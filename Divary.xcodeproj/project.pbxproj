@@ -1,0 +1,563 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 55;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		121CD88AFE797DECAC37EDC1 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DC0AA10F53FD0F638E9251 /* ContentView.swift */; };
+		182E2C3736E297417937F78B /* TuistBundle+Divary.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF2D19D4AEBA3A12196494D3 /* TuistBundle+Divary.swift */; };
+		379914A27BB9670BFACFAFCE /* TuistAssets+Divary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C5A846135421F2EE6E683DD /* TuistAssets+Divary.swift */; };
+		422C9577243F4EA1BC38096C /* DivaryApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDC24D51085D204BF902C88 /* DivaryApp.swift */; };
+		B0E6D1F75CF65BAA3871DECC /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 716652E3C4F0A91EC2604C5B /* Preview Assets.xcassets */; };
+		D5174FA74D3AC75CDBC6C9C0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 489D6D8C60C49F6540485192 /* Assets.xcassets */; };
+		D8D09740892270290867553D /* DivaryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDFC77CFE0E5E51F273624AC /* DivaryTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5B611EAC95569C93E880C3E4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3B486A6A1E3F795C60FE28E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 376CD035D5F33DB311BC22E7;
+			remoteInfo = Divary;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		3248862E4786A0D57581D4E9 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		58A098D5BC5B2A30C5B6A009 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		07DC0AA10F53FD0F638E9251 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		489D6D8C60C49F6540485192 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4BDC24D51085D204BF902C88 /* DivaryApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DivaryApp.swift; sourceTree = "<group>"; };
+		574A7DC1B56DF160470FEB2E /* DivaryTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "DivaryTests-Info.plist"; sourceTree = "<group>"; };
+		5A55D14F274807D8FEBDA73F /* Divary.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Divary.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5C5A846135421F2EE6E683DD /* TuistAssets+Divary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TuistAssets+Divary.swift"; sourceTree = "<group>"; };
+		670F542E184B8ECC0711856B /* Divary-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Divary-Info.plist"; sourceTree = "<group>"; };
+		716652E3C4F0A91EC2604C5B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		BDB124EF2ACDB1AF4E01FBBD /* DivaryTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DivaryTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DDFC77CFE0E5E51F273624AC /* DivaryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DivaryTests.swift; sourceTree = "<group>"; };
+		EF2D19D4AEBA3A12196494D3 /* TuistBundle+Divary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TuistBundle+Divary.swift"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5669FE0BAB6A7A2BE1DEED98 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5B820AF9D25534C79BD3A813 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		099ABD5C79F3AA49E9B42060 /* Derived */ = {
+			isa = PBXGroup;
+			children = (
+				C1E016F49EB5B92CDFAD69D8 /* InfoPlists */,
+				C347A5959F0BA9A336942D91 /* Sources */,
+			);
+			path = Derived;
+			sourceTree = "<group>";
+		};
+		270D9F05FEC5FA862C4925E1 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				D5D7C48D50C7C75ACB1A8F8C /* Preview Content */,
+				489D6D8C60C49F6540485192 /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		29E5FBC648365EBA493FB4EA /* Divary */ = {
+			isa = PBXGroup;
+			children = (
+				270D9F05FEC5FA862C4925E1 /* Resources */,
+				5574EA68BB98FDADC1C60D9D /* Sources */,
+				A6C5FBD737498A912E426EF1 /* Tests */,
+			);
+			path = Divary;
+			sourceTree = "<group>";
+		};
+		5574EA68BB98FDADC1C60D9D /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				07DC0AA10F53FD0F638E9251 /* ContentView.swift */,
+				4BDC24D51085D204BF902C88 /* DivaryApp.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		7738E9020CB77BFB84C75CEF /* Project */ = {
+			isa = PBXGroup;
+			children = (
+				099ABD5C79F3AA49E9B42060 /* Derived */,
+				29E5FBC648365EBA493FB4EA /* Divary */,
+			);
+			name = Project;
+			sourceTree = "<group>";
+		};
+		88051A706631624370E491E9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5A55D14F274807D8FEBDA73F /* Divary.app */,
+				BDB124EF2ACDB1AF4E01FBBD /* DivaryTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A6C5FBD737498A912E426EF1 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				DDFC77CFE0E5E51F273624AC /* DivaryTests.swift */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		A91FE4BD5675A6B711F43B81 = {
+			isa = PBXGroup;
+			children = (
+				7738E9020CB77BFB84C75CEF /* Project */,
+				88051A706631624370E491E9 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C1E016F49EB5B92CDFAD69D8 /* InfoPlists */ = {
+			isa = PBXGroup;
+			children = (
+				670F542E184B8ECC0711856B /* Divary-Info.plist */,
+				574A7DC1B56DF160470FEB2E /* DivaryTests-Info.plist */,
+			);
+			path = InfoPlists;
+			sourceTree = "<group>";
+		};
+		C347A5959F0BA9A336942D91 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				5C5A846135421F2EE6E683DD /* TuistAssets+Divary.swift */,
+				EF2D19D4AEBA3A12196494D3 /* TuistBundle+Divary.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		D5D7C48D50C7C75ACB1A8F8C /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				716652E3C4F0A91EC2604C5B /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		376CD035D5F33DB311BC22E7 /* Divary */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B6871EFE2388AC37CB98F5FE /* Build configuration list for PBXNativeTarget "Divary" */;
+			buildPhases = (
+				A36472742ADD8196EAEDC1B9 /* Sources */,
+				6E5400B690A817A78F5BE642 /* Resources */,
+				5B820AF9D25534C79BD3A813 /* Frameworks */,
+				3248862E4786A0D57581D4E9 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Divary;
+			packageProductDependencies = (
+			);
+			productName = Divary;
+			productReference = 5A55D14F274807D8FEBDA73F /* Divary.app */;
+			productType = "com.apple.product-type.application";
+		};
+		DACE4AD4FA3BC37B552011BD /* DivaryTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 44F811B29D34459B475277F0 /* Build configuration list for PBXNativeTarget "DivaryTests" */;
+			buildPhases = (
+				F0C09551868BB7C7CDBB44F1 /* Sources */,
+				31CF64C98D2CB4F5EE712797 /* Resources */,
+				5669FE0BAB6A7A2BE1DEED98 /* Frameworks */,
+				58A098D5BC5B2A30C5B6A009 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D83A1A2FF6E3073A4B107BA4 /* PBXTargetDependency */,
+			);
+			name = DivaryTests;
+			packageProductDependencies = (
+			);
+			productName = DivaryTests;
+			productReference = BDB124EF2ACDB1AF4E01FBBD /* DivaryTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3B486A6A1E3F795C60FE28E4 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				TargetAttributes = {
+					DACE4AD4FA3BC37B552011BD = {
+						TestTargetID = 376CD035D5F33DB311BC22E7;
+					};
+				};
+			};
+			buildConfigurationList = 765DB847806C33B2D81044D0 /* Build configuration list for PBXProject "Divary" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = A91FE4BD5675A6B711F43B81;
+			productRefGroup = 88051A706631624370E491E9 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				376CD035D5F33DB311BC22E7 /* Divary */,
+				DACE4AD4FA3BC37B552011BD /* DivaryTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		31CF64C98D2CB4F5EE712797 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6E5400B690A817A78F5BE642 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D5174FA74D3AC75CDBC6C9C0 /* Assets.xcassets in Resources */,
+				B0E6D1F75CF65BAA3871DECC /* Preview Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A36472742ADD8196EAEDC1B9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				379914A27BB9670BFACFAFCE /* TuistAssets+Divary.swift in Sources */,
+				182E2C3736E297417937F78B /* TuistBundle+Divary.swift in Sources */,
+				121CD88AFE797DECAC37EDC1 /* ContentView.swift in Sources */,
+				422C9577243F4EA1BC38096C /* DivaryApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F0C09551868BB7C7CDBB44F1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8D09740892270290867553D /* DivaryTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D83A1A2FF6E3073A4B107BA4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Divary;
+			target = 376CD035D5F33DB311BC22E7 /* Divary */;
+			targetProxy = 5B611EAC95569C93E880C3E4 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		05117E1092DCC2F13FEADA85 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = "Derived/InfoPlists/Divary-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.tuist.Divary;
+				PRODUCT_NAME = Divary;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		5D14D1AD018BE55169BE69C3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = "Derived/InfoPlists/DivaryTests-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.tuist.DivaryTests;
+				PRODUCT_NAME = DivaryTests;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+					"$(inherited)",
+					DEBUG,
+				);
+				SWIFT_COMPILATION_MODE = singlefile;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Divary.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Divary";
+				TEST_TARGET_NAME = Divary;
+			};
+			name = Debug;
+		};
+		754A79373724A54395DF2351 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B118F548968F902D445A98E8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		F73CDFBB5FD75683EE0597C0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = "Derived/InfoPlists/DivaryTests-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.tuist.DivaryTests;
+				PRODUCT_NAME = DivaryTests;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Divary.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Divary";
+				TEST_TARGET_NAME = Divary;
+			};
+			name = Release;
+		};
+		FD2F3C7BD81AA2DFB92412E8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = "Derived/InfoPlists/Divary-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.tuist.Divary;
+				PRODUCT_NAME = Divary;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+					"$(inherited)",
+					DEBUG,
+				);
+				SWIFT_COMPILATION_MODE = singlefile;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		44F811B29D34459B475277F0 /* Build configuration list for PBXNativeTarget "DivaryTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5D14D1AD018BE55169BE69C3 /* Debug */,
+				F73CDFBB5FD75683EE0597C0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		765DB847806C33B2D81044D0 /* Build configuration list for PBXProject "Divary" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B118F548968F902D445A98E8 /* Debug */,
+				754A79373724A54395DF2351 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B6871EFE2388AC37CB98F5FE /* Build configuration list for PBXNativeTarget "Divary" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FD2F3C7BD81AA2DFB92412E8 /* Debug */,
+				05117E1092DCC2F13FEADA85 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 3B486A6A1E3F795C60FE28E4 /* Project object */;
+}
