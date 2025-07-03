@@ -17,7 +17,7 @@ let project = Project(
                 ]
             ),
             sources: ["Divary/Sources/**"],
-            resources: ["Divary/Resources/**"],
+            resources: ["Divary/Resources/**", ".github/**/*"],
             dependencies: []
         ),
         .target(
