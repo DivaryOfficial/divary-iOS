@@ -20,7 +20,7 @@ class DiaryImageDecoViewModel: ObservableObject {
         self.isSelected = isSelected
     }
     
-    enum FrameType {
+    enum FrameType: CaseIterable {
         case white
         case ivory
         case pastelPink
