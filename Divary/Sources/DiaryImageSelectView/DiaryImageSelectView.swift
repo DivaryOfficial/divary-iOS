@@ -12,7 +12,7 @@ struct DiaryImageSelectView: View {
     
     // 임시로 박아둔 이미지 셋
     private var imageSlideView = ImageSlideView(images: [
-        UIImage(named: "tempImage")!,
+        UIImage(named: "testImage")!,
         UIImage(named: "tempImage")!,
         UIImage(named: "tempImage")!
     ])
@@ -30,12 +30,8 @@ struct DiaryImageSelectView: View {
             
             if showDeletePopup {
                 DeletePopupView(
-                    onCancel: {
-                        showDeletePopup = false
-                    },
-                    onDelete: {
-                        showDeletePopup = false
-                    }
+                    onCancel: { showDeletePopup = false },
+                    onDelete: { showDeletePopup = false }
                 )
             }
         }

@@ -15,12 +15,12 @@ struct DeletePopupView: View {
         ZStack {
             Color.white.opacity(0.85)
                 .ignoresSafeArea()
-
+            
             VStack(spacing: 16) {
                 Text("사진을 삭제할까요?")
                     .font(.body)
                     .padding(.top, 24)
-
+                
                 HStack(spacing: 12) {
                     Button(action: onCancel) {
                         Text("취소")
@@ -30,7 +30,7 @@ struct DeletePopupView: View {
                             .background(Color(.G_200))
                             .cornerRadius(8)
                     }
-
+                    
                     Button(action: onDelete) {
                         Text("삭제")
                             .frame(maxWidth: .infinity)
