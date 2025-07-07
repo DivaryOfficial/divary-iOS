@@ -9,7 +9,12 @@ import SwiftUI
 
 struct DiaryImageDecoView: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        Spacer()
+        frameSelectBar
+    }
+    
+    private var frameSelectBar: some View {
+        DiaryImageFrame(frameType: .pastelBlue, isSelected: false)
     }
 }
 
