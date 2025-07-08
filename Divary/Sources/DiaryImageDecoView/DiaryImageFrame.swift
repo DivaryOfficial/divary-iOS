@@ -10,18 +10,31 @@ import SwiftUI
 struct DiaryImageFrame: View {
     @StateObject var viewModel: DiaryImageDecoViewModel
     
-    init(frameType: DiaryImageDecoViewModel.FrameType?, isSelected: Bool) {
-        _viewModel = StateObject(wrappedValue: DiaryImageDecoViewModel(frameType: frameType, isSelected: isSelected))
+    init(frameType: DiaryImageDecoViewModel.FrameType = .origin) {
+        _viewModel = StateObject(wrappedValue: DiaryImageDecoViewModel(frameType: frameType, isSelected: false))
+    }
+    
+    init(viewModel: DiaryImageDecoViewModel) {
+        print("init vm : \(viewModel.frameType)")
+        _viewModel = StateObject(wrappedValue: viewModel)
     }
     
     var body: some View {
-        if let actualType = viewModel.frameType {
-            if viewModel.isSelected {
+//        switch viewModel.frameType {
+//        case .origin:
+//            
+//        case default:
+//            
+//        }
+//        let _ = print("DiaryImageFrameUpdated: \(viewModel.frameType)")
+        if viewModel.frameType != .origin {
+//            let _ = print("DiaryImageFrameUpdated: \(viewModel.frameType)")
+            if viewModel.isSelected { // 꾸민 사진 띄우기
                 VStack {
                     Image("testImage")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .cornerRadius(actualType.innerCornerRadius)
+                        .cornerRadius(viewModel.frameType.innerCornerRadius)
                         .padding(.top, 18)
                         .padding(.bottom, 16)
                 
@@ -36,14 +49,14 @@ struct DiaryImageFrame: View {
                 }
                 .frame(width: 300)
                 .padding(.horizontal, 18)
-                .background(actualType.frameColor)
+                .background(viewModel.frameType.frameColor)
                 .shadow(color: .black.opacity(0.25), radius: 2, x: 0, y: 4)
             }
-            else {
+            else { // frameSelectBar에 띄우기
                 VStack {
                     Rectangle()
                         .fill(Color.white)
-                        .cornerRadius(actualType.innerCornerRadius)
+                        .cornerRadius(viewModel.frameType.innerCornerRadius)
                         .aspectRatio(1, contentMode: .fit)
                     Spacer()
                         .frame(height: 20)
@@ -51,23 +64,35 @@ struct DiaryImageFrame: View {
                 .frame(width: 60)
                 .padding(.horizontal, 3)
                 .padding(.top, 3)
-                .background(actualType.frameColor)
+                .background(viewModel.frameType.frameColor)
                 .shadow(color: .black.opacity(0.25), radius: 2, x: 0, y: 4)
             }
         }
         else {
-            Image("tempImage")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .padding(.top, 18)
-                .padding(.bottom, 16)
-                .cornerRadius(8)
+            if viewModel.isSelected {
+                Image("tempImage")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .padding(.top, 18)
+                    .padding(.bottom, 16)
+                    .padding(.horizontal, 48)
+                    .cornerRadius(8)
+            }
+            else {
+                ZStack {
+                    Rectangle()
+                        .frame(width: 70, height: 85) // 높이 수정 필요
+                        .foregroundStyle(Color(.G_300))
+                    Text("없음")
+                        .foregroundStyle(Color(.black))
+                }
+            }
         }
     }
 }
 
 #Preview {
 //    DiaryImageFrame(frameType: .pastelBlue, isSelected: true)
-    DiaryImageFrame(frameType: .pastelBlue, isSelected: false)
-//    DiaryImageFrame(frameType: nil, isSelected: false)
+//    DiaryImageFrame(frameType: .origin, isSelected: false)
+    DiaryImageFrame()
 }

@@ -5,6 +5,7 @@
 //  Created by 김나영 on 7/7/25.
 //
 
+import Combine
 import Foundation
 import SwiftUI
 
@@ -12,15 +13,16 @@ class DiaryImageDecoViewModel: ObservableObject {
     @Published var imageCaption: String = ""
     @Published var imageDate: String = "임시 날짜 2025.5.25 7:32"
     
-    var frameType: FrameType?
+    @Published var frameType: FrameType
     var isSelected: Bool
     
-    init(frameType: FrameType?, isSelected: Bool) {
+    init(frameType: FrameType, isSelected: Bool) {
         self.frameType = frameType
         self.isSelected = isSelected
     }
     
     enum FrameType: CaseIterable {
+        case origin
         case white
         case ivory
         case pastelPink
@@ -31,6 +33,8 @@ class DiaryImageDecoViewModel: ObservableObject {
         
         var frameColor: Color {
             switch self {
+            case .origin:
+                return .clear
             case .white:
                 return Color(.white)
             case .ivory:
@@ -48,6 +52,8 @@ class DiaryImageDecoViewModel: ObservableObject {
         
         var innerCornerRadius: CGFloat {
             switch self {
+            case .origin:
+                return 0
             case .white:
                 return 1.6
             case .ivory:

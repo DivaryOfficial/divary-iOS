@@ -8,28 +8,30 @@
 import SwiftUI
 
 struct DiaryImageDecoView: View {
-    @StateObject var viewModel: DiaryImageDecoViewModel
-    @State private var selectedFrameType: DiaryImageDecoViewModel.FrameType? = nil
+    @StateObject var imageDecoViewModel = DiaryImageDecoViewModel(frameType: .pastelBlue, isSelected: true)
+//    @StateObject var imageSelectViewModel = DiaryImageSelectViewModel()
 
     var body: some View {
+        imageDecoratedGroup
         Spacer()
         frameSelectBar
+    }
+    
+    private var imageDecoratedGroup: some View {
+//        let _ = print("idg: \(imageDecoViewModel.frameType)")
+        return DiaryImageFrame(viewModel: imageDecoViewModel)
+            .padding(.top, 80)
     }
     
     private var frameSelectBar: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 25) {
-                ZStack {
-                    Rectangle()
-                        .frame(width: 70, height: 85) // 높이 수정 필요
-                        .foregroundStyle(Color(.G_300))
-                    Text("없음")
-                }
                 ForEach(DiaryImageDecoViewModel.FrameType.allCases, id: \.self) { type in
                     Button {
-                        selectedFrameType = type
+//                        print("나 눌림 \(type)")
+                        imageDecoViewModel.frameType = type
                     } label: {
-                        DiaryImageFrame(frameType: type, isSelected: false)
+                        DiaryImageFrame(frameType: type)
                     }
                 }
             }
@@ -41,5 +43,5 @@ struct DiaryImageDecoView: View {
 }
 
 #Preview {
-    DiaryImageDecoView(viewModel: DiaryImageDecoViewModel(frameType: .pastelBlue, isSelected: true))
+    DiaryImageDecoView(imageDecoViewModel: DiaryImageDecoViewModel(frameType: .origin, isSelected: true))
 }

@@ -8,30 +8,23 @@
 import SwiftUI
 
 struct DiaryImageSelectView: View {
-    @State private var showDeletePopup = false
-    
-    // 임시로 박아둔 이미지 셋
-    private var imageSlideView = ImageSlideView(images: [
-        UIImage(named: "testImage")!,
-        UIImage(named: "tempImage")!,
-        UIImage(named: "tempImage")!
-    ])
+    @StateObject var viewModel: DiaryImageSelectViewModel
     
     var body: some View {
         ZStack(alignment: .bottom) {
             VStack {
                 Spacer()
                     .frame(height: 189)
-                imageSlideView
+                viewModel.imageSlideView
                 Spacer()
             }
             
             footerBar
             
-            if showDeletePopup {
+            if viewModel.showDeletePopup {
                 DeletePopupView(
-                    onCancel: { showDeletePopup = false },
-                    onDelete: { showDeletePopup = false }
+                    onCancel: { viewModel.showDeletePopup = false },
+                    onDelete: { viewModel.showDeletePopup = false }
                 )
             }
         }
@@ -42,7 +35,7 @@ struct DiaryImageSelectView: View {
             Spacer()
             FooterItem(image: Image(.trash), title: "삭제")
                 .onTapGesture {
-                    showDeletePopup = true
+                    viewModel.showDeletePopup = true
                 }
             FooterItem(image: Image(.deco), title: "꾸미기")
             FooterItem(image: Image(.upload), title: "업로드")
@@ -60,5 +53,5 @@ struct DiaryImageSelectView: View {
 }
 
 #Preview {
-    DiaryImageSelectView()
+    DiaryImageSelectView(viewModel: DiaryImageSelectViewModel())
 }
