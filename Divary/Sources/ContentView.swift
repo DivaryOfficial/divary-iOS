@@ -6,6 +6,7 @@ public struct ContentView: View {
     public var body: some View {
         Text("Hello, World!")
             .padding()
+            .font(Font.omyu.regular(size: 32))
     }
 }
 
