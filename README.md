@@ -1,8 +1,10 @@
 # 🚀 Divary
 
-![배너 이미지 또는 로고](링크)
+<img width="512" alt="image" src="https://github.com/user-attachments/assets/cbf6da5b-a574-4bf0-83ac-be9f9d6e13a7" />
 
-> 간단한 한 줄 소개 – 프로젝트의 핵심 가치 또는 기능
+
+> Diver+Diary
+스쿠버 다이버를 위한, 다이빙의 추억을 나만의 방식으로 기록하는 다이빙 로그 앱 🌊🐠
 
 [![Swift](https://img.shields.io/badge/Swift-6.0-orange.svg)]()
 [![Xcode](https://img.shields.io/badge/Xcode-16.0-blue.svg)]()
@@ -27,7 +29,9 @@
 
 ## 📱 소개
 
-> 프로젝트의 주요 목적과 사용자가 얻게 될 경험을 설명해주세요.
+> ✍️ 다이빙 직후, 생생한 기억을 바로바로 쉽게 기록할 수 있게 도와줘요! <br>
+🎨 사진과 스티커로 예쁘게 꾸며서 나만의 다이빙 로그를 특별하게 남길 수 있어요! <br>
+🐠 해양 생물 도감에서 내가 본 바다 친구가 어떤 생물인지 찾아볼 수 있어요
 
 <br>
 
