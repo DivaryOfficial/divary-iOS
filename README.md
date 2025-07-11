@@ -11,12 +11,16 @@
 ---
 
 <br>
+
 ## 👥 멤버
+
 | 박현규 | 김나영 | 조하은 |
 |:------:|:------:|:------:|
-| <img width="325" height="325" alt="image" src="[https://github.com/user-attachments/assets/d8d920bd-46de-4927-b4d7-455fb0a0de9a]"/> | ![image](https://github.com/user-attachments/assets/1ada3856-3d12-4a62-947e-848ee043251c) | <img width="325" height="325" alt="image" src="https://github.com/user-attachments/assets/d8d920bd-46de-4927-b4d7-455fb0a0de9a" />|
+| <img src="https://github.com/user-attachments/assets/cfc67f28-1e5d-4b83-80bb-9480038549bd" width="150" /> | <img src="https://github.com/user-attachments/assets/a71f49c8-1310-4b07-9693-1ca55df815f7" width="150" /> | <img src="https://github.com/user-attachments/assets/203bbc1b-c679-4581-ae14-be6046f5a8dc" width="150" /> |
 | PL | FE | FE |
 | [GitHub](https://github.com/ParkMazorika) | [GitHub](https://github.com/na0k1m) | [GitHub](https://github.com/na0k1m) |
+
+
 
 <br>
 
@@ -29,7 +33,7 @@
 
 ## 📆 프로젝트 기간
 - 전체 기간: `2025.07.03 - 2025.08.25`
-- 개발 기간: `2025.07.05 - YYYY.08.18`
+- 개발 기간: `2025.07.05 - 2025.08.18`
 
 <br>
 
