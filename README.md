@@ -88,10 +88,10 @@ Swift 6.0
 <table>
   <tr>
     <td>
-      사진 넣어주세요
+      진행중
     </td>
     <td>
-      사진 넣어주세요
+      진행중
     </td>
    
   </tr>
@@ -99,15 +99,7 @@ Swift 6.0
 
 ## 🔖 브랜치 컨벤션
 * `main` - 제품 출시 브랜치
-* `develop` - 출시를 위해 개발하는 브랜치
-* `feat/xx` - 기능 단위로 독립적인 개발 환경을 위해 작성
-* `refac/xx` - 개발된 기능을 리팩토링 하기 위해 작성
-* `hotfix/xx` - 출시 버전에서 발생한 버그를 수정하는 브랜치
-* `chore/xx` - 빌드 작업, 패키지 매니저 설정 등
-* `design/xx` - 디자인 변경
-* `bugfix/xx` - 디자인 변경
-
-
+* `feat/#이슈` - 기능 단위로 독립적인 개발 환경을 위해 작성
 
 <br>
 
@@ -120,24 +112,11 @@ enum DiveType { ... }
 class ChallengeService { ... }
 ```
 
-변수, 상수, 함수, 파라미터 이름: lowerCamelCase
+* 변수, 상수, 함수, 파라미터 이름: lowerCamelCase
 ``` swift
 let diveLogId = UUID()
 func fetchChallengeList(forUser userId: String) { ... }
 ```
-
-축약어가 포함된 경우에도 첫 글자만 대문자로 유지합니다.
-``` swift
-let apiManager = APIManager()
-let urlString = "https://example.com"
-```
-<br>
-
-* 나중에 추가로 작업해야 할 부분에 대해서는 `// TODO: - xxx 주석을 남기도록 한다.`
-* 코드의 섹션을 분리할 때는 `// MARK: - xxx 주석을 남기도록 한다.`
-* 함수에 대해 전부 주석을 남기도록 하여 무슨 액션을 하는지 알 수 있도록 한다.
-
-<br>
 
 ## 📁 PR 컨벤션
 * PR 시, 템플릿이 등장한다. 해당 템플릿에서 작성해야할 부분은 아래와 같다
