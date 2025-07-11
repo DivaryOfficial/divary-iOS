@@ -14,7 +14,7 @@
 ## 👥 멤버
 | 박현규 | 김나영 | 조하은 |
 |:------:|:------:|:------:|
-| <img width="325" height="325" alt="image" src="[https://github.com/user-attachments/assets/d8d920bd-46de-4927-b4d7-455fb0a0de9a](https://github.com/user-attachments/assets/9a8168bd-6a54-4ac8-8c72-2335524b9e01)"/> | ![image](https://github.com/user-attachments/assets/1ada3856-3d12-4a62-947e-848ee043251c) | <img width="325" height="325" alt="image" src="https://github.com/user-attachments/assets/d8d920bd-46de-4927-b4d7-455fb0a0de9a" />|
+| <img width="325" height="325" alt="image" src="[https://github.com/user-attachments/assets/d8d920bd-46de-4927-b4d7-455fb0a0de9a]"/> | ![image](https://github.com/user-attachments/assets/1ada3856-3d12-4a62-947e-848ee043251c) | <img width="325" height="325" alt="image" src="https://github.com/user-attachments/assets/d8d920bd-46de-4927-b4d7-455fb0a0de9a" />|
 | PL | FE | FE |
 | [GitHub](https://github.com/ParkMazorika) | [GitHub](https://github.com/na0k1m) | [GitHub](https://github.com/na0k1m) |
 
