@@ -1,4 +1,4 @@
-# 🚀 프로젝트 이름
+# 🚀 Divary
 
 ![배너 이미지 또는 로고](링크)
 
@@ -15,9 +15,10 @@
 ## 👥 멤버
 | 박현규 | 김나영 | 조하은 |
 |:------:|:------:|:------:|
-| 사진1 | ![image](https://github.com/user-attachments/assets/1ada3856-3d12-4a62-947e-848ee043251c) | 사진3 |
+| ![IMG_1145](https://github.com/user-attachments/assets/34a1f4d3-354e-4709-bec4-493855e83104) | ![image](https://github.com/user-attachments/assets/1ada3856-3d12-4a62-947e-848ee043251c) | <img width="325" height="325" alt="image" src="https://github.com/user-attachments/assets/d8d920bd-46de-4927-b4d7-455fb0a0de9a" />
+ |
 | PL | FE | FE |
-| [GitHub](깃허브 링크) | [GitHub](https://github.com/na0k1m) | [GitHub](깃허브 링크) |
+| [GitHub](https://github.com/ParkMazorika) | [GitHub](https://github.com/na0k1m) | [GitHub](https://github.com/na0k1m) |
 
 <br>
 
@@ -29,8 +30,8 @@
 <br>
 
 ## 📆 프로젝트 기간
-- 전체 기간: `YYYY.MM.DD - YYYY.MM.DD`
-- 개발 기간: `YYYY.MM.DD - YYYY.MM.DD`
+- 전체 기간: `2025.07.03 - 2025.08.25`
+- 개발 기간: `2025.07.05 - YYYY.08.18`
 
 <br>
 
@@ -56,13 +57,11 @@ Swift 6.0
 <img src="https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white" />
 <img src="https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white" />
 <img src="https://img.shields.io/badge/SPM-FA7343?style=for-the-badge&logo=swift&logoColor=white" />
-<img src="https://img.shields.io/badge/Fastlane-n?style=for-the-badge&logo=fastlane&logoColor=black" />
 </div>
 
 ### Development
 <div align="left">
 <img src="https://img.shields.io/badge/Xcode-007ACC?style=for-the-badge&logo=Xcode&logoColor=white" />
-<img src="https://img.shields.io/badge/Firebase-DD2C00?style=for-the-badge&logo=Firebase&logoColor=white" />
 <img src="https://img.shields.io/badge/SwiftUI-42A5F5?style=for-the-badge&logo=swift&logoColor=white" />
 <img src="https://img.shields.io/badge/Alamofire-FF5722?style=for-the-badge&logo=swift&logoColor=white" />
 <img src="https://img.shields.io/badge/Moya-8A4182?style=for-the-badge&logo=swift&logoColor=white" />
@@ -72,7 +71,6 @@ Swift 6.0
 
 ### Communication
 <div align="left">
-<img src="https://img.shields.io/badge/Miro-FFFC00.svg?style=for-the-badge&logo=Miro&logoColor=050038" />
 <img src="https://img.shields.io/badge/Notion-white.svg?style=for-the-badge&logo=Notion&logoColor=000000" />
 <img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=Discord&logoColor=white" />
 <img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white" />
@@ -108,26 +106,26 @@ Swift 6.0
 <br>
 
 ## 🌀 코딩 컨벤션
-* 파라미터 이름을 기준으로 줄바꿈 한다.
-```swift
-let actionSheet = UIActionSheet(
-  title: "정말 계정을 삭제하실 건가요?",
-  delegate: self,
-  cancelButtonTitle: "취소",
-  destructiveButtonTitle: "삭제해주세요"
-)
+* 카멜케이스 사용
+클래스, 구조체, 열거형 이름: UpperCamelCase (PascalCase)
+``` swift
+struct LogBookPageView { ... }
+enum DiveType { ... }
+class ChallengeService { ... }
 ```
 
+변수, 상수, 함수, 파라미터 이름: lowerCamelCase
+``` swift
+let diveLogId = UUID()
+func fetchChallengeList(forUser userId: String) { ... }
+```
+
+축약어가 포함된 경우에도 첫 글자만 대문자로 유지합니다.
+``` swift
+let apiManager = APIManager()
+let urlString = "https://example.com"
+```
 <br>
-
-* if let 구문이 길 경우에 줄바꿈 한다
-```swift
-if let user = self.veryLongFunctionNameWhichReturnsOptionalUser(),
-   let name = user.veryLongFunctionNameWhichReturnsOptionalName(),
-  user.gender == .female {
-  // ...
-}
-```
 
 * 나중에 추가로 작업해야 할 부분에 대해서는 `// TODO: - xxx 주석을 남기도록 한다.`
 * 코드의 섹션을 분리할 때는 `// MARK: - xxx 주석을 남기도록 한다.`
@@ -219,4 +217,13 @@ if let user = self.veryLongFunctionNameWhichReturnsOptionalUser(),
 
 ## 🗂️ 폴더 컨벤션
 ```
+//뷰마다 작업 섹션별, 파일 나누어서 작업
+LogBook/
+├── LogBookMain/
+├── LogBookPage/
+│   ├── Section/
+│   ├── LogBookPageMock.swift
+│   ├── LogBookPageModel.swift
+│   └── LogBookPageView.swift
+└──
 ```
