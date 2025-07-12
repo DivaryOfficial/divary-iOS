@@ -12,13 +12,7 @@ struct DiaryImageSelectView: View {
     
     var body: some View {
         ZStack(alignment: .bottom) {
-            VStack {
-                Spacer()
-                    .frame(height: 189)
-                viewModel.imageSlideView
-                Spacer()
-            }
-            
+            imageSlideGroup
             footerBar
             
             if viewModel.showDeletePopup {
@@ -30,13 +24,19 @@ struct DiaryImageSelectView: View {
         }
     }
     
+    private var imageSlideGroup: some View {
+        VStack {
+            Spacer()
+                .frame(height: 189)
+//            viewModel.imageSlideView
+            ImageSlideView(images: viewModel.imageSet)
+            Spacer()
+        }
+    }
+    
     private var footerBar: some View {
         HStack(spacing: 40) {
             Spacer()
-            FooterItem(image: Image(.trash), title: "삭제")
-                .onTapGesture {
-                    viewModel.showDeletePopup = true
-                }
             FooterItem(image: Image(.deco), title: "꾸미기")
             FooterItem(image: Image(.upload), title: "업로드")
             Spacer()

@@ -23,5 +23,5 @@ struct FooterItem: View {
 }
 
 #Preview {
-    FooterItem(image: Image(.trash), title: "삭제")
+    FooterItem(image: Image(.deco), title: "꾸미기")
 }

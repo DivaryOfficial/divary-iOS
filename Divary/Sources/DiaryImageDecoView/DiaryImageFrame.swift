@@ -15,7 +15,6 @@ struct DiaryImageFrame: View {
     }
     
     init(viewModel: DiaryImageDecoViewModel) {
-        print("init vm : \(viewModel.frameType)")
         _viewModel = StateObject(wrappedValue: viewModel)
     }
     
@@ -70,7 +69,7 @@ struct DiaryImageFrame: View {
         }
         else {
             if viewModel.isSelected {
-                Image("tempImage")
+                Image("testImage")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .padding(.top, 18)

@@ -12,6 +12,8 @@ struct DiaryImageDecoView: View {
 //    @StateObject var imageSelectViewModel = DiaryImageSelectViewModel()
 
     var body: some View {
+        headerBar
+        Spacer()
         imageDecoratedGroup
         Spacer()
         frameSelectBar
@@ -19,8 +21,20 @@ struct DiaryImageDecoView: View {
     
     private var imageDecoratedGroup: some View {
 //        let _ = print("idg: \(imageDecoViewModel.frameType)")
-        return DiaryImageFrame(viewModel: imageDecoViewModel)
-            .padding(.top, 80)
+        DiaryImageFrame(viewModel: imageDecoViewModel)
+    }
+    
+    private var headerBar: some View {
+        HStack {
+            Button(action: { }) {
+                Image(.close)
+            }
+            Spacer()
+            Button(action: { }) {
+                Image(.check)
+            }
+        }
+        .padding(.horizontal, 20)
     }
     
     private var frameSelectBar: some View {
