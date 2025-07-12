@@ -1,4 +1,7 @@
 import SwiftUI
+enum Field: Hashable {
+    case leader, buddy, partner
+}
 
 public struct ContentView: View {
     public init() {}
