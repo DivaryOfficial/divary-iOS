@@ -10,6 +10,12 @@ import SwiftUI
 struct DiaryImageSelectView: View {
     @StateObject var viewModel: DiaryImageSelectViewModel
     
+    let decoViewModels: [DiaryImageDecoViewModel] = [
+        DiaryImageDecoViewModel(frameType: .origin, isSelected: true),
+        DiaryImageDecoViewModel(frameType: .pastelPink, isSelected: true),
+        DiaryImageDecoViewModel(frameType: .black, isSelected: true)
+    ]
+    
     var body: some View {
         ZStack(alignment: .bottom) {
             imageSlideGroup
@@ -29,7 +35,8 @@ struct DiaryImageSelectView: View {
             Spacer()
                 .frame(height: 189)
 //            viewModel.imageSlideView
-            ImageSlideView(images: viewModel.imageSet)
+//            ImageSlideView(images: viewModel.imageSet)
+            ImageSlideView(content: .frames(decoViewModels))
             Spacer()
         }
     }

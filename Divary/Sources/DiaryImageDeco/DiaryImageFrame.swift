@@ -10,6 +10,12 @@ import SwiftUI
 struct DiaryImageFrame: View {
     @StateObject var viewModel: DiaryImageDecoViewModel
     
+    let decoViewModels: [DiaryImageDecoViewModel] = [
+        DiaryImageDecoViewModel(frameType: .white, isSelected: true),
+        DiaryImageDecoViewModel(frameType: .pastelPink, isSelected: true),
+        DiaryImageDecoViewModel(frameType: .black, isSelected: true)
+    ]
+    
     init(frameType: DiaryImageDecoViewModel.FrameType = .origin) {
         _viewModel = StateObject(wrappedValue: DiaryImageDecoViewModel(frameType: frameType, isSelected: false))
     }
@@ -36,6 +42,8 @@ struct DiaryImageFrame: View {
                         .cornerRadius(viewModel.frameType.innerCornerRadius)
                         .padding(.top, 18)
                         .padding(.bottom, 16)
+//                    ImageSlideView(content: .frames(decoViewModels))
+
                 
                     VStack(alignment: .leading, spacing: 4) {
                         TextField("캡션 추가...", text: $viewModel.imageCaption)

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct DiaryImageDecoView: View {
     @StateObject var imageDecoViewModel = DiaryImageDecoViewModel(frameType: .pastelBlue, isSelected: true)
-//    @StateObject var imageSelectViewModel = DiaryImageSelectViewModel()
+//    @StateObject var imageSelectViewModel: DiaryImageSelectViewModel
 
     var body: some View {
         headerBar
