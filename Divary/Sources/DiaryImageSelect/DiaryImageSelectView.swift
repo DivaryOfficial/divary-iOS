@@ -9,6 +9,7 @@ import SwiftUI
 
 struct DiaryImageSelectView: View {
     @StateObject var viewModel: DiaryImageSelectViewModel
+    @State private var currentIndex = 0
     
     let decoViewModels: [DiaryImageDecoViewModel] = [
         DiaryImageDecoViewModel(frameType: .origin, isSelected: true),
@@ -34,9 +35,8 @@ struct DiaryImageSelectView: View {
         VStack {
             Spacer()
                 .frame(height: 189)
-//            viewModel.imageSlideView
 //            ImageSlideView(images: viewModel.imageSet)
-            ImageSlideView(content: .frames(decoViewModels))
+            ImageSlideView(content: .frames(decoViewModels), currentIndex: $currentIndex)
             Spacer()
         }
     }

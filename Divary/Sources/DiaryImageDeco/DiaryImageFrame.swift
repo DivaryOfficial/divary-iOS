@@ -10,11 +10,11 @@ import SwiftUI
 struct DiaryImageFrame: View {
     @StateObject var viewModel: DiaryImageDecoViewModel
     
-    let decoViewModels: [DiaryImageDecoViewModel] = [
-        DiaryImageDecoViewModel(frameType: .white, isSelected: true),
-        DiaryImageDecoViewModel(frameType: .pastelPink, isSelected: true),
-        DiaryImageDecoViewModel(frameType: .black, isSelected: true)
-    ]
+//    let decoViewModels: [DiaryImageDecoViewModel] = [
+//        DiaryImageDecoViewModel(frameType: .white, isSelected: true),
+//        DiaryImageDecoViewModel(frameType: .pastelPink, isSelected: true),
+//        DiaryImageDecoViewModel(frameType: .black, isSelected: true)
+//    ]
     
     init(frameType: DiaryImageDecoViewModel.FrameType = .origin) {
         _viewModel = StateObject(wrappedValue: DiaryImageDecoViewModel(frameType: frameType, isSelected: false))

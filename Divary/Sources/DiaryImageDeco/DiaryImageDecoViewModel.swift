@@ -8,6 +8,13 @@
 import Foundation
 import SwiftUI
 
+class DecoViewModelStore: ObservableObject {
+    @Published var viewModels: [DiaryImageDecoViewModel] = [
+        DiaryImageDecoViewModel(frameType: .white, isSelected: true),
+        DiaryImageDecoViewModel(frameType: .pastelPink, isSelected: true)
+    ]
+}
+
 class DiaryImageDecoViewModel: ObservableObject {
     @Published var imageCaption: String = ""
     @Published var imageDate: String = "임시 날짜 2025.5.25 7:32"

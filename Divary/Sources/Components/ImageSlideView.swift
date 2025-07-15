@@ -20,7 +20,7 @@ struct ImageSlideView: View {
 //    }
 //    let content: [SlideContent]
     
-    @State private var currentIndex = 0
+    @Binding var currentIndex: Int
 
     var body: some View {
         VStack {
@@ -62,12 +62,12 @@ struct ImageSlideView: View {
     }
 }
 
-#Preview {
-    let decoViewModels: [DiaryImageDecoViewModel] = [
-        DiaryImageDecoViewModel(frameType: .white, isSelected: true),
-        DiaryImageDecoViewModel(frameType: .pastelPink, isSelected: true),
-        DiaryImageDecoViewModel(frameType: .pastelBlue, isSelected: true)
-    ]
-    
-    ImageSlideView(content: .frames(decoViewModels))
-}
+//#Preview {
+//    let decoViewModels: [DiaryImageDecoViewModel] = [
+//        DiaryImageDecoViewModel(frameType: .white, isSelected: true),
+//        DiaryImageDecoViewModel(frameType: .pastelPink, isSelected: true),
+//        DiaryImageDecoViewModel(frameType: .pastelBlue, isSelected: true)
+//    ]
+//    
+//    ImageSlideView(content: .frames(decoViewModels))
+//}

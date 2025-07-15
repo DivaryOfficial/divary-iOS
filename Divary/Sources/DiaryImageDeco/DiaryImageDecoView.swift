@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct DiaryImageDecoView: View {
-    @StateObject var imageDecoViewModel = DiaryImageDecoViewModel(frameType: .pastelBlue, isSelected: true)
-//    @StateObject var imageSelectViewModel: DiaryImageSelectViewModel
+    @StateObject var store = DecoViewModelStore()
+    @State private var currentIndex = 0
 
     var body: some View {
         headerBar
@@ -21,7 +21,7 @@ struct DiaryImageDecoView: View {
     
     private var imageDecoratedGroup: some View {
 //        let _ = print("idg: \(imageDecoViewModel.frameType)")
-        DiaryImageFrame(viewModel: imageDecoViewModel)
+        ImageSlideView(content: .frames(store.viewModels), currentIndex: $currentIndex)
     }
     
     private var headerBar: some View {
@@ -43,7 +43,9 @@ struct DiaryImageDecoView: View {
                 ForEach(DiaryImageDecoViewModel.FrameType.allCases, id: \.self) { type in
                     Button {
 //                        print("나 눌림 \(type)")
-                        imageDecoViewModel.frameType = type
+                        if store.viewModels.indices.contains(currentIndex) {
+                            store.viewModels[currentIndex].frameType = type
+                        }
                     } label: {
                         DiaryImageFrame(frameType: type)
                     }
@@ -57,5 +59,6 @@ struct DiaryImageDecoView: View {
 }
 
 #Preview {
-    DiaryImageDecoView(imageDecoViewModel: DiaryImageDecoViewModel(frameType: .origin, isSelected: true))
+//    DiaryImageDecoView(imageDecoViewModel: DiaryImageDecoViewModel(frameType: .origin, isSelected: true))
+    DiaryImageDecoView()
 }
