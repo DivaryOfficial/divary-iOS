@@ -8,19 +8,18 @@
 import SwiftUI
 
 struct DeletePopupView: View {
+    @Binding var isPresented: Bool
     var deleteText: String
     
-    var onCancel: () -> Void = {
-        print("취소 클릭")
-    }
-    var onDelete: () -> Void = {
-        print("삭제 클릭")
+    func onDelete() {
+        isPresented = false
     }
 
     var body: some View {
         ZStack {
             Color.white.opacity(0.85)
                 .ignoresSafeArea()
+                .onTapGesture { isPresented = false }
             
             VStack(spacing: 16) {
                 Text(deleteText)
@@ -28,7 +27,9 @@ struct DeletePopupView: View {
                     .padding(.top, 24)
                 
                 HStack(spacing: 12) {
-                    Button(action: onCancel) {
+                    Button {
+                        isPresented = false
+                    } label: {
                         Text("취소")
                             .foregroundColor(Color(.G_500))
                             .frame(maxWidth: .infinity)
@@ -61,5 +62,6 @@ struct DeletePopupView: View {
 }
 
 #Preview {
-    DeletePopupView(deleteText: "지금 돌아가면 변경 내용이 모두 삭제됩니다.")
+//    DeletePopupView(viewModel: DiaryImageSelectViewModel(), deleteText: "지금 돌아가면 변경 내용이 모두 삭제됩니다.")
+//    DeletePopupView(isPresented: $isPresented, deleteText: "지금 돌아가면 변경 내용이 모두 삭제됩니다.")
 }

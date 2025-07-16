@@ -28,11 +28,11 @@ struct DiaryImageFrame: View {
                 VStack {
                     Image("testImage")
                         .resizable()
-                        .scaledToFill() // 이미지가 정사각형을 채우도록 강제
+                        .scaledToFill()
                         .frame(width: 230, height: 230)
-                        .clipped() // 넘치는 부분 잘라내기
+                        .clipped()
                         .cornerRadius(viewModel.frameType.innerCornerRadius)
-                        .padding(.top, 20)
+                        .padding(.top, 15)
                         .padding(.bottom, 16)
                 
                     VStack(alignment: .leading, spacing: 4) {
@@ -45,7 +45,7 @@ struct DiaryImageFrame: View {
                     }
                 }
                 .frame(width: 240)
-                .padding(.horizontal, 18)
+                .padding(.horizontal, 10)
                 .background(viewModel.frameType.frameColor)
                 .shadow(color: .black.opacity(0.25), radius: 2, x: 0, y: 4)
             }
@@ -71,11 +71,7 @@ struct DiaryImageFrame: View {
                 Image("testImage")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .padding(.top, 18)
-                    .padding(.bottom, 16)
-                    .padding(.horizontal, 48)
                     .cornerRadius(8)
-//                    .frame(width: 240)
             }
             else { // frameSelectBar에 없음 버튼
                 ZStack {

@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct DiaryImageSelectView: View {
-    @StateObject var viewModel: DiaryImageSelectViewModel
+//    @StateObject var viewModel: DiaryImageSelectViewModel //없어도되나
+    @State private var showDeletePopup = false
     @State private var currentIndex = 0
     
     let decoViewModels: [DiaryImageDecoViewModel] = [
@@ -18,14 +19,8 @@ struct DiaryImageSelectView: View {
     ]
     
     var body: some View {
-        ZStack(alignment: .bottom) {
-            imageSlideGroup
-            footerBar
-            
-            if viewModel.showDeletePopup {
-                DeletePopupView(deleteText: "사진을 삭제할까요?")
-            }
-        }
+        imageSlideGroup
+        footerBar
     }
     
     private var imageSlideGroup: some View {
@@ -54,5 +49,6 @@ struct DiaryImageSelectView: View {
 }
 
 #Preview {
-    DiaryImageSelectView(viewModel: DiaryImageSelectViewModel())
+//    DiaryImageSelectView(viewModel: DiaryImageSelectViewModel())
+    DiaryImageSelectView()
 }

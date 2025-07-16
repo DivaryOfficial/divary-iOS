@@ -16,6 +16,8 @@ class DecoViewModelStore: ObservableObject {
 }
 
 class DiaryImageDecoViewModel: ObservableObject {
+    @Published var showDeletePopup = false
+    
     @Published var imageCaption: String = ""
     @Published var imageDate: String = "임시 날짜 2025.5.25 7:32"
     
@@ -33,7 +35,6 @@ class DiaryImageDecoViewModel: ObservableObject {
         case ivory
         case pastelPink
         case pastelBlue
-        // case 종이질감
         case wood
         case black
         

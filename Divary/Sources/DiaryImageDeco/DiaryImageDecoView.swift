@@ -9,23 +9,33 @@ import SwiftUI
 
 struct DiaryImageDecoView: View {
     @StateObject var store = DecoViewModelStore()
+    
+    @State private var showDeletePopup = false
     @State private var currentIndex = 0
 
     var body: some View {
-        headerBar
-        Spacer()
-        imageDecoratedGroup
-        Spacer()
-        frameSelectBar
+        ZStack(alignment: .bottom) {
+            VStack {
+                headerBar
+                Spacer()
+                imageDecoratedGroup
+                Spacer()
+                frameSelectBar
+            }
+            
+            if showDeletePopup {
+                DeletePopupView(isPresented: $showDeletePopup, deleteText: "지금 돌아가면 변경 내용이 모두 삭제됩니다.")
+            }
+        }
     }
     
     private var imageDecoratedGroup: some View {
-        ImageSlideView(framedImages: store.viewModels, currentIndex: $currentIndex)
+        ImageSlideView(framedImages: store.viewModels, isSelectView: false, currentIndex: $currentIndex)
     }
     
     private var headerBar: some View {
         HStack {
-            Button(action: { }) {
+            Button(action: { showDeletePopup = true }) {
                 Image(.close)
             }
             Spacer()
