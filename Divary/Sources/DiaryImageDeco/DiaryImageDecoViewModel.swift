@@ -10,7 +10,7 @@ import SwiftUI
 
 class DecoViewModelStore: ObservableObject {
     @Published var viewModels: [DiaryImageDecoViewModel] = [
-        DiaryImageDecoViewModel(frameType: .white, isSelected: true),
+        DiaryImageDecoViewModel(frameType: .origin, isSelected: true),
         DiaryImageDecoViewModel(frameType: .pastelPink, isSelected: true)
     ]
 }

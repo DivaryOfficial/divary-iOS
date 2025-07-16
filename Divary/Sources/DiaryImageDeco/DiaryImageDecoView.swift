@@ -20,8 +20,7 @@ struct DiaryImageDecoView: View {
     }
     
     private var imageDecoratedGroup: some View {
-//        let _ = print("idg: \(imageDecoViewModel.frameType)")
-        ImageSlideView(content: .frames(store.viewModels), currentIndex: $currentIndex)
+        ImageSlideView(framedImages: store.viewModels, currentIndex: $currentIndex)
     }
     
     private var headerBar: some View {
@@ -42,7 +41,6 @@ struct DiaryImageDecoView: View {
             HStack(spacing: 25) {
                 ForEach(DiaryImageDecoViewModel.FrameType.allCases, id: \.self) { type in
                     Button {
-//                        print("나 눌림 \(type)")
                         if store.viewModels.indices.contains(currentIndex) {
                             store.viewModels[currentIndex].frameType = type
                         }
@@ -59,6 +57,5 @@ struct DiaryImageDecoView: View {
 }
 
 #Preview {
-//    DiaryImageDecoView(imageDecoViewModel: DiaryImageDecoViewModel(frameType: .origin, isSelected: true))
     DiaryImageDecoView()
 }

@@ -8,19 +8,13 @@
 import SwiftUI
 
 struct ImageSlideView: View {
-    enum SlideContent {
-        case uiImages([UIImage])
-        case frames([DiaryImageDecoViewModel])
-    }
-    let content: SlideContent
-    
-//    enum SlideContent {
-//        case uiImages(UIImage)
-//        case frames(DiaryImageDecoViewModel)
-//    }
-//    let content: [SlideContent]
+    var framedImages: [DiaryImageDecoViewModel]
     
     @Binding var currentIndex: Int
+    
+    private var count: Int {
+        framedImages.count
+    }
 
     var body: some View {
         VStack {
@@ -28,46 +22,33 @@ struct ImageSlideView: View {
             Text("\(currentIndex + 1) / \(count)")
                 .font(.headline)
                 .padding(.top, 16)
-            
             TabView(selection: $currentIndex) {
-                switch content {
-                case .uiImages(let imageSet):
-                    ForEach(imageSet.indices, id: \.self) { index in
-                        Image(uiImage: imageSet[index])
-                            .resizable()
-                            .scaledToFit()
-                            .padding(.horizontal, 23)
-                            .cornerRadius(8)
-                            .tag(index)
-                    }
-                    
-                case .frames(let viewModels):
-                    ForEach(viewModels.indices, id: \.self) { index in
-                        DiaryImageFrame(viewModel: viewModels[index])
-                            .padding(.horizontal, 23)
-                            .tag(index)
-                    }
+                ForEach(framedImages.indices, id: \.self) { index in
+                    DiaryImageFrame(viewModel: framedImages[index])
+                        .padding(.horizontal, 23)
+                        .tag(index)
                 }
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-            .frame(height: 280)
-        }
-    }
-    
-    private var count: Int {
-        switch content {
-        case .uiImages(let images): return images.count
-        case .frames(let viewModels): return viewModels.count
+            Spacer()
         }
     }
 }
 
-//#Preview {
-//    let decoViewModels: [DiaryImageDecoViewModel] = [
-//        DiaryImageDecoViewModel(frameType: .white, isSelected: true),
-//        DiaryImageDecoViewModel(frameType: .pastelPink, isSelected: true),
-//        DiaryImageDecoViewModel(frameType: .pastelBlue, isSelected: true)
-//    ]
-//    
-//    ImageSlideView(content: .frames(decoViewModels))
-//}
+#Preview {
+    struct PreviewWrapper: View {
+        @State private var index = 0
+        
+        var body: some View {
+            let decoViewModels: [DiaryImageDecoViewModel] = [
+                DiaryImageDecoViewModel(frameType: .origin, isSelected: true),
+                DiaryImageDecoViewModel(frameType: .pastelPink, isSelected: true),
+                DiaryImageDecoViewModel(frameType: .pastelBlue, isSelected: true)
+            ]
+            
+            ImageSlideView(framedImages: decoViewModels, currentIndex: $index)
+        }
+    }
+
+    return PreviewWrapper()
+}

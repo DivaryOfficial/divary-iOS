@@ -8,8 +8,14 @@
 import SwiftUI
 
 struct DeletePopupView: View {
-    var onCancel: () -> Void
-    var onDelete: () -> Void
+    var deleteText: String
+    
+    var onCancel: () -> Void = {
+        print("취소 클릭")
+    }
+    var onDelete: () -> Void = {
+        print("삭제 클릭")
+    }
 
     var body: some View {
         ZStack {
@@ -17,7 +23,7 @@ struct DeletePopupView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 16) {
-                Text("사진을 삭제할까요?")
+                Text(deleteText)
                     .font(.body)
                     .padding(.top, 24)
                 
@@ -55,10 +61,5 @@ struct DeletePopupView: View {
 }
 
 #Preview {
-    DeletePopupView(onCancel: {
-        print("취소 버튼")
-    },
-    onDelete: {
-        print("삭제 버튼")
-    })
+    DeletePopupView(deleteText: "지금 돌아가면 변경 내용이 모두 삭제됩니다.")
 }

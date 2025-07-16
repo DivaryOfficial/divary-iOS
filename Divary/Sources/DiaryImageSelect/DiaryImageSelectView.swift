@@ -23,20 +23,14 @@ struct DiaryImageSelectView: View {
             footerBar
             
             if viewModel.showDeletePopup {
-                DeletePopupView(
-                    onCancel: { viewModel.showDeletePopup = false },
-                    onDelete: { viewModel.showDeletePopup = false }
-                )
+                DeletePopupView(deleteText: "사진을 삭제할까요?")
             }
         }
     }
     
     private var imageSlideGroup: some View {
         VStack {
-            Spacer()
-                .frame(height: 189)
-//            ImageSlideView(images: viewModel.imageSet)
-            ImageSlideView(content: .frames(decoViewModels), currentIndex: $currentIndex)
+            ImageSlideView(framedImages: decoViewModels, currentIndex: $currentIndex)
             Spacer()
         }
     }

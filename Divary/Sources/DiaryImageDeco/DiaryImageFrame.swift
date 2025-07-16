@@ -9,41 +9,31 @@ import SwiftUI
 
 struct DiaryImageFrame: View {
     @StateObject var viewModel: DiaryImageDecoViewModel
-    
-//    let decoViewModels: [DiaryImageDecoViewModel] = [
-//        DiaryImageDecoViewModel(frameType: .white, isSelected: true),
-//        DiaryImageDecoViewModel(frameType: .pastelPink, isSelected: true),
-//        DiaryImageDecoViewModel(frameType: .black, isSelected: true)
-//    ]
-    
+
     init(frameType: DiaryImageDecoViewModel.FrameType = .origin) {
         _viewModel = StateObject(wrappedValue: DiaryImageDecoViewModel(frameType: frameType, isSelected: false))
     }
+    
+//    init(frameType: DiaryImageDecoViewModel.FrameType = .pastelBlue) {
+//        _viewModel = StateObject(wrappedValue: DiaryImageDecoViewModel(frameType: frameType, isSelected: true))
+//    }
     
     init(viewModel: DiaryImageDecoViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
     
     var body: some View {
-//        switch viewModel.frameType {
-//        case .origin:
-//            
-//        case default:
-//            
-//        }
-//        let _ = print("DiaryImageFrameUpdated: \(viewModel.frameType)")
         if viewModel.frameType != .origin {
-//            let _ = print("DiaryImageFrameUpdated: \(viewModel.frameType)")
             if viewModel.isSelected { // 꾸민 사진 띄우기
                 VStack {
                     Image("testImage")
                         .resizable()
-                        .aspectRatio(contentMode: .fit)
+                        .scaledToFill() // 이미지가 정사각형을 채우도록 강제
+                        .frame(width: 230, height: 230)
+                        .clipped() // 넘치는 부분 잘라내기
                         .cornerRadius(viewModel.frameType.innerCornerRadius)
-                        .padding(.top, 18)
+                        .padding(.top, 20)
                         .padding(.bottom, 16)
-//                    ImageSlideView(content: .frames(decoViewModels))
-
                 
                     VStack(alignment: .leading, spacing: 4) {
                         TextField("캡션 추가...", text: $viewModel.imageCaption)
@@ -54,12 +44,12 @@ struct DiaryImageFrame: View {
                             .padding(.bottom, 18)
                     }
                 }
-                .frame(width: 300)
+                .frame(width: 240)
                 .padding(.horizontal, 18)
                 .background(viewModel.frameType.frameColor)
                 .shadow(color: .black.opacity(0.25), radius: 2, x: 0, y: 4)
             }
-            else { // frameSelectBar에 띄우기
+            else { // frameSelectBar에 프레임 버튼들
                 VStack {
                     Rectangle()
                         .fill(Color.white)
@@ -75,8 +65,9 @@ struct DiaryImageFrame: View {
                 .shadow(color: .black.opacity(0.25), radius: 2, x: 0, y: 4)
             }
         }
+        
         else {
-            if viewModel.isSelected {
+            if viewModel.isSelected { // frame 없이 원본 사진 띄우기
                 Image("testImage")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -84,11 +75,12 @@ struct DiaryImageFrame: View {
                     .padding(.bottom, 16)
                     .padding(.horizontal, 48)
                     .cornerRadius(8)
+//                    .frame(width: 240)
             }
-            else {
+            else { // frameSelectBar에 없음 버튼
                 ZStack {
                     Rectangle()
-                        .frame(width: 70, height: 85) // 높이 수정 필요
+                        .frame(width: 70, height: 85)
                         .foregroundStyle(Color(.G_300))
                     Text("없음")
                         .foregroundStyle(Color(.black))
@@ -99,7 +91,5 @@ struct DiaryImageFrame: View {
 }
 
 #Preview {
-//    DiaryImageFrame(frameType: .pastelBlue, isSelected: true)
-//    DiaryImageFrame(frameType: .origin, isSelected: false)
     DiaryImageFrame()
 }
