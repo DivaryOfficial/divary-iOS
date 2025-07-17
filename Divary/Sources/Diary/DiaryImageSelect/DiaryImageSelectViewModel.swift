@@ -9,7 +9,6 @@ import Foundation
 import SwiftUI
 
 class DiaryImageSelectViewModel: ObservableObject {
-    // 임시로 박아둔 이미지 셋
     let imageSet: [UIImage] = [UIImage(named: "testImage")!,
                              UIImage(named: "tempImage")!,
                              UIImage(named: "tempImage")!]
