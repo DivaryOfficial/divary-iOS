@@ -53,6 +53,8 @@ struct LogBookMainView: View {
 
                 VStack(spacing: 0) {
                     CalenderNavBar(selectedDate: $backupDate, isCalendarPresented: $isCalendarPresented)
+                        .zIndex(1)
+                        .padding(.bottom, 1)
                     
                     CalenderView(
                         currentMonth: $tempMonth,

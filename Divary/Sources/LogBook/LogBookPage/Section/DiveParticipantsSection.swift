@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DiveParticipantsSection: View {
-    let participants: DiveParticipants?
+    @Binding var participants: DiveParticipants?
     @Binding var isSaved: Bool
     
     var status: SectionStatus {
@@ -94,20 +94,20 @@ struct DiveParticipantsSection: View {
 #Preview {
     VStack(spacing: 20) {
         DiveParticipantsSection(
-            participants: DiveParticipants(
+            participants: .constant(DiveParticipants(
                 leader: "김리더",
                 buddy: nil,
                 companion: ["이동행", "최동행"]
-            ),
+            )),
             isSaved: .constant(false)
         )
 
         DiveParticipantsSection(
-            participants: DiveParticipants(
+            participants: .constant(DiveParticipants(
                 leader: nil,
                 buddy: nil,
                 companion: nil
-            ),
+            )),
             isSaved: .constant(false)
         )
     }

@@ -15,7 +15,9 @@ struct LogBookPageView: View {
     
     var body: some View {
         TabView(selection: $selectedPage) {
-            ForEach(Array(viewModel.diveLogData.enumerated()), id: \.offset) { index, data in
+            ForEach(Array(viewModel.diveLogData.enumerated()), id: \.offset) { index, _ in
+                let data = $viewModel.diveLogData[index]
+                
                 ScrollView {
                     ZStack(alignment: .topLeading) {
                         Image("gridBackground")

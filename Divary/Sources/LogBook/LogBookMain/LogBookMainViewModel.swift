@@ -9,7 +9,7 @@ import SwiftUI
 
 @Observable
 class LogBookMainViewModel {
-    let diveLogData: [DiveLogData]
+    var diveLogData: [DiveLogData]
     var selectedDate = Date()
     var logCount: Int {
         3 - diveLogData.filter { $0.isEmpty }.count
