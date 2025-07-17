@@ -20,7 +20,7 @@ let LogBookPageMock: [DiveLogData] = [
         ),
         equipment: DiveEquipment(
             suitType: "웻슈트 3mm",
-            Equipment: ["BCD", "레귤레이터", "마스크"],
+            Equipment: ["BCD", "레귤레이터", "마스크", "다이브 컴퓨터", "다이브 컴퓨터", "다이브 컴퓨터"],
             weight: 6
         ),
         environment: DiveEnvironment(

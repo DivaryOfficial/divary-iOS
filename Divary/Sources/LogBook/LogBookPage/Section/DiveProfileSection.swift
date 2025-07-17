@@ -10,10 +10,14 @@ import SwiftUI
 
 struct DiveProfileSection: View {
     let profile: DiveProfile?
-    let status: SectionStatus
+    @Binding var isSaved: Bool
 
-    init(profile: DiveProfile?) {
+    var status: SectionStatus
+
+    init(profile: DiveProfile?, isSaved: Binding<Bool>) {
         self.profile = profile
+        self._isSaved = isSaved
+
         let values: [Any?] = [
             profile?.diveTime,
             profile?.maxDepth,
@@ -23,7 +27,9 @@ struct DiveProfileSection: View {
             profile?.endPressure
         ]
 
-        if values.allSatisfy({ $0 == nil }) {
+        if isSaved.wrappedValue { // 사용자가 저장했으면 무조건 .complete
+            self.status = .complete
+        } else if values.allSatisfy({ $0 == nil }) {
             self.status = .empty
         } else if values.allSatisfy({ $0 != nil }) {
             self.status = .complete
@@ -31,6 +37,7 @@ struct DiveProfileSection: View {
             self.status = .partial
         }
     }
+        
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -40,8 +47,8 @@ struct DiveProfileSection: View {
                     .foregroundStyle(status != .empty ? Color.bw_black : Color.grayscale_g400)
                 if status == .partial {
                     Text("작성중")
-                        .font(.caption)
-                        .foregroundStyle(.red)
+                        .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 10))
+                        .foregroundStyle(Color.role_color_nagative)
                         .padding(4)
                 }
             }
@@ -208,15 +215,32 @@ struct GasConsumptionView: View {
 
 
 #Preview {
+        // 저장된 상태 (완전한 데이터)
     DiveProfileSection(
-        profile: DiveProfile(
-            diveTime: 42,
-            maxDepth: 30,
-            avgDepth: 18,
-            decoStop: 3,
-            startPressure: 200,
-            endPressure: 50
+            profile: DiveProfile(
+                diveTime: 42,
+                maxDepth: 30,
+                avgDepth: 18,
+                decoStop: 3,
+                startPressure: 200,
+                endPressure: 50
+            ),
+            isSaved: .constant(false)
         )
-    )
+
+        // 작성 안 된 상태 (빈 데이터)
+    DiveProfileSection(
+            profile: DiveProfile(
+                diveTime: nil,
+                maxDepth: nil,
+                avgDepth: nil,
+                decoStop: nil,
+                startPressure: nil,
+                endPressure: nil
+            ),
+            isSaved: .constant(false)
+        )
 }
+
+
 
