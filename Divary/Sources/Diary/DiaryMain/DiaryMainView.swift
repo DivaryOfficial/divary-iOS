@@ -13,6 +13,7 @@ struct DiaryMainView: View {
 
     var body: some View {
         diaryMain
+        
         footerBar
     }
     
