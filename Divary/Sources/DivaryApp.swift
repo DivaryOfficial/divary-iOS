@@ -4,8 +4,7 @@ import SwiftUI
 struct DivaryApp: App {
     var body: some Scene {
         WindowGroup {
-//            DiaryImageSelectView(viewModel: DiaryImageSelectViewModel())
-            DiaryImageSelectView()
+            LoginView()
         }
     }
 }

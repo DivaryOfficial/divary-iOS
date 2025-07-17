@@ -1,8 +1,10 @@
-# 🚀 프로젝트 이름
+# 🚀 Divary
 
-![배너 이미지 또는 로고](링크)
+<img width="512" alt="image" src="https://github.com/user-attachments/assets/cbf6da5b-a574-4bf0-83ac-be9f9d6e13a7" />
 
-> 간단한 한 줄 소개 – 프로젝트의 핵심 가치 또는 기능
+
+> Diver+Diary
+스쿠버 다이버를 위한, 다이빙의 추억을 나만의 방식으로 기록하는 다이빙 로그 앱 🌊🐠
 
 [![Swift](https://img.shields.io/badge/Swift-6.0-orange.svg)]()
 [![Xcode](https://img.shields.io/badge/Xcode-16.0-blue.svg)]()
@@ -13,24 +15,29 @@
 <br>
 
 ## 👥 멤버
-| 박현규 | 김나영 | 조하은 |
+
+| 박현규 | 조하은 | 김나영 |
 |:------:|:------:|:------:|
-| 사진1 | ![image](https://github.com/user-attachments/assets/1ada3856-3d12-4a62-947e-848ee043251c) | 사진3 |
+| <img src="https://github.com/user-attachments/assets/cfc67f28-1e5d-4b83-80bb-9480038549bd" width="150" /> | <img src="https://github.com/user-attachments/assets/a71f49c8-1310-4b07-9693-1ca55df815f7" width="150" /> | <img src="https://github.com/user-attachments/assets/203bbc1b-c679-4581-ae14-be6046f5a8dc" width="150" /> |
 | PL | FE | FE |
-| [GitHub](깃허브 링크) | [GitHub](https://github.com/na0k1m) | [GitHub](깃허브 링크) |
+| [GitHub](https://github.com/ParkMazorika) | [GitHub](https://github.com/haeun030) | [GitHub](https://github.com/na0k1m) |
+
+
 
 <br>
 
 
 ## 📱 소개
 
-> 프로젝트의 주요 목적과 사용자가 얻게 될 경험을 설명해주세요.
+> ✍️ 다이빙 직후, 생생한 기억을 바로바로 쉽게 기록할 수 있게 도와줘요! <br>
+🎨 사진과 스티커로 예쁘게 꾸며서 나만의 다이빙 로그를 특별하게 남길 수 있어요! <br>
+🐠 해양 생물 도감에서 내가 본 바다 친구가 어떤 생물인지 찾아볼 수 있어요
 
 <br>
 
 ## 📆 프로젝트 기간
-- 전체 기간: `YYYY.MM.DD - YYYY.MM.DD`
-- 개발 기간: `YYYY.MM.DD - YYYY.MM.DD`
+- 전체 기간: `2025.07.03 - 2025.08.25`
+- 개발 기간: `2025.07.05 - 2025.08.18`
 
 <br>
 
@@ -56,13 +63,11 @@ Swift 6.0
 <img src="https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white" />
 <img src="https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white" />
 <img src="https://img.shields.io/badge/SPM-FA7343?style=for-the-badge&logo=swift&logoColor=white" />
-<img src="https://img.shields.io/badge/Fastlane-n?style=for-the-badge&logo=fastlane&logoColor=black" />
 </div>
 
 ### Development
 <div align="left">
 <img src="https://img.shields.io/badge/Xcode-007ACC?style=for-the-badge&logo=Xcode&logoColor=white" />
-<img src="https://img.shields.io/badge/Firebase-DD2C00?style=for-the-badge&logo=Firebase&logoColor=white" />
 <img src="https://img.shields.io/badge/SwiftUI-42A5F5?style=for-the-badge&logo=swift&logoColor=white" />
 <img src="https://img.shields.io/badge/Alamofire-FF5722?style=for-the-badge&logo=swift&logoColor=white" />
 <img src="https://img.shields.io/badge/Moya-8A4182?style=for-the-badge&logo=swift&logoColor=white" />
@@ -72,7 +77,6 @@ Swift 6.0
 
 ### Communication
 <div align="left">
-<img src="https://img.shields.io/badge/Miro-FFFC00.svg?style=for-the-badge&logo=Miro&logoColor=050038" />
 <img src="https://img.shields.io/badge/Notion-white.svg?style=for-the-badge&logo=Notion&logoColor=000000" />
 <img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=Discord&logoColor=white" />
 <img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white" />
@@ -84,10 +88,10 @@ Swift 6.0
 <table>
   <tr>
     <td>
-      사진 넣어주세요
+      진행중
     </td>
     <td>
-      사진 넣어주세요
+      진행중
     </td>
    
   </tr>
@@ -95,53 +99,29 @@ Swift 6.0
 
 ## 🔖 브랜치 컨벤션
 * `main` - 제품 출시 브랜치
-* `develop` - 출시를 위해 개발하는 브랜치
-* `feat/xx` - 기능 단위로 독립적인 개발 환경을 위해 작성
-* `refac/xx` - 개발된 기능을 리팩토링 하기 위해 작성
-* `hotfix/xx` - 출시 버전에서 발생한 버그를 수정하는 브랜치
-* `chore/xx` - 빌드 작업, 패키지 매니저 설정 등
-* `design/xx` - 디자인 변경
-* `bugfix/xx` - 디자인 변경
-
-
+* `feat/#이슈` - 기능 단위로 독립적인 개발 환경을 위해 작성
 
 <br>
 
 ## 🌀 코딩 컨벤션
-* 파라미터 이름을 기준으로 줄바꿈 한다.
-```swift
-let actionSheet = UIActionSheet(
-  title: "정말 계정을 삭제하실 건가요?",
-  delegate: self,
-  cancelButtonTitle: "취소",
-  destructiveButtonTitle: "삭제해주세요"
-)
+* 카멜케이스 사용
+클래스, 구조체, 열거형 이름: UpperCamelCase (PascalCase)
+``` swift
+struct LogBookPageView { ... }
+enum DiveType { ... }
+class ChallengeService { ... }
 ```
 
-<br>
-
-* if let 구문이 길 경우에 줄바꿈 한다
-```swift
-if let user = self.veryLongFunctionNameWhichReturnsOptionalUser(),
-   let name = user.veryLongFunctionNameWhichReturnsOptionalName(),
-  user.gender == .female {
-  // ...
-}
+* 변수, 상수, 함수, 파라미터 이름: lowerCamelCase
+``` swift
+let diveLogId = UUID()
+func fetchChallengeList(forUser userId: String) { ... }
 ```
-
-* 나중에 추가로 작업해야 할 부분에 대해서는 `// TODO: - xxx 주석을 남기도록 한다.`
-* 코드의 섹션을 분리할 때는 `// MARK: - xxx 주석을 남기도록 한다.`
-* 함수에 대해 전부 주석을 남기도록 하여 무슨 액션을 하는지 알 수 있도록 한다.
-
-<br>
 
 ## 📁 PR 컨벤션
-* PR 시, 템플릿이 등장한다. 해당 템플릿에서 작성해야할 부분은 아래와 같다
-    1. `PR 유형 작성`, 어떤 변경 사항이 있었는지 [] 괄호 사이에 x를 입력하여 체크할 수 있도록 한다.
-    2. `작업 내용 작성`, 작업 내용에 대해 자세하게 작성을 한다.
-    3. `추후 진행할 작업`, PR 이후 작업할 내용에 대해 작성한다
-    4. `리뷰 포인트`, 본인 PR에서 꼭 확인해야 할 부분을 작성한다.
-    6. `PR 태그 종류`, PR 제목의 태그는 아래 형식을 따른다.
+* PR 템플릿
+  - 📌 요약
+  - ✅ 할 일
 
 #### 🌟 태그 종류 (커밋 컨벤션과 동일)
 | 태그        | 설명                                                   |
@@ -219,4 +199,13 @@ if let user = self.veryLongFunctionNameWhichReturnsOptionalUser(),
 
 ## 🗂️ 폴더 컨벤션
 ```
+//뷰마다 작업 섹션별, 파일 나누어서 작업
+LogBook/
+├── LogBookMain/
+├── LogBookPage/
+│   ├── Section/
+│   ├── LogBookPageMock.swift
+│   ├── LogBookPageModel.swift
+│   └── LogBookPageView.swift
+└──
 ```
