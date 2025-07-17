@@ -9,8 +9,13 @@ import SwiftUI
 
 struct DiveEquipmentSection: View {
     let equipment: DiveEquipment?
-
+    @Binding var isSaved: Bool
+    
     var status: SectionStatus {
+        if isSaved { // 사용자가 저장했으면 무조건 .complete
+            return .complete
+        }
+        
         let suit = equipment?.suitType
         let items = equipment?.Equipment
         let weight = equipment?.weight
@@ -32,71 +37,83 @@ struct DiveEquipmentSection: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Text("착용")
-                    .font(.headline)
+                    .font(Font.omyu.regular(size: 16))
+                    .foregroundStyle(status != .empty ? Color.bw_black : Color.grayscale_g400)
                 if status == .partial {
                     Text("작성중")
-                        .font(.caption)
-                        .foregroundColor(.red)
+                        .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 10))
+                        .foregroundStyle(Color.role_color_nagative)
                         .padding(4)
                 }
             }
 
             VStack(spacing: 0) {
-                HStack {
-                    Text("슈트 종류")
-                        .font(.system(size: 14))
-                        .foregroundColor(.gray)
-                    Spacer()
-                    Text(equipment?.suitType ?? " ")
-                        .font(.system(size: 12))
-                }
-                .padding(8)
-
+                equipmentRow(title: "슈트 종류", value: equipment?.suitType)
                 DashedDivider()
 
-                HStack {
-                    Text("착용")
-                        .font(.system(size: 14))
-                        .foregroundColor(.gray)
-                    Spacer()
-                    Text((equipment?.Equipment ?? [" "]).joined(separator: ", "))
-                        .font(.system(size: 12))
-                }
-                .padding(8)
-
+                equipmentRow(title: "착용", value: (equipment?.Equipment ?? [" "]).joined(separator: ", "))
                 DashedDivider()
 
-                HStack {
-                    Text("웨이트")
-                        .font(.system(size: 14))
-                        .foregroundColor(.gray)
-                    Spacer()
-                    if let weight = equipment?.weight {
-                        Text("\(weight) kg")
-                            .font(.system(size: 12))
-                    } else {
-                        Text(" kg")
-                            .font(.system(size: 12))
-                    }
-                }
-                .padding(8)
+                equipmentRow(title: "웨이트", value: equipment?.weight.map { "\($0)" }, unit: "kg")
             }
             .background(
                 RoundedRectangle(cornerRadius: 10)
                     .fill(Color.white)
-                    .stroke(Color.gray, lineWidth: 1)
+                    .stroke(Color.grayscale_g300)
             )
         }
     }
-}
 
+    private func equipmentRow(title: String, value: String?, unit: String? = nil) -> some View {
+        let trimmedValue = value?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let isEmpty = trimmedValue.isEmpty
+
+        return HStack(alignment: .top) {
+            Text(title)
+                .foregroundStyle(isEmpty ? Color.grayscale_g400 : Color.grayscale_g700)
+                .font(Font.omyu.regular(size: 14))
+
+            Spacer()
+
+            HStack(alignment: .bottom, spacing: 2) {
+                Text(isEmpty ? " " : trimmedValue)
+                    .foregroundStyle(isEmpty ? Color.grayscale_g400 : Color.bw_black)
+                    .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
+
+                if let unit = unit {
+                    Text(unit)
+                        .foregroundStyle(isEmpty ? Color.grayscale_g400 : Color.bw_black)
+                        .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
+                }
+            }
+            .fixedSize(horizontal: false, vertical: true)
+            .multilineTextAlignment(.trailing)
+            .frame(maxWidth: .infinity, alignment: .topTrailing)
+        }
+        .padding(8)
+    }
+
+
+
+}
 
 #Preview {
     DiveEquipmentSection(
         equipment: DiveEquipment(
             suitType: "웻슈트 3mm",
-            Equipment: ["BCD", "레귤레이터", "마스크"],
+            Equipment: ["BCD", "레귤레이터", "마스크", "핀", "스노클", "장갑", "부츠", "후드", "다이브 컴퓨터"],
             weight: 6
-        )
+        ),
+        isSaved: .constant(false)
+    )
+    DiveEquipmentSection(
+        equipment: DiveEquipment(
+            suitType: nil,
+            Equipment: nil,
+            weight: nil
+        ),
+        isSaved: .constant(false)
     )
 }
+
+

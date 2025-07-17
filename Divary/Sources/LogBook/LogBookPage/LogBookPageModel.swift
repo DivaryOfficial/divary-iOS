@@ -46,7 +46,7 @@ struct DiveParticipants: Decodable {
 
 struct DiveEquipment: Decodable {
     let suitType: String?   // 슈트 종류 (예: 드라이, 웻슈트 등)
-    let Equipment: [String]
+    let Equipment: [String]?
     let weight: Int?     // 웨이트 무게 (kg 단위)
 }
 

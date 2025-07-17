@@ -8,47 +8,44 @@
 import SwiftUI
 
 struct LogBookPageView: View {
-    
-    var diveLogData: [DiveLogData]
-    var logCount: Int {
-        3 - diveLogData.filter { $0.isEmpty }.count
-    }
-    @State private var selectedPage: Int = 0
+    @Bindable var viewModel: LogBookMainViewModel
+    @State var selectedPage: Int = 0
+    @State var isSaved: Bool = false
     
     
     var body: some View {
         TabView(selection: $selectedPage) {
-            ForEach(Array(diveLogData.enumerated()), id: \.offset) { index, data in
+            ForEach(Array(viewModel.diveLogData.enumerated()), id: \.offset) { index, data in
                 ScrollView {
                     ZStack(alignment: .topLeading) {
                         Image("gridBackground")
                             .resizable(resizingMode: .tile)
                             .ignoresSafeArea()
 
-                        VStack(alignment: .leading, spacing: 16) {
+                        VStack(alignment: .leading, spacing: 18) {
                             Text("흰수염 고래 여름원정")
                                 .font(Font.omyu.regular(size: 20))
-                                .padding(.top)
-                                .frame(maxWidth: .infinity) // 수평 전체 차지
+                                .padding(12)
+                                .frame(maxWidth: .infinity)
                                 .multilineTextAlignment(.center)
 
-                            DiveOverviewSection(overview: data.overview)
-                            HStack {
-                                DiveParticipantsSection(participants: data.participants)
-                                DiveEquipmentSection(equipment: data.equipment)
+                            DiveOverviewSection(overview: data.overview, isSaved: $isSaved)
+                            HStack(alignment: .top) {
+                                DiveParticipantsSection(participants: data.participants, isSaved: $isSaved)
+                                DiveEquipmentSection(equipment: data.equipment, isSaved: $isSaved)
                             }
-                            DiveEnvironmentSection(environment: data.environment)
-                            DiveProfileSection(profile: data.profile)
+                            DiveEnvironmentSection(environment: data.environment, isSaved: $isSaved)
+                            DiveProfileSection(profile: data.profile, isSaved: $isSaved)
 
                             HStack {
                                 Spacer()
-                                Text("총 다이빙 횟수 \(logCount) 회")
+                                Text("총 다이빙 횟수 \(viewModel.logCount) 회")
                                     .font(Font.omyu.regular(size: 24))
                                 Spacer()
                             }
 
                             PageIndicatorView(
-                                numberOfPages: diveLogData.count,
+                                numberOfPages: viewModel.diveLogData.count,
                                 currentPage: selectedPage
                             )
                         }
@@ -59,22 +56,14 @@ struct LogBookPageView: View {
             }
         }
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-
-        }
     }
+}
+
 
 
 
 #Preview {
-    let defaultLog = DiveLogData(
-        overview: nil,
-        participants: nil,
-        equipment: nil,
-        environment: nil,
-        profile: nil
-    )
-    var data: [DiveLogData] = Array(repeating: defaultLog, count: 3)
-    
-    LogBookPageView(diveLogData: LogBookPageMock)
-        .ignoresSafeArea()
+    let vm = LogBookMainViewModel()
+    LogBookPageView(viewModel: vm)
 }
+

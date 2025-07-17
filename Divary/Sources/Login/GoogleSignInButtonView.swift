@@ -15,14 +15,17 @@ struct GoogleSignInButtonView: View {
     var action: () -> Void
 
     var body: some View {
-        HStack(spacing: 10) {
-            Image("ios_light_sq_SI")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(maxWidth: UIScreen.main.bounds.width * 0.6)
-           }
+        Button(action: action) {
+            HStack(spacing: 10) {
+                Image("ios_light_sq_SI")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(maxWidth: UIScreen.main.bounds.width * 0.6)
+            }
+        }
     }
 }
+
 #Preview {
     GoogleSignInButtonView(action: {})
 }

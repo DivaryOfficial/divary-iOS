@@ -11,7 +11,21 @@ struct LoginView: View {
     @StateObject private var viewModel = LoginViewModel()
     
     var body: some View {
-        GoogleSignInButtonView(action: viewModel.signInWithGoogle)
+        ZStack {
+            Image("Login_Background")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+            VStack{
+                
+                Spacer()
+                
+                GoogleSignInButtonView(action: viewModel.signInWithGoogle)
+                    .padding(.bottom, 84)
+            }
+                
+        }
+        
     }
 }
 

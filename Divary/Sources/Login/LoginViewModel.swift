@@ -18,7 +18,6 @@ final class LoginViewModel: ObservableObject {
     
     // 구글 로그인
     func signInWithGoogle() {
-        
         // xcconfig에서 읽어오기
         guard let clientID = Bundle.main.object(forInfoDictionaryKey: "GOOGLE_CLIENT_ID") as? String else {
             print("GOOGLE_CLIENT_ID 값 불러오기 실패")
