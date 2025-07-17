@@ -38,20 +38,20 @@ struct DiaryImageFrame: View {
                             .cornerRadius(viewModel.frameType.innerCornerRadius)
                             .padding(.top, 15)
                             .padding(.bottom, 16)
-
+                        
                         VStack(alignment: .leading, spacing: 4) {
                             TextField("캡션 추가...", text: $viewModel.imageCaption)
                                 .foregroundColor(.black)
-
+                            
                             Text(viewModel.imageDate)
                                 .foregroundColor(Color(.G_700))
                                 .padding(.bottom, 18)
                         }
                     }
-                    .frame(width: 240)
                     .padding(.horizontal, 10)
                 }
-                .frame(width: 230, height: 230)
+                .frame(width: 260, height: 230)
+                .frame(maxWidth: 260, maxHeight: 340)
             }
             
             else { // frameSelectBar에 프레임 버튼들
@@ -59,7 +59,7 @@ struct DiaryImageFrame: View {
                     Rectangle()
                         .fill(viewModel.frameType.frameColor)
                         .shadow(color: .black.opacity(0.25), radius: 2, x: 0, y: 4)
-
+                    
                     VStack {
                         RoundedRectangle(cornerRadius: viewModel.frameType.innerCornerRadius)
                             .fill(Color.white)
@@ -81,6 +81,7 @@ struct DiaryImageFrame: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .cornerRadius(8)
+//                    .frame(maxWidth: 260)
             }
             else { // frameSelectBar에 없음 버튼
                 ZStack {

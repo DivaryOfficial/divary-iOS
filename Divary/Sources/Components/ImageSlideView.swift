@@ -50,10 +50,11 @@ struct ImageSlideView: View {
                                     .resizable()
                                     .frame(width: 30, height: 30)
                             }
-                            .padding(.top, 22)
-                            .padding(.leading, -75)
+                            .padding(.top, 25)
+                            .padding(.trailing, 45)
                         }
                     }
+                    .frame(maxWidth: .infinity)
                 }
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
@@ -68,8 +69,8 @@ struct ImageSlideView: View {
         
         var body: some View {
             let decoViewModels: [DiaryImageDecoViewModel] = [
-                DiaryImageDecoViewModel(frameType: .origin, isSelected: true),
                 DiaryImageDecoViewModel(frameType: .pastelPink, isSelected: true),
+                DiaryImageDecoViewModel(frameType: .origin, isSelected: true),
                 DiaryImageDecoViewModel(frameType: .pastelBlue, isSelected: true)
             ]
             
