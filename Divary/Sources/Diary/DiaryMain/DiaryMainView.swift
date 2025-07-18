@@ -7,14 +7,46 @@
 
 import SwiftUI
 import PhotosUI
+import PencilKit
 
 struct DiaryMainView: View {
+    let canvas = PKCanvasView()
+    let toolPicker = PKToolPicker()
+    @State var showCanvas: Bool = false
+    
     @StateObject private var viewModel = DiaryMainViewModel()
 
     var body: some View {
-        diaryMain
-        
-        footerBar
+        NavigationView {
+            diaryMain
+                .toolbar {
+                    ToolbarItemGroup(placement: .bottomBar) {
+                        PhotosPicker(selection: $viewModel.selectedItems, matching: .images) {
+                            Image(.photo)
+                        }
+                        Button(action: { }) {
+                            Image(.font)
+                        }
+                        Button(action: { }) {
+                            Image(.alignText)
+                        }
+                        Button(action: {  }) {
+                            Image(.sticker)
+                        }
+                        Button(action: {
+                            showCanvas = true
+                        }) {
+                            Image(.pencil)
+                        }
+                        Button(action: { }) {
+                            Image(.keyboard)
+                        }
+                    }
+                }
+                .overlay(
+                    showCanvas ? DiaryCanvasView(showCanvas: $showCanvas) : nil
+                )
+        }
     }
     
     private var diaryMain: some View {
@@ -58,6 +90,18 @@ struct DiaryMainView: View {
 
 
 
+//#Preview {
+//    DiaryMainView()
+//}
+
 #Preview {
-    DiaryMainView()
+    PreviewWrapper()
+}
+
+private struct PreviewWrapper: View {
+    @State private var showCanvas = false
+
+    var body: some View {
+        DiaryMainView(showCanvas: showCanvas)
+    }
 }
