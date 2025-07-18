@@ -5,6 +5,7 @@
 //  Created by 바견규 on 7/9/25.
 //
 
+
 let LogBookPageMock: [DiveLogData] = [
     DiveLogData(
         overview: DiveOverview(

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DiveOverviewSection: View {
-    let overview: DiveOverview?
+    @Binding var overview: DiveOverview?
     @Binding var isSaved: Bool
     
     var status: SectionStatus {
@@ -103,12 +103,12 @@ struct DiveOverviewSection: View {
 
 #Preview {
     DiveOverviewSection(
-        overview: DiveOverview(
+        overview: .constant(DiveOverview(
             title: "제주도 서귀포시",
             point: "문섬",
             purpose: "펀 다이빙",
             method: "보트"
-        ),
+        )),
         isSaved: .constant(false)
     )
 }

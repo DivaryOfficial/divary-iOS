@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DiveEquipmentSection: View {
-    let equipment: DiveEquipment?
+    @Binding var equipment: DiveEquipment?
     @Binding var isSaved: Bool
     
     var status: SectionStatus {
@@ -99,19 +99,19 @@ struct DiveEquipmentSection: View {
 
 #Preview {
     DiveEquipmentSection(
-        equipment: DiveEquipment(
+        equipment: .constant(DiveEquipment(
             suitType: "웻슈트 3mm",
             Equipment: ["BCD", "레귤레이터", "마스크", "핀", "스노클", "장갑", "부츠", "후드", "다이브 컴퓨터"],
             weight: 6
-        ),
+        )),
         isSaved: .constant(false)
     )
     DiveEquipmentSection(
-        equipment: DiveEquipment(
+        equipment: .constant(DiveEquipment(
             suitType: nil,
             Equipment: nil,
             weight: nil
-        ),
+        )),
         isSaved: .constant(false)
     )
 }

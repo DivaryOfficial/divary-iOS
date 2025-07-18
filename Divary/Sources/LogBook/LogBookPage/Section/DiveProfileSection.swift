@@ -9,22 +9,24 @@
 import SwiftUI
 
 struct DiveProfileSection: View {
-    let profile: DiveProfile?
+    @Binding var profile: DiveProfile?
     @Binding var isSaved: Bool
 
     var status: SectionStatus
 
-    init(profile: DiveProfile?, isSaved: Binding<Bool>) {
-        self.profile = profile
+    init(profile: Binding<DiveProfile?>, isSaved: Binding<Bool>) {
+        self._profile = profile
         self._isSaved = isSaved
 
+        let p = profile.wrappedValue
+        
         let values: [Any?] = [
-            profile?.diveTime,
-            profile?.maxDepth,
-            profile?.avgDepth,
-            profile?.decoStop,
-            profile?.startPressure,
-            profile?.endPressure
+            p?.diveTime,
+            p?.maxDepth,
+            p?.avgDepth,
+            p?.decoStop,
+            p?.startPressure,
+            p?.endPressure
         ]
 
         if isSaved.wrappedValue { // 사용자가 저장했으면 무조건 .complete
@@ -217,27 +219,27 @@ struct GasConsumptionView: View {
 #Preview {
         // 저장된 상태 (완전한 데이터)
     DiveProfileSection(
-            profile: DiveProfile(
+            profile: .constant(DiveProfile(
                 diveTime: 42,
                 maxDepth: 30,
                 avgDepth: 18,
                 decoStop: 3,
                 startPressure: 200,
                 endPressure: 50
-            ),
+            )),
             isSaved: .constant(false)
         )
 
         // 작성 안 된 상태 (빈 데이터)
     DiveProfileSection(
-            profile: DiveProfile(
+            profile: .constant(DiveProfile(
                 diveTime: nil,
                 maxDepth: nil,
                 avgDepth: nil,
                 decoStop: nil,
                 startPressure: nil,
                 endPressure: nil
-            ),
+            )),
             isSaved: .constant(false)
         )
 }

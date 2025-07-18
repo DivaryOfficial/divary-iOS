@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DiveEnvironmentSection: View {
-    let environment: DiveEnvironment?
+    @Binding var environment: DiveEnvironment?
     @Binding var isSaved: Bool
     // 기입 상태
     var status: SectionStatus {
@@ -195,7 +195,7 @@ struct DiveEnvironmentSection: View {
 
 #Preview {
     DiveEnvironmentSection(
-        environment: DiveEnvironment(
+        environment: .constant(DiveEnvironment(
             weather: "맑음",
             wind: "중풍",
             current: "없음",
@@ -203,11 +203,11 @@ struct DiveEnvironmentSection: View {
             airTemp: 6,
             waterTemp: 6,
             visibility: "좋음"
-        ),
+        )),
         isSaved: .constant(false)
     )
     DiveEnvironmentSection(
-        environment: DiveEnvironment(
+        environment: .constant(DiveEnvironment(
             weather:  nil,
             wind:  nil,
             current:  nil,
@@ -215,7 +215,7 @@ struct DiveEnvironmentSection: View {
             airTemp:  nil,
             waterTemp:  nil,
             visibility: nil
-        ),
+        )),
         isSaved: .constant(false)
     )
 }
