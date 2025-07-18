@@ -34,7 +34,7 @@ struct ImageSlideView: View {
         VStack {
             // 인덱스 표시
             Text("\(currentIndex + 1) / \(count)")
-                .font(.headline)
+                .font(.omyu.regular(size: 20))
                 .padding(.top, 16)
             
             TabView(selection: $currentIndex) {
