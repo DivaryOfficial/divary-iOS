@@ -74,16 +74,19 @@ struct EnvironmentInputView: View {
         }
     }
     
-    //파도 아이콘
-    private func tempImage(for temp: String?) -> Image {
+    //체감 온도 아이콘
+    private func feelsLikeTempImage(for temp: String?) -> Image {
         guard let temp = temp else {
             return Image(systemName: "")
         }
         
         switch temp {
         case "추움": return Image("EnvInput-추움")
+        case "추움-블루": return Image("EnvInput-추움-블루")
         case "보통": return Image("EnvInput-보통")
+        case "보통-블루": return Image("EnvInput-보통-블루")
         case "더움": return Image("EnvInput-더움")
+        case "더움-블루": return Image("EnvInput-더움-블루")
         default: return Image("")
         }
     }
@@ -101,6 +104,8 @@ struct EnvironmentInputView: View {
         default: return Image("")
         }
     }
+    
+    
     
     
     
@@ -174,6 +179,16 @@ struct EnvironmentInputView: View {
                                 value: $environment.airTemp
                             )
                             
+                            // 체감 온도
+                            IconButtonRow(
+                                options: ["추움", "보통", "더움"],
+                                selected: environment.feelsLike,
+                                imageProvider: feelsLikeTempImage(for:),
+                                onSelect: { environment.feelsLike = $0 },
+                                size: 45,
+                                isImage: true
+                            )
+                            
                             
                             //수온
                             TemperatureInputField(
@@ -199,8 +214,9 @@ struct EnvironmentInputView: View {
                         
                         
                     }
-                    .padding(.horizontal, 11)
-                    .padding(.vertical, 22)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 22)
+                    .padding(.bottom, 22)
                     .background(
                         RoundedRectangle(cornerRadius: 10)
                             .fill(Color(.white))
@@ -232,9 +248,10 @@ struct IconButtonRow: View {
                 Button(action: {
                     onSelect(option)
                 }) {
-                    VStack(spacing: 4) {
+                    VStack() {
                         
                         Spacer()
+                        
                         if isImage {
                             imageProvider(selected == option ? option + "-블루" : option)
                                 .resizable()
@@ -246,7 +263,7 @@ struct IconButtonRow: View {
                                 .scaledToFit()
                                 .frame(width: size, height: size)
                         }
-                        
+                            
                         Spacer()
                         
                         Text(option)
@@ -256,7 +273,7 @@ struct IconButtonRow: View {
                     .frame(maxWidth: .infinity)
                     .aspectRatio(1, contentMode: .fit) // 정사각형 유지
                     .background(
-                        RoundedRectangle(cornerRadius: 10)
+                        RoundedRectangle(cornerRadius: 5.81)
                             .stroke(
                                 selected == option ? Color.primary_sea_blue : Color.grayscale_g300
                             )
@@ -327,6 +344,7 @@ struct TemperatureInputField: View {
         current: "없음",
         wave: "약함",
         airTemp: nil,
+        feelsLike: nil,
         waterTemp: nil,
         visibility: "보통"
     )

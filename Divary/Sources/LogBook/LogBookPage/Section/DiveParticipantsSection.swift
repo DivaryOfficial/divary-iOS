@@ -79,6 +79,7 @@ struct DiveParticipantsSection: View {
                 Text(isEmpty ? " " : trimmedValue)
                     .foregroundStyle(isEmpty ? Color.grayscale_g400 : Color.bw_black)
                     .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
+                    .lineSpacing(4)
             }
             .fixedSize(horizontal: false, vertical: true)
             .multilineTextAlignment(.trailing)

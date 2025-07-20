@@ -111,6 +111,7 @@ class DiveEnvironment {
     var current: String?    // 조류 상태 (예: 약함, 강함 등)
     var wave: String?       // 파도 상태
     var airTemp: Int?    // 기온 (°C)
+    var feelsLike: String?   // 체감온도 (°C)
     var waterTemp: Int?  // 수온 (°C)
     var visibility: String? // 시야 (예: 10m 등)
     
@@ -120,6 +121,7 @@ class DiveEnvironment {
         current: String? = nil,
         wave: String? = nil,
         airTemp: Int? = nil,
+        feelsLike: String? = nil,
         waterTemp: Int? = nil,
         visibility: String? = nil
     ) {
@@ -128,6 +130,7 @@ class DiveEnvironment {
         self.current = current
         self.wave = wave
         self.airTemp = airTemp
+        self.feelsLike = feelsLike
         self.waterTemp = waterTemp
         self.visibility = visibility
     }

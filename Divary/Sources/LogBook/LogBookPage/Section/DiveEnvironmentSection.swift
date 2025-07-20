@@ -83,7 +83,7 @@ struct DiveEnvironmentSection: View {
                         Text("날씨")
                             .font(Font.omyu.regular(size: 16))
                             .foregroundStyle(environment?.weather != nil ? Color.grayscale_g700 : Color.grayscale_g400)
-                            .padding(.bottom, 2)
+                            .padding(.bottom, 4)
                         weatherImage(for: environment?.weather)
                             .renderingMode(.template)
                             .resizable()
