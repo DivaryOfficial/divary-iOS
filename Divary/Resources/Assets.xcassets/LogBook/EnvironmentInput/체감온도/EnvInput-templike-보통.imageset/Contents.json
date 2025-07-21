@@ -1,15 +1,12 @@
 {
   "images" : [
     {
-      "filename" : "온도-41.svg",
+      "filename" : "EnvInput-보통.pdf",
       "idiom" : "universal"
     }
   ],
   "info" : {
     "author" : "xcode",
     "version" : 1
-  },
-  "properties" : {
-    "template-rendering-intent" : "template"
   }
 }
