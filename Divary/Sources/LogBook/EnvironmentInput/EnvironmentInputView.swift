@@ -83,8 +83,8 @@ struct EnvironmentInputView: View {
         switch temp {
         case "추움": return Image("EnvInput-추움")
         case "추움-블루": return Image("EnvInput-추움-블루")
-        case "보통": return Image("EnvInput-보통")
-        case "보통-블루": return Image("EnvInput-보통-블루")
+        case "보통": return Image("EnvInput-templike-보통")
+        case "보통-블루": return Image("EnvInput-templike-보통-블루")
         case "더움": return Image("EnvInput-더움")
         case "더움-블루": return Image("EnvInput-더움-블루")
         default: return Image("")
@@ -278,7 +278,7 @@ struct IconButtonRow: View {
                                 selected == option ? Color.primary_sea_blue : Color.grayscale_g300
                             )
                     )
-                    .foregroundStyle(selected == option ? Color.primary_sea_blue : Color.grayscale_g300)
+                    .foregroundStyle(selected == option ? Color.primary_sea_blue : Color.grayscale_g400)
                 }
                 .padding(.horizontal, 3)
                 
