@@ -16,10 +16,10 @@ struct OverViewInputView: View {
         }
         
         switch method {
-        case "비치": return Image("parasolGray")
+        case "비치": return Image("parasol")
         case "비치B": return Image("parasolBlue")
         case "보트": return Image("boat")
-        case "보트B": return Image("BoatBlue")
+        case "보트B": return Image("boatBlue")
         case "기타": return Image("anchor")
         case "기타B": return Image("anchorBlue")
         default: return Image("")
@@ -59,12 +59,13 @@ struct OverViewInputView: View {
                             Text("다이빙 방법")
                                 .font(Font.omyu.regular(size: 20))
                             
-                            IconButtonRow(
+                            IconButton(
                                 options: ["비치", "보트", "기타"],
                                 selected: overview.method,
                                 imageProvider: methodImage(for:),
                                 onSelect: { overview.method = $0 },
-                                size: 53
+                                size: 45, //폰트 12
+                                isImage: true
                             )
                             
                             //다이빙 목적
@@ -129,7 +130,8 @@ struct OverViewInputView: View {
     @Previewable @State var previewOverview = DiveOverview(
         title: "제주 서귀포",
         point: "apfhd",
-        purpose: "펀", method: "보트"
+        purpose: "펀", 
+        method: "보트"
     )
     
     OverViewInputView(overview: $previewOverview)

@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "exsuitBlue.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

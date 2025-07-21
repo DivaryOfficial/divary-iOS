@@ -51,7 +51,7 @@ extension Font {
        }
            
         static func NanumSquareNeoBold(size: CGFloat) -> Font {
-            return DivaryFontFamily.NanumSquareNeo.heavy.swiftUIFont(size: size)
+            return DivaryFontFamily.NanumSquareNeo.bold.swiftUIFont(size: size)
         }
        
        static func NanumSquareNeoRegular(size: CGFloat) -> Font {

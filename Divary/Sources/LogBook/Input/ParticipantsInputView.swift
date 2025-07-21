@@ -41,10 +41,10 @@ struct ParticipantsInputView: View {
                             )
                             
                             // 동행자
-                            CompanionInputField(
+                            ListInputField(
                                 title: "동행자",
                                 placeholder: "김동행",
-                                companions: $participants.companion,
+                                list: $participants.companion,
                                     value: $companionInput
                             )
 
@@ -81,10 +81,10 @@ struct ParticipantsInputView: View {
 }
 
 
-struct CompanionInputField: View {
+struct ListInputField: View {
     let title: String
     let placeholder: String
-    @Binding var companions: [String]?
+    @Binding var list: [String]?
     @Binding var value: String?
 
     var body: some View {
@@ -96,14 +96,14 @@ struct CompanionInputField: View {
                 // 배경 박스
                 HStack(spacing: 8) {
                     // 1. Placeholder
-                    if (companions?.isEmpty ?? true) && (value?.isEmpty ?? true) {
+                    if (list?.isEmpty ?? true) && (value?.isEmpty ?? true) {
                         Text(placeholder)
                             .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
                             .foregroundColor(.gray)
                     }
 
                     // 2. 사용자 입력된 companion
-                    ForEach(companions ?? [], id: \.self) { name in
+                    ForEach(list ?? [], id: \.self) { name in
                         Text(name)
                             .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
                             .foregroundColor(Color.bw_black)
@@ -135,9 +135,9 @@ struct CompanionInputField: View {
 
         let trimmed = text.dropLast().trimmingCharacters(in: .whitespacesAndNewlines)
         if !trimmed.isEmpty {
-            if companions == nil { companions = [] }
-            if !companions!.contains(trimmed) {
-                companions?.append(trimmed)
+            if list == nil { list = [] }
+            if !list!.contains(trimmed) {
+                list?.append(trimmed)
             }
         }
 

@@ -20,6 +20,7 @@ struct IconButton: View {
         
         LazyVGrid(columns: columns) {
             ForEach(options, id: \.self) { option in
+                
                 Button(action: {
                     onSelect(option)
                 }) {
@@ -41,7 +42,9 @@ struct IconButton: View {
                         Spacer()
                         
                         Text(option)
-                            .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 14))
+                            .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
+                        
+                        Spacer()
                     }
                     .padding(10)
                     .frame(maxWidth: .infinity)
