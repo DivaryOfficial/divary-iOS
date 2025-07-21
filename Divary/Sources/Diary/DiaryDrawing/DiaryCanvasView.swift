@@ -9,43 +9,52 @@ import SwiftUI
 import PencilKit
 
 struct DiaryCanvasView: View {
-    let canvas = PKCanvasView()
-    let toolPicker = PKToolPicker()
-
-//    @State private var showToolPicker: Bool = true
-    @Binding var showCanvas: Bool
+    @ObservedObject var viewModel: DiaryCanvasViewModel
 
     var body: some View {
-        VStack {
-            drawingbar
-            Spacer()
-            CanvasView(canvas: canvas, toolPicker: toolPicker)
+        ZStack(alignment: .bottom){
+            CanvasView(canvas: viewModel.canvas, toolPicker: viewModel.toolPicker)
+            drawingBar
+//                .padding(.bottom, 25)
+                .padding(.bottom, 100)
         }
+//        .ignoresSafeArea(edges: .bottom)
     }
     
-    private var drawingbar: some View {
-        HStack {
-            Button(action: { toolPickerToggle() }) {
+    private var drawingBar: some View {
+        HStack(spacing: 12) {
+            Button(action: { viewModel.toggleToolPicker() }) {
                 Text("취소")
+                    .font(.NanumSquareNeo.NanumSquareNeoBold(size: 12))
+                    .foregroundStyle(Color(.black))
             }
+            .padding(.leading, 12)
+            
+            Spacer()
+            
+            Button(action: { viewModel.undo() }) {
+                Image("humbleicons_arrow_go_back")
+                    .foregroundColor(viewModel.canUndo ? .black : Color(.G_500))
+            }
+            .padding(.trailing, 18)
+            
+            Button(action: { viewModel.redo() }) {
+                Image("humbleicons_arrow_go_forward")
+                    .foregroundColor(viewModel.canRedo ? .black : Color(.G_500))
+            }
+            
+            Spacer()
+            
             Button(action: { }) {
-                Text("이전")
+                Image("humbleicons_check")
+                    .foregroundColor(Color(.black))
             }
-            Button(action: { }) {
-                Text("다음")
-            }
-            Button(action: { }) {
-                Text("저장")
-            }
+            .padding(.trailing, 12)
         }
+        .padding(.vertical, 12)
+        .background(Color(.G_100))
     }
 
-    private func toolPickerToggle() {
-        toolPicker.setVisible(!toolPicker.isVisible, forFirstResponder: canvas)
-        
-//        showToolPicker.toggle()
-        showCanvas.toggle()
-    }
 }
 
 struct CanvasView: UIViewRepresentable {
@@ -54,7 +63,7 @@ struct CanvasView: UIViewRepresentable {
     
     func makeUIView(context: Context) -> PKCanvasView {
         canvas.isOpaque = false
-        canvas.backgroundColor = .black.withAlphaComponent(0.5)
+//        canvas.backgroundColor = .black.withAlphaComponent(0.5)
         
         toolPicker.setVisible(true, forFirstResponder: canvas)
         toolPicker.addObserver(canvas)
@@ -67,13 +76,5 @@ struct CanvasView: UIViewRepresentable {
 }
 
 #Preview {
-    PreviewWrapper()
-}
-
-private struct PreviewWrapper: View {
-    @State private var showCanvas = false
-
-    var body: some View {
-        DiaryCanvasView(showCanvas: $showCanvas)
-    }
+    DiaryCanvasView(viewModel: DiaryCanvasViewModel(showCanvas: .constant(true)))
 }
