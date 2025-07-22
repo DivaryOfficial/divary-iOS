@@ -60,10 +60,8 @@ final class DiaryCanvasViewModel: ObservableObject {
 
         do {
             try data.write(to: url)
-            print("✅ Drawing saved at \(url.path)")
             showCanvas = false
         } catch {
-            print("❌ Failed to save drawing: \(error)")
         }
     }
     
@@ -71,7 +69,6 @@ final class DiaryCanvasViewModel: ObservableObject {
         let url = drawingFileURL()
 
         guard FileManager.default.fileExists(atPath: url.path) else {
-            print("⚠️ No drawing file found at \(url.path)")
             return
         }
 
@@ -79,10 +76,7 @@ final class DiaryCanvasViewModel: ObservableObject {
             let data = try Data(contentsOf: url)
             let drawing = try PKDrawing(data: data)
             canvas.drawing = drawing
-            print("✅ Drawing loaded.")
-        } catch {
-            print("❌ Failed to load drawing: \(error)")
-        }
+        } catch { }
     }
     
     private func drawingFileURL() -> URL {

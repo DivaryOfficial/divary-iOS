@@ -17,34 +17,37 @@ struct DiaryMainView: View {
 
     var body: some View {
         NavigationView {
-            diaryMain
-                .toolbar {
-                    ToolbarItemGroup(placement: .bottomBar) {
-                        PhotosPicker(selection: $viewModel.selectedItems, matching: .images) {
-                            Image(.photo)
-                        }
-                        Button(action: { }) {
-                            Image(.font)
-                        }
-                        Button(action: { }) {
-                            Image(.alignText)
-                        }
-                        Button(action: {  }) {
-                            Image(.sticker)
-                        }
-                        Button(action: {
-                            showCanvas = true
-                        }) {
-                            Image(.pencil)
-                        }
-                        Button(action: { }) {
-                            Image(.keyboard)
+            ZStack {
+                diaryMain
+                    .toolbar {
+                        ToolbarItemGroup(placement: .bottomBar) {
+                            PhotosPicker(selection: $viewModel.selectedItems, matching: .images) {
+                                Image(.photo)
+                            }
+                            Button(action: { }) {
+                                Image(.font)
+                            }
+                            Button(action: { }) {
+                                Image(.alignText)
+                            }
+                            Button(action: {  }) {
+                                Image(.sticker)
+                            }
+                            Button(action: {
+                                showCanvas = true
+                            }) {
+                                Image(.pencil)
+                            }
+                            Button(action: { }) {
+                                Image(.keyboard)
+                            }
                         }
                     }
-                }
-                .overlay(
-                    showCanvas ? DiaryCanvasView(viewModel: DiaryCanvasViewModel(showCanvas: $showCanvas)) : nil
-                )
+//                    .overlay(
+//                        showCanvas ? DiaryCanvasView(viewModel: DiaryCanvasViewModel(showCanvas: $showCanvas)) : nil
+//                    )
+                showCanvas ? DiaryCanvasView(viewModel: DiaryCanvasViewModel(showCanvas: $showCanvas)) : nil
+            }
         }
     }
     

@@ -13,10 +13,11 @@ struct DiaryCanvasView: View {
 
     var body: some View {
         ZStack(alignment: .bottom){
-            CanvasView(canvas: viewModel.canvas, toolPicker: viewModel.toolPicker)
+//            let _ = print(canvasView.frame.height)
+            canvasView
             drawingBar
 //                .padding(.bottom, 25)
-                .padding(.bottom, 100)
+                .padding(.bottom, canvasView.frame.height)
         }
 //        .ignoresSafeArea(edges: .bottom)
         .onAppear {
@@ -24,8 +25,13 @@ struct DiaryCanvasView: View {
         }
     }
     
+    private var canvasView: CanvasView {
+        CanvasView(canvas: viewModel.canvas, toolPicker: viewModel.toolPicker)
+    }
+    
     private var drawingBar: some View {
         HStack(spacing: 12) {
+            // 취소 버튼
             Button(action: { viewModel.dismissCanvas() }) {
                 Text("취소")
                     .font(.NanumSquareNeo.NanumSquareNeoBold(size: 12))
@@ -35,12 +41,14 @@ struct DiaryCanvasView: View {
             
             Spacer()
             
+            // undo 버튼
             Button(action: { viewModel.undo() }) {
                 Image("humbleicons_arrow_go_back")
                     .foregroundColor(viewModel.canUndo ? .black : Color(.G_500))
             }
             .padding(.trailing, 18)
             
+            // redo 버튼
             Button(action: { viewModel.redo() }) {
                 Image("humbleicons_arrow_go_forward")
                     .foregroundColor(viewModel.canRedo ? .black : Color(.G_500))
@@ -48,6 +56,7 @@ struct DiaryCanvasView: View {
             
             Spacer()
             
+            // 저장 버튼
             Button(action: {
                 viewModel.saveDrawingToFile()
                 viewModel.dismissCanvas()
@@ -79,6 +88,10 @@ struct CanvasView: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: PKCanvasView, context: Context) {}
+    
+    var frame: CGRect {
+        return toolPicker.frameObscured(in: canvas)
+    }
 }
 
 #Preview {

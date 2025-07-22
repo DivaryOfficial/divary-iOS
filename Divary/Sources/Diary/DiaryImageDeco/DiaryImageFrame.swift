@@ -45,7 +45,7 @@ struct DiaryImageFrame: View {
                                 .foregroundColor(.black)
                             
                             Text(viewModel.imageDate)
-                                .font(.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
+                                .font(.NanumSquareNeo.NanumSquareNeoBold(size: 12))
                                 .foregroundColor(Color(.G_700))
                                 .padding(.bottom, 18)
                         }
@@ -91,7 +91,7 @@ struct DiaryImageFrame: View {
                         .frame(width: 70, height: 85)
                         .foregroundStyle(Color(.G_300))
                     Text("없음")
-                        .font(.NanumSquareNeo.NanumSquareNeoExtraBold(size: 12))
+                        .font(.NanumSquareNeo.NanumSquareNeoBold(size: 12))
                         .foregroundStyle(Color(.black))
                 }
             }
