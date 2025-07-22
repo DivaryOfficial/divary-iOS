@@ -38,8 +38,9 @@ final class DiaryCanvasViewModel: ObservableObject {
         canvas.undoManager?.redo()
     }
 
-    func toggleToolPicker() {
-        toolPicker.setVisible(!toolPicker.isVisible, forFirstResponder: canvas)
+    func dismissCanvas() {
+//        toolPicker.setVisible(!toolPicker.isVisible, forFirstResponder: canvas)
+        toolPicker.setVisible(false, forFirstResponder: canvas)
         showCanvas = false
     }
 
@@ -49,5 +50,43 @@ final class DiaryCanvasViewModel: ObservableObject {
             canUndo = canvas.undoManager?.canUndo ?? false
             canRedo = canvas.undoManager?.canRedo ?? false
         }
+    }
+    
+    func saveDrawingToFile() {
+        let drawing = canvas.drawing
+        let data = drawing.dataRepresentation()
+
+        let url = drawingFileURL()
+
+        do {
+            try data.write(to: url)
+            print("✅ Drawing saved at \(url.path)")
+            showCanvas = false
+        } catch {
+            print("❌ Failed to save drawing: \(error)")
+        }
+    }
+    
+    func loadDrawingFromFile() {
+        let url = drawingFileURL()
+
+        guard FileManager.default.fileExists(atPath: url.path) else {
+            print("⚠️ No drawing file found at \(url.path)")
+            return
+        }
+
+        do {
+            let data = try Data(contentsOf: url)
+            let drawing = try PKDrawing(data: data)
+            canvas.drawing = drawing
+            print("✅ Drawing loaded.")
+        } catch {
+            print("❌ Failed to load drawing: \(error)")
+        }
+    }
+    
+    private func drawingFileURL() -> URL {
+        let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        return directory.appendingPathComponent("drawing.pkdraw")
     }
 }

@@ -19,11 +19,14 @@ struct DiaryCanvasView: View {
                 .padding(.bottom, 100)
         }
 //        .ignoresSafeArea(edges: .bottom)
+        .onAppear {
+            viewModel.loadDrawingFromFile()
+        }
     }
     
     private var drawingBar: some View {
         HStack(spacing: 12) {
-            Button(action: { viewModel.toggleToolPicker() }) {
+            Button(action: { viewModel.dismissCanvas() }) {
                 Text("취소")
                     .font(.NanumSquareNeo.NanumSquareNeoBold(size: 12))
                     .foregroundStyle(Color(.black))
@@ -45,7 +48,10 @@ struct DiaryCanvasView: View {
             
             Spacer()
             
-            Button(action: { }) {
+            Button(action: {
+                viewModel.saveDrawingToFile()
+                viewModel.dismissCanvas()
+            }) {
                 Image("humbleicons_check")
                     .foregroundColor(Color(.black))
             }

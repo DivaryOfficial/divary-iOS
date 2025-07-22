@@ -7,9 +7,11 @@
 
 import SwiftUI
 import PhotosUI
+import PencilKit
 
 struct DiaryMainView: View {
     @State var showCanvas: Bool = false
+    @State private var savedDrawing: PKDrawing? = nil
     
     @StateObject private var viewModel = DiaryMainViewModel()
 
