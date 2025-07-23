@@ -72,13 +72,12 @@ struct OverViewInputView: View {
                             Text("다이빙 목적")
                                 .font(Font.omyu.regular(size: 20))
                             
-                            HStack(spacing: 16) {
-                                Spacer()
-                                
+                            HStack(spacing: 5) {
+                               
                                 ForEach(["펀 다이빙", "교육 다이빙"], id: \.self) { option in
                                     purposeButton(option: option)
                                 }
-                                Spacer()
+                             
                             }
                             
 
@@ -101,21 +100,19 @@ struct OverViewInputView: View {
     
     private func purposeButton(option: String) -> some View {
         let isSelected = overview.purpose == option
+        
         return Button(action: {
             overview.purpose = option
         }) {
             Text(option)
-                .font(.system(size: 16))
-                .foregroundColor(isSelected ? Color("primary_sea_blue") : Color("grayscale_g400"))
-                .padding(.horizontal, 20)
-                .padding(.vertical, 12)
+                .font(.system(size: 12))
+                .foregroundColor(isSelected ? Color(.white) : Color("grayscale_g400"))
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 14)
                 .background(
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(isSelected ? Color("primary_sea_blue").opacity(0.1) : Color("grayscale_g100"))
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 20)
-                        .stroke(isSelected ? Color("primary_sea_blue") : Color.clear, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(isSelected ? Color("primary_sea_blue") : Color("grayscale_g100"))
                 )
         }
     }
