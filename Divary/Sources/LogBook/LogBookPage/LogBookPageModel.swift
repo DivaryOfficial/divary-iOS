@@ -6,7 +6,18 @@
 //
 
 import Foundation
+import SwiftUI
 
+//어떤 섹션을 선택했는지
+enum InputSectionType: Int, Identifiable {
+    case overview = 0
+    case participants
+    case equipment
+    case environment
+    case profile
+
+    var id: Int { rawValue }
+}
 
 // 섹션이 작성 중인지 모두 채웠는지 확인
 enum SectionStatus {

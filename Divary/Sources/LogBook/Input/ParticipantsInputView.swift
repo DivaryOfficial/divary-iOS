@@ -15,10 +15,10 @@ struct ParticipantsInputView: View {
     @State private var companionInput: String? = nil
     
     var body: some View {
-        GeometryReader { geometry in
+        //GeometryReader { geometry in
             ZStack {
-                Color.gray.opacity(0.8)
-                    .edgesIgnoringSafeArea(.all)
+//                Color.gray.opacity(0.8)
+//                    .edgesIgnoringSafeArea(.all)
                 
                 VStack{
                     ScrollView {
@@ -56,9 +56,8 @@ struct ParticipantsInputView: View {
                     .background(
                         RoundedRectangle(cornerRadius: 10)
                             .fill(Color(.white))
-                            .stroke(Color.grayscale_g300)
                     )
-                    .frame(maxHeight: geometry.size.height * 0.38)
+                    //.frame(maxHeight: geometry.size.height * 0.38)
                     .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.horizontal)
                     
@@ -66,7 +65,6 @@ struct ParticipantsInputView: View {
             }
         }
     }
-}
 
 
 #Preview {

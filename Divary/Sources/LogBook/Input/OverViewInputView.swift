@@ -30,10 +30,10 @@ struct OverViewInputView: View {
     @Binding var overview: DiveOverview
     
     var body: some View {
-        GeometryReader { geometry in
+        //GeometryReader { geometry in
             ZStack {
-                Color.gray.opacity(0.8)
-                    .edgesIgnoringSafeArea(.all)
+//                Color.white
+//                    .edgesIgnoringSafeArea(.all)
                 
                 VStack{
                     ScrollView {
@@ -90,16 +90,14 @@ struct OverViewInputView: View {
                     .background(
                         RoundedRectangle(cornerRadius: 10)
                             .fill(Color(.white))
-                            .stroke(Color.grayscale_g300)
                     )
-                    .frame(maxHeight: geometry.size.height * 0.64)
+                    //.frame(maxHeight: geometry.size.height * 0.64)
                     .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.horizontal)
                     
                 }
             }
         }
-    }
     
     private func purposeButton(option: String) -> some View {
         let isSelected = overview.purpose == option
