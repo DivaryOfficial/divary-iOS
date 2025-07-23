@@ -49,7 +49,7 @@ struct DiveProfileSection: View {
                     .foregroundStyle(status != .empty ? Color.bw_black : Color.grayscale_g400)
                 if status == .partial {
                     Text("작성중")
-                        .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 10))
+                        .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 10))
                         .foregroundStyle(Color.role_color_nagative)
                         .padding(4)
                 }
@@ -83,10 +83,10 @@ struct DiveTimeView: View {
                 .foregroundStyle(.white)
             Spacer()
             Text("\(diveTime ?? 0)")
-                .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 16))
+                .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 16))
                 .foregroundStyle(.white)
             Text("분")
-                .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 14))
+                .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
                 .foregroundStyle(.white)
         }
         .padding()
@@ -132,10 +132,10 @@ struct DepthRow: View {
                     .font(Font.omyu.regular(size: 16))
             }
             Text("\(value ?? 0)")
-                .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 14))
+                .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
                 .foregroundStyle(value != nil ? Color.bw_black : Color.grayscale_g400)
             Text(unit)
-                .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
+                .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
                 .foregroundStyle(value != nil ? Color.bw_black : Color.grayscale_g400)
         }
         .padding(.vertical, 4)
@@ -170,10 +170,10 @@ struct TankView: View {
 
             (
                 Text("\(pressure ?? 0)")
-                    .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 14))
+                    .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
                 +
                 Text(" bar")
-                    .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
+                    .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
             )
         }
         .foregroundStyle(pressure != nil ? Color.bw_black : Color.grayscale_g400)
@@ -194,11 +194,11 @@ struct GasConsumptionView: View {
                         .foregroundStyle(Color.grayscale_g700)
                     
                     Text("\(max(start - end, 0))")
-                        .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 14))
+                        .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
                         .foregroundStyle(Color.bw_black)
                     +
                     Text(" bar")
-                        .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
+                        .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
                         .foregroundStyle(Color.bw_black)
             } else {
                 Text("기체 소모량 ")
@@ -206,7 +206,7 @@ struct GasConsumptionView: View {
                     .foregroundStyle(Color.grayscale_g400)
 
                 Text("0 bar")
-                    .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 14))
+                    .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
                     .foregroundStyle(Color.grayscale_g400)
             }
             

@@ -267,7 +267,7 @@ struct IconButtonRow: View {
                         Spacer()
                         
                         Text(option)
-                            .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 9))
+                            .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 9))
                     }
                     .padding(10)
                     .frame(maxWidth: .infinity)
@@ -315,7 +315,7 @@ struct TemperatureInputField: View {
                         }
                     }
                 ))
-                .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
+                .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
                 .keyboardType(.numberPad)
                 .foregroundColor(Color.bw_black)
                 
@@ -323,7 +323,7 @@ struct TemperatureInputField: View {
                 
                 Text(unit)
                     .foregroundColor(Color.bw_black)
-                    .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 14))
+                    .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
             }
             .padding(.vertical, 12)
             .padding(.horizontal, 20)
