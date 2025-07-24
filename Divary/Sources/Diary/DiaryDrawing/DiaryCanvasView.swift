@@ -13,15 +13,15 @@ struct DiaryCanvasView: View {
 
     var body: some View {
         ZStack(alignment: .bottom){
-//            let _ = print(canvasView.frame.height)
             canvasView
             drawingBar
-//                .padding(.bottom, 25)
                 .padding(.bottom, canvasView.frame.height)
         }
-//        .ignoresSafeArea(edges: .bottom)
         .onAppear {
-            viewModel.loadDrawingFromFile()
+            if let saved = UserDefaults.standard.string(forKey: "SavedDrawing") {
+                viewModel.loadDrawingFromString(saved)
+            }
+//            viewModel.loadDrawingFromFile()
         }
     }
     
@@ -59,6 +59,8 @@ struct DiaryCanvasView: View {
             // 저장 버튼
             Button(action: {
                 viewModel.saveDrawingToFile()
+                let base64 = viewModel.saveDrawingAsString()
+                UserDefaults.standard.set(base64, forKey: "SavedDrawing")
                 viewModel.dismissCanvas()
             }) {
                 Image("humbleicons_check")
@@ -78,7 +80,6 @@ struct CanvasView: UIViewRepresentable {
     
     func makeUIView(context: Context) -> PKCanvasView {
         canvas.isOpaque = false
-//        canvas.backgroundColor = .black.withAlphaComponent(0.5)
         
         toolPicker.setVisible(true, forFirstResponder: canvas)
         toolPicker.addObserver(canvas)

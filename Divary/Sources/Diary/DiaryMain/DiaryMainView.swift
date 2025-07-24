@@ -11,13 +11,12 @@ import PencilKit
 
 struct DiaryMainView: View {
     @State var showCanvas: Bool = false
-    @State private var savedDrawing: PKDrawing? = nil
     
     @StateObject private var viewModel = DiaryMainViewModel()
 
     var body: some View {
         NavigationView {
-            ZStack {
+//            ZStack {
                 diaryMain
                     .toolbar {
                         ToolbarItemGroup(placement: .bottomBar) {
@@ -43,31 +42,45 @@ struct DiaryMainView: View {
                             }
                         }
                     }
-//                    .overlay(
-//                        showCanvas ? DiaryCanvasView(viewModel: DiaryCanvasViewModel(showCanvas: $showCanvas)) : nil
-//                    )
-                showCanvas ? DiaryCanvasView(viewModel: DiaryCanvasViewModel(showCanvas: $showCanvas)) : nil
-            }
+                    .overlay(
+                        showCanvas ? DiaryCanvasView(viewModel: DiaryCanvasViewModel(showCanvas: $showCanvas)) : nil
+                    )
+
+//                showCanvas ? DiaryCanvasView(viewModel: DiaryCanvasViewModel(showCanvas: $showCanvas)) : nil
+//            }
         }
     }
     
     private var diaryMain: some View {
-        ZStack {
-            Image(.gridBackground)
-                .resizable()
-                .scaledToFill()
-                .ignoresSafeArea()
-            
-            VStack {
-                Group {
-                    TextField("|", text: $viewModel.diaryText)
-                        .foregroundColor(Color(.black))
+        ScrollView {
+            ZStack {
+                Image(.gridBackground)
+                    .resizable(resizingMode: .tile)
+//                    .resizable()
+//                    .scaledToFill()
+                    .ignoresSafeArea()
+                
+                VStack {
+                    Group {
+                        TextField("|", text: $viewModel.diaryText)
+                            .foregroundColor(Color(.black))
+                        Spacer()
+                    }
+                    .padding(.top, 44)
+                    .padding(.leading, 45)
+                    
                     Spacer()
                 }
-                .padding(.top, 44)
-                .padding(.leading, 45)
+                .frame(maxWidth: .infinity, minHeight: UIScreen.main.bounds.height * 2)
                 
-                Spacer()
+                if let drawing = viewModel.savedDrawing {
+                    DiaryDrawingImageView(drawing: drawing)
+                        .frame(height: 300) // 원하는 위치/크기
+                        .offset(y: -500) // 스크롤뷰 내 위치 (고정값 or 변수화 가능)
+                }
+            }
+            .onAppear {
+                viewModel.loadSavedDrawing()
             }
         }
     }
