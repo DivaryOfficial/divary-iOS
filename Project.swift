@@ -4,7 +4,8 @@ let project = Project(
     name: "Divary",
     packages: [
         .package(url: "https://github.com/Moya/Moya.git", .upToNextMajor(from: "15.0.0")),
-        .package(url: "https://github.com/google/GoogleSignIn-iOS", from: "7.0.0")
+        .package(url: "https://github.com/google/GoogleSignIn-iOS", from: "7.0.0"),
+        .package(url: "https://github.com/danielsaidi/RichTextKit.git", from: "1.2.0")
     ],
     settings: .settings(
         base: [
@@ -46,7 +47,8 @@ let project = Project(
             dependencies: [
                 .package(product: "Moya"),
                 .package(product: "GoogleSignIn"),
-                .package(product: "GoogleSignInSwift") // SwiftUI 사용 시에만 필요
+                .package(product: "GoogleSignInSwift"), // SwiftUI 사용 시에만 필요
+                .package(product: "RichTextKit")
             ]
         ),
         .target(

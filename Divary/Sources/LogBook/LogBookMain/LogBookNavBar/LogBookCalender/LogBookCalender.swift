@@ -70,7 +70,7 @@ struct CalenderView: View {
         HStack(spacing: 0) {
             ForEach(Self.weekdaySymbols, id: \.self) { symbol in
                 Text(symbol)
-                    .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
+                    .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
                     .foregroundStyle(.gray)
                     .frame(maxWidth: .infinity)
                     .frame(height: 26)
@@ -175,7 +175,7 @@ private struct CellView: View {
                 }
 
                 Text("\(day)")
-                    .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 14))
+                    .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
                     .foregroundStyle(
                         isDisabled ? Color.grayscale_g300 : (isSelected ? .white : Color.grayscale_g600)
                     )

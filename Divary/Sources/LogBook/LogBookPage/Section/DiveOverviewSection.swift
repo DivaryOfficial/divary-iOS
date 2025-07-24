@@ -35,7 +35,7 @@ struct DiveOverviewSection: View {
                     .foregroundStyle(status != .empty ? Color.bw_black : Color.grayscale_g400)
                 if status == .partial {
                     Text("작성중")
-                        .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 10))
+                        .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 10))
                         .foregroundStyle(Color.role_color_nagative)
                         .padding(4)
                 }
@@ -92,7 +92,7 @@ struct DiveOverviewSection: View {
             HStack {
                 Spacer()
                 Text(isEmpty ? " " : trimmed)
-                    .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
+                    .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
                     .foregroundStyle(isEmpty ? Color.grayscale_g400 : Color.bw_black)
                     .multilineTextAlignment(.trailing)
             }

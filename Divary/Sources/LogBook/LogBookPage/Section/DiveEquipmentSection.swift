@@ -41,7 +41,7 @@ struct DiveEquipmentSection: View {
                     .foregroundStyle(status != .empty ? Color.bw_black : Color.grayscale_g400)
                 if status == .partial {
                     Text("작성중")
-                        .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 10))
+                        .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 10))
                         .foregroundStyle(Color.role_color_nagative)
                         .padding(4)
                 }
@@ -78,13 +78,13 @@ struct DiveEquipmentSection: View {
             HStack(alignment: .bottom, spacing: 2) {
                 Text(isEmpty ? " " : trimmedValue)
                     .foregroundStyle(isEmpty ? Color.grayscale_g400 : Color.bw_black)
-                    .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
+                    .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
                     .lineSpacing(4)
 
                 if let unit = unit {
                     Text(unit)
                         .foregroundStyle(isEmpty ? Color.grayscale_g400 : Color.bw_black)
-                        .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
+                        .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
                 }
             }
             .fixedSize(horizontal: false, vertical: true)
