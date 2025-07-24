@@ -22,9 +22,14 @@ struct LogBookPageView: View {
                     
                     ScrollView {
                         ZStack(alignment: .topLeading) {
-                            Image("gridBackground")
-                                .resizable(resizingMode: .tile)
-                                .ignoresSafeArea()
+                            GeometryReader { geometry in
+                                      Image("gridBackground")
+                                          .resizable(resizingMode: .tile)
+                                          .frame(
+                                              width: geometry.size.width,
+                                              height: max(geometry.size.height, UIScreen.main.bounds.height)
+                                          )
+                                  }.ignoresSafeArea()
                             
                             VStack(alignment: .leading, spacing: 18) {
                                 Text("흰수염 고래 여름원정")

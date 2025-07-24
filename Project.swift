@@ -38,7 +38,7 @@ let project = Project(
                 ]
             ),
             sources: ["Divary/Sources/**"],
-            resources: ["Divary/Resources/**"], // ✅ .github 제거
+            resources: ["Divary/Resources/**"],
             dependencies: [
                 .package(product: "Moya"),
                 .package(product: "GoogleSignIn"),
