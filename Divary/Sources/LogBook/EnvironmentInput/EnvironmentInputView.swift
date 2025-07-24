@@ -112,10 +112,10 @@ struct EnvironmentInputView: View {
     @Binding var environment: DiveEnvironment
     
     var body: some View {
-        GeometryReader { geometry in
+        //GeometryReader { geometry in
             ZStack {
-                Color.gray.opacity(0.8)
-                    .edgesIgnoringSafeArea(.all)
+//                Color.gray.opacity(0.8)
+//                    .edgesIgnoringSafeArea(.all)
                 
                 VStack{
                     ScrollView {
@@ -222,7 +222,7 @@ struct EnvironmentInputView: View {
                             .fill(Color(.white))
                             .stroke(Color.grayscale_g300)
                     )
-                    .frame(maxHeight: geometry.size.height * 0.64)
+                    //.frame(maxHeight: geometry.size.height * 0.64)
                     .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.horizontal)
                     
@@ -230,7 +230,7 @@ struct EnvironmentInputView: View {
             }
         }
     }
-}
+//}
 
 struct IconButtonRow: View {
     let options: [String]
