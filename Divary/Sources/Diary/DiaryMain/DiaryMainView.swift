@@ -11,6 +11,7 @@ import PencilKit
 
 struct DiaryMainView: View {
     @State var showCanvas: Bool = false
+    @State private var currentOffsetY: CGFloat = 0
     
     @StateObject private var viewModel = DiaryMainViewModel()
 
@@ -42,8 +43,15 @@ struct DiaryMainView: View {
                             }
                         }
                     }
+//                    .overlay(
+//                        showCanvas ? DiaryCanvasView(viewModel: DiaryCanvasViewModel(showCanvas: $showCanvas)) : nil
+//                    )
+            
                     .overlay(
-                        showCanvas ? DiaryCanvasView(viewModel: DiaryCanvasViewModel(showCanvas: $showCanvas)) : nil
+                        showCanvas ? DiaryCanvasView(
+                            viewModel: DiaryCanvasViewModel(showCanvas: $showCanvas),
+                            offsetY: currentOffsetY
+                        ) : nil
                     )
 
 //                showCanvas ? DiaryCanvasView(viewModel: DiaryCanvasViewModel(showCanvas: $showCanvas)) : nil
@@ -54,6 +62,12 @@ struct DiaryMainView: View {
     private var diaryMain: some View {
         ScrollView {
             ZStack {
+                GeometryReader { geo in
+                    Color.clear
+                        .preference(key: ScrollOffsetPreferenceKey.self, value: geo.frame(in: .named("scroll")).origin.y)
+                }
+                .frame(height: 0)
+                
                 Image(.gridBackground)
                     .resizable(resizingMode: .tile)
 //                    .resizable()
@@ -71,17 +85,25 @@ struct DiaryMainView: View {
                     
                     Spacer()
                 }
-                .frame(maxWidth: .infinity, minHeight: UIScreen.main.bounds.height * 2)
+                .frame(maxWidth: .infinity, minHeight: UIScreen.main.bounds.height)
                 
                 if let drawing = viewModel.savedDrawing {
                     DiaryDrawingImageView(drawing: drawing)
-                        .frame(height: 300) // 원하는 위치/크기
-                        .offset(y: -500) // 스크롤뷰 내 위치 (고정값 or 변수화 가능)
+                        .frame(height: drawing.bounds.height)
+                        .offset(y: viewModel.drawingOffsetY)
                 }
+                
             }
             .onAppear {
                 viewModel.loadSavedDrawing()
             }
+        }
+        .coordinateSpace(name: "scroll")
+//        .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
+//            currentOffsetY = -value
+//        }
+        .onPreferenceChange(ScrollOffsetPreferenceKey.self) {
+            viewModel.setOffset($0)
         }
     }
 }

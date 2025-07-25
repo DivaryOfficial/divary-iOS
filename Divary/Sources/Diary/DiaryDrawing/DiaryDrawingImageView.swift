@@ -18,22 +18,8 @@ struct DiaryDrawingImageView: View {
                 .resizable()
                 .scaledToFit()
         } else {
-            Text("빈 그림입니다")
+            Text("빈 그림")
                 .foregroundColor(.gray)
         }
     }
 }
-
-#Preview {
-    let path = PKStrokePath(controlPoints: [
-        PKStrokePoint(location: CGPoint(x: 0, y: 0), timeOffset: 0, size: CGSize(width: 5, height: 5), opacity: 1, force: 1, azimuth: 0, altitude: 0),
-        PKStrokePoint(location: CGPoint(x: 100, y: 100), timeOffset: 0.1, size: CGSize(width: 5, height: 5), opacity: 1, force: 1, azimuth: 0, altitude: 0)
-    ], creationDate: Date())
-
-    let ink = PKInk(.pen, color: .black)
-    let stroke = PKStroke(ink: ink, path: path)
-    let drawing = PKDrawing(strokes: [stroke])
-    
-    return DiaryDrawingImageView(drawing: drawing)
-}
-

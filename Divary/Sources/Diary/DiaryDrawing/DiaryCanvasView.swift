@@ -10,6 +10,7 @@ import PencilKit
 
 struct DiaryCanvasView: View {
     @ObservedObject var viewModel: DiaryCanvasViewModel
+    let offsetY: CGFloat
 
     var body: some View {
         ZStack(alignment: .bottom){
@@ -18,9 +19,15 @@ struct DiaryCanvasView: View {
                 .padding(.bottom, canvasView.frame.height)
         }
         .onAppear {
-            if let saved = UserDefaults.standard.string(forKey: "SavedDrawing") {
-                viewModel.loadDrawingFromString(saved)
+            if let data = UserDefaults.standard.data(forKey: "SavedDrawingMeta"),
+               let meta = try? JSONDecoder().decode(DrawingMeta.self, from: data) {
+                viewModel.loadDrawingFromString(meta.base64)
             }
+            
+//            if let saved = UserDefaults.standard.string(forKey: "SavedDrawing") {
+//                viewModel.loadDrawingFromString(saved)
+//            }
+            
 //            viewModel.loadDrawingFromFile()
         }
     }
@@ -58,9 +65,13 @@ struct DiaryCanvasView: View {
             
             // 저장 버튼
             Button(action: {
-                viewModel.saveDrawingToFile()
-                let base64 = viewModel.saveDrawingAsString()
-                UserDefaults.standard.set(base64, forKey: "SavedDrawing")
+//                viewModel.saveDrawingToFile()
+                
+//                let base64 = viewModel.saveDrawingAsString()
+//                UserDefaults.standard.set(base64, forKey: "SavedDrawing")
+                
+                viewModel.saveDrawingWithOffset(offsetY: offsetY)
+                
                 viewModel.dismissCanvas()
             }) {
                 Image("humbleicons_check")
@@ -96,5 +107,9 @@ struct CanvasView: UIViewRepresentable {
 }
 
 #Preview {
-    DiaryCanvasView(viewModel: DiaryCanvasViewModel(showCanvas: .constant(true)))
+    DiaryCanvasView(
+        viewModel: DiaryCanvasViewModel(showCanvas: .constant(true)),
+        offsetY: 300
+    )
 }
+

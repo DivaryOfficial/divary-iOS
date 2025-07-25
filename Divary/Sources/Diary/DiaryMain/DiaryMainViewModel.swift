@@ -14,14 +14,30 @@ class DiaryMainViewModel: ObservableObject {
     @Published var diaryText: String = ""
     @Published var selectedItems: [PhotosPickerItem] = []
     @Published var savedDrawing: PKDrawing? = nil
+    @Published var drawingOffsetY: CGFloat = 0
+    var offset: CGFloat = 0
+        var originOffset: CGFloat = 0
+        var isCheckedOriginOffset: Bool = false
+        
+        func setOriginOffset(_ offset: CGFloat) {
+            guard !isCheckedOriginOffset else { return }
+            self.originOffset = offset
+            isCheckedOriginOffset = true
+        }
+        
+        func setOffset(_ offset: CGFloat) {
+            self.offset = offset
+        }
     
     func loadSavedDrawing() {
-        guard let base64 = UserDefaults.standard.string(forKey: "SavedDrawing"),
-              let data = Data(base64Encoded: base64),
-              let drawing = try? PKDrawing(data: data) else {
+        guard let data = UserDefaults.standard.data(forKey: "SavedDrawingMeta"),
+              let meta = try? JSONDecoder().decode(DrawingMeta.self, from: data),
+              let drawingData = Data(base64Encoded: meta.base64),
+              let drawing = try? PKDrawing(data: drawingData) else {
             return
         }
         self.savedDrawing = drawing
+        self.drawingOffsetY = meta.offsetY
     }
     
 }
