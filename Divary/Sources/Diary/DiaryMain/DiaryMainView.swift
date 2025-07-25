@@ -34,10 +34,15 @@ struct DiaryMainView: View {
     private var diaryMain: some View {
         ScrollView(.vertical, showsIndicators: false) {
             ZStack {
-                Image(.gridBackground)
-                    .resizable()
-                    .scaledToFill()
-                    .ignoresSafeArea()
+                GeometryReader { geometry in
+                          Image("gridBackground")
+                              .resizable(resizingMode: .tile)
+                              .scaledToFill()
+                              .frame(
+                                  width: geometry.size.width,
+                                  height: max(geometry.size.height, UIScreen.main.bounds.height)
+                              )
+                      }.ignoresSafeArea()
                 
                 VStack(spacing: 8) {
                     ForEach(viewModel.blocks) { block in

@@ -72,7 +72,7 @@ struct ParticipantsInputView: View {
     @Previewable @State var previewParticipants = DiveParticipants(
         leader: "PMPM",
         buddy: "iOSiOS",
-        companion: [] ,
+        companion: []
     )
 
     ParticipantsInputView(participants: $previewParticipants)
