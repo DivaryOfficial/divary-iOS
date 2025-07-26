@@ -7,16 +7,32 @@
 
 import SwiftUI
 
-class CharacterViewModel: ObservableObject {
-    @Published var customization: CharacterCustomization?
+@Observable
+class CharacterViewModel {
+    var customization: CharacterCustomization?
 
+    // 말풍선 입력을 위한 Binding 생성자
+    var speechTextBinding: Binding<String> {
+        Binding(
+            get: { self.customization?.speechText ?? "" },
+            set: { newText in
+                if let current = self.customization {
+                    self.customization = current.copy(speechText: newText)
+                }
+            }
+        )
+    }
+    
     init(customization: CharacterCustomization) {
         self.customization = customization
     }
+    
+    
 
     /// 목데이터용 기본 초기화
     convenience init() {
         self.init(customization: CharacterCustomization(
+            CharacterName: "하루",
             background: .coralForest,
             tank: .white,
             pin: .pink,
@@ -25,10 +41,13 @@ class CharacterViewModel: ObservableObject {
             mask: .yellow,
             body: .gray,
             pet: PetCustomization(
-                type: .none,
+                type: .axolotl,
                 offset: CGSize(width: -100, height: 250),
                 rotation: .degrees(40)
-            ), userName: nil
+            ),
+            speechBubble: .rectangleTail,
+            speechText: "다이빙하러 갈 사람"
+            
         ))
     }
 
