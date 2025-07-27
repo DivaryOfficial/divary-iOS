@@ -6,26 +6,38 @@
 //
 
 import SwiftUI
+import GoogleSignIn
+import GoogleSignInSwift
+import UIKit
 
 struct LoginView: View {
     @StateObject private var viewModel = LoginViewModel()
     
     var body: some View {
         ZStack {
-            Image("Login_Background")
+            Image("loginBackground")
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
-            VStack{
-                
-                Spacer()
-                
-                GoogleSignInButtonView(action: viewModel.signInWithGoogle)
-                    .padding(.bottom, 84)
+            
+            GeometryReader { geometry in
+                VStack {
+                    Spacer()
+                    
+                    HStack {
+                        Spacer()
+                        GoogleSignInButtonView(action: viewModel.signInWithGoogle)
+                        Spacer()
+                    }
+                    
+                    // 기기별로 다른 여백 적용
+                    Spacer()
+                        .frame(height: UIDevice.current.userInterfaceIdiom == .pad ?
+                               geometry.size.height * 0.2 :
+                               geometry.size.height * 0.1)
+                }
             }
-                
         }
-        
     }
 }
 
