@@ -142,7 +142,7 @@ struct OnboardingMessageOverlay: View {
         }
         
         if hasInvalidCharacters {
-            showErrorMessage("특수문자는 사용할 수 없습니다!\n한글, 영문, 공백, 이모지만 허용됩니다.")
+            showErrorMessage("특수문자는 사용할 수 없습니다!")
             return
         }
         

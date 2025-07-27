@@ -16,8 +16,40 @@ struct CharacterCustomization: Decodable {
     let cheek: CheekType
     let mask: MaskType
     let body: CharacterBodyType
-    let pet: PetCustomization
-    let userName: String?
+    var pet: PetCustomization
+    let speechBubble: SpeechBubbleType
+    var speechText: String? = nil
+}
+
+//값 변경을 위한 copy 함수
+extension CharacterCustomization {
+    func copy(
+        background: BackgroundType? = nil,
+        tank: TankType? = nil,
+        pin: PinType? = nil,
+        regulator: RegulatorType? = nil,
+        cheek: CheekType? = nil,
+        mask: MaskType? = nil,
+        body: CharacterBodyType? = nil,
+        pet: PetCustomization? = nil,
+        speechBubble: SpeechBubbleType? = nil,
+        CharacterName: String?? = nil,
+        speechText: String?? = nil
+    ) -> CharacterCustomization {
+        return CharacterCustomization(
+            CharacterName: CharacterName ?? self.CharacterName,
+            background: background ?? self.background,
+            tank: tank ?? self.tank,
+            pin: pin ?? self.pin,
+            regulator: regulator ?? self.regulator,
+            cheek: cheek ?? self.cheek,
+            mask: mask ?? self.mask,
+            body: body ?? self.body,
+            pet: pet ?? self.pet,
+            speechBubble: speechBubble ?? self.speechBubble,
+            speechText: speechText ?? self.speechText
+        )
+    }
 }
 
 
@@ -30,58 +62,120 @@ enum BackgroundType: String, CaseIterable, Decodable {
 }
 
 enum TankType: String, CaseIterable, Decodable {
+    case none = "none"
     case yellow = "TankYellow"
     case green = "TankGreen"
     case white = "TankWhite"
     case blue = "TankBlue"
     case pink = "TankPink"
-    case none = "none"
 }
 
 enum PinType: String, CaseIterable, Decodable {
+    case none = "none"
     case pink = "PinPink"
     case blue = "PinBlue"
     case white = "PinWhite"
     case yellow = "PinYellow"
     case green = "PinGreen"
-    case none = "none"
 }
 
 enum RegulatorType: String, CaseIterable, Decodable {
+    case none = "none"
     case green = "RegulatorGreen"
     case white = "RegulatorWhite"
     case pink = "RegulatorPink"
     case blue = "RegulatorBlue"
     case yellow = "RegulatorYellow"
-    case none = "none"
 }
 
 enum CheekType: String, CaseIterable, Decodable {
     case pastelPink = "CheekPastelPink"
     case salmon = "CheekSalmon"
-    case pink = "CheekPink"
-    case coral = "CheekCoral"
     case orange = "CheekOrange"
+    case coral = "CheekCoral"
+    case pink = "CheekPink"
     case none = "none"
 }
 
 enum MaskType: String, CaseIterable, Decodable {
+    case none = "none"
     case pink = "MaskPink"
     case blue = "MaskBlue"
     case green = "MaskGreen"
     case white = "MaskWhite"
     case yellow = "MaskYellow"
-    case none = "none"
 }
 
 enum CharacterBodyType: String, CaseIterable, Decodable {
+    case ivory = "CharacterBodyIvory"
     case yellow = "CharacterBodyYellow"
     case pink = "CharacterBodyPink"
-    case gray = "CharacterBodyGray"
-    case ivory = "CharacterBodyIvory"
     case brown = "CharacterBodyBrown"
+    case gray = "CharacterBodyGray"
     case none = "none"
 }
+
+enum SpeechBubbleType: String, CaseIterable, Decodable {
+    case none = "none"
+    case rectangle = "SpeechBubbleRectangle"
+    case rectangleTail = "rectangleTail"
+    case roundedTail = "roundedTail"
+    case thought = "SpeechBubbleThought"
+    
+    func view(text: String, binding: Binding<String>? = nil) -> some View {
+        switch self {
+        case .rectangle:
+            return AnyView(RectangleSpeechBubble(text: text))
+        case .rectangleTail:
+            return AnyView(RectangleTailSpeechBubbleView(text: text))
+        case .roundedTail:
+            return AnyView(RoundedTailSpeechBubbleView(text: text))
+        case .thought:
+            return AnyView(ThoughtSpeechBubbleView(text: text))
+        case .none:
+            return AnyView(EmptyView())
+        }
+    }
+    
+    func inputView(text: Binding<String>) -> some View {
+        switch self {
+        case .rectangle:
+            return AnyView(RectangleSpeechBubbleInput(text: text))
+        case .rectangleTail:
+            return AnyView(RectangleTailSpeechBubbleInputView(text: text))
+        case .roundedTail:
+            return AnyView(RoundedTailSpeechBubbleInputView(text: text))
+        case .thought:
+            return AnyView(ThoughtSpeechBubbleInputView(text: text))
+        case .none:
+            return AnyView(EmptyView())
+        }
+    }
+}
+
+extension SpeechBubbleType {
+    var defaultImageName: String {
+        switch self {
+        case .none: return "noneDefault"
+        case .rectangle: return "RectangleSpeechBubbleDefault"
+        case .rectangleTail: return "RectangleTailSpeechBubbleDefault"
+        case .roundedTail: return "RoundedTailSpeechBubbleDefault"
+        case .thought: return "ThoughtSpeechBubbleDefault"
+        }
+    }
+    
+    var clickedImageName: String {
+        switch self {
+        case .none: return "noneClicked"
+        case .rectangle: return "RectangleSpeechBubbleClicked"
+        case .rectangleTail: return "RectangleTailSpeechBubbleClicked"
+        case .roundedTail: return "RoundedTailSpeechBubbleClicked"
+        case .thought: return "ThoughtSpeechBubbleClicked"
+        }
+    }
+}
+
+
 
 struct PetCustomization: Decodable {
     let type: PetType
@@ -124,9 +218,11 @@ struct PetCustomization: Decodable {
 enum PetType: String, CaseIterable, Decodable {
     case expectedGray = "PetExpectedGray"
     case expectedBlue = "PetExpectedBlue"
+    case none = "none"
+    case hermitCrab = "PetHermitCrab"
     case seahorse = "PetSeahorse"
     case axolotl = "PetAxolotl"
     case whale = "PetWhale"
-    case hermitCrab = "PetHermitCrab"
-    case none = "none"
+    
+   
 }
