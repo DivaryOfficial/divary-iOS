@@ -17,7 +17,7 @@ struct FooterItem: View {
                 .frame(width: 40, height: 40)
                 .padding(.bottom, 4)
             Text(title)
-                .foregroundColor(.black)
+                .foregroundStyle(.black)
         }
     }
 }

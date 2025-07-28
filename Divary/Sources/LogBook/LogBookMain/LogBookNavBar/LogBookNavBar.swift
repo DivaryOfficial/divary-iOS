@@ -22,7 +22,7 @@ struct LogBookNavBar: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 24)
-                        .foregroundColor(.black)
+                        .foregroundStyle(.black)
                 }
                 
                 Spacer()
@@ -33,7 +33,7 @@ struct LogBookNavBar: View {
                     HStack(spacing: 4) {
                         Text(selectedDateFormatted)
                             .font(Font.omyu.regular(size: 20))
-                            .foregroundColor(.black)
+                            .foregroundStyle(.black)
                             .padding(.vertical, 6)
                     }
                 }
@@ -79,7 +79,7 @@ struct LogBookNavBar: View {
                 
                 Text("저장")
                     .font(Font.omyu.regular(size: 20))
-                    .foregroundColor(.gray)
+                    .foregroundStyle(.gray)
             }
         }
         .padding(12)

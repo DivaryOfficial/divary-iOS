@@ -97,14 +97,14 @@ struct ListInputField: View {
                     if (list?.isEmpty ?? true) && (value?.isEmpty ?? true) {
                         Text(placeholder)
                             .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
-                            .foregroundColor(.gray)
+                            .foregroundStyle(.gray)
                     }
 
                     // 2. 사용자 입력된 companion
                     ForEach(list ?? [], id: \.self) { name in
                         Text(name)
                             .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
-                            .foregroundColor(Color.bw_black)
+                            .foregroundStyle(Color.bw_black)
                     }
 
                     // 3. 입력창
@@ -116,7 +116,7 @@ struct ListInputField: View {
                         }
                     ))
                     .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
-                    .foregroundColor(Color.bw_black)
+                    .foregroundStyle(Color.bw_black)
                     .frame(minWidth: 40)
                 }
                 .padding(.vertical, 12)
@@ -163,21 +163,21 @@ struct ListInputField: View {
     //                        if (companions?.isEmpty ?? true) && inputText.isEmpty {
     //                            Text(placeholder)
     //                                .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
-    //                                .foregroundColor(Color.bw_black)
+    //                                .foregroundStyle(Color.bw_black)
     //                        } else {
     //
     //                            // 2. 동행자 리스트
     //                            FlexibleView(data: companions ?? [], spacing: 8) { name in
     //                                Text(name)
     //                                    .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
-    //                                    .foregroundColor(Color.bw_black)
+    //                                    .foregroundStyle(Color.bw_black)
     //                            }
     //                        }
     //
     //                        // 3. 입력창
     //                        TextField("", text: $inputText)
     //                            .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
-    //                            .foregroundColor(Color.bw_black)
+    //                            .foregroundStyle(Color.bw_black)
     //                            .onChange(of: inputText) { newValue in
     //                                handleInput(newValue)
     //                            }

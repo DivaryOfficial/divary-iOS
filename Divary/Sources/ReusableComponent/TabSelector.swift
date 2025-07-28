@@ -16,7 +16,7 @@ struct TabSelector<T: Hashable & CaseIterable & RawRepresentable>: View where T.
         HStack(spacing: 8) {
             ForEach(tabs, id: \.self) { tab in
                 let isSelected = selectedTab == tab
-                let foregroundColor = isSelected ? Color.white : Color.gray
+                let foregroundStyle = isSelected ? Color.white : Color.gray
                 let backgroundColor = isSelected ? Color.blue : Color.gray.opacity(0.2)
 
                 Button(action: {
@@ -27,7 +27,7 @@ struct TabSelector<T: Hashable & CaseIterable & RawRepresentable>: View where T.
                         .font(Font.omyu.regular(size: 20))
                         .padding(.vertical, 10)
                         .background(backgroundColor)
-                        .foregroundColor(foregroundColor)
+                        .foregroundStyle(foregroundStyle)
                         .clipShape(RoundedCorner(radius: 12, corners: [.topLeft, .topRight]))
                 }
             }

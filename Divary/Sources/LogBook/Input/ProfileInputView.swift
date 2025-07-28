@@ -159,7 +159,7 @@ struct PressInputField: View {
                     // 읽기 전용 (기체 소모량)
                     Text(value.map { String($0) } ?? "-")
                         .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
-                        .foregroundColor(.bw_black)
+                        .foregroundStyle(Color.bw_black)
                 } else {
                     // 입력 가능한 필드
                     TextField(placeholder, text: Binding(
@@ -168,13 +168,13 @@ struct PressInputField: View {
                     ))
                     .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
                     .keyboardType(.numberPad)
-                    .foregroundColor(.bw_black)
+                    .foregroundStyle(Color.bw_black)
                 }
 
                 Spacer()
 
                 Text(unit)
-                    .foregroundColor(.bw_black)
+                    .foregroundStyle(Color.bw_black)
                     .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
             }
             .padding(.vertical, 12)

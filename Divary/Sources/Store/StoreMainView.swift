@@ -101,7 +101,7 @@ struct StoreMainView: View {
                         Spacer()
                         Text("상점에서는 캐릭터와 펫이 실제 위치보다 아래에 표시됩니다.")
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 12)
                             .background(
@@ -211,12 +211,11 @@ struct StoreMainView: View {
     struct BuddyPetView: View {
         @Bindable var viewModel: CharacterViewModel
         @Binding var isPetEditingMode: Bool
+        // 물고기 선택 상태 관리
+        @State var isFishSelected = false
         
         var body: some View {
             VStack(spacing: 22) {
-                // 물고기 선택 상태 관리
-                @State var isFishSelected = false
-                
                 // 펫 그리드
                 ScrollView {
                     let columns = [
@@ -306,7 +305,7 @@ struct StoreMainView: View {
     @ViewBuilder
     private func skin() -> some View {
         ScrollView{
-            VStack(alignment: .leading, spacing: 24) {
+            LazyVStack(alignment: .leading, spacing: 24) {
                 // 바디 색상
                 Text("바디 색상")
                     .font(Font.omyu.regular(size: 20))
@@ -327,7 +326,7 @@ struct StoreMainView: View {
                                             .resizable()
                                             .scaledToFit()
                                             .scaleEffect(0.4)
-                                            .foregroundColor(.primary_sea_blue) // 선택 시 체크 아이콘 색상
+                                            .foregroundStyle(Color.primary_sea_blue) // 선택 시 체크 아이콘 색상
                                         
                                     }
                                 }
@@ -358,7 +357,7 @@ struct StoreMainView: View {
                                             .resizable()
                                             .scaledToFit()
                                             .scaleEffect(0.4)
-                                            .foregroundColor(.primary_sea_blue) // 선택 시 체크 아이콘 색상
+                                            .foregroundStyle(Color.primary_sea_blue) // 선택 시 체크 아이콘 색상
                                         
                                     }
                                 }
@@ -397,7 +396,7 @@ struct StoreMainView: View {
     private func diverItem() -> some View {
         
         ScrollView(.vertical, showsIndicators: false) {
-            VStack(spacing: 16) {
+            LazyVStack(spacing: 16) {
                 ItemSelectionSection(
                     title: "마스크",
                     items: MaskType.allCases,

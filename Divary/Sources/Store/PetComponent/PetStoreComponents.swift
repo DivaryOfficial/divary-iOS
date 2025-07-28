@@ -35,7 +35,7 @@ struct FishPetCard: View {
                 // 물고기 이름
                 Text("공개예정")
                     .font(Font.omyu.regular(size: 20))
-                    .foregroundColor(.bw_black)
+                    .foregroundStyle(Color.bw_black)
                 Spacer()
             }
             .padding(.top, 1)
@@ -82,7 +82,7 @@ struct PetSelectionCard: View {
                 if petType == .none {
                     Image("StoreNone")
                         .font(.system(size: 80))
-                        .foregroundColor(.grayscale_g400)
+                        .foregroundStyle(Color.grayscale_g400)
                 } else {
                     Image(petType.rawValue)
                         .resizable()
@@ -94,7 +94,7 @@ struct PetSelectionCard: View {
             HStack {
                 Text(petNameFor(petType))
                     .font(Font.omyu.regular(size: 20))
-                    .foregroundColor(.bw_black)
+                    .foregroundStyle(Color.bw_black)
                 Spacer()
             }
         }

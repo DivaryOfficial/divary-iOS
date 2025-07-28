@@ -13,7 +13,7 @@ struct RectangleSpeechBubble: View {
     var body: some View {
         Text(text)
             .font(Font.omyu.regular(size: 16))
-            .foregroundColor(.bw_black)
+            .foregroundStyle(Color.bw_black)
             .padding(.horizontal, 12)
             .padding(.vertical, 18)
             .background(Color.white)
@@ -32,7 +32,7 @@ struct RectangleSpeechBubbleInput: View {
                 .font(Font.omyu.regular(size: 16))
                 .padding(.horizontal, 12)
                 .padding(.vertical, 18)
-                .foregroundColor(.bw_black)
+                .foregroundStyle(Color.bw_black)
         }
         .background(Color.white)
         .clipShape(RoundedCorner(radius: 8, corners: [.topLeft, .topRight, .bottomLeft]))

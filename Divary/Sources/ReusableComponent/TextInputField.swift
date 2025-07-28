@@ -24,12 +24,12 @@ struct TextInputField: View {
                     set: { value = $0.isEmpty ? nil : $0 }
                 ))
                 .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
-                .foregroundColor(Color.bw_black)
+                .foregroundStyle(Color.bw_black)
 
                 Spacer()
 
                 Text(unit)
-                    .foregroundColor(Color.bw_black)
+                    .foregroundStyle(Color.bw_black)
                     .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 14))
             }
             .padding(.vertical, 12)

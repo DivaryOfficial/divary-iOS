@@ -106,7 +106,7 @@ struct OverViewInputView: View {
         }) {
             Text(option)
                 .font(.system(size: 12))
-                .foregroundColor(isSelected ? Color(.white) : Color("grayscale_g400"))
+                .foregroundStyle(isSelected ? Color(.white) : Color("grayscale_g400"))
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 14)

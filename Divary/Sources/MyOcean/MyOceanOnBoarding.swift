@@ -65,7 +65,7 @@ struct OnboardingMessageOverlay: View {
                     .padding(.vertical, 12)
                     .padding(.horizontal, 16)
                     .multilineTextAlignment(.center)
-                    .foregroundColor(Color.bw_black)
+                    .foregroundStyle(Color.bw_black)
                     .background(Color.grayscale_g100)
                     .cornerRadius(8)
                     .frame(width: 200)
@@ -74,7 +74,7 @@ struct OnboardingMessageOverlay: View {
                             if nicknameString.isEmpty {
                                 Text("이름을 입력해주세요")
                                     .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
-                                    .foregroundColor(Color.grayscale_g400)
+                                    .foregroundStyle(Color.grayscale_g400)
                                     .allowsHitTesting(false)
                             }
                         }
@@ -95,7 +95,7 @@ struct OnboardingMessageOverlay: View {
                 
                 if showError {
                     Text(errorMessage)
-                        .foregroundColor(.red)
+                        .foregroundStyle(.red)
                         .font(.system(size: 12))
                         .multilineTextAlignment(.center)
                         .padding(.top, 8)

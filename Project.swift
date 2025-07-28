@@ -34,7 +34,8 @@ let project = Project(
                                 "$(GOOGLE_URL_SCHEME)"
                             ]
                         ]
-                    ]
+                    ],
+                    "UIUserInterfaceStyle": "Light"
                 ]
             ),
             sources: ["Divary/Sources/**"],

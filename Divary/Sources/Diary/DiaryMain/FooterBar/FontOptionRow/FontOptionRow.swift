@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-// 간단한 FontOptionRow
 struct FontOptionRow: View {
     let title: String
     let font: Font

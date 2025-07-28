@@ -34,7 +34,7 @@ struct BottomSheetView<Content: View>: View {
                 // 드래그 핸들
                 Capsule()
                     .frame(width: 40, height: 6)
-                    .foregroundColor(.gray.opacity(0.5))
+                    .foregroundStyle(.gray.opacity(0.5))
                     .padding(.top, 8)
                     .padding(.bottom, 12)
 

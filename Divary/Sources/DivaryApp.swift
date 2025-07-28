@@ -4,7 +4,7 @@ import SwiftUI
 struct DivaryApp: App {
     var body: some Scene {
         WindowGroup {
-            CharacterView()
+            DiaryMainView()
         }
     }
 }

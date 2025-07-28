@@ -31,7 +31,7 @@ struct LogBookPageView: View {
                                           )
                                   }.ignoresSafeArea()
                             
-                            VStack(alignment: .leading, spacing: 18) {
+                            LazyVStack(alignment: .leading, spacing: 18) {
                                 Text("흰수염 고래 여름원정")
                                     .font(Font.omyu.regular(size: 20))
                                     .padding(12)

@@ -50,7 +50,7 @@ struct TopTabView<TabType: Hashable & CaseIterable & RawRepresentable>: View whe
                         VStack() {
                             Text(tab.rawValue)
                                 .font(Font.omyu.regular(size: fontSize))
-                                .foregroundColor(selectedTab == tab ? selectedColor : unselectedColor)
+                                .foregroundStyle(selectedTab == tab ? selectedColor : unselectedColor)
                                 .frame(maxWidth: .infinity) // 버튼 내 텍스트를 가운데로
                         }
                         .frame(maxWidth: .infinity) // 버튼 자체도 균등 분할
