@@ -33,7 +33,7 @@ struct DiaryCanvasView: View {
     }
     
     private var canvasView: CanvasView {
-        CanvasView(canvas: viewModel.canvas, toolPicker: viewModel.toolPicker)
+        CanvasView(canvas: viewModel.canvas, toolPicker: viewModel.toolPicker, offsetY: offsetY)
     }
     
     private var drawingBar: some View {
@@ -88,6 +88,7 @@ struct DiaryCanvasView: View {
 struct CanvasView: UIViewRepresentable {
     let canvas: PKCanvasView
     let toolPicker: PKToolPicker
+    let offsetY: CGFloat
     
     func makeUIView(context: Context) -> PKCanvasView {
         canvas.isOpaque = false
@@ -96,10 +97,16 @@ struct CanvasView: UIViewRepresentable {
         toolPicker.addObserver(canvas)
         canvas.becomeFirstResponder()
         
+        DispatchQueue.main.async {
+            canvas.contentOffset.y = offsetY
+        }
+        
         return canvas
     }
     
-    func updateUIView(_ uiView: PKCanvasView, context: Context) {}
+    func updateUIView(_ uiView: PKCanvasView, context: Context) {
+        uiView.contentOffset.y = offsetY
+    }
     
     var frame: CGRect {
         return toolPicker.frameObscured(in: canvas)

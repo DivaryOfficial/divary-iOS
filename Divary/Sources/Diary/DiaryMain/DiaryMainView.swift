@@ -62,12 +62,6 @@ struct DiaryMainView: View {
     private var diaryMain: some View {
         ScrollView {
             ZStack {
-                GeometryReader { geo in
-                    Color.clear
-                        .preference(key: ScrollOffsetPreferenceKey.self, value: geo.frame(in: .named("scroll")).origin.y)
-                }
-                .frame(height: 0)
-                
                 Image(.gridBackground)
                     .resizable(resizingMode: .tile)
 //                    .resizable()
@@ -88,22 +82,22 @@ struct DiaryMainView: View {
                 .frame(maxWidth: .infinity, minHeight: UIScreen.main.bounds.height)
                 
                 if let drawing = viewModel.savedDrawing {
-                    DiaryDrawingImageView(drawing: drawing)
-                        .frame(height: drawing.bounds.height)
-                        .offset(y: viewModel.drawingOffsetY)
+                    DrawingCanvasView(drawing: drawing)
+                    
+                    GeometryReader { geo in
+                        Color.clear
+                            .preference(key: ScrollOffsetPreferenceKey.self, value: geo.frame(in: .named("scroll")).origin.y)
+                    }
                 }
                 
             }
-            .onAppear {
+            .task {
                 viewModel.loadSavedDrawing()
             }
         }
         .coordinateSpace(name: "scroll")
-//        .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
-//            currentOffsetY = -value
-//        }
-        .onPreferenceChange(ScrollOffsetPreferenceKey.self) {
-            viewModel.setOffset($0)
+        .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
+            currentOffsetY = -value
         }
     }
 }

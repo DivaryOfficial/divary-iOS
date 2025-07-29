@@ -54,9 +54,12 @@ final class DiaryCanvasViewModel: ObservableObject {
     
     func saveDrawingWithOffset(offsetY: CGFloat) {
         let drawing = canvas.drawing
+        print(drawing.bounds.origin)
+        print(drawing.bounds.size)
         let data = drawing.dataRepresentation()
         let base64 = data.base64EncodedString()
         let meta = DrawingMeta(base64: base64, offsetY: offsetY)
+        print("캔버스뷰모델 \(meta.offsetY)")
 
         if let encoded = try? JSONEncoder().encode(meta) {
             UserDefaults.standard.set(encoded, forKey: "SavedDrawingMeta")
@@ -80,6 +83,7 @@ final class DiaryCanvasViewModel: ObservableObject {
         do {
             let drawing = try PKDrawing(data: data)
             canvas.drawing = drawing
+//            canvas.contentOffset.y =
         } catch {
             print("PKDrawing 복원 실패: \(error.localizedDescription)")
         }
