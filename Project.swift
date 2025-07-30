@@ -11,6 +11,9 @@ let project = Project(
         base: [
                "GOOGLE_CLIENT_ID": "$(GOOGLE_CLIENT_ID)",
                "GOOGLE_URL_SCHEME": "$(GOOGLE_URL_SCHEME)"
+        ],
+        configurations: [
+            .debug(name: "SecretOnly", xcconfig: .relativeToRoot("../divary-iOS/Configuration/Secret.xcconfig"))
         ]
     ),
     targets: [
