@@ -41,10 +41,10 @@ struct DiaryImageFrame: View {
                         
                         VStack(alignment: .leading, spacing: 4) {
                             TextField("캡션 추가...", text: $viewModel.imageCaption)
-                                .foregroundColor(.black)
+                                .foregroundStyle(.black)
                             
                             Text(viewModel.imageDate)
-                                .foregroundColor(Color(.G_700))
+                                .foregroundStyle(Color(.G_700))
                                 .padding(.bottom, 18)
                         }
                     }

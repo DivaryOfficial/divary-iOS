@@ -36,12 +36,12 @@ struct NumberInputField: View {
                 ))
                 .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
                 .keyboardType(.numberPad)
-                .foregroundColor(Color.bw_black)
+                .foregroundStyle(Color.bw_black)
                 
                 Spacer()
                 
                 Text(unit)
-                    .foregroundColor(Color.bw_black)
+                    .foregroundStyle(Color.bw_black)
                     .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 14))
             }
             .padding(.vertical, 12)

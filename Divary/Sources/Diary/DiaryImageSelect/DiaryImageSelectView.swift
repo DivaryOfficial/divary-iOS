@@ -42,7 +42,7 @@ struct DiaryImageSelectView: View {
         .overlay(
             Rectangle()
                 .frame(height: 2)
-                .foregroundColor(Color(.G_100)),
+                .foregroundStyle(Color(.G_100)),
             alignment: .top
         )
     }

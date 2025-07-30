@@ -66,24 +66,24 @@ struct DiveInputPageView: View {
 
 
 #Preview {
-    @State var overview = DiveOverview(
+    @Previewable @State var overview = DiveOverview(
         title: "제주 서귀포",
         point: "문섬",
         purpose: "펀 다이빙",
         method: "보트"
     )
-    @State var participants = DiveParticipants(
+    @Previewable @State var participants = DiveParticipants(
         leader: "이예나",
         buddy: "지안",
         companion: ["하람", "주원"]
     )
-    @State var equipment = DiveEquipment(
+    @Previewable @State var equipment = DiveEquipment(
         suitType: "드라이슈트",
         Equipment: ["BCD", "레귤레이터"],
         weight: 5,
         pweight: "약간 무거움"
     )
-    @State var environment = DiveEnvironment(
+    @Previewable @State var environment = DiveEnvironment(
         weather: "맑음",
         wind: "약풍",
         current: "약함",
@@ -92,7 +92,7 @@ struct DiveInputPageView: View {
         waterTemp: 18,
         visibility: "좋음"
     )
-    @State var profile = DiveProfile(
+    @Previewable @State var profile = DiveProfile(
         diveTime: 35,
         maxDepth: 18,
         avgDepth: 12,

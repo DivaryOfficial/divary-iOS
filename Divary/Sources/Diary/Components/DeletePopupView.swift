@@ -31,7 +31,7 @@ struct DeletePopupView: View {
                         isPresented = false
                     } label: {
                         Text("취소")
-                            .foregroundColor(Color(.G_500))
+                            .foregroundStyle(Color(.G_500))
                             .frame(maxWidth: .infinity)
                             .padding()
                             .background(Color(.G_200))
@@ -43,7 +43,7 @@ struct DeletePopupView: View {
                             .frame(maxWidth: .infinity)
                             .padding()
                             .background(Color(.seaBlue))
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                             .cornerRadius(8)
                     }
                 }

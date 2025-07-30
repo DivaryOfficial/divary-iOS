@@ -119,7 +119,7 @@ struct EnvironmentInputView: View {
                 
                 VStack{
                     ScrollView {
-                        VStack(alignment: .leading, spacing: 20) {
+                        LazyVStack(alignment: .leading, spacing: 20) {
                             
                             // 날씨
                             Text("날씨")
@@ -317,12 +317,12 @@ struct TemperatureInputField: View {
                 ))
                 .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
                 .keyboardType(.numberPad)
-                .foregroundColor(Color.bw_black)
+                .foregroundStyle(Color.bw_black)
                 
                 Spacer()
                 
                 Text(unit)
-                    .foregroundColor(Color.bw_black)
+                    .foregroundStyle(Color.bw_black)
                     .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
             }
             .padding(.vertical, 12)

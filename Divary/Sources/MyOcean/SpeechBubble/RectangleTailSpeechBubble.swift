@@ -44,7 +44,7 @@ struct RectangleTailSpeechBubbleView: View {
     var body: some View {
         Text(text)
             .font(Font.omyu.regular(size: 16))
-            .foregroundColor(.bw_black)
+            .foregroundStyle(Color.bw_black)
             .background(Color.white)
             .padding(.horizontal, 20)
             .padding(.vertical, 18)
@@ -65,7 +65,7 @@ struct RectangleTailSpeechBubbleInputView: View {
         HStack {
             TextField(text.isEmpty ? "입력해주세요" : "", text: $text)
                 .font(Font.omyu.regular(size: 16))
-                .foregroundColor(.bw_black)
+                .foregroundStyle(Color.bw_black)
                 .padding(.horizontal, 20)
                 .padding(.vertical, 18)
                 .padding(.bottom, 8)

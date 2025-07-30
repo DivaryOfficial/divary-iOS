@@ -27,7 +27,7 @@ struct OceanThemaStoreComponent: View {
                 HStack {
                     Text(componentText)
                         .font(Font.omyu.regular(size: 20))
-                        .foregroundColor(.bw_black)
+                        .foregroundStyle(Color.bw_black)
                     Spacer()
                 }
             }

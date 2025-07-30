@@ -61,7 +61,7 @@ struct CharacterView: View {
                     
                 } else {
                     ProgressView("로딩 중...")
-                        .onAppear {
+                        .task {
                             viewModel.loadFromJSON()
                         }
                 }
@@ -237,7 +237,7 @@ struct CharacterView: View {
             .frame(width: handleSize, height: handleSize)
             .overlay(
                 Image(systemName: "arrow.clockwise")
-                    .foregroundColor(.primary_sea_blue)
+                    .foregroundStyle(Color.primary_sea_blue)
                     .font(.system(size: 10 * scale, weight: .semibold))  // 스케일 적용
             )
             .offset(handleOffset)
@@ -286,7 +286,7 @@ struct CharacterView: View {
                             Text("완료")
                                 .font(.system(size: 16, weight: .semibold))
                         }
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 12)
                         .background(
@@ -310,7 +310,7 @@ struct CharacterView: View {
                             Text("리셋")
                                 .font(.system(size: 14, weight: .medium))
                         }
-                        .foregroundColor(.primary_sea_blue)
+                        .foregroundStyle(Color.primary_sea_blue)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 10)
                         .background(
