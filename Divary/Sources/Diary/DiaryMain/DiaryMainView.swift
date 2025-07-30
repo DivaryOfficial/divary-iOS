@@ -16,6 +16,9 @@ struct DiaryMainView: View {
     @FocusState private var isRichTextEditorFocused: Bool
     @State private var footerBarType: DiaryFooterBarType = .main
     
+    @Binding var showCanvas: Bool
+    @State private var currentOffsetY: CGFloat = 0
+    
     @ViewBuilder
     private var activeFooterBar: some View {
         switch footerBarType {
@@ -23,7 +26,8 @@ struct DiaryMainView: View {
             MainFooterBar(
                 viewModel: viewModel,
                 footerBarType: $footerBarType,
-                isRichTextEditorFocused: $isRichTextEditorFocused
+                isRichTextEditorFocused: $isRichTextEditorFocused,
+                showCanvas: $showCanvas
             )
         case .textStyle:
             TextStyleFooterBar(
@@ -53,6 +57,12 @@ struct DiaryMainView: View {
             diaryMain
             activeFooterBar
         }
+        .overlay(
+            showCanvas ? DiaryCanvasView(
+                viewModel: DiaryCanvasViewModel(showCanvas: $showCanvas),
+                offsetY: currentOffsetY
+            ) : nil
+        )
     }
     
     private var diaryMain: some View {
@@ -103,6 +113,15 @@ struct DiaryMainView: View {
                     
                     Spacer(minLength: 100)
                 }
+                .frame(maxWidth: .infinity, minHeight: UIScreen.main.bounds.height)
+                
+                if let drawing = viewModel.savedDrawing {
+                    DrawingCanvasView(drawing: drawing)
+                    GeometryReader { geo in
+                        Color.clear
+                            .preference(key: ScrollOffsetPreferenceKey.self, value: geo.frame(in: .named("scroll")).origin.y)
+                    }
+                }
             }
             .onChange(of: viewModel.selectedItems) { _, newItems in
                 for item in newItems {
@@ -117,10 +136,29 @@ struct DiaryMainView: View {
                 }
                 viewModel.selectedItems.removeAll()
             }
+            .task {
+                viewModel.loadSavedDrawing()
+            }
+        }
+        .coordinateSpace(name: "scroll")
+        .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
+            currentOffsetY = -value
         }
     }
 }
 
+//#Preview {
+//    DiaryMainView()
+//}
+
 #Preview {
-    DiaryMainView()
+    PreviewWrapper()
+}
+
+private struct PreviewWrapper: View {
+    @State private var showCanvas = false
+
+    var body: some View {
+        DiaryMainView(showCanvas: $showCanvas)
+    }
 }

@@ -41,9 +41,11 @@ struct DiaryImageFrame: View {
                         
                         VStack(alignment: .leading, spacing: 4) {
                             TextField("캡션 추가...", text: $viewModel.imageCaption)
+                                .font(.omyu.regular(size: 20))
                                 .foregroundStyle(.black)
                             
                             Text(viewModel.imageDate)
+                                .font(.NanumSquareNeo.NanumSquareNeoBold(size: 12))
                                 .foregroundStyle(Color(.G_700))
                                 .padding(.bottom, 18)
                         }
@@ -89,6 +91,7 @@ struct DiaryImageFrame: View {
                         .frame(width: 70, height: 85)
                         .foregroundStyle(Color(.G_300))
                     Text("없음")
+                        .font(.NanumSquareNeo.NanumSquareNeoBold(size: 12))
                         .foregroundStyle(Color(.black))
                 }
             }

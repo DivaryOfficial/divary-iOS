@@ -23,8 +23,9 @@ struct DeletePopupView: View {
             
             VStack(spacing: 16) {
                 Text(deleteText)
-                    .font(.body)
+                    .multilineTextAlignment(.center)
                     .padding(.top, 24)
+                    .font(.omyu.regular(size: 24))
                 
                 HStack(spacing: 12) {
                     Button {
@@ -36,6 +37,7 @@ struct DeletePopupView: View {
                             .padding()
                             .background(Color(.G_200))
                             .cornerRadius(8)
+                            .font(.omyu.regular(size: 16))
                     }
                     
                     Button(action: onDelete) {
@@ -45,6 +47,7 @@ struct DeletePopupView: View {
                             .background(Color(.seaBlue))
                             .foregroundStyle(.white)
                             .cornerRadius(8)
+                            .font(.omyu.regular(size: 16))
                     }
                 }
                 .padding(.horizontal, 20)

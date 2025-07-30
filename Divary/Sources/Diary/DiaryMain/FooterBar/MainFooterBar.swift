@@ -14,6 +14,8 @@ struct MainFooterBar: View {
     @Binding var footerBarType: DiaryFooterBarType
     var isRichTextEditorFocused: FocusState<Bool>.Binding
     
+    @Binding var showCanvas: Bool
+    
     var body: some View {
         HStack(spacing: 20) {
             PhotosPicker(selection: $viewModel.selectedItems, matching: .images) {
@@ -48,7 +50,7 @@ struct MainFooterBar: View {
                 Image(.sticker)
             }
             
-            Button(action: {}) {
+            Button(action: { showCanvas = true }) {
                 Image(.pencil)
             }
             
