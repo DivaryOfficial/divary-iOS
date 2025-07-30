@@ -7,6 +7,7 @@ import SwiftUI
 import PhotosUI
 import RichTextKit
 import Observation
+import PencilKit
 
 @Observable
 class DiaryMainViewModel {
@@ -20,6 +21,9 @@ class DiaryMainViewModel {
     // 폰트 상태 추적을 위한 변수들 - 실제 적용 가능한 폰트로 초기화
     var currentFontSize: CGFloat = 16.0
     var currentFontName: String = "NanumSquareNeoTTF-cBd"
+    
+    var savedDrawing: PKDrawing? = nil
+    var drawingOffsetY: CGFloat = 0
 
     // MARK: - Block Management
     
@@ -255,5 +259,20 @@ class DiaryMainViewModel {
         } else {
             return NSRange(location: 0, length: mutableString.length)
         }
+    }
+    
+    // MARK: - Drawing
+    
+    func loadSavedDrawing() {
+        guard let data = UserDefaults.standard.data(forKey: "SavedDrawingMeta"),
+              let meta = try? JSONDecoder().decode(DrawingMeta.self, from: data),
+              let drawingData = Data(base64Encoded: meta.base64),
+              let drawing = try? PKDrawing(data: drawingData) else {
+            return
+        }
+        self.savedDrawing = drawing
+        self.drawingOffsetY = meta.offsetY
+//        print("drawingOffsetY = \(drawingOffsetY)")
+//        print("meta.offsetY = \(meta.offsetY)")
     }
 }
