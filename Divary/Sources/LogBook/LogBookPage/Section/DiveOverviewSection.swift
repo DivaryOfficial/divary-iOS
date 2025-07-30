@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DiveOverviewSection: View {
-    let overview: DiveOverview?
+    @Binding var overview: DiveOverview?
     @Binding var isSaved: Bool
     
     var status: SectionStatus {
@@ -35,7 +35,7 @@ struct DiveOverviewSection: View {
                     .foregroundStyle(status != .empty ? Color.bw_black : Color.grayscale_g400)
                 if status == .partial {
                     Text("작성중")
-                        .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 10))
+                        .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 10))
                         .foregroundStyle(Color.role_color_nagative)
                         .padding(4)
                 }
@@ -92,7 +92,7 @@ struct DiveOverviewSection: View {
             HStack {
                 Spacer()
                 Text(isEmpty ? " " : trimmed)
-                    .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
+                    .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
                     .foregroundStyle(isEmpty ? Color.grayscale_g400 : Color.bw_black)
                     .multilineTextAlignment(.trailing)
             }
@@ -103,12 +103,12 @@ struct DiveOverviewSection: View {
 
 #Preview {
     DiveOverviewSection(
-        overview: DiveOverview(
+        overview: .constant(DiveOverview(
             title: "제주도 서귀포시",
             point: "문섬",
             purpose: "펀 다이빙",
             method: "보트"
-        ),
+        )),
         isSaved: .constant(false)
     )
 }

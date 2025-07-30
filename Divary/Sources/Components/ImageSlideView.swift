@@ -38,15 +38,17 @@ struct ImageSlideView: View {
                 .padding(.top, 16)
             
             TabView(selection: $currentIndex) {
-                ForEach(framedImages.indices, id: \.self) { index in
+//                ForEach(framedImages.indices, id: \.self) { index in
+                ForEach(Array(framedImages.enumerated()), id: \.offset) { index, image in
                     ZStack(alignment: .topTrailing) {
-                        DiaryImageFrame(viewModel: framedImages[index])
+//                        DiaryImageFrame(viewModel: framedImages[index])
+                        DiaryImageFrame(viewModel: image)
                             .padding(.horizontal, 23)
                             .tag(index)
                         
                         if isSelectView { // delete 버튼 띄우기
                             Button(action: { showDeletePopup = true }) {
-                                Image(.delete)
+                                Image("imageDelete")
                                     .resizable()
                                     .frame(width: 30, height: 30)
                             }

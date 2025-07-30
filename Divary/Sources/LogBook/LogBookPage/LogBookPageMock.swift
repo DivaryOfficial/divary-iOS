@@ -5,6 +5,7 @@
 //  Created by 바견규 on 7/9/25.
 //
 
+
 let LogBookPageMock: [DiveLogData] = [
     DiveLogData(
         overview: DiveOverview(
@@ -16,7 +17,7 @@ let LogBookPageMock: [DiveLogData] = [
         participants: DiveParticipants(
             leader: "김다이버",
             buddy: "이버디",
-            companion: ["이동행1", "이동행2"]
+            companion: ["이동행1", "이동행2","이동행3", "이동행4"]
         ),
         equipment: DiveEquipment(
             suitType: "웻슈트 3mm",
@@ -29,6 +30,7 @@ let LogBookPageMock: [DiveLogData] = [
             current: "보통",
             wave: "약함",
             airTemp: 27,
+            feelsLike: "더움",
             waterTemp: 22,
             visibility: "보통"
         ),
@@ -64,6 +66,7 @@ let LogBookPageMock: [DiveLogData] = [
             current: "강함",
             wave: "보통",
             airTemp: 20,
+            feelsLike: "추움",
             waterTemp: 18,
             visibility: "나쁨"
         ),

@@ -10,13 +10,13 @@ import SwiftUI
 struct DiaryImageFrame: View {
     @StateObject var viewModel: DiaryImageDecoViewModel
 
-//    init(frameType: DiaryImageDecoViewModel.FrameType = .origin) {
-//        _viewModel = StateObject(wrappedValue: DiaryImageDecoViewModel(frameType: frameType, isSelected: false))
-//    }
-    
-    init(frameType: DiaryImageDecoViewModel.FrameType = .pastelBlue) {
-        _viewModel = StateObject(wrappedValue: DiaryImageDecoViewModel(frameType: frameType, isSelected: true))
+    init(frameType: DiaryImageDecoViewModel.FrameType = .origin) {
+        _viewModel = StateObject(wrappedValue: DiaryImageDecoViewModel(frameType: frameType, isSelected: false))
     }
+    
+//    init(frameType: DiaryImageDecoViewModel.FrameType = .pastelBlue) {
+//        _viewModel = StateObject(wrappedValue: DiaryImageDecoViewModel(frameType: frameType, isSelected: true))
+//    }
     
     init(viewModel: DiaryImageDecoViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
@@ -42,11 +42,11 @@ struct DiaryImageFrame: View {
                         VStack(alignment: .leading, spacing: 4) {
                             TextField("캡션 추가...", text: $viewModel.imageCaption)
                                 .font(.omyu.regular(size: 20))
-                                .foregroundColor(.black)
+                                .foregroundStyle(Color(.black))
                             
                             Text(viewModel.imageDate)
                                 .font(.NanumSquareNeo.NanumSquareNeoBold(size: 12))
-                                .foregroundColor(Color(.G_700))
+                                .foregroundStyle(Color(.G_700))
                                 .padding(.bottom, 18)
                         }
                     }

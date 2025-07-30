@@ -14,6 +14,7 @@ struct FooterItem: View {
     var body: some View {
         VStack(spacing: 4) {
             image
+                .resizable()
                 .frame(width: 40, height: 40)
                 .padding(.bottom, 4)
             Text(title)
@@ -23,5 +24,5 @@ struct FooterItem: View {
 }
 
 #Preview {
-    FooterItem(image: Image(.deco), title: "꾸미기")
+    FooterItem(image: Image("tabler_photo-edit"), title: "꾸미기")
 }

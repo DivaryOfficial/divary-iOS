@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DiveEnvironmentSection: View {
-    let environment: DiveEnvironment?
+    @Binding var environment: DiveEnvironment?
     @Binding var isSaved: Bool
     // 기입 상태
     var status: SectionStatus {
@@ -71,7 +71,7 @@ struct DiveEnvironmentSection: View {
                     .foregroundStyle(status != .empty ? Color.bw_black : Color.grayscale_g400)
                 if status == .partial {
                     Text("작성중")
-                        .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 10))
+                        .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 10))
                         .foregroundStyle(Color.role_color_nagative)
                         .padding(4)
                 }
@@ -83,7 +83,7 @@ struct DiveEnvironmentSection: View {
                         Text("날씨")
                             .font(Font.omyu.regular(size: 16))
                             .foregroundStyle(environment?.weather != nil ? Color.grayscale_g700 : Color.grayscale_g400)
-                            .padding(.bottom, 2)
+                            .padding(.bottom, 4)
                         weatherImage(for: environment?.weather)
                             .renderingMode(.template)
                             .resizable()
@@ -102,7 +102,7 @@ struct DiveEnvironmentSection: View {
                             .foregroundStyle(environment?.wind != nil ? Color.grayscale_g700 : Color.grayscale_g400)
                             .padding(.bottom, 8)
                         Text(environment?.wind ?? " ")
-                            .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
+                            .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
                             .foregroundStyle(Color.bw_black)
                     }
                     .frame(maxWidth: .infinity)
@@ -115,7 +115,7 @@ struct DiveEnvironmentSection: View {
                             .foregroundStyle(environment?.current != nil ? Color.grayscale_g700 : Color.grayscale_g400)
                             .padding(.bottom, 8)
                         Text(environment?.current ?? " ")
-                            .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
+                            .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
                             .foregroundStyle(Color.bw_black)
                     }
                     .frame(maxWidth: .infinity)
@@ -128,7 +128,7 @@ struct DiveEnvironmentSection: View {
                             .foregroundStyle(environment?.wave != nil ? Color.grayscale_g700 : Color.grayscale_g400)
                             .padding(.bottom, 8)
                         Text(environment?.wave ?? " ")
-                            .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
+                            .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
                             .foregroundStyle(Color.bw_black)
                     }
                     .frame(maxWidth: .infinity)
@@ -145,9 +145,9 @@ struct DiveEnvironmentSection: View {
                             .padding(14)
                         Group{
                             Text(environment?.airTemp != nil ? "\(environment!.airTemp!)" : "0")
-                                .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 14))
+                                .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
                             Text("℃")
-                                .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
+                                .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
                         }.foregroundStyle(environment?.airTemp != nil ? Color.bw_black : Color.grayscale_g400)
                     }
                     
@@ -160,9 +160,9 @@ struct DiveEnvironmentSection: View {
                             .padding(14)
                         Group{
                             Text(environment?.waterTemp != nil ? "\(environment!.waterTemp!)" : "0")
-                                .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 14))
+                                .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
                             Text("℃")
-                                .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
+                                .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
                         }.foregroundStyle(environment?.waterTemp != nil ? Color.bw_black : Color.grayscale_g400)
                     }
                     
@@ -195,7 +195,7 @@ struct DiveEnvironmentSection: View {
 
 #Preview {
     DiveEnvironmentSection(
-        environment: DiveEnvironment(
+        environment: .constant(DiveEnvironment(
             weather: "맑음",
             wind: "중풍",
             current: "없음",
@@ -203,11 +203,11 @@ struct DiveEnvironmentSection: View {
             airTemp: 6,
             waterTemp: 6,
             visibility: "좋음"
-        ),
+        )),
         isSaved: .constant(false)
     )
     DiveEnvironmentSection(
-        environment: DiveEnvironment(
+        environment: .constant(DiveEnvironment(
             weather:  nil,
             wind:  nil,
             current:  nil,
@@ -215,7 +215,7 @@ struct DiveEnvironmentSection: View {
             airTemp:  nil,
             waterTemp:  nil,
             visibility: nil
-        ),
+        )),
         isSaved: .constant(false)
     )
 }

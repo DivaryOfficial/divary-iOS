@@ -18,7 +18,7 @@ struct CalenderNavBar: View {
             HStack(spacing: 4) {
                 Text(selectedDateFormatted)
                     .font(Font.omyu.regular(size: 20))
-                    .foregroundColor(.black)
+                    .foregroundStyle(.black)
                     .padding(.vertical, 6)
                 ZStack{
                     Button(action: {
@@ -66,7 +66,7 @@ struct CalenderNavBar: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 24)
-                        .foregroundColor(.black)
+                        .foregroundStyle(.black)
                 }
                 
                 Spacer()

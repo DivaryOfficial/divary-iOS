@@ -36,11 +36,13 @@ struct DiaryImageDecoView: View {
     private var headerBar: some View {
         HStack {
             Button(action: { showDeletePopup = true }) {
-                Image(.close)
+                Image("iconamoon_close-thin")
+                    .foregroundStyle(Color(.black))
             }
             Spacer()
             Button(action: { }) {
-                Image(.check)
+                Image("humbleicons_check")
+                    .foregroundStyle(Color(.black))
             }
         }
         .padding(.horizontal, 20)

@@ -33,8 +33,8 @@ struct DiaryImageSelectView: View {
     private var footerBar: some View {
         HStack(spacing: 40) {
             Spacer()
-            FooterItem(image: Image(.deco), title: "꾸미기")
-            FooterItem(image: Image(.upload), title: "업로드")
+            FooterItem(image: Image("tabler_photo-edit"), title: "꾸미기")
+            FooterItem(image: Image("Photo-1"), title: "업로드")
             Spacer()
         }
         .padding(.horizontal, 16)
@@ -42,7 +42,7 @@ struct DiaryImageSelectView: View {
         .overlay(
             Rectangle()
                 .frame(height: 2)
-                .foregroundColor(Color(.G_100)),
+                .foregroundStyle(Color(.G_100)),
             alignment: .top
         )
     }

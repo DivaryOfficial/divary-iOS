@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DiveParticipantsSection: View {
-    let participants: DiveParticipants?
+    @Binding var participants: DiveParticipants?
     @Binding var isSaved: Bool
     
     var status: SectionStatus {
@@ -37,7 +37,7 @@ struct DiveParticipantsSection: View {
                     .foregroundStyle(status != .empty ? Color.bw_black : Color.grayscale_g400)
                 if status == .partial {
                     Text("작성중")
-                        .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 10))
+                        .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 10))
                         .foregroundStyle(Color.role_color_nagative)
                         .padding(4)
                 }
@@ -78,7 +78,8 @@ struct DiveParticipantsSection: View {
             HStack(alignment: .bottom, spacing: 2) {
                 Text(isEmpty ? " " : trimmedValue)
                     .foregroundStyle(isEmpty ? Color.grayscale_g400 : Color.bw_black)
-                    .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
+                    .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
+                    .lineSpacing(4)
             }
             .fixedSize(horizontal: false, vertical: true)
             .multilineTextAlignment(.trailing)
@@ -94,20 +95,20 @@ struct DiveParticipantsSection: View {
 #Preview {
     VStack(spacing: 20) {
         DiveParticipantsSection(
-            participants: DiveParticipants(
+            participants: .constant(DiveParticipants(
                 leader: "김리더",
                 buddy: nil,
                 companion: ["이동행", "최동행"]
-            ),
+            )),
             isSaved: .constant(false)
         )
 
         DiveParticipantsSection(
-            participants: DiveParticipants(
+            participants: .constant(DiveParticipants(
                 leader: nil,
                 buddy: nil,
                 companion: nil
-            ),
+            )),
             isSaved: .constant(false)
         )
     }
