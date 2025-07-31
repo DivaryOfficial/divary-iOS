@@ -5,8 +5,7 @@ struct DivaryApp: App {
     
     var body: some Scene {
         WindowGroup {
-            
-            DiaryMainView()
+            DiaryMainView(showCanvas: .constant(false))
         }
     }
 }

@@ -7,6 +7,7 @@ import SwiftUI
 import PhotosUI
 import RichTextKit
 import Observation
+import PencilKit
 
 @Observable
 class DiaryMainViewModel {
@@ -26,6 +27,9 @@ class DiaryMainViewModel {
     // 내부 상태 관리
     private var isApplyingStyle: Bool = false
     private var lastCursorPosition: Int = 0
+    
+    var savedDrawing: PKDrawing? = nil
+    var drawingOffsetY: CGFloat = 0
 
     // MARK: - Block Management
     
@@ -429,5 +433,20 @@ class DiaryMainViewModel {
         }
         
         return nil
+    }
+    
+    // MARK: - Drawing
+    
+    func loadSavedDrawing() {
+        guard let data = UserDefaults.standard.data(forKey: "SavedDrawingMeta"),
+              let meta = try? JSONDecoder().decode(DrawingMeta.self, from: data),
+              let drawingData = Data(base64Encoded: meta.base64),
+              let drawing = try? PKDrawing(data: drawingData) else {
+            return
+        }
+        self.savedDrawing = drawing
+        self.drawingOffsetY = meta.offsetY
+//        print("drawingOffsetY = \(drawingOffsetY)")
+//        print("meta.offsetY = \(meta.offsetY)")
     }
 }

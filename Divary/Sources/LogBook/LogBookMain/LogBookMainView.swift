@@ -37,7 +37,7 @@ struct LogBookMainView: View {
                     case .logbook:
                         LogBookPageView(viewModel: viewModel)
                     case .diary:
-                        DiaryMainView()
+                        DiaryMainView(showCanvas: .constant(false))
                     }
                 }
             }
