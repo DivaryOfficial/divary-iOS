@@ -8,10 +8,20 @@
 import SwiftUI
 
 struct MainView: View {
+    @State private var selectedYear: Int = 2025
+    
+    private var canSubYear: Bool {
+        selectedYear > 1950
+    }
+    private var canAddYear: Bool {
+        selectedYear < 2025
+    }
+    
     var body: some View {
         ZStack {
             background
             yearSelectbar
+            YearlyLogBubbleView()
         }
     }
     
@@ -34,22 +44,35 @@ struct MainView: View {
                 
             }
             .padding(.top, 50)
+            .padding(.bottom, 3)
             
-            HStack {
-                Button(action: {}) {
+            HStack(alignment: .top) {
+                Button(action: {
+                    if canSubYear {
+                        selectedYear -= 1
+                    }
+                }) {
                     Image("chevron.left")
-                        .foregroundStyle(.black)
+                        .foregroundStyle(canSubYear ? .black : Color(.grayscaleG500))
                 }
+                .padding(.top, 8)
                 Spacer()
                 
-                YearDropdownPicker()
+                YearDropdownPicker(selectedYear: $selectedYear)
                 
                 Spacer()
-                Button(action: {}) {
+                Button(action: {
+                    if canAddYear {
+                        selectedYear += 1
+                    }
+                }) {
                     Image("chevron.right")
-                        .foregroundStyle(.black)
+                        .foregroundStyle(canAddYear ? .black : Color(.grayscaleG500))
                 }
+                .padding(.top, 8)
             }
+            .padding(.horizontal, 12)
+            
             Spacer()
         }
     }

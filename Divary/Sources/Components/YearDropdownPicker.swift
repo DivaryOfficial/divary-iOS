@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct YearDropdownPicker: View {
-    @State private var selection = 2025
+    @Binding var selectedYear: Int
     @State private var isExpanded = false
 
     var body: some View {
@@ -24,7 +24,7 @@ struct YearDropdownPicker: View {
                 }
             }) {
                 HStack {
-                    Text("\(String(selection))년")
+                    Text("\(String(selectedYear))년")
                         .font(Font.omyu.regular(size: 20))
                         .foregroundColor(.black)
                     Spacer()
@@ -42,7 +42,7 @@ struct YearDropdownPicker: View {
                     VStack(spacing: 0) {
                         ForEach((1950...2025).reversed(), id: \.self) { item in
                             Button(action: {
-                                selection = item
+                                selectedYear = item
                                 isExpanded = false
                             }) {
                                 Text("\(String(item))년")
@@ -51,7 +51,7 @@ struct YearDropdownPicker: View {
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .padding(.horizontal, 16)
                                     .padding(.vertical, 10)
-                                    .background(selection == item ? Color.gray.opacity(0.15) : Color.white)
+                                    .background(selectedYear == item ? Color.gray.opacity(0.15) : Color.white)
                             }
                         }
                     }
@@ -67,5 +67,6 @@ struct YearDropdownPicker: View {
 }
 
 #Preview {
-    YearDropdownPicker()
+    @Previewable @State var selectedYear: Int = 2025
+    YearDropdownPicker(selectedYear: $selectedYear)
 }
