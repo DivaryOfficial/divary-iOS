@@ -44,6 +44,9 @@ struct StoreMainView: View {
     
     @Bindable var viewModel:CharacterViewModel
     
+    //패드 기기 사이즈 조정
+    @Environment(\.horizontalSizeClass) private var hSizeClass
+    private var isPad: Bool { hSizeClass == .regular }
     
     var body: some View {
         ZStack{
@@ -58,11 +61,37 @@ struct StoreMainView: View {
                 VStack(spacing: 0) {
                     if showSheet && !isPetEditingMode {  // 편집 모드가 아닐 때만 시트 표시
                         StoreNavBar(showSheet: $showSheet)
+                            .background(Color.white)
+                            
                         TabSelector(selectedTab: $selectedTab)
                             .padding(.horizontal)
+                            .background(Color.white)
+                            
+                        
+                        HStack {
+                            Spacer()
+                            
+                            if showToast {
+                                Image("StoreTooltip")
+                                    .offset(x: isPad ? 0 : 30, y: 0)
+                                    .scaleEffect(isPad ? 1.3 : 1.0) // 아이패드에서 30% 확대
+                            }
+                            
+                            Button(action: { showToastMessage() }) {
+                                Image("InfoCircle")
+                                    .resizable()
+                                    .foregroundStyle(Color.white)
+                                    .frame(width: isPad ? 32 : 24, height: isPad ? 32 : 24)
+                                    .padding(.horizontal, isPad ? 14 : 10)
+                                    .padding(.vertical, isPad ? 20 : 15)
+                            }
+                        }
+
+                        
                     }
                 }
-                .background(Color.white)
+                
+                
                 
                 
                 
@@ -72,7 +101,7 @@ struct StoreMainView: View {
                         switch selectedTab {
                         case .myOcean:
                             BottomSheetView(
-                                minHeight: UIScreen.main.bounds.height * 0.05,
+                                minHeight: UIScreen.main.bounds.height * 0.06,
                                 medianHeight: UIScreen.main.bounds.height * 0.5,
                                 maxHeight: UIScreen.main.bounds.height * 0.8
                             ) {
@@ -80,7 +109,7 @@ struct StoreMainView: View {
                             }
                         case .wardrobe:
                             BottomSheetView(
-                                minHeight: UIScreen.main.bounds.height * 0.05,
+                                minHeight: UIScreen.main.bounds.height * 0.06,
                                 medianHeight: UIScreen.main.bounds.height * 0.5,
                                 maxHeight: UIScreen.main.bounds.height * 0.8
                             ) {
@@ -91,39 +120,12 @@ struct StoreMainView: View {
                 }
                 
                 
+                
+                
             }
             
-            // 토스트 메시지
-            if showToast {
-                VStack {
-                    Spacer()
-                    HStack {
-                        Spacer()
-                        Text("상점에서는 캐릭터와 펫이 실제 위치보다 아래에 표시됩니다.")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 12)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(Color.black.opacity(0.8))
-                            )
-                            .transition(.asymmetric(
-                                insertion: .move(edge: .bottom).combined(with: .opacity),
-                                removal: .opacity
-                            ))
-                        Spacer()
-                    }
-                    .padding(.bottom, 40) // 하단 시트 위에 표시
-                }
-            }
+           
             
-        }
-        .onChange(of: isPetEditingMode) { oldValue, newValue in
-            // 펫 편집 모드에서 나올 때 (true -> false)
-            if oldValue == true && newValue == false {
-                showToastMessage()
-            }
         }
         
         

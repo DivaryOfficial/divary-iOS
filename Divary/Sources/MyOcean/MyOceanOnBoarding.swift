@@ -60,20 +60,20 @@ struct OnboardingMessageOverlay: View {
             )
             
             VStack(spacing: 0) {
-                TextField("이름을 입력해주세요", text: $nicknameString)
+                TextField("이름을 작성해주세요", text: $nicknameString)
                     .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
                     .padding(.vertical, 12)
-                    .padding(.horizontal, 16)
                     .multilineTextAlignment(.center)
                     .foregroundStyle(Color.bw_black)
                     .background(Color.grayscale_g100)
                     .cornerRadius(8)
-                    .frame(width: 200)
+                    .frame(width: 240)
                     .overlay(
                         Group {
                             if nicknameString.isEmpty {
-                                Text("이름을 입력해주세요")
+                                Text("이름을 작성해주세요")
                                     .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
+                                    .padding(.vertical, 12)
                                     .foregroundStyle(Color.grayscale_g400)
                                     .allowsHitTesting(false)
                             }
@@ -86,8 +86,8 @@ struct OnboardingMessageOverlay: View {
                     Text("작성 완료")
                         .font(Font.omyu.regular(size: 16))
                         .foregroundStyle(nicknameString.isEmpty ? Color.grayscale_g500 : Color.bw_white)
-                        .frame(width: 200)
-                        .padding(.vertical, 10)
+                        .frame(width: 240)
+                        .padding(.vertical, 12)
                         .background(nicknameString.isEmpty ? Color.grayscale_g200 : Color.primary_sea_blue)
                         .cornerRadius(8)
                 }
@@ -103,7 +103,7 @@ struct OnboardingMessageOverlay: View {
                 }
             }
         }
-        .padding(.horizontal, 39)
+        .padding(.horizontal, 26)
         .padding(.bottom, 22)
         .background(
             RoundedRectangle(cornerRadius: 12)
@@ -184,6 +184,7 @@ struct SpeechBubble: View {
             Text(text)
                 .font(Font.omyu.regular(size: fontSize))
                 .multilineTextAlignment(.center)
+                .lineSpacing(8)
                 .padding(.horizontal, 44)
                 .padding(.vertical, 22)
         }
