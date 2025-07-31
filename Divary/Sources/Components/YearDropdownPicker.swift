@@ -7,10 +7,8 @@
 
 import SwiftUI
 
-struct CustomDropdownPicker: View {
+struct YearDropdownPicker: View {
     @State private var selection = 2025
-    let items = [2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018]
-
     @State private var isExpanded = false
 
     var body: some View {
@@ -42,7 +40,7 @@ struct CustomDropdownPicker: View {
             if isExpanded {
                 ScrollView {
                     VStack(spacing: 0) {
-                        ForEach(items, id: \.self) { item in
+                        ForEach((1950...2025).reversed(), id: \.self) { item in
                             Button(action: {
                                 selection = item
                                 isExpanded = false
@@ -58,7 +56,7 @@ struct CustomDropdownPicker: View {
                         }
                     }
                 }
-                .frame(height: min(CGFloat(items.count) * 44, 150)) // 5개만 보이도록
+                .frame(height: 150) // 5개만 보이도록
                 .background(Color.white)
             }
         }
@@ -69,5 +67,5 @@ struct CustomDropdownPicker: View {
 }
 
 #Preview {
-    CustomDropdownPicker()
+    YearDropdownPicker()
 }
