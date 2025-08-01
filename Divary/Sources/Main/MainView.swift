@@ -21,7 +21,7 @@ struct MainView: View {
         ZStack {
             background
             yearSelectbar
-            YearlyLogBubbleView()
+            YearlyLogBubble()
         }
     }
     
