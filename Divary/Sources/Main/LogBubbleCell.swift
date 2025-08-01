@@ -21,11 +21,6 @@ struct LogBubbleCell: View {
         VStack {
             ZStack {
                 Image(.bubble)
-                    .blur(radius: 3)
-                    .overlay(
-                        Circle()
-                            .stroke(Color.white, lineWidth: 1)
-                    )
                 iconType.image
             }
             if iconType != .plus { // 로그북 버블일 때

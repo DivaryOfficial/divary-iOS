@@ -22,6 +22,7 @@ struct MainView: View {
             background
             yearSelectbar
             YearlyLogBubble()
+                .padding(.top, 150)
         }
     }
     
