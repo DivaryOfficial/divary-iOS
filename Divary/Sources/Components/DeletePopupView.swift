@@ -36,6 +36,7 @@ struct DeletePopupView: View {
                             .padding()
                             .background(Color(.G_200))
                             .cornerRadius(8)
+                            .font(.omyu.regular(size: 16))
                     }
                     
                     Button(action: onDelete) {
@@ -45,6 +46,7 @@ struct DeletePopupView: View {
                             .background(Color(.seaBlue))
                             .foregroundColor(.white)
                             .cornerRadius(8)
+                            .font(.omyu.regular(size: 16))
                     }
                 }
                 .padding(.horizontal, 20)

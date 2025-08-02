@@ -9,6 +9,8 @@ import SwiftUI
 
 struct MainView: View {
     @State private var selectedYear: Int = 2025
+    @State private var showSwipeTooltip = false
+    @State private var showDeletePopup = false
     
     private var canSubYear: Bool {
         selectedYear > 1950
@@ -21,9 +23,43 @@ struct MainView: View {
         ZStack {
             background
             yearSelectbar
-            YearlyLogBubble()
+            YearlyLogBubble(showDeletePopup: $showDeletePopup)
                 .padding(.top, 150)
+            
+            if showSwipeTooltip {
+                VStack {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        Image(.swipeTooltip)
+                            .padding(.trailing, 20)
+                            .transition(.opacity)
+                    }
+                    .padding(.bottom, 200)
+                }
+            }
+
         }
+        .task {
+            // 최초 실행 시 한 번만 표시
+            let launched = UserDefaults.standard.bool(forKey: "launchedBefore")
+            if !launched {
+                showSwipeTooltip = true
+                UserDefaults.standard.set(true, forKey: "launchedBefore")
+//        
+//                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+//                    withAnimation {
+//                        showSwipeTooltip = false
+//                    }
+//                }
+            }
+        }
+        .overlay {
+           if showDeletePopup {
+               DeletePopupView(isPresented: $showDeletePopup, deleteText: "삭제하시겠습니까?")
+           }
+       }
+        
     }
     
     private var background: some View {
@@ -34,7 +70,7 @@ struct MainView: View {
     }
     
     private var yearSelectbar: some View {
-        VStack {
+        VStack(spacing: 0) {
             HStack {
                 Spacer()
                 Button(action: {}) {
@@ -44,7 +80,10 @@ struct MainView: View {
                 .padding(.trailing, 12)
                 
             }
-            .padding(.top, 50)
+//            .padding(.top, 50)
+            .safeAreaInset(edge: .top) {
+                Color.clear.frame(height: 55)
+            }
             .padding(.bottom, 3)
             
             HStack(alignment: .top) {
