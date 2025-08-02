@@ -277,7 +277,7 @@ struct StoreMainView: View {
         switch type {
         case .ivory: return Color(hex: "#FFFDF6")
         case .yellow: return Color(hex: "#FFF6D2")
-        case .pink: return Color(hex: "#FFE929")
+        case .pink: return Color(hex: "#FFE9E9")
         case .brown: return Color(hex: "#AF9685")
         case .gray: return Color(hex: "#7B8184")
         default: return .clear
