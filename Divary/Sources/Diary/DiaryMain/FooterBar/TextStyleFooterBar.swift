@@ -27,18 +27,18 @@ struct TextStyleFooterBar: View {
             }
             
             Button(action: {
-                viewModel.toggleStyle(.underlined)
+                viewModel.setUnderline(!viewModel.getCurrentIsUnderlined())
             }) {
                 Image("humbleicons_underline")
-                    .foregroundStyle(viewModel.richTextContext.hasStyle(.underlined) ?
+                    .foregroundStyle(viewModel.getCurrentIsUnderlined() ?
                                      Color.primary_sea_blue : Color.bw_black)
             }
             
             Button(action: {
-                viewModel.toggleStyle(.strikethrough)
+                viewModel.setStrikethrough(!viewModel.getCurrentIsStrikethrough())
             }) {
                 Image("mi_strikethrough")
-                    .foregroundStyle(viewModel.richTextContext.hasStyle(.strikethrough) ?
+                    .foregroundStyle(viewModel.getCurrentIsStrikethrough() ?
                                      Color.primary_sea_blue : Color.bw_black)
             }
             
@@ -48,7 +48,11 @@ struct TextStyleFooterBar: View {
         .padding(.horizontal, 20)
         .padding(.vertical, 12)
         .background(Color(.G_100))
-        .onChange(of: viewModel.forceUIUpdate) { _, _ in }
-        .onChange(of: viewModel.richTextContext.attributedString) { _, _ in }
+        .onChange(of: viewModel.forceUIUpdate) { _, _ in
+            // UI 업데이트 트리거
+        }
+        .onChange(of: viewModel.richTextContext.attributedString) { _, _ in
+            // 텍스트 변경 감지
+        }
     }
 }

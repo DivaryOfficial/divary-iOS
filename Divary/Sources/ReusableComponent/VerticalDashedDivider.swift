@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct VerticalDashedDivider: View {
-    var dashSize: CGSize = CGSize(width: 1, height: 4)
+    var dashSize: CGSize = CGSize(width: 1, height: 2)
     var spacing: CGFloat = 3
-    var color: Color = .gray
+    var color: Color = Color.grayscale_g300
 
     var body: some View {
         Canvas { context, size in
@@ -23,4 +23,10 @@ struct VerticalDashedDivider: View {
         }
         .frame(width: dashSize.width)
     }
+}
+
+
+#Preview {
+    VerticalDashedDivider()
+        .frame(width: 72)
 }

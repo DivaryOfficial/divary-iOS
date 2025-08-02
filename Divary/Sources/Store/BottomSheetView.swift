@@ -49,7 +49,7 @@ struct BottomSheetView<Content: View>: View {
             .frame(height: currentHeight)
             .frame(maxWidth: .infinity)
             .background(Color.white)
-            .cornerRadius(20)
+            .clipShape(RoundedCorner(radius: 12, corners: [.topLeft, .topRight]))
             .offset(y: dragOffset)
             .gesture(
                 DragGesture()
