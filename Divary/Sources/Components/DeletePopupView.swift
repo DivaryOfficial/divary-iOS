@@ -23,8 +23,8 @@ struct DeletePopupView: View {
             
             VStack(spacing: 16) {
                 Text(deleteText)
-                    .font(.body)
                     .padding(.top, 24)
+                    .font(.omyu.regular(size: 24))
                 
                 HStack(spacing: 12) {
                     Button {

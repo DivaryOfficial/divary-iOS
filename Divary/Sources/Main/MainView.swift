@@ -46,12 +46,6 @@ struct MainView: View {
             if !launched {
                 showSwipeTooltip = true
                 UserDefaults.standard.set(true, forKey: "launchedBefore")
-//        
-//                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-//                    withAnimation {
-//                        showSwipeTooltip = false
-//                    }
-//                }
             }
         }
         .overlay {
