@@ -23,7 +23,6 @@ struct DeletePopupView: View {
             
             VStack(spacing: 16) {
                 Text(deleteText)
-                    .multilineTextAlignment(.center)
                     .padding(.top, 24)
                     .font(.omyu.regular(size: 24))
                 

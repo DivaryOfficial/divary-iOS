@@ -28,19 +28,26 @@ enum SectionStatus {
 
 @Observable
 class DiveLogData {
-    var overview: DiveOverview?           // 다이빙 개요
-    var participants: DiveParticipants?   // 동행자 정보
-    var equipment: DiveEquipment?         // 장비 정보
-    var environment: DiveEnvironment?    // 환경 정보
-    var profile: DiveProfile?             // 다이빙 프로파일
+    var title: String        // 로그 제목
+    var date: String         // 로그 날짜 (예: "2022-01-23")
     
+    var overview: DiveOverview?
+    var participants: DiveParticipants?
+    var equipment: DiveEquipment?
+    var environment: DiveEnvironment?
+    var profile: DiveProfile?
+
     init(
+        title: String = "",
+        date: String = "",
         overview: DiveOverview? = nil,
         participants: DiveParticipants? = nil,
         equipment: DiveEquipment? = nil,
         environment: DiveEnvironment? = nil,
         profile: DiveProfile? = nil
     ) {
+        self.title = title
+        self.date = date
         self.overview = overview
         self.participants = participants
         self.equipment = equipment
