@@ -17,6 +17,7 @@ struct LogBookMainView: View {
     @State var selectedTab: DiveLogTab = .logbook
     @State var viewModel: LogBookMainViewModel = .init()
     @State private var isCalendarPresented = false
+    @State private var showCanvas = false
     
     //날짜 변경 취소를 위한 백업데이터
     @State private var backupDate: Date = Date()
@@ -37,7 +38,7 @@ struct LogBookMainView: View {
                     case .logbook:
                         LogBookPageView(viewModel: viewModel)
                     case .diary:
-                        DiaryMainView(showCanvas: .constant(false))
+                        DiaryMainView(showCanvas: $showCanvas)
                     }
                 }
             }
