@@ -40,7 +40,7 @@ struct YearDropdownPicker: View {
             if isExpanded {
                 ScrollView {
                     VStack(spacing: 0) {
-                        ForEach((1950...2025).reversed(), id: \.self) { item in
+                        ForEach((1950...Calendar.current.component(.year, from: Date())).reversed(), id: \.self) { item in
                             Button(action: {
                                 selectedYear = item
                                 isExpanded = false

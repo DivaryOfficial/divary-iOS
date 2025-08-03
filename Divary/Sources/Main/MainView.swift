@@ -16,13 +16,13 @@ struct MainView: View {
         selectedYear > 1950
     }
     private var canAddYear: Bool {
-        selectedYear < 2025
+        selectedYear < Calendar.current.component(.year, from: Date())
     }
     
     var body: some View {
         ZStack {
             background
-            yearSelectbar
+            
             YearlyLogBubble(showDeletePopup: $showDeletePopup)
                 .padding(.top, 150)
             
@@ -38,7 +38,7 @@ struct MainView: View {
                     .padding(.bottom, 200)
                 }
             }
-
+            yearSelectbar
         }
         .task {
             // 최초 실행 시 한 번만 표시
