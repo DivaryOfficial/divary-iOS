@@ -14,6 +14,32 @@ struct SeaCreatureCard: Decodable, Identifiable {
     let imageUrl: URL
 }
 
+extension SeaCreatureCard {
+    var nameImageAssetName: String {
+        switch name {
+        case "흰동가리": return "clownfish"
+        case "갯민숭달팽이": return "longhornCowfish"
+        case "문어": return "octopus"
+        case "청줄놀래기": return "anchovy"
+        case "쏨뱅이": return "seaSlug"
+        case "군소": return "turtle"
+        case "복어": return "blowfish"
+        case "돌돔": return "dolphin"
+        case "나비고기": return "butterflyfish"
+        case "보름달물해파리": return "combJelly"
+        case "줄전갱이": return "shrimp"
+        case "꼬덕새우": return "crab"
+        case "바다거북": return "lionfish"
+        case "불가사리": return "squid"
+        case "쏠배감펭": return "clam"
+        case "성게": return "starfish"
+        default: return "placeholder"
+        }
+    }
+}
+
+
+
 // MARK: - Root Response
 struct SeaCreatureResponse: Decodable {
     let timestamp: String

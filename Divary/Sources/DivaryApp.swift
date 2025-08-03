@@ -17,7 +17,7 @@ struct DivaryApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $router.path) {
-                DiaryMainView(showCanvas: .constant(false))
+                DiaryMainView()
                     .navigationDestination(for: Route.self) { route in
                         switch route {
                             
