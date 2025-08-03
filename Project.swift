@@ -11,6 +11,9 @@ let project = Project(
         base: [
                "GOOGLE_CLIENT_ID": "$(GOOGLE_CLIENT_ID)",
                "GOOGLE_URL_SCHEME": "$(GOOGLE_URL_SCHEME)"
+        ],
+        configurations: [
+            .debug(name: "SecretOnly", xcconfig: .relativeToRoot("../divary-iOS/Configuration/Secret.xcconfig"))
         ]
     ),
     targets: [
@@ -34,11 +37,12 @@ let project = Project(
                                 "$(GOOGLE_URL_SCHEME)"
                             ]
                         ]
-                    ]
+                    ],
+                    "UIUserInterfaceStyle": "Light"
                 ]
             ),
             sources: ["Divary/Sources/**"],
-            resources: ["Divary/Resources/**"], // ✅ .github 제거
+            resources: ["Divary/Resources/**"],
             dependencies: [
                 .package(product: "Moya"),
                 .package(product: "GoogleSignIn"),

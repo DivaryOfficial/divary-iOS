@@ -7,25 +7,52 @@
 
 
 import SwiftUI
-import GoogleSignIn
-import GoogleSignInSwift
 
 //구글 로그인 버튼
 struct GoogleSignInButtonView: View {
     var action: () -> Void
+    @Environment(\.horizontalSizeClass) private var hSizeClass
 
     var body: some View {
+        let isPad = hSizeClass == .regular
+        let btnHeight: CGFloat = isPad ? 56 : 44
+        let fontSize: CGFloat = isPad ? 16 : 14
+
         Button(action: action) {
-            HStack(spacing: 10) {
-                Image("ios_light_sq_SI")
+            HStack(spacing: 12) {
+                Image("google_g_logo")
                     .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(maxWidth: UIScreen.main.bounds.width * 0.6)
+                    .frame(width: 20, height: 20)
+                Text("Continue with Google")
+                    .font(Font.RobotoMedium.RobotoMedium(size: fontSize))
+                    .foregroundStyle(Color.black)
             }
+            .frame(height: btnHeight)
+            .padding(.horizontal, 16)
+            .background(
+                   RoundedRectangle(cornerRadius: 8)
+                     .fill(Color.white)
+                     .shadow(color: Color.black.opacity(0.18), radius: 6, x: 0, y: 4)
+            )
+            .cornerRadius(4)
         }
     }
 }
 
+
 #Preview {
-    GoogleSignInButtonView(action: {})
+    VStack {
+        Spacer()
+        HStack {
+            Spacer()
+            Text("Preview")
+            Spacer()
+        }
+        
+        ZStack {
+            GoogleSignInButtonView(action: {})
+        }
+        Spacer()
+    }
+    .background(Color.primary_sea_blue)
 }

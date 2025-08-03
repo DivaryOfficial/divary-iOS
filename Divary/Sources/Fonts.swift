@@ -85,7 +85,7 @@ extension Font {
     }
     
     enum NanumHanYunCe: String {
-        case regular = "Cafe24Oneprettynight"
+        case regular = "NanumHanYunCe"
 
         var value: String {
             return self.rawValue
@@ -93,6 +93,18 @@ extension Font {
         
         static func NanumHanYunCeRegular(size: CGFloat) -> Font {
             return DivaryFontFamily.나눔손글씨한윤체.regular.swiftUIFont(size: size)
+        }
+    }
+    
+    enum RobotoMedium: String {
+        case regular = "Roboto-Medium"
+
+        var value: String {
+            return self.rawValue
+        }
+        
+        static func RobotoMedium(size: CGFloat) -> Font {
+            return DivaryFontFamily.Roboto.medium.swiftUIFont(size: size)
         }
     }
     
