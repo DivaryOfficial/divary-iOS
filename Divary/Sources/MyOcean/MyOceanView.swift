@@ -174,11 +174,10 @@ struct CharacterView: View {
                         cornerHandle(at: CGSize(width: -frameSize/2 - (5 * scale), height: -frameSize/2 - (5 * scale)), scale: scale)
                         cornerHandle(at: CGSize(width: frameSize/2 + (5 * scale), height: -frameSize/2 - (5 * scale)), scale: scale)
                         cornerHandle(at: CGSize(width: -frameSize/2 - (5 * scale), height: frameSize/2 + (5 * scale)), scale: scale)
-                        cornerHandle(at: CGSize(width: frameSize/2 + (5 * scale), height: frameSize/2 + (5 * scale)), scale: scale)
+                        // 회전 핸들
+                        rotationHandle(at:  CGSize(width: frameSize/2 + (5 * scale), height: frameSize/2 + (5 * scale)), scale: scale)
                     }
-                    
-                    // 회전 핸들
-                    rotationHandle(frameSize: frameSize, scale: scale)
+        
                 }
                 .offset(x: finalX, y: finalY)
                 .gesture(
@@ -216,7 +215,7 @@ struct CharacterView: View {
     // MARK: - 모서리 핸들
     @ViewBuilder
     private func cornerHandle(at offset: CGSize, scale: CGFloat) -> some View {
-        let handleSize = 16 * scale  // 스케일 적용
+        let handleSize = 12 * scale  // 스케일 적용
         
         Circle()
             .fill(Color.white)
@@ -227,9 +226,8 @@ struct CharacterView: View {
 
     // MARK: - 회전 핸들
     @ViewBuilder
-    private func rotationHandle(frameSize: CGFloat, scale: CGFloat) -> some View {
-        let handleOffset = CGSize(width: frameSize/2 + (25 * scale), height: -frameSize/2 - (25 * scale))  // 스케일 적용
-        let handleSize = 24 * scale  // 스케일 적용
+    private func rotationHandle(at offset: CGSize, scale: CGFloat) -> some View {
+        let handleSize = 18 * scale  // 스케일 적용
         
         Circle()
             .fill(Color.white)
@@ -239,13 +237,15 @@ struct CharacterView: View {
                 Image(systemName: "arrow.clockwise")
                     .foregroundStyle(Color.primary_sea_blue)
                     .font(.system(size: 10 * scale, weight: .semibold))  // 스케일 적용
+                    .scaleEffect(x: -1, y: 1)  // 좌우반전
+                    
             )
-            .offset(handleOffset)
+            .offset(offset)
             .gesture(
                 DragGesture()
                     .onChanged { value in
                         let center = CGPoint.zero
-                        let start = CGPoint(x: handleOffset.width, y: handleOffset.height)
+                        let start = CGPoint(x: offset.width, y: offset.height)
                         let current = CGPoint(x: start.x + value.translation.width, y: start.y + value.translation.height)
                         
                         let startAngle = atan2(start.y - center.y, start.x - center.x)

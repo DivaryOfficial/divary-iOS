@@ -18,9 +18,15 @@ class DiaryMainViewModel {
     var forceUIUpdate: Bool = false
     var currentTextAlignment: NSTextAlignment = .left
     
-    // 폰트 상태 추적을 위한 변수들 - 실제 적용 가능한 폰트로 초기화
+    // 현재 커서 스타일 상태
     var currentFontSize: CGFloat = 16.0
     var currentFontName: String = "NanumSquareNeoTTF-cBd"
+    var currentIsUnderlined: Bool = false
+    var currentIsStrikethrough: Bool = false
+    
+    // 내부 상태 관리
+    private var isApplyingStyle: Bool = false
+    private var lastCursorPosition: Int = 0
     
     var savedDrawing: PKDrawing? = nil
     var drawingOffsetY: CGFloat = 0
@@ -28,7 +34,6 @@ class DiaryMainViewModel {
     // MARK: - Block Management
     
     func addTextBlock() {
-        // 빈 텍스트로 시작
         let text = NSAttributedString(string: "")
         let content = RichTextContent(text: text)
         let block = DiaryBlock(content: .text(content))
@@ -37,9 +42,11 @@ class DiaryMainViewModel {
         editingTextBlock = block
         richTextContext = content.context
         richTextContext.setAttributedString(to: text)
-        
-        // RichTextContext의 fontSize 설정
         richTextContext.fontSize = currentFontSize
+        
+        DispatchQueue.main.async {
+            self.applyCurrentStyleToTypingAttributes()
+        }
     }
 
     func saveCurrentEditingBlock() {
@@ -47,12 +54,9 @@ class DiaryMainViewModel {
               case .text(let content) = block.content else { return }
 
         let newText = richTextContext.attributedString
-        
-        // 텍스트가 실제로 변경된 경우에만 업데이트
         if !content.text.isEqual(to: newText) {
             content.text = newText
             content.context = richTextContext
-            content.context.setAttributedString(to: newText)
         }
     }
 
@@ -72,8 +76,10 @@ class DiaryMainViewModel {
             richTextContext = content.context
             content.context.setAttributedString(to: content.text)
             
-            // 편집 시작할 때는 상태 변수 변경하지 않음 - 현재 설정 유지
-            forceUIUpdate.toggle()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self.syncStyleFromCurrentPosition()
+                self.forceUIUpdate.toggle()
+            }
         }
     }
 
@@ -84,23 +90,64 @@ class DiaryMainViewModel {
         }
     }
 
-    // MARK: - Text Styling
+    // MARK: - Style Management
     
-    func toggleStyle(_ style: RichTextStyle) {
+    func setFontSize(_ size: CGFloat) {
+        currentFontSize = size
+        applyFontSizeChange()
+    }
+    
+    func setFontFamily(_ fontName: String) {
+        currentFontName = fontName
+        applyFontFamilyChange()
+    }
+    
+    func setUnderline(_ isUnderlined: Bool) {
+        currentIsUnderlined = isUnderlined
+        applyUnderlineChange()
+    }
+    
+    func setStrikethrough(_ isStrikethrough: Bool) {
+        currentIsStrikethrough = isStrikethrough
+        applyStrikethroughChange()
+    }
+    
+    func setTextAlignment(_ alignment: NSTextAlignment) {
+        currentTextAlignment = alignment
+        
         guard editingTextBlock != nil else { return }
         
-        let currentSelectedRange = richTextContext.selectedRange
-        let attributedString = richTextContext.attributedString
+        let mutableString = richTextContext.attributedString.mutableCopy() as! NSMutableAttributedString
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = alignment
         
-        guard attributedString.length > 0 else { return }
+        if mutableString.length == 0 {
+            applyCurrentStyleToTypingAttributes()
+            return
+        }
         
-        if currentSelectedRange.location == NSNotFound || currentSelectedRange.length == 0 {
-            let fullRange = NSRange(location: 0, length: attributedString.length)
-            richTextContext.handle(.selectRange(fullRange))
-            richTextContext.toggleStyle(style)
-            richTextContext.handle(.selectRange(currentSelectedRange))
+        let fullRange = NSRange(location: 0, length: mutableString.length)
+        mutableString.addAttribute(.paragraphStyle, value: paragraphStyle, range: fullRange)
+        richTextContext.setAttributedString(to: mutableString)
+        
+        DispatchQueue.main.async {
+            self.applyCurrentStyleToTypingAttributes()
+            self.saveCurrentEditingBlock()
+            self.forceUIUpdate.toggle()
+        }
+    }
+    
+    // MARK: - Private Methods
+    
+    private func applyFontSizeChange() {
+        guard editingTextBlock != nil, let textView = findCurrentTextView() else { return }
+        
+        let selectedRange = textView.selectedRange
+        
+        if selectedRange.length > 0 {
+            applyFontSizeToSelectedText(selectedRange)
         } else {
-            richTextContext.toggleStyle(style)
+            applyCurrentStyleToTypingAttributes()
         }
         
         DispatchQueue.main.async {
@@ -108,157 +155,284 @@ class DiaryMainViewModel {
             self.forceUIUpdate.toggle()
         }
     }
-
-    // MARK: - Font Management
     
-    func setFontSize(_ size: CGFloat) {
-        guard editingTextBlock != nil else { return }
+    private func applyFontFamilyChange() {
+        guard editingTextBlock != nil, let textView = findCurrentTextView() else { return }
         
-        // 상태 먼저 업데이트
-        currentFontSize = size
+        let selectedRange = textView.selectedRange
         
+        if selectedRange.length > 0 {
+            applyFontFamilyToSelectedText(selectedRange)
+        } else {
+            applyCurrentStyleToTypingAttributes()
+        }
+        
+        DispatchQueue.main.async {
+            self.saveCurrentEditingBlock()
+            self.forceUIUpdate.toggle()
+        }
+    }
+    
+    private func applyUnderlineChange() {
+        guard editingTextBlock != nil, let textView = findCurrentTextView() else { return }
+        
+        let selectedRange = textView.selectedRange
+        
+        if selectedRange.length > 0 {
+            applyUnderlineToSelectedText(selectedRange)
+        } else {
+            applyCurrentStyleToTypingAttributes()
+        }
+        
+        DispatchQueue.main.async {
+            self.saveCurrentEditingBlock()
+            self.forceUIUpdate.toggle()
+        }
+    }
+    
+    private func applyStrikethroughChange() {
+        guard editingTextBlock != nil, let textView = findCurrentTextView() else { return }
+        
+        let selectedRange = textView.selectedRange
+        
+        if selectedRange.length > 0 {
+            applyStrikethroughToSelectedText(selectedRange)
+        } else {
+            applyCurrentStyleToTypingAttributes()
+        }
+        
+        DispatchQueue.main.async {
+            self.saveCurrentEditingBlock()
+            self.forceUIUpdate.toggle()
+        }
+    }
+    
+    private func applyFontSizeToSelectedText(_ range: NSRange) {
         let mutableString = richTextContext.attributedString.mutableCopy() as! NSMutableAttributedString
         
-        // 텍스트가 없으면 컨텍스트만 업데이트
-        guard mutableString.length > 0 else {
-            richTextContext.fontSize = size
-            return
-        }
-        
-        let selectedRange = getSelectedRange(for: mutableString)
-        
-        // 전체 범위에 현재 설정된 폰트 적용
-        if let font = UIFont(name: currentFontName, size: size) {
-            mutableString.addAttribute(.font, value: font, range: selectedRange)
-        } else {
-            // 폰트 생성 실패 시 시스템 폰트로 대체
-            let systemFont = UIFont.systemFont(ofSize: size)
-            mutableString.addAttribute(.font, value: systemFont, range: selectedRange)
-        }
-        
-        // 핵심: richTextContext를 완전히 동기화
-        richTextContext.setAttributedString(to: mutableString)
-        richTextContext.fontSize = size
-        
-        // RichTextContext의 내부 상태 강제 동기화
-        DispatchQueue.main.async {
-            let currentRange = self.richTextContext.selectedRange
-            self.richTextContext.handle(.selectRange(NSRange(location: 0, length: 0)))
-            
-            DispatchQueue.main.async {
-                self.richTextContext.handle(.selectRange(currentRange))
-                self.saveCurrentEditingBlock()
-                self.forceUIUpdate.toggle()
+        mutableString.enumerateAttribute(.font, in: range, options: []) { fontAttribute, subRange, _ in
+            if let existingFont = fontAttribute as? UIFont {
+                if let newFont = UIFont(name: existingFont.fontName, size: currentFontSize) {
+                    mutableString.addAttribute(.font, value: newFont, range: subRange)
+                }
+            } else {
+                if let newFont = UIFont(name: currentFontName, size: currentFontSize) {
+                    mutableString.addAttribute(.font, value: newFont, range: subRange)
+                }
             }
         }
+        
+        richTextContext.setAttributedString(to: mutableString)
     }
     
-    func getCurrentFontSize() -> CGFloat {
-        return currentFontSize
-    }
-
-    func getCurrentFontName() -> String {
-        return currentFontName
-    }
-
-    func setFontFamily(_ fontName: String) {
-        guard editingTextBlock != nil else { return }
-        
-        // 상태 먼저 업데이트
-        currentFontName = fontName
-        
+    private func applyFontFamilyToSelectedText(_ range: NSRange) {
         let mutableString = richTextContext.attributedString.mutableCopy() as! NSMutableAttributedString
         
-        // 텍스트가 없으면 상태만 업데이트
-        guard mutableString.length > 0 else {
-            return
-        }
-        
-        let selectedRange = getSelectedRange(for: mutableString)
-        
-        // 현재 상태의 폰트 크기로 새 폰트 생성
-        if let font = UIFont(name: fontName, size: currentFontSize) {
-            mutableString.addAttribute(.font, value: font, range: selectedRange)
-        } else {
-            // 폰트 생성 실패 시 상태 되돌리기
-            return
-        }
-        
-        // 핵심: richTextContext를 완전히 동기화
-        richTextContext.setAttributedString(to: mutableString)
-        
-        // RichTextContext의 내부 상태 강제 동기화
-        DispatchQueue.main.async {
-            let currentRange = self.richTextContext.selectedRange
-            self.richTextContext.handle(.selectRange(NSRange(location: 0, length: 0)))
+        mutableString.enumerateAttribute(.font, in: range, options: []) { fontAttribute, subRange, _ in
+            let fontSize: CGFloat
+            if let existingFont = fontAttribute as? UIFont {
+                fontSize = existingFont.pointSize
+            } else {
+                fontSize = currentFontSize
+            }
             
-            DispatchQueue.main.async {
-                self.richTextContext.handle(.selectRange(currentRange))
-                self.saveCurrentEditingBlock()
-                self.forceUIUpdate.toggle()
+            if let newFont = UIFont(name: currentFontName, size: fontSize) {
+                mutableString.addAttribute(.font, value: newFont, range: subRange)
             }
         }
-    }
-
-    // MARK: - Text Alignment
-    
-    func setTextAlignment(_ alignment: NSTextAlignment) {
-        guard editingTextBlock != nil else { return }
         
+        richTextContext.setAttributedString(to: mutableString)
+    }
+    
+    private func applyUnderlineToSelectedText(_ range: NSRange) {
         let mutableString = richTextContext.attributedString.mutableCopy() as! NSMutableAttributedString
-        guard mutableString.length > 0 else {
-            currentTextAlignment = alignment
-            return
+        
+        if currentIsUnderlined {
+            mutableString.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: range)
+        } else {
+            mutableString.removeAttribute(.underlineStyle, range: range)
         }
         
+        richTextContext.setAttributedString(to: mutableString)
+    }
+    
+    private func applyStrikethroughToSelectedText(_ range: NSRange) {
+        let mutableString = richTextContext.attributedString.mutableCopy() as! NSMutableAttributedString
+        
+        if currentIsStrikethrough {
+            mutableString.addAttribute(.strikethroughStyle, value: NSUnderlineStyle.single.rawValue, range: range)
+        } else {
+            mutableString.removeAttribute(.strikethroughStyle, range: range)
+        }
+        
+        richTextContext.setAttributedString(to: mutableString)
+    }
+    
+    private func createCurrentStyleAttributes() -> [NSAttributedString.Key: Any] {
+        var attributes: [NSAttributedString.Key: Any] = [:]
+        
+        // 폰트
+        if let font = UIFont(name: currentFontName, size: currentFontSize) {
+            attributes[.font] = font
+        } else {
+            attributes[.font] = UIFont.systemFont(ofSize: currentFontSize)
+        }
+        
+        // 정렬
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = alignment
+        paragraphStyle.alignment = currentTextAlignment
+        attributes[.paragraphStyle] = paragraphStyle
         
-        let fullRange = NSRange(location: 0, length: mutableString.length)
-        mutableString.addAttribute(.paragraphStyle, value: paragraphStyle, range: fullRange)
+        // 밑줄
+        if currentIsUnderlined {
+            attributes[.underlineStyle] = NSUnderlineStyle.single.rawValue
+        }
         
-        // 핵심: richTextContext를 완전히 동기화
-        richTextContext.setAttributedString(to: mutableString)
-        currentTextAlignment = alignment
+        // 취소선
+        if currentIsStrikethrough {
+            attributes[.strikethroughStyle] = NSUnderlineStyle.single.rawValue
+        }
         
-        // RichTextContext의 내부 상태 강제 동기화
-        DispatchQueue.main.async {
-            let currentRange = self.richTextContext.selectedRange
-            self.richTextContext.handle(.selectRange(NSRange(location: 0, length: 0)))
-            
-            DispatchQueue.main.async {
-                self.richTextContext.handle(.selectRange(currentRange))
-                self.saveCurrentEditingBlock()
-                self.forceUIUpdate.toggle()
+        // 기본 색상
+        attributes[.foregroundColor] = UIColor.label
+        
+        return attributes
+    }
+    
+    private func applyCurrentStyleToTypingAttributes() {
+        guard let textView = findCurrentTextView() else { return }
+        
+        let selectedRange = textView.selectedRange
+        if selectedRange.length > 0 { return }
+        
+        let attributes = createCurrentStyleAttributes()
+        textView.typingAttributes = attributes
+        
+        // 한글 IME 대응
+        for delay in [0.01, 0.02, 0.05] {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                if textView.selectedRange.length == 0 {
+                    textView.typingAttributes = attributes
+                }
+            }
+        }
+        
+        richTextContext.fontSize = currentFontSize
+    }
+    
+    // 텍스트 변경 후 커서 위치 스타일 동기화
+    func handleTextChange(isDeleteOperation: Bool = false) {
+        guard !isApplyingStyle else { return }
+        
+        if isDeleteOperation {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+                self.syncStyleFromCurrentPosition()
             }
         }
     }
-     
+    
+    // 커서 이동 시 스타일 동기화
+    func handleCursorPositionChange() {
+        guard !isApplyingStyle else { return }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+            self.syncStyleFromCurrentPosition()
+        }
+    }
+    
+    private func syncStyleFromCurrentPosition() {
+        guard let textView = findCurrentTextView() else { return }
+        
+        let selectedRange = textView.selectedRange
+        if selectedRange.length > 0 { return }
+        
+        guard let attributedText = textView.attributedText else { return }
+        let cursorPosition = selectedRange.location
+        
+        if attributedText.length > 0 && cursorPosition > 0 {
+            let checkPosition = min(cursorPosition - 1, attributedText.length - 1)
+            let attributes = attributedText.attributes(at: checkPosition, effectiveRange: nil)
+            
+            // 폰트 동기화
+            if let font = attributes[.font] as? UIFont {
+                currentFontSize = font.pointSize
+                currentFontName = font.fontName
+            }
+            
+            // 정렬 동기화
+            if let paragraphStyle = attributes[.paragraphStyle] as? NSParagraphStyle {
+                currentTextAlignment = paragraphStyle.alignment
+            }
+            
+            // 밑줄 동기화
+            if let underlineStyle = attributes[.underlineStyle] as? Int {
+                currentIsUnderlined = underlineStyle != 0
+            } else {
+                currentIsUnderlined = false
+            }
+            
+            // 취소선 동기화
+            if let strikethroughStyle = attributes[.strikethroughStyle] as? Int {
+                currentIsStrikethrough = strikethroughStyle != 0
+            } else {
+                currentIsStrikethrough = false
+            }
+            
+            // UI 업데이트
+            DispatchQueue.main.async {
+                self.forceUIUpdate.toggle()
+            }
+        }
+        
+        lastCursorPosition = cursorPosition
+    }
+    
+    // MARK: - Getters
+    
+    func getCurrentFontSize() -> CGFloat { currentFontSize }
+    func getCurrentFontName() -> String { currentFontName }
+    func getCurrentIsUnderlined() -> Bool { currentIsUnderlined }
+    func getCurrentIsStrikethrough() -> Bool { currentIsStrikethrough }
+    
     func getCurrentTextAlignment() -> NSTextAlignment {
         let attributedString = richTextContext.attributedString
-        guard attributedString.length > 0 else { return .left }
+        guard attributedString.length > 0 else { return currentTextAlignment }
         
         if let paragraphStyle = attributedString.attribute(.paragraphStyle, at: 0, effectiveRange: nil) as? NSParagraphStyle {
             return paragraphStyle.alignment
         }
         
-        return .left
+        return currentTextAlignment
+    }
+    
+    // MARK: - Helper Methods
+    
+    private func findCurrentTextView() -> UITextView? {
+        let scenes = UIApplication.shared.connectedScenes
+        for scene in scenes {
+            if let windowScene = scene as? UIWindowScene {
+                for window in windowScene.windows {
+                    if let textView = findTextViewInView(window) {
+                        return textView
+                    }
+                }
+            }
+        }
+        return nil
     }
 
-    // MARK: - Helper
-    
-    private func getSelectedRange(for mutableString: NSMutableAttributedString) -> NSRange {
-        let range = richTextContext.selectedRange
-        let isValidRange = range.location != NSNotFound &&
-                           range.location >= 0 &&
-                           range.location < mutableString.length &&
-                           NSMaxRange(range) <= mutableString.length
-
-        if isValidRange && range.length > 0 {
-            return range
-        } else {
-            return NSRange(location: 0, length: mutableString.length)
+    private func findTextViewInView(_ view: UIView) -> UITextView? {
+        if let textView = view as? UITextView, textView.isFirstResponder {
+            return textView
         }
+        
+        for subview in view.subviews {
+            if let textView = findTextViewInView(subview) {
+                return textView
+            }
+        }
+        
+        return nil
     }
     
     // MARK: - Drawing
