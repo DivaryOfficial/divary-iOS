@@ -49,7 +49,6 @@ struct CategoryTabBar: View {
 }
 
 #Preview {
-    @Previewable @State var selectedCategory: SeaCreatureCategory = .all
-    
+    @State var selectedCategory: SeaCreatureCategory = .all
     CategoryTabBar(selectedCategory: $selectedCategory)
 }

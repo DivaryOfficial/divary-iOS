@@ -49,7 +49,6 @@ enum SeaCreatureCategory: String, CaseIterable, Identifiable {
     var id: String { self.rawValue }
 }
 
-
 // MARK: - Root Response
 struct SeaCreatureResponse: Decodable {
     let timestamp: String
