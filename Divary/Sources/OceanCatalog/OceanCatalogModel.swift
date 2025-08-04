@@ -38,6 +38,16 @@ extension SeaCreatureCard {
     }
 }
 
+// MARK: - 해양도감 탭바 카테고리
+enum SeaCreatureCategory: String, CaseIterable, Identifiable {
+    case all = "전체"
+    case fish = "어류"
+    case crustacean = "갑각류"
+    case mollusk = "연체동물"
+    case other = "기타"
+
+    var id: String { self.rawValue }
+}
 
 
 // MARK: - Root Response
