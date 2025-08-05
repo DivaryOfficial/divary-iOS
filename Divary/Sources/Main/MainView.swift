@@ -22,11 +22,15 @@ struct MainView: View {
     @State private var newLogViewModel = NewLogCreationViewModel()
     
     // 연도별 필터링된 로그베이스들
-       private var filteredLogBases: [LogBookBaseMock] {
-           MockDataManager.shared.logBookBases.filter { logBase in
-               Calendar.current.component(.year, from: logBase.date) == selectedYear
-           }
+    private var filteredLogBases: [LogBookBaseMock] {
+       MockDataManager.shared.logBookBases.filter { logBase in
+           Calendar.current.component(.year, from: logBase.date) == selectedYear
        }
+    }
+    
+    private var selectedLogBase: LogBookBaseMock? {
+        MockDataManager.shared.logBookBases.first(where: { $0.id == selectedLogBaseId })
+    }
     
     private var canSubYear: Bool {
         selectedYear > 1950
@@ -41,16 +45,22 @@ struct MainView: View {
                 background
                 
                 YearlyLogBubble(
-                                  selectedYear: selectedYear, // 선택된 연도 전달
-                                  showDeletePopup: $showDeletePopup,
-                                  onBubbleTap: { logBaseId in
-                                      selectedLogBaseId = logBaseId
-                                      showLogBookMain = true
-                                  },
-                                  onPlusButtonTap: {// + 버튼 탭 시 새 로그 생성 플로우 시작
-                                      newLogViewModel.showNewLogCreation = true
-                                  }
-                              )
+                    selectedYear: selectedYear, // 선택된 연도 전달
+                    showDeletePopup: $showDeletePopup,
+                    onBubbleTap: { logBaseId in
+                      selectedLogBaseId = logBaseId
+                      showLogBookMain = true
+                    },
+                    onPlusButtonTap: {// + 버튼 탭 시 새 로그 생성 플로우 시작
+                      newLogViewModel.showNewLogCreation = true
+                    },
+                    onDeleteTap: { logBaseId in
+                      selectedLogBaseId = logBaseId
+                      DispatchQueue.main.async {
+                          showDeletePopup = true
+                      }
+                    }
+                )
                 .padding(.top, 150)
                 
                 if showSwipeTooltip {
@@ -97,7 +107,16 @@ struct MainView: View {
                 }
             }
             .overlay {
-                if showDeletePopup {
+                if showDeletePopup, let log = selectedLogBase {
+                    let text: String = {
+                        let formatter = DateFormatter()
+                        formatter.dateFormat = "M/d"
+                        return "\(formatter.string(from: log.date)) [\(log.title)]을 삭제하시겠습니까?"
+                    }()
+                    
+                    DeletePopupView(isPresented: $showDeletePopup, deleteText: text)
+                }
+                else if showDeletePopup {
                     DeletePopupView(isPresented: $showDeletePopup, deleteText: "삭제하시겠습니까?")
                 }
             }
@@ -179,6 +198,7 @@ struct MainView: View {
             Spacer()
         }
     }
+
 }
 
 #Preview {

@@ -72,7 +72,8 @@ struct LogBubbleCell: View {
                         Image(.deleteFloating)
                             .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 2)
                     }
-                    .offset(x: 70, y: -30)
+//                    .offset(x: 70, y: -30)
+                    .offset(x: 25, y: -10)
                 }
             }
         }
