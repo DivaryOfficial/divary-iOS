@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// 알림 데이터 모델
+
 struct NotificationItem: Identifiable {
     let id = UUID()
     let icon: String
@@ -16,28 +16,42 @@ struct NotificationItem: Identifiable {
     let description: String
     let timeAgo: String
     var isExpanded: Bool = false
+    var isRead: Bool = false  // 추가
 }
 
-struct NotificationView: View {
-    @Environment(\.dismiss) private var dismiss
-    
-    @State private var notifications: [NotificationItem] = [
+@Observable
+class NotificationManager {
+    var notifications: [NotificationItem] = [
         NotificationItem(
             icon: "mysea",
             category: "나의 바다",
             title: "버디가 바다에서 기다리고 있어요!",
             description: "7일간 접속하지 않았어요. 버디가 바다에서 기다리고 있어요.",
-            timeAgo: "1시간 전"
+            timeAgo: "1시간 전",
+            isRead: false
         ),
         NotificationItem(
             icon: "update",
             category: "업데이트 알림",
             title: "새로운 기능이 업데이트 됐어요!",
             description: "새로운 기능이 업데이트 됐어요!",
-            timeAgo: "어제"
+            timeAgo: "어제",
+            isRead: false
         )
     ]
     
+    var unreadCount: Int {
+        notifications.filter { !$0.isRead }.count
+    }
+    
+    static let shared = NotificationManager()
+    private init() {}
+}
+
+struct NotificationView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Bindable var manager = NotificationManager.shared
+
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
@@ -47,13 +61,13 @@ struct NotificationView: View {
                 // 알림 리스트
                 ScrollView {
                     LazyVStack(spacing: 12) {
-                        ForEach(notifications.indices, id: \.self) { index in
+                        ForEach(manager.notifications.indices, id: \.self) { index in
                             NotificationRow(
-                                notification: $notifications[index]
+                                notification: $manager.notifications[index]
                             )
                             
                             // 마지막 아이템이 아닌 경우 구분선 추가
-                            if index < notifications.count - 1 {
+                            if index < manager.notifications.count - 1 {
                                                          Divider()
                                                              .background(Color.gray.opacity(0.3))
                                                              .padding(.horizontal, 16)
@@ -130,7 +144,7 @@ struct NotificationRow: View {
                     
                     Text(notification.title)
                         .font(Font.omyu.regular(size: 20))
-                        .foregroundColor(Color.bw_black)
+                        .foregroundColor(notification.isRead ? Color.grayscale_g400 : Color.bw_black)
                     
                     
                     // 상세 내용 (확장될 때만 표시)
@@ -152,6 +166,11 @@ struct NotificationRow: View {
                     Button(action: {
                         withAnimation(.easeInOut(duration: 0.3)) {
                             notification.isExpanded.toggle()
+                            
+                            // 확장할 때 읽음 처리
+                                   if notification.isExpanded && !notification.isRead {
+                                       notification.isRead = true
+                                   }
                         }
                     }) {
                         Image(systemName: notification.isExpanded ? "chevron.up" : "chevron.down")

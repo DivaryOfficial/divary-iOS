@@ -12,6 +12,7 @@ struct MainView: View {
     @State private var showSwipeTooltip = false
     @State private var showDeletePopup = false
     @State private var showNotification = false
+    @State private var notificationView = NotificationView()
     
     // 추가: 네비게이션 상태
     @State private var selectedLogBaseId: String? = nil
@@ -120,15 +121,27 @@ struct MainView: View {
     }
     
     private var yearSelectbar: some View {
+        
         VStack(spacing: 0) {
             HStack {
                 Spacer()
-                Button(action: {
-                    showNotification = true }) {
-                    Image("bell-1")
-                        .foregroundStyle(.black)
-                }
-                .padding(.trailing, 12)
+                // 벨 버튼 부분을 다음과 같이 수정
+                ZStack {
+                    Button(action: {
+                        showNotification = true
+                    }) {
+                        Image("bell-1")
+                            .foregroundStyle(.black)
+                    }
+                    
+                    // 안 읽은 알림이 있으면 빨간점 표시
+                    if NotificationManager.shared.unreadCount > 0 {
+                        Circle()
+                            .fill(Color.red)
+                            .frame(width: 8, height: 8)
+                            .offset(x: 8, y: -8)
+                    }
+                }.padding(.trailing, 12)
                 
             }
             .safeAreaInset(edge: .top) {
