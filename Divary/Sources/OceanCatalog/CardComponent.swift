@@ -11,8 +11,11 @@ struct CardComponent: View {
     let name: String
     let type: String
     let image: Image
+    @Binding var isSelected: Bool
+//    let isBottomSheetPresented: Bool
+    let onTap: () -> Void
     
-    @State private var isSelected: Bool = false
+//    @State private var isSelected: Bool = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -31,7 +34,8 @@ struct CardComponent: View {
             .aspectRatio(1, contentMode: .fit)
             .padding(.bottom, 10)
             .onTapGesture {
-                isSelected.toggle()
+//                isSelected.toggle()
+                onTap()
             }
             
             Text(name)
@@ -43,6 +47,6 @@ struct CardComponent: View {
     }
 }
 
-#Preview {
-    CardComponent(name: "흰동가리", type: "어류", image: Image(.clownfish))
-}
+//#Preview {
+//    CardComponent(name: "흰동가리", type: "어류", image: Image(.clownfish))
+//}

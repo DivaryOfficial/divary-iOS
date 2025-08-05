@@ -72,6 +72,24 @@ struct SeaCreatureDetail: Decodable, Identifiable {
     let significant: Significant
 }
 
+extension SeaCreatureDetail {
+    static func mock(for card: SeaCreatureCard) -> SeaCreatureDetail {
+        SeaCreatureDetail(
+            id: card.id,
+            name: card.name,
+            type: card.type,
+            size: "약 5cm",
+            appearPeriod: "여름",
+            place: "바다",
+            imageUrls: [card.imageUrl],
+            appearance: Appearance(body: "", colorCodes: [], color: "", pattern: "", etc: ""),
+            personality: Personality(activity: "", socialSkill: "", behavior: "", reactivity: ""),
+            significant: Significant(toxicity: "", strategy: "", observeTip: "", otherFeature: "")
+        )
+    }
+}
+
+
 // MARK: - Appearance
 struct Appearance: Decodable {
     let body: String
