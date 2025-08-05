@@ -11,30 +11,20 @@ struct OceanCreatureDetailView: View {
     let creature: SeaCreatureDetail
     @State var selectedSection: SectionType = .appearance
     @State private var sectionAnchors: [SectionAnchor] = []
+    @State private var currentIndex: Int = 0
 
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 16) {
-                    AsyncImage(url: creature.imageUrls.first) { phase in
-                        if let image = phase.image {
-                            image.resizable().scaledToFill()
-                        } else {
-                            Color.gray
-                        }
-                    }
-                    .frame(height: 220)
-                    .clipped()
-                    
+                    imageSlider
                     titleBlock
                     sectionButtons(proxy: proxy, selectedSection: $selectedSection)
                     
                     appearanceSection
                     divider
-                    
                     personalitySection
                     divider
-                    
                     significantSection
                 }
                 .background(GeometryReader { _ in Color.clear })
@@ -51,6 +41,41 @@ struct OceanCreatureDetailView: View {
             .navigationTitle("해양도감")
             .navigationBarTitleDisplayMode(.inline)
         }
+    }
+    
+    // MARK: - 이미지 슬라이드
+    private var imageSlider: some View {
+        TabView(selection: $currentIndex) {
+            ForEach(Array(creature.imageUrls.enumerated()), id: \.offset) { index, url in
+                AsyncImage(url: url) { phase in
+                    if let image = phase.image {
+                        image
+//                            .resizable()
+//                            .scaledToFill()
+//                            .frame(height: 220)
+//                            .clipped()
+                    } else {
+//                        Color.gray
+                        Image("testImage")
+                    }
+                }
+                .tag(index)
+            }
+        }
+        .frame(height: 220)
+        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+        .clipped()
+        .overlay(
+            Text("\(currentIndex + 1)｜\(creature.imageUrls.count)")
+                .font(.NanumSquareNeo.NanumSquareNeoBold(size: 10))
+                .foregroundColor(.white)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(.black)
+                .cornerRadius(10)
+                .padding(8),
+            alignment: .bottomTrailing
+        )
     }
     
     // MARK: - 상단 블록
@@ -255,7 +280,9 @@ struct RoundedCorners: Shape {
         appearPeriod: "봄, 가을에 주로 관찰",
         place: "따뜻한 연안, 바위 틈",
         imageUrls: [
-            URL(string: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Nudibranch_flabellina.jpg/640px-Nudibranch_flabellina.jpg")!
+            URL(string: "https://commons.wikimedia.org/wiki/File:Lampetra_fluviatilis.jpg")!,
+            URL(string: "https://commons.wikimedia.org/wiki/File:Lampetra_fluviatilis.jpg")!,
+            URL(string: "https://commons.wikimedia.org/wiki/File:Lampetra_fluviatilis.jpg")!
         ],
         appearance: Appearance(
             body: "부드럽고 납작한 몸체",
