@@ -15,7 +15,7 @@ enum DiveLogTab: String, CaseIterable {
 
 struct LogBookMainView: View {
     @State var selectedTab: DiveLogTab = .logbook
-    @State var viewModel: LogBookMainViewModel = .init()
+    @State var viewModel: LogBookMainViewModel
     @State private var isCalendarPresented = false
     @State private var showCanvas = false
     
@@ -24,12 +24,26 @@ struct LogBookMainView: View {
     
     // 백업데이터 변경없이 month 이동을 위한 사용자가 현재 보고있는 월 데이터 - 캘린더 month 변경시 변경
     @State private var tempMonth = Date()
+    
+    // 추가: 뒤로가기를 위한 환경변수
+      @Environment(\.dismiss) private var dismiss
+    
+    // 수정: logBaseId를 받는 init
+       init(logBaseId: String) {
+           _viewModel = State(initialValue: LogBookMainViewModel(logBaseId: logBaseId))
+       }
 
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
-                LogBookNavBar(selectedDate: $viewModel.selectedDate, isCalendarPresented: $isCalendarPresented)
-                    .zIndex(1) // 항상 위에 오도록
+                LogBookNavBar(
+                                 selectedDate: $viewModel.selectedDate,
+                                 isCalendarPresented: $isCalendarPresented,
+                                 onBackTap: {
+                                     dismiss()
+                                 }
+                             )
+                             .zIndex(1)
                 TabSelector(selectedTab: $selectedTab)
                     .padding(.horizontal)
 
@@ -101,7 +115,6 @@ struct LogBookMainView: View {
     }
 }
 
-
 #Preview {
-    LogBookMainView()
+    LogBookMainView(logBaseId: "log_base_1")
 }

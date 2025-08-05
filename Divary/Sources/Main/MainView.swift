@@ -11,6 +11,21 @@ struct MainView: View {
     @State private var selectedYear: Int = 2025
     @State private var showSwipeTooltip = false
     @State private var showDeletePopup = false
+    @State private var showNotification = false
+    
+    // 추가: 네비게이션 상태
+    @State private var selectedLogBaseId: String? = nil
+    @State private var showLogBookMain = false
+    
+    // 새 로그 생성 상태 추가
+    @State private var newLogViewModel = NewLogCreationViewModel()
+    
+    // 연도별 필터링된 로그베이스들
+       private var filteredLogBases: [LogBookBaseMock] {
+           MockDataManager.shared.logBookBases.filter { logBase in
+               Calendar.current.component(.year, from: logBase.date) == selectedYear
+           }
+       }
     
     private var canSubYear: Bool {
         selectedYear > 1950
@@ -20,40 +35,81 @@ struct MainView: View {
     }
     
     var body: some View {
-        ZStack {
-            background
-            
-            YearlyLogBubble(showDeletePopup: $showDeletePopup)
+        NavigationStack {
+            ZStack {
+                background
+                
+                YearlyLogBubble(
+                                  selectedYear: selectedYear, // 선택된 연도 전달
+                                  showDeletePopup: $showDeletePopup,
+                                  onBubbleTap: { logBaseId in
+                                      selectedLogBaseId = logBaseId
+                                      showLogBookMain = true
+                                  },
+                                  onPlusButtonTap: {// + 버튼 탭 시 새 로그 생성 플로우 시작
+                                      newLogViewModel.showNewLogCreation = true
+                                  }
+                              )
                 .padding(.top, 150)
-            
-            if showSwipeTooltip {
-                VStack {
-                    Spacer()
-                    HStack {
+                
+                if showSwipeTooltip {
+                    VStack {
                         Spacer()
-                        Image(.swipeTooltip)
-                            .padding(.trailing, 20)
-                            .transition(.opacity)
+                        HStack {
+                            Spacer()
+                            Image(.swipeTooltip)
+                                .padding(.trailing, 20)
+                                .transition(.opacity)
+                        }
+                        .padding(.bottom, 200)
                     }
-                    .padding(.bottom, 200)
+                }
+                yearSelectbar
+                
+                // 새 로그 생성 플로우
+                if newLogViewModel.showNewLogCreation {
+                    NewLogCreationView(
+                        viewModel: newLogViewModel,
+                                        onNavigateToExistingLog: { logBaseId in
+                                            // 기존 로그로 이동
+                                            selectedLogBaseId = logBaseId
+                                            showLogBookMain = true
+                                            newLogViewModel.resetData()
+                                        },
+                                        onCreateNewLog: {
+                                            // 새 로그 생성 후 해당 로그로 이동
+                                            let newLogBaseId = newLogViewModel.createNewLog()
+                                            if !newLogBaseId.isEmpty {
+                                                selectedLogBaseId = newLogBaseId
+                                                showLogBookMain = true
+                                            }
+                                        }
+                                    )
+                                }
+            }
+            .task {
+                // 최초 실행 시 한 번만 표시
+                let launched = UserDefaults.standard.bool(forKey: "launchedBefore")
+                if !launched {
+                    showSwipeTooltip = true
+                    UserDefaults.standard.set(true, forKey: "launchedBefore")
                 }
             }
-            yearSelectbar
-        }
-        .task {
-            // 최초 실행 시 한 번만 표시
-            let launched = UserDefaults.standard.bool(forKey: "launchedBefore")
-            if !launched {
-                showSwipeTooltip = true
-                UserDefaults.standard.set(true, forKey: "launchedBefore")
+            .overlay {
+                if showDeletePopup {
+                    DeletePopupView(isPresented: $showDeletePopup, deleteText: "삭제하시겠습니까?")
+                }
+            }
+            .navigationDestination(isPresented: $showLogBookMain) {
+                if let logBaseId = selectedLogBaseId {
+                    LogBookMainView(logBaseId: logBaseId)
+                        .navigationBarBackButtonHidden(true)
+                }
+            }
+            .fullScreenCover(isPresented: $showNotification) {
+                NotificationView()
             }
         }
-        .overlay {
-           if showDeletePopup {
-               DeletePopupView(isPresented: $showDeletePopup, deleteText: "삭제하시겠습니까?")
-           }
-       }
-        
     }
     
     private var background: some View {
@@ -67,14 +123,14 @@ struct MainView: View {
         VStack(spacing: 0) {
             HStack {
                 Spacer()
-                Button(action: {}) {
+                Button(action: {
+                    showNotification = true }) {
                     Image("bell-1")
                         .foregroundStyle(.black)
                 }
                 .padding(.trailing, 12)
                 
             }
-//            .padding(.top, 50)
             .safeAreaInset(edge: .top) {
                 Color.clear.frame(height: 55)
             }

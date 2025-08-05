@@ -11,12 +11,15 @@ struct LogBookNavBar: View {
     @Binding var selectedDate: Date
     @Binding var isCalendarPresented: Bool
     @State private var showTooltip = false
+
+    // 추가: 뒤로가기 콜백 (옵셔널)
+       var onBackTap: (() -> Void)? = nil
     
     var body: some View {
         ZStack() {
             HStack{
                 Button(action: {
-                    // 뒤로가기 로직
+                    onBackTap?()
                 }) {
                     Image("chevron.left")
                         .resizable()
