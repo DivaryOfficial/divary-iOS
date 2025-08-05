@@ -144,7 +144,7 @@ struct OceanCreatureDetailView: View {
             
             SectionHeader(title: "외모", icon: Image(.appearance))
             DetailLine("몸 형태", creature.appearance.body)
-            DetailLine("색상", creature.appearance.color)
+            DetailLine("색상", creature.appearance.color, colorCodes: creature.appearance.colorCodes)
             DetailLine("무늬", creature.appearance.pattern)
             DetailLine("기타", creature.appearance.etc)
         }
@@ -227,13 +227,30 @@ struct SectionHeader: View {
     }
 }
 
-func DetailLine(_ title: String, _ value: String) -> some View {
+func DetailLine(_ title: String, _ value: String, colorCodes: [String] = []) -> some View {
     VStack(alignment: .leading, spacing: 4) {
-        Text(title).font(.omyu.regular(size: 20))
+        Text(title)
+            .font(.omyu.regular(size: 20))
             .padding(.bottom, 4)
+        
+        // 색상 원이 있을 때만 표시
+        if title == "색상" && !colorCodes.isEmpty {
+            HStack(spacing: 8) {
+                ForEach(colorCodes, id: \.self) { hex in
+                    Circle()
+                        .frame(width: 20, height: 20)
+                        .foregroundColor(Color(hex: hex))
+                        .overlay(
+                            Circle().stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
+                        )
+                }
+            }
+            .padding(.bottom, 4)
+        }
         Text(value).font(.NanumSquareNeo.NanumSquareNeoBold(size: 14)).foregroundColor(Color(.grayscaleG700))
     }
 }
+
 
 struct RoundedCorners: Shape {
     var tl: CGFloat = 0.0
