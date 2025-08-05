@@ -9,86 +9,169 @@ import SwiftUI
 
 struct OceanCreatureDetailView: View {
     let creature: SeaCreatureDetail
+    @State var selectedSection: SectionType = .appearance
+    @State private var sectionAnchors: [SectionAnchor] = []
 
     var body: some View {
-        ScrollView {
-            LazyVStack(alignment: .leading, spacing: 16) {
-                AsyncImage(url: creature.imageUrls.first) { phase in
-                    if let image = phase.image {
-                        image.resizable().scaledToFill()
-                    } else {
-                        Color.gray
+        ScrollViewReader { proxy in
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 16) {
+                    AsyncImage(url: creature.imageUrls.first) { phase in
+                        if let image = phase.image {
+                            image.resizable().scaledToFill()
+                        } else {
+                            Color.gray
+                        }
+                    }
+                    .frame(height: 220)
+                    .clipped()
+                    
+                    titleBlock
+                    sectionButtons(proxy: proxy, selectedSection: $selectedSection)
+                    
+                    appearanceSection
+                    divider
+                    
+                    personalitySection
+                    divider
+                    
+                    significantSection
+                }
+                .background(GeometryReader { _ in Color.clear })
+                .onPreferenceChange(SectionPositionKey.self) { values in
+                    sectionAnchors = values
+                    
+                    // 현재 화면에서 가장 위에 가까운 섹션 선택
+                    if let closest = values.min(by: { abs($0.minY) < abs($1.minY) }) {
+                        selectedSection = closest.section
                     }
                 }
-                .frame(height: 220)
-                .clipped()
-
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("\(creature.name) (\(creature.appearance.pattern))")
-                        .font(.omyu.regular(size: 24))
-                    Text(creature.type)
-                        .font(.NanumSquareNeo.NanumSquareNeoBold(size: 14))
-                        .foregroundColor(.gray)
-
-                    VStack {
-                        DetailInfoBlock(title: "크기", value: creature.size)
-                            .padding(.horizontal)
-                            .padding(.top)
-                        DetailInfoBlock(title: "출몰시기", value: creature.appearPeriod)
-                            .padding(.horizontal)
-                        DetailInfoBlock(title: "서식", value: creature.place)
-                            .padding(.horizontal)
-                            .padding(.bottom)
-                    }
-                    .background(Color(.grayscaleG100))
-                    .cornerRadius(8)
-//                    .padding(.vertical)
-                }
-                .padding()
-
-                Group {
-                    SectionHeader(title: "외모")
-                    DetailLine("몸 형태", creature.appearance.body)
-                    DetailLine("색상", creature.appearance.color)
-                    DetailLine("무늬", creature.appearance.pattern)
-                    DetailLine("기타", creature.appearance.etc)
-                }
-                .padding(.horizontal)
-                .padding(.bottom, 16)
-                
-                Divider()
-                    .frame(height: 5)
-                    .frame(maxWidth: .infinity)
-                    .background(Color(.grayscaleG200))
-                        
-                Group {
-                    SectionHeader(title: "성격")
-                    DetailLine("활동성", creature.personality.activity)
-                    DetailLine("사회성", creature.personality.socialSkill)
-                    DetailLine("행동 특성", creature.personality.behavior)
-                    DetailLine("반응성", creature.personality.reactivity)
-                }
-                .padding(.horizontal)
-                
-                Divider()
-                    .frame(height: 5)
-                    .frame(maxWidth: .infinity)
-                    .background(Color(.grayscaleG200))
-                
-                Group {
-                    SectionHeader(title: "특이사항")
-                    DetailLine("독성", creature.significant.toxicity)
-                    DetailLine("생존 전략", creature.significant.strategy)
-                    DetailLine("관찰 팁", creature.significant.observeTip)
-                    DetailLine("기타", creature.significant.otherFeature)
-                }
-                .padding(.horizontal)
-                
             }
+            .coordinateSpace(name: "scroll")
+            .navigationTitle("해양도감")
+            .navigationBarTitleDisplayMode(.inline)
         }
-        .navigationTitle("해양도감")
-        .navigationBarTitleDisplayMode(.inline)
     }
+    
+    // MARK: - 상단 블록
+    private var titleBlock: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("\(creature.name) (\(creature.appearance.pattern))")
+                .font(.omyu.regular(size: 24))
+            Text(creature.type)
+                .font(.NanumSquareNeo.NanumSquareNeoBold(size: 14))
+                .foregroundColor(.grayscale_g600)
+                .padding(.bottom)
+
+            VStack {
+                DetailInfoBlock(title: "크기", value: creature.size)
+                    .padding(.horizontal)
+                    .padding(.top)
+                DetailInfoBlock(title: "출몰시기", value: creature.appearPeriod)
+                    .padding(.horizontal)
+                DetailInfoBlock(title: "서식", value: creature.place)
+                    .padding(.horizontal)
+                    .padding(.bottom)
+            }
+            .background(Color(.grayscaleG100))
+            .cornerRadius(8)
+        }
+        .padding()
+    }
+    
+    // MARK: - 섹션버튼
+    private func sectionButtons(proxy: ScrollViewProxy, selectedSection: Binding<SectionType>) -> some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 10) {
+                ForEach(SectionType.allCases, id: \.self) { section in
+                    let isSelected = selectedSection.wrappedValue == section
+
+                    Button(action: {
+                        withAnimation {
+                            selectedSection.wrappedValue = section
+                            proxy.scrollTo(section, anchor: .top)
+                        }
+                    }) {
+                        Text(section.rawValue)
+                            .font(.omyu.regular(size: 20))
+                            .padding(.vertical, 8)
+                            .frame(maxWidth: .infinity)
+                            .foregroundStyle(isSelected ? Color(.white) : Color(.grayscaleG400))
+                            .background(
+                                RoundedCorners(tl: 12, tr: 12, bl: 0, br: 0)
+                                    .fill(isSelected ? Color(.primarySeaBlue) : Color(.grayscaleG100))
+                            )
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal)
+            
+            divider
+        }
+    }
+    
+    // MARK: - 외모
+    private var appearanceSection: some View {
+        Group {
+            SectionPositionReporter(section: .appearance)
+                .frame(height: 0)
+            
+            SectionHeader(title: "외모", icon: Image(.appearance))
+            DetailLine("몸 형태", creature.appearance.body)
+            DetailLine("색상", creature.appearance.color)
+            DetailLine("무늬", creature.appearance.pattern)
+            DetailLine("기타", creature.appearance.etc)
+        }
+        .padding(.horizontal)
+        .padding(.bottom, 16)
+        .id(SectionType.appearance)
+    }
+    
+    // MARK: - 성격
+    private var personalitySection: some View {
+        Group {
+            SectionPositionReporter(section: .personality)
+                .frame(height: 0)
+            
+            SectionHeader(title: "성격", icon: Image(.personality))
+            DetailLine("활동성", creature.personality.activity)
+            DetailLine("사회성", creature.personality.socialSkill)
+            DetailLine("행동 특성", creature.personality.behavior)
+            DetailLine("반응성", creature.personality.reactivity)
+        }
+        .padding(.horizontal)
+        .padding(.bottom, 16)
+        .id(SectionType.personality)
+    }
+    
+    // MARK: - 특이사항
+    private var significantSection: some View {
+        Group {
+            SectionPositionReporter(section: .significant)
+                .frame(height: 0)
+            
+            SectionHeader(title: "특이사항", icon: Image(.significant))
+            DetailLine("독성 여부", creature.significant.toxicity)
+            DetailLine("생존 전략", creature.significant.strategy)
+            DetailLine("관찰 팁", creature.significant.observeTip)
+            DetailLine("기타 특징", creature.significant.otherFeature)
+        }
+        .padding(.horizontal)
+        .padding(.bottom, 16)
+        .id(SectionType.significant)
+    }
+
+    
+    private var divider: some View {
+        Divider().frame(height: 3).frame(maxWidth: .infinity).background(Color(.grayscaleG200))
+    }
+}
+
+enum SectionType: String, CaseIterable {
+    case appearance = "외모"
+    case personality = "성격"
+    case significant = "특이사항"
 }
 
 struct DetailInfoBlock: View {
@@ -98,8 +181,9 @@ struct DetailInfoBlock: View {
     var body: some View {
         HStack {
             Text(title).font(.NanumSquareNeo.NanumSquareNeoBold(size: 12)).foregroundColor(Color(.grayscaleG600))
-            Spacer()
+                .frame(width: 60, alignment: .leading)
             Text(value).font(.NanumSquareNeo.NanumSquareNeoBold(size: 12)).foregroundColor(Color(.grayscaleG800))
+            Spacer()
         }
         .padding(.vertical, 4)
     }
@@ -107,11 +191,14 @@ struct DetailInfoBlock: View {
 
 struct SectionHeader: View {
     let title: String
+    let icon: Image
 
     var body: some View {
-        Text(title)
-            .font(.omyu.regular(size: 24))
-            .padding(.top, 16)
+        HStack {
+            icon
+            Text(title)
+                .font(.omyu.regular(size: 24))
+        }
     }
 }
 
@@ -123,6 +210,41 @@ func DetailLine(_ title: String, _ value: String) -> some View {
     }
 }
 
+struct RoundedCorners: Shape {
+    var tl: CGFloat = 0.0
+    var tr: CGFloat = 0.0
+    var bl: CGFloat = 0.0
+    var br: CGFloat = 0.0
+
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+
+        let w = rect.size.width
+        let h = rect.size.height
+
+        let tr = min(min(self.tr, h/2), w/2)
+        let tl = min(min(self.tl, h/2), w/2)
+        let bl = min(min(self.bl, h/2), w/2)
+        let br = min(min(self.br, h/2), w/2)
+
+        path.move(to: CGPoint(x: w / 2.0, y: 0))
+        path.addLine(to: CGPoint(x: w - tr, y: 0))
+        path.addArc(center: CGPoint(x: w - tr, y: tr), radius: tr,
+                    startAngle: Angle(degrees: -90), endAngle: Angle(degrees: 0), clockwise: false)
+        path.addLine(to: CGPoint(x: w, y: h - br))
+        path.addArc(center: CGPoint(x: w - br, y: h - br), radius: br,
+                    startAngle: Angle(degrees: 0), endAngle: Angle(degrees: 90), clockwise: false)
+        path.addLine(to: CGPoint(x: bl, y: h))
+        path.addArc(center: CGPoint(x: bl, y: h - bl), radius: bl,
+                    startAngle: Angle(degrees: 90), endAngle: Angle(degrees: 180), clockwise: false)
+        path.addLine(to: CGPoint(x: 0, y: tl))
+        path.addArc(center: CGPoint(x: tl, y: tl), radius: tl,
+                    startAngle: Angle(degrees: 180), endAngle: Angle(degrees: 270), clockwise: false)
+        path.closeSubpath()
+
+        return path
+    }
+}
 
 #Preview {
     let sampleSeaCreatureDetail = SeaCreatureDetail(
@@ -156,5 +278,5 @@ func DetailLine(_ title: String, _ value: String) -> some View {
         )
     )
     
-    OceanCreatureDetailView(creature: sampleSeaCreatureDetail)
+    OceanCreatureDetailView(creature: sampleSeaCreatureDetail, selectedSection: .appearance)
 }
