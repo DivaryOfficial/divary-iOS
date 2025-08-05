@@ -75,16 +75,34 @@ struct SeaCreatureDetail: Decodable, Identifiable {
 extension SeaCreatureDetail {
     static func mock(for card: SeaCreatureCard) -> SeaCreatureDetail {
         SeaCreatureDetail(
-            id: card.id,
-            name: card.name,
-            type: card.type,
-            size: "약 5cm",
-            appearPeriod: "여름",
-            place: "바다",
-            imageUrls: [card.imageUrl],
-            appearance: Appearance(body: "", colorCodes: [], color: "", pattern: "", etc: ""),
-            personality: Personality(activity: "", socialSkill: "", behavior: "", reactivity: ""),
-            significant: Significant(toxicity: "", strategy: "", observeTip: "", otherFeature: "")
+            id: 2,
+            name: "갯민숭달팽이",
+            type: "연체동물",
+            size: "약 1.5~6cm",
+            appearPeriod: "봄, 가을에 주로 관찰",
+            place: "따뜻한 연안, 바위 틈",
+            imageUrls: [
+                URL(string: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Nudibranch_flabellina.jpg/640px-Nudibranch_flabellina.jpg")!
+            ],
+            appearance: Appearance(
+                body: "부드럽고 납작한 몸체",
+                colorCodes: ["#FFFFFF", "#FFD700", "#000000"],
+                color: "흰색, 노란색, 검정색 점",
+                pattern: "누디브랜치",
+                etc: "촉수가 눈처럼 보임"
+            ),
+            personality: Personality(
+                activity: "느림",
+                socialSkill: "혼자 다님",
+                behavior: "서식지 주변을 기어다님",
+                reactivity: "자극에 민감"
+            ),
+            significant: Significant(
+                toxicity: "무독성",
+                strategy: "위장",
+                observeTip: "작고 조용히 숨어 있으니 자세히 봐야 함",
+                otherFeature: "바다 속 꽃처럼 생김"
+            )
         )
     }
 }

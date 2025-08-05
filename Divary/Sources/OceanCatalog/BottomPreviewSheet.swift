@@ -27,10 +27,12 @@ struct BottomPreviewSheet: View {
                             .resizable()
                             .scaledToFill()
                     } else {
-                        Color.gray.opacity(0.2)
+//                        Color.gray.opacity(0.2)
+                        Image(.test)
+                            .resizable()
+                            .scaledToFill()
                     }
                 }
-                .frame(width: 100, height: 100)
                 .cornerRadius(10)
 
                 VStack(alignment: .leading, spacing: 6) {
@@ -57,7 +59,7 @@ struct BottomPreviewSheet: View {
             RoundedRectangle(cornerRadius: 20)
                 .fill(Color(.systemBackground))
         )
-        .frame(maxHeight: 280) // ← 높이 제한
+        .frame(maxHeight: 280) // 높이 제한
     }
 }
 
