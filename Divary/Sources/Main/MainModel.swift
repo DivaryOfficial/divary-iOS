@@ -9,18 +9,30 @@
 import Foundation
 import SwiftUI
 
-
-struct LogListItem: Identifiable {
-    let id = UUID()
-    let date: String              // 날짜 (예: "2022-01-23")
-    let iconType: IconType          // 대표 아이콘 코드 (예: "CLOWNFISH")
+// 추가: 저장 상태 enum
+enum SaveStatus: String, CaseIterable {
+    case complete = "COMPLETE"
+    case temp = "TEMP"
 }
 
-struct DiveLogGroup: Identifiable {
-    let id = UUID()
-    var date: String
-    var iconType: IconType        // ✅ 날짜별 대표 아이콘
+struct LogBookBase: Identifiable{
+    let id: String
+    let date: Date
+    let title: String
+    let iconType: IconType
     var logs: [DiveLogData]     // 최대 3개
+    var saveStatus: SaveStatus = .complete // 추가: 저장 상태
+    // API에서 받을 때는 로그북 데이터는 별도 API로 가져올지도
+    // var logBooks: [DiveLogData] // 이건 별도 API 호출로 가져올 예정
+}
+
+// 실제 API Response 모델
+struct LogBookBaseResponse{
+    let logBases: [LogBookBase]
+}
+
+struct LogBookResponse {
+    let logBooks: [DiveLogData]
 }
 
 enum IconType: String, CaseIterable, Identifiable {
@@ -75,26 +87,3 @@ enum IconType: String, CaseIterable, Identifiable {
 //        }
 //    }
 }
-
-
-
-//@Observable
-//class MainLogs {
-//    var name: String?   // 로그 제목
-//    var date: String?   // 로그 날짜
-//    var iconType: String? // 로그 아이콘
-//    var saveStatus: Bool? // 임시저장 상태
-//    
-//    init(
-//        name: String? = nil,
-//        date: String? = nil,
-//        iconType: String? = nil,
-//        saveStatus: Bool? = nil
-//    ) {
-//        self.name = name
-//        self.date = date
-//        self.iconType = iconType
-//        self.saveStatus = saveStatus
-//    }
-//}
-
