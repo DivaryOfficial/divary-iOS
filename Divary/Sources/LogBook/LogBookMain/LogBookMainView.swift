@@ -41,7 +41,12 @@ struct LogBookMainView: View {
                                  isCalendarPresented: $isCalendarPresented,
                                  onBackTap: {
                                      dismiss()
-                                 }
+                                 },
+                                 isTempSaved: viewModel.isTempSaved,
+                                                    onSaveTap: {
+                                                        // 저장 버튼 액션 (필요시 구현)
+                                                        print("저장 버튼 클릭됨")
+                                                    }
                              )
                              .zIndex(1)
                 TabSelector(selectedTab: $selectedTab)

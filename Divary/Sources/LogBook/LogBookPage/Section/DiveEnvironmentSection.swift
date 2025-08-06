@@ -10,8 +10,14 @@ import SwiftUI
 struct DiveEnvironmentSection: View {
     @Binding var environment: DiveEnvironment?
     @Binding var isSaved: Bool
+    
     // 기입 상태
     var status: SectionStatus {
+        Self.getStatus(environment: environment, isSaved: isSaved)
+    }
+    
+    // Static 메서드로 분리
+    static func getStatus(environment: DiveEnvironment?, isSaved: Bool) -> SectionStatus {
         if isSaved { // 사용자가 저장했으면 무조건 .complete
             return .complete
         }

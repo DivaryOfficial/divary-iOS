@@ -12,6 +12,11 @@ struct DiveEquipmentSection: View {
     @Binding var isSaved: Bool
     
     var status: SectionStatus {
+        Self.getStatus(equipment: equipment, isSaved: isSaved)
+    }
+    
+    // Static 메서드로 분리
+    static func getStatus(equipment: DiveEquipment?, isSaved: Bool) -> SectionStatus {
         if isSaved { // 사용자가 저장했으면 무조건 .complete
             return .complete
         }
