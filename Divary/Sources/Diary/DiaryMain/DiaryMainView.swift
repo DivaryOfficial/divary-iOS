@@ -16,7 +16,7 @@ struct DiaryMainView: View {
     @FocusState private var isRichTextEditorFocused: Bool
     @State private var footerBarType: DiaryFooterBarType = .main
     
-    @Binding var showCanvas: Bool
+    @State var showCanvas: Bool = false
     @State private var currentOffsetY: CGFloat = 0
     
     @ViewBuilder
@@ -159,6 +159,6 @@ private struct PreviewWrapper: View {
     @State private var showCanvas = false
 
     var body: some View {
-        DiaryMainView(showCanvas: $showCanvas)
+        DiaryMainView()
     }
 }
