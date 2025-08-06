@@ -80,6 +80,7 @@ struct LogBookPageView: View {
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             
+            // DiveInputPageView 팝업
             if let section = pageViewModel.activeInputSection {
                 GeometryReader { geometry in
                     // 흐린 배경
@@ -137,34 +138,61 @@ struct LogBookPageView: View {
                 }
             }
             
+            // TempPop 팝업 (alert 대신 사용)
+            if pageViewModel.showUnsavedAlert {
+                
+                GeometryReader { geometry in
+                    Color.white.opacity(0.8)
+                        .ignoresSafeArea()
+
+                    VStack {
+                        Spacer()
+                        
+                        TempPop(
+                            onTempSave: {
+                                pageViewModel.handleTempSave()
+                                pageViewModel.showUnsavedAlert = false
+                            },
+                            onDiscardChanges: {
+                                pageViewModel.handleDiscardChanges()
+                                pageViewModel.showUnsavedAlert = false
+                            },
+                            onClose: {
+                                pageViewModel.showUnsavedAlert = false
+                            }
+                        )
+                        .padding(.horizontal, 24)
+                        
+                        Spacer()
+                    }
+                    .transition(.opacity)
+                    .zIndex(20)
+                }
+            }
+            
             // 임시저장 완료 메시지
             if pageViewModel.showTempSavedMessage {
-                HStack(alignment: .center, spacing: 12) {
-                    Spacer()
-                    
-                    Text("임시저장 완료!")
-                        .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 16))
-                        .foregroundColor(.white)
-                        .padding()
+                VStack {
                     
                     Spacer()
+                    
+                    HStack(alignment: .center, spacing: 12) {
+                        Spacer()
+                        
+                        Text("임시저장 완료!")
+                            .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 16))
+                            .foregroundColor(.white)
+                            .padding()
+                        
+                        Spacer()
+                    }
+                    .frame(width: 350, alignment: .center)
+                    .background(Color.grayscale_g500)
+                    .cornerRadius(8)
+                    .transition(.opacity)
                 }
-                .frame(width: 350, alignment: .center)
-                .background(Color.grayscale_g500)
-                .cornerRadius(8)
-                .transition(.opacity)
-                .zIndex(20)
+                .zIndex(30)
             }
-        }
-        .alert("아직 작성되지 않은 내용이 있어요", isPresented: $pageViewModel.showUnsavedAlert) {
-            Button("임시저장하고 나가기") {
-                pageViewModel.handleTempSave()
-            }
-            Button("그냥 나가기") {
-                pageViewModel.handleDiscardChanges()
-            }
-        } message: {
-            Text("저장하지 않으면 지금까지 입력한 내용이 사라집니다")
         }
     }
 }
