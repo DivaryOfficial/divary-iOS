@@ -1,0 +1,16 @@
+{
+  "images" : [
+    {
+<<<<<<< HEAD:Divary/Resources/Assets.xcassets/Main/seaFriends/clownfish.imageset/Contents.json
+      "filename" : "clownfish.svg",
+=======
+      "filename" : "humbleicons_exclamation-triangle.svg",
+>>>>>>> main:Divary/Resources/Assets.xcassets/OceanCatalog/significant.imageset/Contents.json
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
