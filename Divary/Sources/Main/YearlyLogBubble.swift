@@ -55,6 +55,9 @@ struct YearlyLogBubble: View {
                             } else if let logBaseId = item.logBaseId {
                                 onBubbleTap?(logBaseId) // 기존 로그 버블 클릭 시
                             }
+                        },
+                        onLongTap: {
+                            onDeleteTap?(item.logBaseId ?? "")
                         }
                     )
                     .padding(.bottom, index % 2 == 0 ? 60 : 0)
@@ -65,12 +68,13 @@ struct YearlyLogBubble: View {
                            Image(.plusTooltip)
                                .offset(x: 60, y: -45)
                        }
-                    }
                 }
-                .padding(.horizontal)
             }
+            .padding()
         }
+//        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
+}
 
 #Preview {
     @Previewable @State var showDeletePopup: Bool = false
