@@ -45,79 +45,32 @@ class LogBookMainViewModel {
         self.tempSavedData = Array(repeating: DiveLogData(), count: 3)
     }
     
-    // 모든 섹션이 완성되었는지 체크
+    // 모든 섹션이 완성되었는지 체크 (간소화된 버전)
     func areAllSectionsComplete(for index: Int) -> Bool {
         guard index < diveLogData.count else { return false }
         
         let data = diveLogData[index]
+        let sections: [InputSectionType] = [.overview, .participants, .equipment, .environment, .profile]
         
-        // 각 섹션의 완성도 체크
-        let overviewComplete = isOverviewComplete(data.overview)
-        let participantsComplete = isParticipantsComplete(data.participants)
-        let equipmentComplete = isEquipmentComplete(data.equipment)
-        let environmentComplete = isEnvironmentComplete(data.environment)
-        let profileComplete = isProfileComplete(data.profile)
-        
-        return overviewComplete && participantsComplete && equipmentComplete && environmentComplete && profileComplete
+        return sections.allSatisfy { section in
+            getSectionStatus(for: data, section: section) == .complete
+        }
     }
     
-    // 개요 섹션 완성도 체크
-    private func isOverviewComplete(_ overview: DiveOverview?) -> Bool {
-        guard let overview = overview else { return false }
-        let values = [overview.title, overview.point, overview.purpose, overview.method]
-        return values.allSatisfy({ !($0?.isEmpty ?? true) })
-    }
-    
-    // 동행자 섹션 완성도 체크
-    private func isParticipantsComplete(_ participants: DiveParticipants?) -> Bool {
-        guard let participants = participants else { return false }
-        let leader = !(participants.leader?.isEmpty ?? true)
-        let buddy = !(participants.buddy?.isEmpty ?? true)
-        let companions = !(participants.companion?.allSatisfy { $0.isEmpty } ?? true)
-        return leader && buddy && !companions
-    }
-    
-    // 착용 섹션 완성도 체크
-    private func isEquipmentComplete(_ equipment: DiveEquipment?) -> Bool {
-        guard let equipment = equipment else { return false }
-        let suit = !(equipment.suitType?.isEmpty ?? true)
-        let items = !(equipment.Equipment?.isEmpty ?? true)
-        let weight = equipment.weight != nil
-        return suit && items && weight
-    }
-    
-    // 환경정보 섹션 완성도 체크
-    private func isEnvironmentComplete(_ environment: DiveEnvironment?) -> Bool {
-        guard let environment = environment else { return false }
-        let values: [Any?] = [
-            environment.weather,
-            environment.wind,
-            environment.current,
-            environment.wave,
-            environment.airTemp,
-            environment.waterTemp,
-            environment.visibility
-        ]
-        return values.allSatisfy({
-            if let stringValue = $0 as? String {
-                return !stringValue.isEmpty
-            }
-            return $0 != nil
-        })
-    }
-    
-    // 프로파일 섹션 완성도 체크
-    private func isProfileComplete(_ profile: DiveProfile?) -> Bool {
-        guard let profile = profile else { return false }
-        let values: [Any?] = [
-            profile.diveTime,
-            profile.maxDepth,
-            profile.avgDepth,
-            profile.decoStop,
-            profile.startPressure,
-            profile.endPressure
-        ]
-        return values.allSatisfy({ $0 != nil })
+    // 섹션별 상태 가져오기
+    private func getSectionStatus(for data: DiveLogData, section: InputSectionType) -> SectionStatus {
+        switch section {
+        case .overview:
+            return DiveOverviewSection.getStatus(overview: data.overview, isSaved: false)
+        case .participants:
+            return DiveParticipantsSection.getStatus(participants: data.participants, isSaved: false)
+        case .equipment:
+            return DiveEquipmentSection.getStatus(equipment: data.equipment, isSaved: false)
+        case .environment:
+            return DiveEnvironmentSection.getStatus(environment: data.environment, isSaved: false)
+        case .profile:
+            return DiveProfileSection.getStatus(profile: data.profile, isSaved: false)
+        }
     }
     
     // 임시저장 후 변경사항이 있는지 체크
@@ -280,67 +233,67 @@ class LogBookMainViewModel {
     }
     
     // 임시저장된 데이터로 되돌리기
-       func restoreFromTempSave(for index: Int) {
-           guard index < diveLogData.count && index < tempSavedData.count else { return }
-           
-           let tempData = tempSavedData[index]
-           let newData = DiveLogData()
-           
-           // Overview 복사
-           if let overview = tempData.overview {
-               newData.overview = DiveOverview(
-                   title: overview.title,
-                   point: overview.point,
-                   purpose: overview.purpose,
-                   method: overview.method
-               )
-           }
-           
-           // Participants 복사
-           if let participants = tempData.participants {
-               newData.participants = DiveParticipants(
-                   leader: participants.leader,
-                   buddy: participants.buddy,
-                   companion: participants.companion
-               )
-           }
-           
-           // Equipment 복사
-           if let equipment = tempData.equipment {
-               newData.equipment = DiveEquipment(
-                   suitType: equipment.suitType,
-                   Equipment: equipment.Equipment,
-                   weight: equipment.weight,
-                   pweight: equipment.pweight
-               )
-           }
-           
-           // Environment 복사
-           if let environment = tempData.environment {
-               newData.environment = DiveEnvironment(
-                   weather: environment.weather,
-                   wind: environment.wind,
-                   current: environment.current,
-                   wave: environment.wave,
-                   airTemp: environment.airTemp,
-                   feelsLike: environment.feelsLike,
-                   waterTemp: environment.waterTemp,
-                   visibility: environment.visibility
-               )
-           }
-           
-           // Profile 복사
-           if let profile = tempData.profile {
-               newData.profile = DiveProfile(
-                   diveTime: profile.diveTime,
-                   maxDepth: profile.maxDepth,
-                   avgDepth: profile.avgDepth,
-                   decoStop: profile.decoStop,
-                   startPressure: profile.startPressure,
-                   endPressure: profile.endPressure
-               )
-           }
-           
-           diveLogData[index] = newData
-       }
+    func restoreFromTempSave(for index: Int) {
+        guard index < diveLogData.count && index < tempSavedData.count else { return }
+        
+        let tempData = tempSavedData[index]
+        let newData = DiveLogData()
+        
+        // Overview 복사
+        if let overview = tempData.overview {
+            newData.overview = DiveOverview(
+                title: overview.title,
+                point: overview.point,
+                purpose: overview.purpose,
+                method: overview.method
+            )
+        }
+        
+        // Participants 복사
+        if let participants = tempData.participants {
+            newData.participants = DiveParticipants(
+                leader: participants.leader,
+                buddy: participants.buddy,
+                companion: participants.companion
+            )
+        }
+        
+        // Equipment 복사
+        if let equipment = tempData.equipment {
+            newData.equipment = DiveEquipment(
+                suitType: equipment.suitType,
+                Equipment: equipment.Equipment,
+                weight: equipment.weight,
+                pweight: equipment.pweight
+            )
+        }
+        
+        // Environment 복사
+        if let environment = tempData.environment {
+            newData.environment = DiveEnvironment(
+                weather: environment.weather,
+                wind: environment.wind,
+                current: environment.current,
+                wave: environment.wave,
+                airTemp: environment.airTemp,
+                feelsLike: environment.feelsLike,
+                waterTemp: environment.waterTemp,
+                visibility: environment.visibility
+            )
+        }
+        
+        // Profile 복사
+        if let profile = tempData.profile {
+            newData.profile = DiveProfile(
+                diveTime: profile.diveTime,
+                maxDepth: profile.maxDepth,
+                avgDepth: profile.avgDepth,
+                decoStop: profile.decoStop,
+                startPressure: profile.startPressure,
+                endPressure: profile.endPressure
+            )
+        }
+        
+        diveLogData[index] = newData
+    }
 }

@@ -88,16 +88,16 @@ struct LogBookPageView: View {
 
                         VStack(spacing: 0) {
                             // 닫기 버튼
-                                                HStack {
-                                                    Spacer()
-                                                    Button(action: {
-                                                        handleCloseButtonTap()
-                                                    }) {
-                                                        Image(systemName: "xmark")
-                                                            .font(.system(size: 20))
-                                                            .padding()
-                                                    }
-                                                }
+                            HStack {
+                                Spacer()
+                                Button(action: {
+                                    handleCloseButtonTap()
+                                }) {
+                                    Image(systemName: "xmark")
+                                        .font(.system(size: 20))
+                                        .padding()
+                                }
+                            }
 
                             // DiveInputPageView 팝업
                             DiveInputPageView(
@@ -139,17 +139,22 @@ struct LogBookPageView: View {
             
             // 임시저장 완료 메시지
                  if showTempSavedMessage {
-                     VStack {
+                     
+                     HStack(alignment: .center, spacing: 12) {
                          Spacer()
-                         Text("임시저장 완료")
-                             .font(Font.omyu.regular(size: 16))
+                         
+                         Text("임시저장 완료!")
+                             .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 16))
                              .foregroundColor(.white)
                              .padding()
-                             .background(Color.black.opacity(0.7))
-                             .cornerRadius(8)
-                             .transition(.opacity)
+                            
+                         
                          Spacer()
                      }
+                     .frame(width: 350, alignment: .center)
+                     .background(Color.grayscale_g500)
+                     .cornerRadius(8)
+                     .transition(.opacity)
                      .zIndex(20)
                  }
              }
