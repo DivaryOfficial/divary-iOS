@@ -21,6 +21,10 @@ struct MainView: View {
     // 새 로그 생성 상태 추가
     @State private var newLogViewModel = NewLogCreationViewModel()
     
+    // 나의바다로 가기 위한 변수들
+    @State private var showCharacterView = false
+    @State private var isEditing = false
+    
     // 연도별 필터링된 로그베이스들
     private var filteredLogBases: [LogBookBaseMock] {
        MockDataManager.shared.logBookBases.filter { logBase in
@@ -42,11 +46,6 @@ struct MainView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-//                Image("seaBack")
-//                    .resizable()
-//                    .scaledToFill()
-//                    .ignoresSafeArea()
-                
                 YearlyLogBubble(
                     selectedYear: selectedYear, // 선택된 연도 전달
                     showDeletePopup: $showDeletePopup,
@@ -113,7 +112,7 @@ struct MainView: View {
                     UserDefaults.standard.set(true, forKey: "launchedBefore")
                 }
             }
-            .overlay {
+            .overlay { // 로그 삭제 확인 팝업
                 if showDeletePopup, let log = selectedLogBase {
                     let text: String = {
                         let formatter = DateFormatter()
@@ -136,7 +135,21 @@ struct MainView: View {
             .fullScreenCover(isPresented: $showNotification) {
                 NotificationView()
             }
+            .gesture( // 나의 바다 뷰로 이동
+                DragGesture(minimumDistance: 30, coordinateSpace: .local)
+                    .onEnded { value in
+                        // 오른쪽 → 왼쪽 스와이프 감지
+                        if value.translation.width < -50 {
+                            let _ = print("스와이프햇다1")
+                            showCharacterView = true
+                        }
+                    }
+            )
+            .navigationDestination(isPresented: $showCharacterView) { // 나의 바다 뷰로 이동
+                CharacterView(isPetEditingMode: $isEditing)
+            }
         }
+        
     }
     
     
