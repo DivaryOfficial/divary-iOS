@@ -17,15 +17,16 @@ struct DivaryApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $router.path) {
-                DiaryMainView()
-                    .navigationDestination(for: Route.self) { route in
-                        switch route {
-                            
-                        case .login:
-                            LoginView()
-                            
-                        }
-                    }
+                OceanCatalogView()
+//                DiaryMainView()
+//                    .navigationDestination(for: Route.self) { route in
+//                        switch route {
+//                            
+//                        case .login:
+//                            LoginView()
+//                            
+//                        }
+//                    }
             }
 
         }

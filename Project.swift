@@ -45,6 +45,7 @@ let project = Project(
             resources: ["Divary/Resources/**"],
             dependencies: [
                 .package(product: "Moya"),
+                .package(product: "CombineMoya"),
                 .package(product: "GoogleSignIn"),
                 .package(product: "GoogleSignInSwift"), // 선택적
                 .package(product: "RichTextKit")        // 실제 product명이 맞는지 꼭 확인
