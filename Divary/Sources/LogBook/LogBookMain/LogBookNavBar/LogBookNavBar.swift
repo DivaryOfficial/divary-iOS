@@ -15,6 +15,10 @@ struct LogBookNavBar: View {
     // 추가: 뒤로가기 콜백 (옵셔널)
        var onBackTap: (() -> Void)? = nil
     
+    // 추가: 임시저장 상태와 저장 버튼 액션
+       var isTempSaved: Bool = false
+       var onSaveTap: (() -> Void)? = nil
+    
     var body: some View {
         ZStack() {
             HStack{
@@ -79,10 +83,15 @@ struct LogBookNavBar: View {
                 
                 
                 Spacer()
-                
-                Text("저장")
-                    .font(Font.omyu.regular(size: 20))
-                    .foregroundStyle(.gray)
+              
+                // 저장 텍스트를 버튼으로 변경
+                Button(action: {
+                    onSaveTap?()
+                }) {
+                    Text("저장")
+                        .font(Font.omyu.regular(size: 20))
+                        .foregroundStyle(isTempSaved ? Color.primary_sea_blue : .gray)
+                }
             }
         }
         .padding(12)

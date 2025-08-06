@@ -46,9 +46,7 @@ struct DiveInputPageView: View {
                 ForEach(0..<pages.count, id: \.self) { index in
                     ScrollView {
                         VStack(alignment:.center) {
-                     
                             pages[index]
-                           
                         }
                     }
                     .tag(index)
