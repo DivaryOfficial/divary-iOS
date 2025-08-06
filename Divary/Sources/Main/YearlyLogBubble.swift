@@ -55,6 +55,7 @@ struct YearlyLogBubble: View {
                                         onBubbleTap?(logBaseId) // 기존 로그 버블 클릭 시
                                     }
                                 }
+//                                hasTempSave: item.logBaseId != nil ? dataManager.hasTempSaveInLogBase(logBaseId: item.logBaseId!) : false
                             )
                             .padding(.bottom, index % 2 == 0 ? 60 : 0)
                             .padding(.top, index % 2 == 1 ? 60 : 0)
