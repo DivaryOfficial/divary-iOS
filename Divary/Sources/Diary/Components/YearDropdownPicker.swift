@@ -56,7 +56,7 @@ struct YearDropdownPicker: View {
                         }
                     }
                 }
-                .frame(height: 150) // 5개만 보이도록
+                .frame(height: 160) // 5개만 보이도록
                 .background(Color.white)
             }
         }

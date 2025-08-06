@@ -21,12 +21,20 @@ struct MainView: View {
     // 새 로그 생성 상태 추가
     @State private var newLogViewModel = NewLogCreationViewModel()
     
+    // 나의바다로 가기 위한 변수들
+    @State private var showCharacterView = false
+    @State private var isEditing = false
+    
     // 연도별 필터링된 로그베이스들
-       private var filteredLogBases: [LogBookBaseMock] {
-           MockDataManager.shared.logBookBases.filter { logBase in
-               Calendar.current.component(.year, from: logBase.date) == selectedYear
-           }
+    private var filteredLogBases: [LogBookBaseMock] {
+       MockDataManager.shared.logBookBases.filter { logBase in
+           Calendar.current.component(.year, from: logBase.date) == selectedYear
        }
+    }
+    
+    private var selectedLogBase: LogBookBaseMock? {
+        MockDataManager.shared.logBookBases.first(where: { $0.id == selectedLogBaseId })
+    }
     
     private var canSubYear: Bool {
         selectedYear > 1950
@@ -38,20 +46,22 @@ struct MainView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                background
-                
                 YearlyLogBubble(
-                                  selectedYear: selectedYear, // 선택된 연도 전달
-                                  showDeletePopup: $showDeletePopup,
-                                  onBubbleTap: { logBaseId in
-                                      selectedLogBaseId = logBaseId
-                                      showLogBookMain = true
-                                  },
-                                  onPlusButtonTap: {// + 버튼 탭 시 새 로그 생성 플로우 시작
-                                      newLogViewModel.showNewLogCreation = true
-                                  }
-                              )
-                .padding(.top, 150)
+                    selectedYear: selectedYear, // 선택된 연도 전달
+                    showDeletePopup: $showDeletePopup,
+                    onBubbleTap: { logBaseId in
+                      selectedLogBaseId = logBaseId
+                      showLogBookMain = true
+                    },
+                    onPlusButtonTap: {// + 버튼 탭 시 새 로그 생성 플로우 시작
+                      newLogViewModel.showNewLogCreation = true
+                    },
+                    onDeleteTap: { logBaseId in
+                      selectedLogBaseId = logBaseId
+                        showDeletePopup = true
+                    }
+                )
+                .padding(.top, 110)
                 
                 if showSwipeTooltip {
                     VStack {
@@ -65,29 +75,35 @@ struct MainView: View {
                         .padding(.bottom, 200)
                     }
                 }
+                
                 yearSelectbar
                 
                 // 새 로그 생성 플로우
                 if newLogViewModel.showNewLogCreation {
                     NewLogCreationView(
-                        viewModel: newLogViewModel,
-                                        onNavigateToExistingLog: { logBaseId in
-                                            // 기존 로그로 이동
-                                            selectedLogBaseId = logBaseId
-                                            showLogBookMain = true
-                                            newLogViewModel.resetData()
-                                        },
-                                        onCreateNewLog: {
-                                            // 새 로그 생성 후 해당 로그로 이동
-                                            let newLogBaseId = newLogViewModel.createNewLog()
-                                            if !newLogBaseId.isEmpty {
-                                                selectedLogBaseId = newLogBaseId
-                                                showLogBookMain = true
-                                            }
-                                        }
-                                    )
-                                }
+                        viewModel: newLogViewModel, onNavigateToExistingLog: { logBaseId in
+                            // 기존 로그로 이동
+                            selectedLogBaseId = logBaseId
+                            showLogBookMain = true
+                            newLogViewModel.resetData()
+                        },
+                        onCreateNewLog: {
+                            // 새 로그 생성 후 해당 로그로 이동
+                            let newLogBaseId = newLogViewModel.createNewLog()
+                            if !newLogBaseId.isEmpty {
+                                selectedLogBaseId = newLogBaseId
+                                showLogBookMain = true
+                            }
+                        }
+                    )
+                }
             }
+            .background(
+                Image("seaBack")
+                    .resizable()
+                    .ignoresSafeArea()
+                    .scaledToFill()
+            )
             .task {
                 // 최초 실행 시 한 번만 표시
                 let launched = UserDefaults.standard.bool(forKey: "launchedBefore")
@@ -96,8 +112,17 @@ struct MainView: View {
                     UserDefaults.standard.set(true, forKey: "launchedBefore")
                 }
             }
-            .overlay {
-                if showDeletePopup {
+            .overlay { // 로그 삭제 확인 팝업
+                if showDeletePopup, let log = selectedLogBase {
+                    let text: String = {
+                        let formatter = DateFormatter()
+                        formatter.dateFormat = "M/d"
+                        return "\(formatter.string(from: log.date)) [\(log.title)] 을/를\n삭제하시겠습니까?"
+                    }()
+                    
+                    DeletePopupView(isPresented: $showDeletePopup, deleteText: text)
+                }
+                else if showDeletePopup {
                     DeletePopupView(isPresented: $showDeletePopup, deleteText: "삭제하시겠습니까?")
                 }
             }
@@ -110,22 +135,29 @@ struct MainView: View {
             .fullScreenCover(isPresented: $showNotification) {
                 NotificationView()
             }
+            .gesture( // 나의 바다 뷰로 이동
+                DragGesture(minimumDistance: 30, coordinateSpace: .local)
+                    .onEnded { value in
+                        // 오른쪽 → 왼쪽 스와이프 감지
+                        if value.translation.width < -50 {
+                            let _ = print("스와이프햇다1")
+                            showCharacterView = true
+                        }
+                    }
+            )
+            .navigationDestination(isPresented: $showCharacterView) { // 나의 바다 뷰로 이동
+                CharacterView(isPetEditingMode: $isEditing)
+            }
         }
+        
     }
     
-    private var background: some View {
-        Image("seaBack")
-            .resizable()
-            .scaledToFill()
-            .ignoresSafeArea()
-    }
     
     private var yearSelectbar: some View {
         
         VStack(spacing: 0) {
             HStack {
                 Spacer()
-                // 벨 버튼 부분을 다음과 같이 수정
                 ZStack {
                     Button(action: {
                         showNotification = true
@@ -141,15 +173,12 @@ struct MainView: View {
                             .frame(width: 8, height: 8)
                             .offset(x: 8, y: -8)
                     }
-                }.padding(.trailing, 12)
+                }
                 
             }
-            .safeAreaInset(edge: .top) {
-                Color.clear.frame(height: 55)
-            }
-            .padding(.bottom, 3)
+            .padding(.trailing)
             
-            HStack(alignment: .top) {
+            HStack(alignment: .top, spacing: 0) {
                 Button(action: {
                     if canSubYear {
                         selectedYear -= 1
@@ -157,8 +186,8 @@ struct MainView: View {
                 }) {
                     Image("chevron.left")
                         .foregroundStyle(canSubYear ? .black : Color(.grayscaleG500))
+                        .padding(.top, 8)
                 }
-                .padding(.top, 8)
                 Spacer()
                 
                 YearDropdownPicker(selectedYear: $selectedYear)
@@ -171,14 +200,15 @@ struct MainView: View {
                 }) {
                     Image("chevron.right")
                         .foregroundStyle(canAddYear ? .black : Color(.grayscaleG500))
+                        .padding(.top, 8)
                 }
-                .padding(.top, 8)
             }
-            .padding(.horizontal, 12)
+            .padding()
             
             Spacer()
         }
     }
+
 }
 
 #Preview {

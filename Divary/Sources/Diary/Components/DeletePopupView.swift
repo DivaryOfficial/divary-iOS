@@ -21,8 +21,9 @@ struct DeletePopupView: View {
                 .ignoresSafeArea()
                 .onTapGesture { isPresented = false }
             
-            VStack(spacing: 16) {
+            VStack {
                 Text(deleteText)
+                    .multilineTextAlignment(.center)
                     .padding(.top, 24)
                     .font(.omyu.regular(size: 24))
                 
