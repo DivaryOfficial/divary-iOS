@@ -12,10 +12,10 @@ struct DiaryImageSelectView: View {
     @State private var showDeletePopup = false
     @State private var currentIndex = 0
     
-    let decoViewModels: [DiaryImageDecoViewModel] = [
-        DiaryImageDecoViewModel(frameType: .origin, isSelected: true),
-        DiaryImageDecoViewModel(frameType: .pastelPink, isSelected: true),
-        DiaryImageDecoViewModel(frameType: .black, isSelected: true)
+    let decoViewModels: [TempImageDecoModel] = [
+        TempImageDecoModel(frameColor: .origin, isSelected: true),
+        TempImageDecoModel(frameColor: .pastelPink, isSelected: true),
+        TempImageDecoModel(frameColor: .black, isSelected: true)
     ]
     
     var body: some View {

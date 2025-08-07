@@ -58,7 +58,7 @@ final class DiaryCanvasViewModel: ObservableObject {
         print(drawing.bounds.size)
         let data = drawing.dataRepresentation()
         let base64 = data.base64EncodedString()
-        let meta = DrawingMeta(base64: base64, offsetY: offsetY)
+        let meta = DrawingContentDTO(base64: base64, offsetY: offsetY)
         print("캔버스뷰모델 \(meta.offsetY)")
 
         if let encoded = try? JSONEncoder().encode(meta) {

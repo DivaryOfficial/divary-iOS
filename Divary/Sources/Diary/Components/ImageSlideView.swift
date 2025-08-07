@@ -11,8 +11,10 @@ struct ImageSlideView: View {
 //    @StateObject var viewModel: DiaryImageSelectViewModel = DiaryImageSelectViewModel()
     @State private var showDeletePopup = false
     
-    var framedImages: [DiaryImageDecoViewModel]
+    var framedImages: [TempImageDecoModel]
     var isSelectView: Bool = true
+    
+    var framedImages2: [FramedImage] = []
     
     @Binding var currentIndex: Int
     
@@ -68,10 +70,10 @@ struct ImageSlideView: View {
         @State private var index = 0
         
         var body: some View {
-            let decoViewModels: [DiaryImageDecoViewModel] = [
-                DiaryImageDecoViewModel(frameType: .pastelPink, isSelected: true),
-                DiaryImageDecoViewModel(frameType: .origin, isSelected: true),
-                DiaryImageDecoViewModel(frameType: .pastelBlue, isSelected: true)
+            let decoViewModels: [TempImageDecoModel] = [
+                TempImageDecoModel(frameColor: .pastelPink, isSelected: true),
+                TempImageDecoModel(frameColor: .origin, isSelected: true),
+                TempImageDecoModel(frameColor: .pastelBlue, isSelected: true)
             ]
             
             ImageSlideView(framedImages: decoViewModels, currentIndex: $index)

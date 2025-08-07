@@ -439,7 +439,7 @@ class DiaryMainViewModel {
     
     func loadSavedDrawing() {
         guard let data = UserDefaults.standard.data(forKey: "SavedDrawingMeta"),
-              let meta = try? JSONDecoder().decode(DrawingMeta.self, from: data),
+              let meta = try? JSONDecoder().decode(DrawingContentDTO.self, from: data),
               let drawingData = Data(base64Encoded: meta.base64),
               let drawing = try? PKDrawing(data: drawingData) else {
             return

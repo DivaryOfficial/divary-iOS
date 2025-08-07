@@ -48,19 +48,19 @@ struct DiaryImageDecoView: View {
     
     private var frameSelectBar: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 25) {
-                ForEach(DiaryImageDecoViewModel.FrameType.allCases, id: \.self) { type in
+            HStack {
+                ForEach(FrameColor.allCases, id: \.self) { type in
                     Button {
                         if store.viewModels.indices.contains(currentIndex) {
-                            store.viewModels[currentIndex].frameType = type
+                            store.viewModels[currentIndex].frameColor = type
                         }
                     } label: {
                         DiaryImageFrame(frameType: type)
                     }
+                    .padding(.horizontal, 8)
+                    .padding(.vertical)
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
         }
         .background(Color(.G_100))
     }

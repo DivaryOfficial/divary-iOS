@@ -20,7 +20,7 @@ struct DiaryCanvasView: View {
         }
         .onAppear {
             if let data = UserDefaults.standard.data(forKey: "SavedDrawingMeta"),
-               let meta = try? JSONDecoder().decode(DrawingMeta.self, from: data) {
+               let meta = try? JSONDecoder().decode(DrawingContentDTO.self, from: data) {
                 viewModel.loadDrawingFromString(meta.base64)
             }
             

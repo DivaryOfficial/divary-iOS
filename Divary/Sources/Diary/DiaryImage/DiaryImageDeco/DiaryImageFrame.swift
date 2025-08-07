@@ -8,26 +8,26 @@
 import SwiftUI
 
 struct DiaryImageFrame: View {
-    @StateObject var viewModel: DiaryImageDecoViewModel
+    @StateObject var viewModel: TempImageDecoModel
 
-    init(frameType: DiaryImageDecoViewModel.FrameType = .origin) {
-        _viewModel = StateObject(wrappedValue: DiaryImageDecoViewModel(frameType: frameType, isSelected: false))
+    init(frameType: FrameColor = .origin) {
+        _viewModel = StateObject(wrappedValue: TempImageDecoModel(frameColor: frameType, isSelected: false))
     }
     
-//    init(frameType: DiaryImageDecoViewModel.FrameType = .pastelBlue) {
+//    init(frameType: FrameType = .pastelBlue) {
 //        _viewModel = StateObject(wrappedValue: DiaryImageDecoViewModel(frameType: frameType, isSelected: true))
 //    }
     
-    init(viewModel: DiaryImageDecoViewModel) {
+    init(viewModel: TempImageDecoModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
     
     var body: some View {
-        if viewModel.frameType != .origin {
+        if viewModel.frameColor != .origin {
             if viewModel.isSelected {
                 ZStack {
                     Rectangle()
-                        .fill(viewModel.frameType.frameColor)
+                        .fill(viewModel.frameColor.frameColor)
                         .shadow(color: .black.opacity(0.25), radius: 2, x: 0, y: 4)
                     VStack {
                         Image("testImage")
@@ -35,16 +35,16 @@ struct DiaryImageFrame: View {
                             .scaledToFill()
                             .frame(width: 230, height: 230)
                             .clipped()
-                            .cornerRadius(viewModel.frameType.innerCornerRadius)
+                            .cornerRadius(viewModel.frameColor.innerCornerRadius)
                             .padding(.top, 15)
                             .padding(.bottom, 16)
                         
                         VStack(alignment: .leading, spacing: 4) {
-                            TextField("캡션 추가...", text: $viewModel.imageCaption)
+                            TextField("캡션 추가...", text: $viewModel.caption)
                                 .font(.omyu.regular(size: 20))
                                 .foregroundStyle(.black)
                             
-                            Text(viewModel.imageDate)
+                            Text(viewModel.date)
                                 .font(.NanumSquareNeo.NanumSquareNeoBold(size: 12))
                                 .foregroundStyle(Color(.G_700))
                                 .padding(.bottom, 18)
@@ -59,13 +59,13 @@ struct DiaryImageFrame: View {
             else { // frameSelectBar에 프레임 버튼들
                 ZStack {
                     Rectangle()
-                        .fill(viewModel.frameType.frameColor)
+                        .fill(viewModel.frameColor.frameColor)
                         .shadow(color: .black.opacity(0.25), radius: 2, x: 0, y: 4)
                     
                     VStack {
-                        RoundedRectangle(cornerRadius: viewModel.frameType.innerCornerRadius)
+                        RoundedRectangle(cornerRadius: viewModel.frameColor.innerCornerRadius)
                             .fill(Color.white)
-                            .cornerRadius(viewModel.frameType.innerCornerRadius)
+                            .cornerRadius(viewModel.frameColor.innerCornerRadius)
                             .aspectRatio(1, contentMode: .fit)
                         Spacer()
                             .frame(height: 20)
@@ -88,7 +88,7 @@ struct DiaryImageFrame: View {
             else { // frameSelectBar에 없음 버튼
                 ZStack {
                     Rectangle()
-                        .frame(width: 70, height: 85)
+                        .frame(width: 70, height: 87)
                         .foregroundStyle(Color(.G_300))
                     Text("없음")
                         .font(.NanumSquareNeo.NanumSquareNeoBold(size: 12))
