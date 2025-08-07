@@ -8,10 +8,7 @@
 import Foundation
 import SwiftUI
 
-final class FramedImage: ObservableObject, Identifiable {
-//    var showDeletePopup: Bool
-//    var isSelected: Bool
-    
+final class FramedImageDTO: ObservableObject, Identifiable {
     @Published var image: Image
     @Published var caption: String
     @Published var frameColor: FrameColor

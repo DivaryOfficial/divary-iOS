@@ -30,7 +30,7 @@ struct FrameSelectBar: View {
     // MARK: - 개별 프레임 버튼 생성
     @ViewBuilder
     private func frameSelection(for type: FrameColor) -> some View {
-        if type == .origin {
+        if type == .origin { // 없음 버튼
             ZStack {
                 Rectangle()
                     .frame(width: 70, height: 87)
@@ -40,7 +40,7 @@ struct FrameSelectBar: View {
                     .foregroundStyle(Color(.black))
             }
         }
-        else {
+        else { // 색상 버튼
             ZStack {
                 Rectangle()
                     .fill(type.frameColor)

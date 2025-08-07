@@ -1,5 +1,5 @@
 //
-//  DiaryImageFrame2.swift
+//  FramedImageComponent.swift
 //  Divary
 //
 //  Created by 김나영 on 8/7/25.
@@ -8,8 +8,9 @@
 import Foundation
 import SwiftUI
 
-struct DiaryImageFrame2: View {
-    @ObservedObject var framedImage: FramedImage
+struct FramedImageComponent: View {
+    @ObservedObject var framedImage: FramedImageDTO
+    var isEditing: Bool = false
     
     var body: some View {
         if framedImage.frameColor == .origin {
@@ -33,10 +34,17 @@ struct DiaryImageFrame2: View {
                         .padding(.top, 15)
                         .padding(.bottom, 16)
                     
-                    VStack(alignment: .leading, spacing: 4) {
-                        TextField("캡션 추가...", text: $framedImage.caption)
-                            .font(.omyu.regular(size: 20))
-                            .foregroundStyle(.black)
+                    VStack(alignment: .leading, spacing: 7) {
+                        if isEditing {
+                            TextField("캡션 추가...", text: $framedImage.caption)
+                                .font(.omyu.regular(size: 20))
+                                .foregroundStyle(.black)
+                        } else {
+                            Text(framedImage.caption)
+                                .font(.omyu.regular(size: 20))
+                                .foregroundStyle(.black)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
                         
                         Text(framedImage.date)
                             .font(.NanumSquareNeo.NanumSquareNeoBold(size: 12))
@@ -53,8 +61,8 @@ struct DiaryImageFrame2: View {
 }
 
 #Preview {
-    let testImage = FramedImage(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .pastelBlue, date: "2025.08.07 7:32")
+    let testImage = FramedImageDTO(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .pastelBlue, date: "2025.08.07 7:32")
     
-    return DiaryImageFrame2(framedImage: testImage)
+    return FramedImageComponent(framedImage: testImage)
 }
 
