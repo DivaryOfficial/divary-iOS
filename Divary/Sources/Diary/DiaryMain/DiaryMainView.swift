@@ -62,7 +62,7 @@ struct DiaryMainView: View {
                 activeFooterBar
             }
             .navigationDestination(isPresented: $navigateToImageSelectView) {
-                ImageSelectView(framedImages: FramedImageSelectList)
+                ImageSelectView(viewModel: viewModel, framedImages: FramedImageSelectList)
             }
         }
         .overlay(
@@ -139,9 +139,10 @@ struct DiaryMainView: View {
                                       let uiImage = UIImage(data: data) else {
                                     return nil
                                 }
-                                let dateString = await viewModel.formattedPhotoDateString(from: item)
-                                
-                                return FramedImageDTO(image: Image(uiImage: uiImage), caption: "", frameColor: .origin, date: dateString)
+//                                let dateString = await viewModel.formattedPhotoDateString(from: item)
+//                                
+//                                return FramedImageDTO(image: Image(uiImage: uiImage), caption: "", frameColor: .origin, date: dateString)
+                                return FramedImageDTO(image: Image(uiImage: uiImage), caption: "", frameColor: .origin, date: "dd")
                             }
                         }
                         
@@ -157,6 +158,12 @@ struct DiaryMainView: View {
                         viewModel.selectedItems.removeAll()
 //                        viewModel.addImage(framedDTO)
                     }
+//                    await MainActor.run {
+//                        if !tempDTOs.isEmpty {
+//                            navigateToImageSelectView = true
+//                            viewModel.selectedItems.removeAll()
+//                        }
+//                    }
                 }
             }
 

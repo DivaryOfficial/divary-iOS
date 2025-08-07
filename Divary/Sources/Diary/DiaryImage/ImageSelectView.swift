@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct ImageSelectView: View {
+    @Environment(\.dismiss) private var dismiss
+    
+    @Bindable var viewModel: DiaryMainViewModel
     @State var framedImages: [FramedImageDTO]
     
     @State private var showDeletePopup = false
@@ -20,14 +23,12 @@ struct ImageSelectView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                imageSlideGroup
-                footerBar
-            }
-            .navigationDestination(isPresented: $showImageDecoView) {
-                ImageDecoView(framedImages: framedImages, currentIndex: $currentIndex)
-            }
+        VStack(spacing: 0) {
+            imageSlideGroup
+            footerBar
+        }
+        .navigationDestination(isPresented: $showImageDecoView) {
+            ImageDecoView(framedImages: framedImages, currentIndex: $currentIndex)
         }
         .overlay {
             if showDeletePopup {
@@ -78,7 +79,12 @@ struct ImageSelectView: View {
                 FooterItem(image: Image(.deco), title: "꾸미기")
             }
             
-            FooterItem(image: Image(.upload), title: "업로드")
+            Button(action: {
+                viewModel.addImages(framedImages)
+                dismiss()
+            }) {
+                FooterItem(image: Image(.upload), title: "업로드")
+            }
             
             Spacer()
         }
@@ -109,10 +115,11 @@ struct FooterItem: View {
 }
 
 #Preview {
+    @Bindable var viewModel = DiaryMainViewModel()
     let testImages = [
         FramedImageDTO(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .pastelBlue, date: "2025.08.07 7:32"),
         FramedImageDTO(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .pastelBlue, date: "2025.08.07 7:32")
     ]
     
-    ImageSelectView(framedImages: testImages)
+    ImageSelectView(viewModel: viewModel, framedImages: testImages)
 }

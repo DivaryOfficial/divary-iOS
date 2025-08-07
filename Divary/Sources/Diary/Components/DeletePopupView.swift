@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct DeletePopupView: View {
+    @Environment(\.dismiss) private var dismiss
     @Binding var isPresented: Bool
     var deleteText: String
     
@@ -29,6 +30,7 @@ struct DeletePopupView: View {
                 
                 HStack(spacing: 12) {
                     Button {
+//                        dismiss()
                         isPresented = false
                     } label: {
                         Text("취소")

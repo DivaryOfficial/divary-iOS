@@ -107,11 +107,18 @@ class DiaryMainViewModel {
         editingTextBlock = nil
     }
 
-    func addImage(_ image: FramedImageDTO) {
-        let block = DiaryBlock(content: .image(image))
-        blocks.append(block)
+//    func addImage(_ image: FramedImageDTO) {
+//        let block = DiaryBlock(content: .image(image))
+//        blocks.append(block)
+//    }
+    func addImages(_ images: [FramedImageDTO]) {
+        images.forEach { image in
+            let block = DiaryBlock(content: .image(image))
+            blocks.append(block)
+        }
     }
 
+    
     func startEditing(_ block: DiaryBlock) {
         if case .text(let content) = block.content {
             editingTextBlock = block
