@@ -15,14 +15,16 @@ final class DiaryBlock: ObservableObject, Identifiable, Equatable {
     
     enum Content: Equatable {
         case text(RichTextContent)
-        case image(UIImage)
+        case image(FramedImageDTO)
         
         static func == (lhs: Content, rhs: Content) -> Bool {
             switch (lhs, rhs) {
             case (.text(let lhsContent), .text(let rhsContent)):
                 return lhsContent == rhsContent
-            case (.image(let lhsImage), .image(let rhsImage)):
-                return lhsImage.pngData() == rhsImage.pngData()
+            case (.image(let lhsFramed), .image(let rhsFramed)):
+                return lhsFramed.id == rhsFramed.id
+//            case (.image(let lhsImage), .image(let rhsImage)):
+//                return lhsImage.pngData() == rhsImage.pngData()
             default:
                 return false
             }

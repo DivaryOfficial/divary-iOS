@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ImageDecoView: View {
+    @Environment(\.dismiss) private var dismiss
+    
     @State var framedImages: [FramedImageDTO]
     @State var selectedFrame: FrameColor = .origin
     
@@ -26,6 +28,7 @@ struct ImageDecoView: View {
             Spacer()
             FrameSelectBar(selectedFrame: $selectedFrame)
         }
+        .navigationBarBackButtonHidden(true)
         .overlay {
             if showDeletePopup {
                 DeletePopupView(isPresented: $showDeletePopup, deleteText: "지금 돌아가면 변경 내용이 모두 삭제됩니다.")
@@ -49,7 +52,9 @@ struct ImageDecoView: View {
                 .font(.omyu.regular(size: 20))
             
             Spacer()
-            Button(action: { }) {
+            Button(action: {
+                dismiss()
+            }) {
                 Image(.check)
             }
         }

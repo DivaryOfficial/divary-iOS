@@ -16,6 +16,9 @@ struct DiaryMainView: View {
     @FocusState private var isRichTextEditorFocused: Bool
     @State private var footerBarType: DiaryFooterBarType = .main
     
+    @State private var navigateToImageSelectView = false
+    @State private var FramedImageSelectList: [FramedImageDTO] = []
+    
     @State var showCanvas: Bool = false
     @State private var currentOffsetY: CGFloat = 0
     
@@ -53,9 +56,14 @@ struct DiaryMainView: View {
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            diaryMain
-            activeFooterBar
+        NavigationStack {
+            VStack(spacing: 0) {
+                diaryMain
+                activeFooterBar
+            }
+            .navigationDestination(isPresented: $navigateToImageSelectView) {
+                ImageSelectView(framedImages: FramedImageSelectList)
+            }
         }
         .overlay(
             showCanvas ? DiaryCanvasView(
@@ -102,12 +110,9 @@ struct DiaryMainView: View {
                                         }
                                     }
                             }
-                            
-                        case .image(let image):
-                            Image(uiImage: image)
-                                .resizable()
-                                .scaledToFit()
-                                .padding()
+                           
+                        case .image(let dto):
+                            FramedImageComponent(framedImage: dto)
                         }
                     }
                     
@@ -124,18 +129,37 @@ struct DiaryMainView: View {
                 }
             }
             .onChange(of: viewModel.selectedItems) { _, newItems in
-                for item in newItems {
-                    Task {
-                        if let data = try? await item.loadTransferable(type: Data.self),
-                           let uiImage = UIImage(data: data) {
-                            await MainActor.run {
-                                viewModel.addImage(uiImage)
+                Task {
+                    var tempDTOs: [FramedImageDTO] = []
+                    // 비동기 그룹을 사용해서 동시에 로딩
+                    await withTaskGroup(of: FramedImageDTO?.self) { group in
+                        for item in newItems {
+                            group.addTask {
+                                guard let data = try? await item.loadTransferable(type: Data.self),
+                                      let uiImage = UIImage(data: data) else {
+                                    return nil
+                                }
+                                let dateString = await viewModel.formattedPhotoDateString(from: item)
+                                
+                                return FramedImageDTO(image: Image(uiImage: uiImage), caption: "", frameColor: .origin, date: dateString)
+                            }
+                        }
+                        
+                        for await result in group {
+                            if let dto = result {
+                                tempDTOs.append(dto)
                             }
                         }
                     }
+                    await MainActor.run {
+                        FramedImageSelectList = tempDTOs
+                        navigateToImageSelectView = true
+                        viewModel.selectedItems.removeAll()
+//                        viewModel.addImage(framedDTO)
+                    }
                 }
-                viewModel.selectedItems.removeAll()
             }
+
             .task {
                 viewModel.loadSavedDrawing()
             }

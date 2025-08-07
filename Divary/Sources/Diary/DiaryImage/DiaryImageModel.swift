@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 
 final class FramedImageDTO: ObservableObject, Identifiable {
+    let id = UUID()
     @Published var image: Image
     @Published var caption: String
     @Published var frameColor: FrameColor

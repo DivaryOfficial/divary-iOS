@@ -5,6 +5,8 @@
 
 import SwiftUI
 import PhotosUI
+import ImageIO
+import UniformTypeIdentifiers
 import RichTextKit
 import Observation
 import PencilKit
@@ -30,6 +32,46 @@ class DiaryMainViewModel {
     
     var savedDrawing: PKDrawing? = nil
     var drawingOffsetY: CGFloat = 0
+    
+    // MARK: - 사진 날짜 가져오기
+    func extractPhotoDate(from item: PhotosPickerItem) async -> Date? {
+        do {
+            // 1. 파일 URL 가져오기
+            if let url = try await item.loadTransferable(type: URL.self) {
+                let imageSource = CGImageSourceCreateWithURL(url as CFURL, nil)
+                guard let imageSource else { return nil }
+
+                // 2. 메타데이터 읽기
+                let metadata = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, nil) as? [CFString: Any]
+                let exif = metadata?[kCGImagePropertyExifDictionary] as? [CFString: Any]
+
+                // 3. 날짜 파싱
+                if let dateTimeString = exif?[kCGImagePropertyExifDateTimeOriginal] as? String {
+                    let formatter = DateFormatter()
+                    formatter.dateFormat = "yyyy:MM:dd HH:mm:ss"
+                    return formatter.date(from: dateTimeString)
+                }
+            }
+        } catch {
+            print("extractPhotoDate error: \(error)")
+        }
+        return nil
+    }
+    
+    private let formatter: DateFormatter = {
+        let df = DateFormatter()
+        df.locale = Locale(identifier: "ko_KR") // 한글 기준 정렬
+        df.dateFormat = "yyyy.M.d H:mm" // 2025.5.25 7:32
+        return df
+    }()
+    
+    func formattedPhotoDateString(from item: PhotosPickerItem) async -> String {
+        if let date = await extractPhotoDate(from: item) {
+            return formatter.string(from: date)
+        } else {
+            return formatter.string(from: Date())
+        }
+    }
 
     // MARK: - Block Management
     
@@ -65,7 +107,7 @@ class DiaryMainViewModel {
         editingTextBlock = nil
     }
 
-    func addImage(_ image: UIImage) {
+    func addImage(_ image: FramedImageDTO) {
         let block = DiaryBlock(content: .image(image))
         blocks.append(block)
     }

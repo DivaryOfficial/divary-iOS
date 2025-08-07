@@ -13,14 +13,21 @@ struct ImageSelectView: View {
     @State private var showDeletePopup = false
     @State private var currentIndex = 0
     
+    @State private var showImageDecoView = false
+    
     private var count: Int {
         framedImages.count
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            imageSlideGroup
-            footerBar
+        NavigationStack {
+            VStack(spacing: 0) {
+                imageSlideGroup
+                footerBar
+            }
+            .navigationDestination(isPresented: $showImageDecoView) {
+                ImageDecoView(framedImages: framedImages, currentIndex: $currentIndex)
+            }
         }
         .overlay {
             if showDeletePopup {
@@ -64,8 +71,15 @@ struct ImageSelectView: View {
     private var footerBar: some View {
         HStack(spacing: 40) {
             Spacer()
-            FooterItem(image: Image(.deco), title: "꾸미기")
+            
+            Button(action: {
+                showImageDecoView = true
+            }) {
+                FooterItem(image: Image(.deco), title: "꾸미기")
+            }
+            
             FooterItem(image: Image(.upload), title: "업로드")
+            
             Spacer()
         }
         .padding(.horizontal, 16)
