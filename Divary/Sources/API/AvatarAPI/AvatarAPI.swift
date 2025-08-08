@@ -48,19 +48,18 @@ extension AvatarAPI: TargetType {
     }
 
     var headers: [String : String]? {
-        var baseHeaders: [String: String] = [
-            "Accept": "*/*",
-            "Accept-Language": "ko-KR,ko;q=0.9"
+        var headers: [String: String] = [
+            "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
+            "accept": "application/json",
         ]
         
-        switch self {
-        case .saveAvatar:
-            baseHeaders["Content-Type"] = "application/json"
-        default:
-            break
+        if let accessToken = KeyChainManager.shared.readAccessToken() {
+            headers["Authorization"] = "Bearer \(accessToken)"
+        } else {
+            print("❌ accessToken 없음: 인증이 필요한 요청입니다.")
         }
         
-        return baseHeaders
+        return headers
     }
 
     var sampleData: Data {
