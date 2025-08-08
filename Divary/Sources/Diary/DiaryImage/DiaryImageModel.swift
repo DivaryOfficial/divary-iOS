@@ -55,3 +55,20 @@ enum FrameColor: CaseIterable {
         return 1.6
     }
 }
+
+extension FramedImageDTO {
+    func copy() -> FramedImageDTO {
+        FramedImageDTO(
+            image: self.image,
+            caption: self.caption,
+            frameColor: self.frameColor,
+            date: self.date
+        )
+    }
+}
+
+extension Array where Element == FramedImageDTO {
+    func deepCopied() -> [FramedImageDTO] {
+        map { $0.copy() }
+    }
+}

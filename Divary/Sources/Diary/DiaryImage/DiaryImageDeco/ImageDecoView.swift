@@ -11,6 +11,7 @@ struct ImageDecoView: View {
     @Environment(\.dismiss) private var dismiss
     
     @State var framedImages: [FramedImageDTO]
+    @State private var originalImagesCopied: [FramedImageDTO] = [] // 변경 내용 원상복귀용 임시 배열(스냅샷)
     @State var selectedFrame: FrameColor = .origin
     
     @State private var showDeletePopup = false
@@ -19,6 +20,9 @@ struct ImageDecoView: View {
     private var count: Int {
         framedImages.count
     }
+    
+    var onApply: ([FramedImageDTO]) -> Void = { _ in }   // 확인(체크) 시 호출
+    var onCancel: () -> Void = {}
     
     var body: some View {
         VStack {
@@ -29,9 +33,22 @@ struct ImageDecoView: View {
             FrameSelectBar(selectedFrame: $selectedFrame)
         }
         .navigationBarBackButtonHidden(true)
+        .task {
+            if originalImagesCopied.isEmpty {
+                originalImagesCopied = framedImages.deepCopied()   // 원본 저장
+                framedImages  = framedImages.deepCopied()    // ✅ 편집은 복사본에서만!
+            }
+        }
         .overlay {
             if showDeletePopup {
-                DeletePopupView(isPresented: $showDeletePopup, deleteText: "지금 돌아가면 변경 내용이 모두 삭제됩니다.")
+                DeletePopupView(
+                    isPresented: $showDeletePopup,
+                    deleteText: "지금 돌아가면 변경 내용이 모두 삭제됩니다.",
+                    onDelete: { // 원상복귀
+                        onCancel()
+                        dismiss()
+                    }
+                )
             }
         }
         .onChange(of: selectedFrame) {
@@ -53,6 +70,7 @@ struct ImageDecoView: View {
             
             Spacer()
             Button(action: {
+                onApply(framedImages.deepCopied())
                 dismiss()
             }) {
                 Image(.check)

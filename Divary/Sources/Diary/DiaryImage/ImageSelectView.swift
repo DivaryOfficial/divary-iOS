@@ -28,7 +28,12 @@ struct ImageSelectView: View {
             footerBar
         }
         .navigationDestination(isPresented: $showImageDecoView) {
-            ImageDecoView(framedImages: framedImages, currentIndex: $currentIndex)
+            ImageDecoView(framedImages: framedImages,
+                currentIndex: $currentIndex,
+                onApply: { edited in
+                    self.framedImages = edited
+                }
+            )
         }
         .overlay {
             if showDeletePopup {
