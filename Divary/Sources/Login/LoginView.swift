@@ -10,8 +10,22 @@ import GoogleSignIn
 import GoogleSignInSwift
 import UIKit
 
+struct LoginWrapperView: View {
+    @Environment(\.diContainer) private var container
+    
+    var body: some View {
+        LoginView(loginService: container.loginService, router: container.router)
+    }
+}
+
 struct LoginView: View {
-    @StateObject private var viewModel = LoginViewModel()
+    @Environment(\.diContainer) private var container
+    @StateObject private var viewModel: LoginViewModel
+    
+    init(loginService: LoginService,  router: AppRouter) {
+        // @StateObject는 wrappedValue를 통해 초기화해야 합니다
+        _viewModel = StateObject(wrappedValue: LoginViewModel(loginService: loginService, router: router))
+    }
     
     var body: some View {
         ZStack {
@@ -30,6 +44,14 @@ struct LoginView: View {
                         Spacer()
                     }
                     
+                    // 로그인 에러 표시
+                    if let errorMessage = viewModel.loginError {
+                        Text(errorMessage)
+                            .foregroundColor(.red)
+                            .font(.caption)
+                            .padding()
+                    }
+                    
                     // 기기별로 다른 여백 적용
                     Spacer()
                         .frame(height: UIDevice.current.userInterfaceIdiom == .pad ?
@@ -41,7 +63,6 @@ struct LoginView: View {
     }
 }
 
-
 #Preview {
-    LoginView()
+    LoginWrapperView()
 }

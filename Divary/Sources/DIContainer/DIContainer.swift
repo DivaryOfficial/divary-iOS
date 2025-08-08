@@ -18,14 +18,20 @@ final class DIContainer: ObservableObject {
    // let chatRefreshSubject = PassthroughSubject<Void, Never>()
     
     // 모든 서비스 선언
-    //let authService: AuthService
+    let loginService: LoginService
+    let notificationService: NotificationService
+    let logBookService: LogBookService
+    let avatarService: AvatarService
   
 
     init(router: AppRouter) {
         self.router = router
 
         // 각 서비스 초기화
-        //self.authService = AuthService()
+        self.loginService = LoginService()
+        self.notificationService = NotificationService()
+        self.logBookService = LogBookService()
+        self.avatarService = AvatarService()
        
     }
 }

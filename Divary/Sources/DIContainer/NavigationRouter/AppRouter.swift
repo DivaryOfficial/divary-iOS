@@ -9,6 +9,7 @@ import SwiftUI
 
 enum Route: Hashable {
     case login
+    case main
 }
 
 class AppRouter: ObservableObject {

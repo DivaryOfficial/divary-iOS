@@ -28,6 +28,7 @@ struct YearlyLogBubble: View {
     // 추가: 버블 탭 콜백
     var onBubbleTap: ((String) -> Void)?
     var onPlusButtonTap: (() -> Void)? // 추가: + 버튼 탭 콜백
+    var onDeleteTap: ((String) -> Void)?
     
     var body: some View {
 
