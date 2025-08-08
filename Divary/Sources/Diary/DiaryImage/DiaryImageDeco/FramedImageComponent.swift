@@ -18,6 +18,7 @@ struct FramedImageComponent: View {
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .cornerRadius(8)
+                .frame(width: 300)
         }
         else {
             ZStack {
@@ -61,7 +62,7 @@ struct FramedImageComponent: View {
 }
 
 #Preview {
-    let testImage = FramedImageDTO(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .pastelBlue, date: "2025.08.07 7:32")
+    let testImage = FramedImageDTO(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .origin, date: "2025.08.07 7:32")
     
     return FramedImageComponent(framedImage: testImage)
 }

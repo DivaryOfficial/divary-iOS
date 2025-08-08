@@ -32,17 +32,52 @@ struct ImageSelectView: View {
         }
         .overlay {
             if showDeletePopup {
-                DeletePopupView(isPresented: $showDeletePopup, deleteText: "사진을 삭제할까요?")
+                DeletePopupView(
+                    isPresented: $showDeletePopup,
+                    deleteText: "사진을 삭제할까요?",
+                    onDelete: {
+                        withAnimation {
+                            guard !framedImages.isEmpty,
+                                  framedImages.indices.contains(currentIndex) else {
+                                showDeletePopup = false
+                                return
+                            }
+                            framedImages.remove(at: currentIndex)
+                            
+                            if framedImages.isEmpty {
+                                showDeletePopup = false
+                                dismiss()
+                                return
+                            }
+                            
+                            if currentIndex >= framedImages.count {
+                                currentIndex = max(0, framedImages.count - 1)
+                            }
+                            showDeletePopup = false
+                        }
+                    }
+                )
             }
         }
+
     }
     
     private var imageSlideGroup: some View {
         VStack {
-            // 인덱스 표시
-            Text("\(currentIndex + 1) / \(count)")
-                .font(.omyu.regular(size: 20))
-                .padding(.top, 16)
+            ZStack {
+                HStack {
+                    Button(action: { dismiss() }) {
+                        Image(.chevronLeft)
+                            .foregroundStyle(.black)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding()
+                }
+                
+                // 인덱스 중앙
+                Text("\(currentIndex + 1) / \(count)")
+                    .font(.omyu.regular(size: 20))
+            }
             
             TabView(selection: $currentIndex) {
                 ForEach(framedImages.indices, id: \.self) { index in
@@ -117,7 +152,7 @@ struct FooterItem: View {
 #Preview {
     @Bindable var viewModel = DiaryMainViewModel()
     let testImages = [
-        FramedImageDTO(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .pastelBlue, date: "2025.08.07 7:32"),
+        FramedImageDTO(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .origin, date: "2025.08.07 7:32"),
         FramedImageDTO(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .pastelBlue, date: "2025.08.07 7:32")
     ]
     

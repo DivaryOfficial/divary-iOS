@@ -23,8 +23,6 @@ final class DiaryBlock: ObservableObject, Identifiable, Equatable {
                 return lhsContent == rhsContent
             case (.image(let lhsFramed), .image(let rhsFramed)):
                 return lhsFramed.id == rhsFramed.id
-//            case (.image(let lhsImage), .image(let rhsImage)):
-//                return lhsImage.pngData() == rhsImage.pngData()
             default:
                 return false
             }

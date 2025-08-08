@@ -12,9 +12,10 @@ struct DeletePopupView: View {
     @Binding var isPresented: Bool
     var deleteText: String
     
-    func onDelete() {
-        isPresented = false
-    }
+//    func onDelete() {
+//        isPresented = false
+//    }
+    var onDelete: () -> Void = { }
 
     var body: some View {
         ZStack {
@@ -30,7 +31,6 @@ struct DeletePopupView: View {
                 
                 HStack(spacing: 12) {
                     Button {
-//                        dismiss()
                         isPresented = false
                     } label: {
                         Text("취소")
@@ -42,7 +42,9 @@ struct DeletePopupView: View {
                             .font(.omyu.regular(size: 16))
                     }
                     
-                    Button(action: onDelete) {
+                    Button {
+                        onDelete()
+                    } label: {
                         Text("삭제")
                             .frame(maxWidth: .infinity)
                             .padding()

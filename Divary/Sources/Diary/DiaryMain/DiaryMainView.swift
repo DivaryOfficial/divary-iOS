@@ -61,8 +61,15 @@ struct DiaryMainView: View {
                 diaryMain
                 activeFooterBar
             }
-            .navigationDestination(isPresented: $navigateToImageSelectView) {
+//            .navigationDestination(isPresented: $navigateToImageSelectView) {
+//                ImageSelectView(viewModel: viewModel, framedImages: FramedImageSelectList)
+//            }
+        }
+        .fullScreenCover(isPresented: $navigateToImageSelectView) {
+            NavigationStack {
+                let _ = print(FramedImageSelectList.count)
                 ImageSelectView(viewModel: viewModel, framedImages: FramedImageSelectList)
+                    .background(Color.white)
             }
         }
         .overlay(
@@ -128,7 +135,9 @@ struct DiaryMainView: View {
                     }
                 }
             }
+            // 기존
             .onChange(of: viewModel.selectedItems) { _, newItems in
+                guard !newItems.isEmpty else { return }
                 Task {
                     let dtos = await viewModel.makeFramedDTOs(from: newItems)
                     
