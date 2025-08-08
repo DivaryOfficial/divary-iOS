@@ -130,43 +130,17 @@ struct DiaryMainView: View {
             }
             .onChange(of: viewModel.selectedItems) { _, newItems in
                 Task {
-                    var tempDTOs: [FramedImageDTO] = []
-                    // 비동기 그룹을 사용해서 동시에 로딩
-                    await withTaskGroup(of: FramedImageDTO?.self) { group in
-                        for item in newItems {
-                            group.addTask {
-                                guard let data = try? await item.loadTransferable(type: Data.self),
-                                      let uiImage = UIImage(data: data) else {
-                                    return nil
-                                }
-//                                let dateString = await viewModel.formattedPhotoDateString(from: item)
-//                                
-//                                return FramedImageDTO(image: Image(uiImage: uiImage), caption: "", frameColor: .origin, date: dateString)
-                                return FramedImageDTO(image: Image(uiImage: uiImage), caption: "", frameColor: .origin, date: "dd")
-                            }
-                        }
-                        
-                        for await result in group {
-                            if let dto = result {
-                                tempDTOs.append(dto)
-                            }
-                        }
-                    }
+                    let dtos = await viewModel.makeFramedDTOs(from: newItems)
+                    
                     await MainActor.run {
-                        FramedImageSelectList = tempDTOs
-                        navigateToImageSelectView = true
+                        FramedImageSelectList = dtos
+                        if !dtos.isEmpty {
+                            navigateToImageSelectView = true
+                        }
                         viewModel.selectedItems.removeAll()
-//                        viewModel.addImage(framedDTO)
                     }
-//                    await MainActor.run {
-//                        if !tempDTOs.isEmpty {
-//                            navigateToImageSelectView = true
-//                            viewModel.selectedItems.removeAll()
-//                        }
-//                    }
                 }
             }
-
             .task {
                 viewModel.loadSavedDrawing()
             }

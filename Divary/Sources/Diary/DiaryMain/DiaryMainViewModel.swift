@@ -33,7 +33,41 @@ class DiaryMainViewModel {
     var savedDrawing: PKDrawing? = nil
     var drawingOffsetY: CGFloat = 0
     
-    // MARK: - 사진 날짜 가져오기
+    // MARK: - 사진 처리
+    func makeFramedDTOs(from items: [PhotosPickerItem]) async -> [FramedImageDTO] {
+        let indexed = Array(items.enumerated())
+        var temp = Array<FramedImageDTO?>(repeating: nil, count: indexed.count)
+
+        await withTaskGroup(of: (Int, FramedImageDTO?) .self) { group in
+            for (idx, item) in indexed {
+                group.addTask { [weak self] in
+                    guard let self else { return (idx, nil) }
+                    guard
+                        let data = try? await item.loadTransferable(type: Data.self),
+                        let uiImage = UIImage(data: data)
+                    else {
+                        return (idx, nil)
+                    }
+
+                    let dateString = await self.formattedPhotoDateString(from: item)
+                    let dto = FramedImageDTO(
+                        image: Image(uiImage: uiImage),
+                        caption: "",
+                        frameColor: .origin,
+                        date: dateString
+                    )
+                    return (idx, dto)
+                }
+            }
+
+            for await (idx, dto) in group {
+                temp[idx] = dto
+            }
+        }
+
+        return temp.compactMap { $0 } // 실패 항목 제거
+    }
+    
     func extractPhotoDate(from item: PhotosPickerItem) async -> Date? {
         do {
             // 1. 파일 URL 가져오기
