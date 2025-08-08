@@ -17,11 +17,7 @@ struct ImageDecoView: View {
     @State private var showDeletePopup = false
     @Binding var currentIndex: Int
     
-    private var count: Int {
-        framedImages.count
-    }
-    
-    var onApply: ([FramedImageDTO]) -> Void = { _ in }   // 확인(체크) 시 호출
+    var onApply: ([FramedImageDTO]) -> Void = { _ in }
     var onCancel: () -> Void = {}
     
     var body: some View {
@@ -36,7 +32,7 @@ struct ImageDecoView: View {
         .task {
             if originalImagesCopied.isEmpty {
                 originalImagesCopied = framedImages.deepCopied()   // 원본 저장
-                framedImages  = framedImages.deepCopied()    // ✅ 편집은 복사본에서만!
+                framedImages  = framedImages.deepCopied()    // 편집은 복사본에서만
             }
         }
         .overlay {
@@ -65,7 +61,7 @@ struct ImageDecoView: View {
             }
             Spacer()
             
-            Text("\(currentIndex + 1) / \(count)")
+            Text("\(currentIndex + 1) / \(framedImages.count)")
                 .font(.omyu.regular(size: 20))
             
             Spacer()

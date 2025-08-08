@@ -18,10 +18,6 @@ struct ImageSelectView: View {
     
     @State private var showImageDecoView = false
     
-    private var count: Int {
-        framedImages.count
-    }
-    
     var body: some View {
         VStack(spacing: 0) {
             imageSlideGroup
@@ -80,7 +76,7 @@ struct ImageSelectView: View {
                 }
                 
                 // 인덱스 중앙
-                Text("\(currentIndex + 1) / \(count)")
+                Text("\(currentIndex + 1) / \(framedImages.count)")
                     .font(.omyu.regular(size: 20))
             }
             
@@ -97,7 +93,7 @@ struct ImageSelectView: View {
                                 .resizable()
                                 .frame(width: 30, height: 30)
                         }
-                        .padding(.top, 25)
+                        .padding(.top, 35)
                         .padding(.trailing, 45)
                     }
                     .frame(maxWidth: .infinity)
@@ -157,8 +153,8 @@ struct FooterItem: View {
 #Preview {
     @Bindable var viewModel = DiaryMainViewModel()
     let testImages = [
-        FramedImageDTO(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .origin, date: "2025.08.07 7:32"),
-        FramedImageDTO(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .pastelBlue, date: "2025.08.07 7:32")
+        FramedImageDTO(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .pastelBlue, date: "2025.08.07 7:32"),
+        FramedImageDTO(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .origin, date: "2025.08.07 7:32")
     ]
     
     ImageSelectView(viewModel: viewModel, framedImages: testImages)

@@ -12,6 +12,8 @@ enum DiaryFooterBarType {
 }
 
 struct DiaryMainView: View {
+    let diaryId: Int
+    
     @State private var viewModel = DiaryMainViewModel()
     @FocusState private var isRichTextEditorFocused: Bool
     @State private var footerBarType: DiaryFooterBarType = .main
@@ -61,9 +63,6 @@ struct DiaryMainView: View {
                 diaryMain
                 activeFooterBar
             }
-//            .navigationDestination(isPresented: $navigateToImageSelectView) {
-//                ImageSelectView(viewModel: viewModel, framedImages: FramedImageSelectList)
-//            }
         }
         .fullScreenCover(isPresented: $navigateToImageSelectView) {
             NavigationStack {
@@ -74,8 +73,12 @@ struct DiaryMainView: View {
         }
         .overlay(
             showCanvas ? DiaryCanvasView(
-                viewModel: DiaryCanvasViewModel(showCanvas: $showCanvas),
-                offsetY: currentOffsetY
+                viewModel: DiaryCanvasViewModel(showCanvas: $showCanvas, diaryId: 0),
+                offsetY: currentOffsetY,
+                onSaved: { drawing, offset in
+                    viewModel.savedDrawing = drawing
+                    viewModel.drawingOffsetY = offset
+                }
             ) : nil
         )
     }
@@ -127,8 +130,8 @@ struct DiaryMainView: View {
                 }
                 .frame(maxWidth: .infinity, minHeight: UIScreen.main.bounds.height)
                 
-                if let drawing = viewModel.savedDrawing {
-                    DrawingCanvasView(drawing: drawing)
+                if !showCanvas, let drawing = viewModel.savedDrawing {
+                    DrawingScreenView(drawing: drawing)
                     GeometryReader { geo in
                         Color.clear
                             .preference(key: ScrollOffsetPreferenceKey.self, value: geo.frame(in: .named("scroll")).origin.y)
@@ -151,7 +154,7 @@ struct DiaryMainView: View {
                 }
             }
             .task {
-                viewModel.loadSavedDrawing()
+                viewModel.loadSavedDrawing(diaryId: diaryId)
             }
         }
         .coordinateSpace(name: "scroll")
@@ -161,10 +164,6 @@ struct DiaryMainView: View {
     }
 }
 
-//#Preview {
-//    DiaryMainView()
-//}
-
 #Preview {
     PreviewWrapper()
 }
@@ -173,6 +172,6 @@ private struct PreviewWrapper: View {
     @State private var showCanvas = false
 
     var body: some View {
-        DiaryMainView()
+        DiaryMainView(diaryId: 0)
     }
 }
