@@ -1,3 +1,4 @@
+
 //
 //  DiaryModel.swift
 //  Divary
@@ -131,7 +132,7 @@ final class RichTextContent: ObservableObject, Equatable {
 //    let rtfData: Data           // RTF 형태 (서식 + 내용)
 //    let plainText: String       // 순수 텍스트 내용
 //    let contentLength: Int      // 텍스트 길이
-//    
+//
 //    init(rtfData: Data, plainText: String) {
 //        self.rtfData = rtfData
 //        self.plainText = plainText
@@ -145,26 +146,26 @@ final class RichTextContent: ObservableObject, Equatable {
 //    // DiaryBlock을 DTO로 변환 (서버 전송용)
 //    func toDTO() -> DiaryBlockDTO {
 //        let contentDTO: DiaryBlockDTO.DiaryContentDTO
-//        
+//
 //        switch content {
 //        case .text(let richTextContent):
 //            let rtfData = richTextContent.rtfData ?? Data()
 //            let plainText = richTextContent.plainText
 //            contentDTO = .text(RichTextContentDTO(rtfData: rtfData, plainText: plainText))
-//            
+//
 //        case .image(_):
 //            // 이미지는 별도 업로드 후 URL 받아서 처리
 //            // 실제 구현에서는 이미지 업로드 API 호출 후 URL 받아와야 함
 //            contentDTO = .image(URL(string: "https://example.com/placeholder")!)
 //        }
-//        
+//
 //        return DiaryBlockDTO(id: id.uuidString, content: contentDTO)
 //    }
-//    
+//
 //    // DTO에서 DiaryBlock으로 변환 (서버에서 받은 데이터)
 //    static func fromDTO(_ dto: DiaryBlockDTO) -> DiaryBlock? {
 //        guard let uuid = UUID(uuidString: dto.id) else { return nil }
-//        
+//
 //        let content: Content
 //        switch dto.content {
 //        case .text(let textDTO):
@@ -176,13 +177,13 @@ final class RichTextContent: ObservableObject, Equatable {
 //                let fallbackText = NSAttributedString(string: textDTO.plainText)
 //                content = .text(RichTextContent(text: fallbackText))
 //            }
-//            
+//
 //        case .image(let url):
 //            // URL에서 이미지 로드 (실제 구현에서는 async 처리 필요)
 //            // 여기서는 placeholder로 처리
 //            content = .image(UIImage())
 //        }
-//        
+//
 //        let block = DiaryBlock(content: content)
 //        return block
 //    }

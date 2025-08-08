@@ -1,3 +1,4 @@
+
 //
 //  DiaryMainViewModel.swift
 //  Divary
@@ -514,7 +515,7 @@ class DiaryMainViewModel {
         return nil
     }
     
-    // MARK: - Drawing 띄우기
+    // MARK: - Drawing
     
     func loadSavedDrawing(diaryId: Int) {
         do {

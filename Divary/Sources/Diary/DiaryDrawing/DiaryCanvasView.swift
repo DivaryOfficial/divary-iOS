@@ -11,7 +11,7 @@ import PencilKit
 struct DiaryCanvasView: View { // 그리는 공간
     @ObservedObject var viewModel: DiaryCanvasViewModel
     let offsetY: CGFloat
-    var onSaved: ((PKDrawing, CGFloat) -> Void)?
+    var onSaved: ((PKDrawing, CGFloat) -> Void)?    // ← 추가
 
     var body: some View {
         ZStack(alignment: .bottom){
@@ -19,7 +19,7 @@ struct DiaryCanvasView: View { // 그리는 공간
             drawingBar
                 .padding(.bottom, canvasView.frame.height)
         }
-        .onAppear {
+        .task {
             viewModel.loadDrawingIfExists()
         }
     }
@@ -57,6 +57,7 @@ struct DiaryCanvasView: View { // 그리는 공간
             
             // 저장 버튼
             Button(action: {
+                
                 viewModel.saveDrawingWithOffset(offsetY: offsetY)
                 onSaved?(viewModel.canvas.drawing, offsetY)
                 viewModel.dismissCanvas()

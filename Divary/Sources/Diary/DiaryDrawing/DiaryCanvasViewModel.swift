@@ -41,7 +41,6 @@ final class DiaryCanvasViewModel: ObservableObject {
     }
 
     func dismissCanvas() {
-//        toolPicker.setVisible(!toolPicker.isVisible, forFirstResponder: canvas)
         toolPicker.setVisible(false, forFirstResponder: canvas)
         showCanvas = false
     }
@@ -68,24 +67,8 @@ final class DiaryCanvasViewModel: ObservableObject {
         do {
             let loaded = try DrawingStore.load(diaryId: diaryId)
             canvas.drawing = loaded.drawing
-            // 편집 시작 시 저장돼 있던 offset으로 시작하고 싶으면, CanvasView의 offsetY를 그대로 쓰면 됨
-            // (DiaryCanvasView에서 offsetY를 이미 주입하므로 여기서 별도 조정 불필요)
         } catch {
             print("loadDrawingIfExists error: \(error)")
-        }
-    }
-    
-    func loadDrawingFromString(_ base64String: String) {
-        guard let data = Data(base64Encoded: base64String) else {
-            print("base64 복호화 실패")
-            return
-        }
-        
-        do {
-            let drawing = try PKDrawing(data: data)
-            canvas.drawing = drawing
-        } catch {
-            print("PKDrawing 복원 실패: \(error.localizedDescription)")
         }
     }
 }

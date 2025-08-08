@@ -1,7 +1,9 @@
+//
 //  DiaryMainView.swift
 //  Divary
 //
 //  Created by 김나영 on 7/6/25.
+//
 
 import SwiftUI
 import PhotosUI
@@ -13,7 +15,6 @@ enum DiaryFooterBarType {
 
 struct DiaryMainView: View {
     let diaryId: Int
-    
     @State private var viewModel = DiaryMainViewModel()
     @FocusState private var isRichTextEditorFocused: Bool
     @State private var footerBarType: DiaryFooterBarType = .main
@@ -73,13 +74,16 @@ struct DiaryMainView: View {
         }
         .overlay(
             showCanvas ? DiaryCanvasView(
-                viewModel: DiaryCanvasViewModel(showCanvas: $showCanvas, diaryId: 0),
+                viewModel: DiaryCanvasViewModel(showCanvas: $showCanvas, diaryId: diaryId),
                 offsetY: currentOffsetY,
                 onSaved: { drawing, offset in
+                    // 메인 뷰 즉시 업데이트
                     viewModel.savedDrawing = drawing
                     viewModel.drawingOffsetY = offset
                 }
-            ) : nil
+            )
+            .ignoresSafeArea(.container, edges: .bottom)
+            : nil
         )
     }
     
@@ -130,8 +134,11 @@ struct DiaryMainView: View {
                 }
                 .frame(maxWidth: .infinity, minHeight: UIScreen.main.bounds.height)
                 
-                if !showCanvas, let drawing = viewModel.savedDrawing {
+                if let drawing = viewModel.savedDrawing {
                     DrawingScreenView(drawing: drawing)
+                        .opacity(showCanvas ? 0 : 1)
+//                        .accessibilityHidden(showCanvas)
+//                        .allowsHitTesting(false)
                     GeometryReader { geo in
                         Color.clear
                             .preference(key: ScrollOffsetPreferenceKey.self, value: geo.frame(in: .named("scroll")).origin.y)
@@ -157,12 +164,19 @@ struct DiaryMainView: View {
                 viewModel.loadSavedDrawing(diaryId: diaryId)
             }
         }
+        .disabled(showCanvas)
         .coordinateSpace(name: "scroll")
         .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
-            currentOffsetY = -value
+            if !showCanvas {
+                currentOffsetY = -value
+            }
         }
     }
 }
+
+//#Preview {
+//    DiaryMainView()
+//}
 
 #Preview {
     PreviewWrapper()
