@@ -44,6 +44,7 @@ struct MainView: View {
     }
     
     var body: some View {
+        NavigationStack {
             ZStack {
                 YearlyLogBubble(
                     selectedYear: selectedYear, // 선택된 연도 전달
@@ -147,6 +148,7 @@ struct MainView: View {
             .navigationDestination(isPresented: $showCharacterView) { // 나의 바다 뷰로 이동
                 CharacterView(isPetEditingMode: $isEditing)
             }
+        }
         
     }
     
