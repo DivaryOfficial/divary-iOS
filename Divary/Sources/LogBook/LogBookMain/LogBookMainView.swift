@@ -19,6 +19,10 @@ struct LogBookMainView: View {
     @State private var isCalendarPresented = false
     @State private var showCanvas = false
     
+    // 저장 관련 상태
+    @State private var showSavePopup = false
+    @State private var showSavedMessage = false
+    
     //날짜 변경 취소를 위한 백업데이터
     @State private var backupDate: Date = Date()
     
@@ -26,29 +30,29 @@ struct LogBookMainView: View {
     @State private var tempMonth = Date()
     
     // 추가: 뒤로가기를 위한 환경변수
-      @Environment(\.dismiss) private var dismiss
+    @Environment(\.dismiss) private var dismiss
     
     // 수정: logBaseId를 받는 init
-       init(logBaseId: String) {
-           _viewModel = State(initialValue: LogBookMainViewModel(logBaseId: logBaseId))
-       }
+    init(logBaseId: String) {
+        _viewModel = State(initialValue: LogBookMainViewModel(logBaseId: logBaseId))
+    }
 
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
                 LogBookNavBar(
-                                 selectedDate: $viewModel.selectedDate,
-                                 isCalendarPresented: $isCalendarPresented,
-                                 onBackTap: {
-                                     dismiss()
-                                 },
-                                 isTempSaved: viewModel.isTempSaved,
-                                                    onSaveTap: {
-                                                        // 저장 버튼 액션 (필요시 구현)
-                                                        print("저장 버튼 클릭됨")
-                                                    }
-                             )
-                             .zIndex(1)
+                    selectedDate: $viewModel.selectedDate,
+                    isCalendarPresented: $isCalendarPresented,
+                    onBackTap: {
+                        dismiss()
+                    },
+                    isTempSaved: viewModel.isTempSaved,
+                    onSaveTap: {
+                        // 저장 버튼 클릭 처리
+                        viewModel.handleSaveButtonTap()
+                    }
+                )
+                .zIndex(1)
                 TabSelector(selectedTab: $selectedTab)
                     .padding(.horizontal)
 
@@ -112,10 +116,66 @@ struct LogBookMainView: View {
                     }
                     
                     Spacer()
-                    
-
                 }
-                
+            }
+            
+            // SavePop 팝업
+            if viewModel.showSavePopup {
+                GeometryReader { geometry in
+                    Color.white.opacity(0.5)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            // 배경 터치로 닫기 방지
+                        }
+                    
+                    VStack {
+                        Spacer()
+                        
+                        SavePop(
+                            onCompleteSave: {
+                                viewModel.handleCompleteSave()
+                            },
+                            onTempSave: {
+                                viewModel.handleTempSaveFromSavePopup()
+                            },
+                            onClose: {
+                                viewModel.showSavePopup = false
+                            }
+                        )
+                        .padding(.horizontal, 24)
+                        
+                        Spacer()
+                    }
+                    .transition(.opacity)
+                    .zIndex(25)
+                }
+            }
+            
+            // 저장 완료 메시지 (ComPop 사용)
+            if viewModel.showSavedMessage {
+                GeometryReader { geometry in
+                    Color.white.opacity(0.5)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            // 배경 터치로 닫기 방지
+                        }
+                    
+                    VStack {
+                        Spacer()
+                        
+                        ComPop(
+                            onClose: {
+                                viewModel.showSavedMessage = false
+                            }
+                        )
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 24)
+                        
+                        Spacer()
+                    }
+                    .transition(.opacity)
+                    .zIndex(35)
+                }
             }
         }
     }
