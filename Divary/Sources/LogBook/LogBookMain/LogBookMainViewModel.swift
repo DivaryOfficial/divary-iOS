@@ -1,5 +1,5 @@
 //
-//  LogBookPageViewModel.swift
+//  LogBookMainViewModel.swift
 //  Divary
 //
 //  Created by 바견규 on 7/17/25.
@@ -15,6 +15,10 @@ class LogBookMainViewModel {
     var logBaseTitle: String = "" // 추가: 로그베이스 제목
     var isTempSaved: Bool = false // 임시저장 상태
     var tempSavedData: [DiveLogData] = [] // 임시저장된 데이터 백업
+    
+    // 저장 관련 상태
+    var showSavePopup = false
+    var showSavedMessage = false
     
     private let dataManager = MockDataManager.shared
     
@@ -44,6 +48,57 @@ class LogBookMainViewModel {
         }
         self.tempSavedData = Array(repeating: DiveLogData(), count: 3)
     }
+    
+    // MARK: - 저장 관련 메서드
+    
+    // 저장 버튼 처리
+    func handleSaveButtonTap() {
+        // 1. 모든 섹션이 완성되어 있는지 확인
+        if areAllSectionsCompleteForAllPages() {
+            // 모든 섹션이 완성됨 -> 바로 저장
+            handleCompleteSave()
+        } else {
+            // 일부 섹션이 미완성 -> SavePop 표시
+            showSavePopup = true
+        }
+    }
+    
+    // 모든 페이지의 모든 섹션이 완성되었는지 확인
+    private func areAllSectionsCompleteForAllPages() -> Bool {
+        for (index, _) in diveLogData.enumerated() {
+            if !areAllSectionsComplete(for: index) {
+                return false
+            }
+        }
+        return true
+    }
+    
+    // 작성 완료하기 (진짜 저장)
+    func handleCompleteSave() {
+        // 진짜 저장 로직 (API 호출 등)
+        // TODO: API 연동시 구현
+        
+        // 임시저장 상태 해제
+        isTempSaved = false
+        
+        // 저장 완료 메시지 표시 (ComPop - 자동으로 사라지지 않음)
+        withAnimation {
+            showSavedMessage = true
+            showSavePopup = false
+        }
+    }
+    
+    // 임시 저장하기 (SavePop에서 호출)
+    func handleTempSaveFromSavePopup() {
+        tempSave()
+        
+        // SavePop 닫기
+        withAnimation {
+            showSavePopup = false
+        }
+    }
+    
+    // MARK: - 기존 메서드들
     
     // 모든 섹션이 완성되었는지 체크 (간소화된 버전)
     func areAllSectionsComplete(for index: Int) -> Bool {
