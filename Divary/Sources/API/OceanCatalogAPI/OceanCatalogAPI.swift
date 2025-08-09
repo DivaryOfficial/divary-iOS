@@ -20,15 +20,15 @@ extension OceanCatalogAPI: TargetType {
 //            fatalError("❌ API_URL not found or invalid in Info.plist")
 //        }
 //        return url
-        return URL(string: "http://52.79.237.68:8080/")!
+        return URL(string: "https://www.divary.app/")!
     }
     
     var path: String {
         switch self {
-        case .getCardList(let type):
-            return "/api/v1/cards"
+        case .getCardList:
+            return "api/v1/cards"
         case .getCardDetail(let cardId):
-            return "/api/v1/cards/\(cardId)"
+            return "api/v1/cards/\(cardId)"
         }
     }
     
@@ -42,9 +42,12 @@ extension OceanCatalogAPI: TargetType {
     var task: Moya.Task {
         switch self {
         case .getCardList(let type):
-            return .requestParameters(parameters: [
-                "type": type ?? ""
-            ], encoding: URLEncoding.queryString)
+            if let type, !type.isEmpty {
+                return .requestParameters(parameters: ["type": type], encoding: URLEncoding.queryString)
+            }
+            else {
+                return .requestPlain
+            }
         case .getCardDetail:
             return .requestPlain
         }

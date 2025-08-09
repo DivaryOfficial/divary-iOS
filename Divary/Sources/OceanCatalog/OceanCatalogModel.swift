@@ -82,9 +82,9 @@ extension SeaCreatureDetail {
             appearPeriod: "봄, 가을에 주로 관찰",
             place: "따뜻한 연안, 바위 틈",
             imageUrls: [
-                URL(string: "https://commons.wikimedia.org/wiki/File:Lampetra_fluviatilis.jpg")!,
-                URL(string: "https://commons.wikimedia.org/wiki/File:Lampetra_fluviatilis.jpg")!,
-                URL(string: "https://commons.wikimedia.org/wiki/File:Lampetra_fluviatilis.jpg")!
+                URL(string: "")!,
+                URL(string: "")!,
+                URL(string: "")!
             ],
             appearance: Appearance(
                 body: "부드럽고 납작한 몸체",

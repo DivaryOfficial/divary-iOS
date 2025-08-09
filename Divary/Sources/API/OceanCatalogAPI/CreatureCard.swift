@@ -1,5 +1,5 @@
 //
-//  SeaCreatureCardDTO.swift
+//  CreatureCardDTO.swift
 //  Divary
 //
 //  Created by 김나영 on 8/6/25.

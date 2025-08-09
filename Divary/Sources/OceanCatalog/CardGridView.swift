@@ -12,21 +12,10 @@ struct CardGridView: View {
     @Binding var selectedCard: SeaCreatureCard?
     let onSelect: (SeaCreatureCard) -> Void
     
-    @State private var viewModel: OceanCatalogViewModel = .init()
-    
     var body: some View {
-        
-        let _ = viewModel.getCardList(type: "어류")
         ScrollView {
             LazyVGrid(columns: Array(repeating: .init(.flexible(), spacing: 14), count: 3), spacing: 26) {
-                ForEach(viewModel.creatureCards.map({
-                    SeaCreatureCard(id: $0.id, name: $0.name, type: $0.type, imageUrl: $0.dogamProfileUrl!)
-                })) { item in
-//                    CardComponent(
-//                        name: item.name,
-//                        type: item.type,
-//                        image: Image(item.nameImageAssetName)
-//                    )
+                ForEach(items) { item in
                     let isSelected = Binding<Bool>(
                         get: { selectedCard?.id == item.id },
                         set: { newValue in
