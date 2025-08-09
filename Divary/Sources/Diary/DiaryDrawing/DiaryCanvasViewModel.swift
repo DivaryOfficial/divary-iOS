@@ -45,6 +45,7 @@ final class DiaryCanvasViewModel: ObservableObject {
         showCanvas = false
     }
 
+    // Undo, Redo 버튼 활성화 모니터링
     private func startMonitoringUndoRedo() {
         timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
             guard let self else { return }

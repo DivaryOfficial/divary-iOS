@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import PencilKit
 
-struct CanvasView: UIViewRepresentable { // UIKit 에서 가져온 펜슬킷 실질적 캔버스뷰
+struct CanvasView: UIViewRepresentable { // UIKit 에서 가져온 펜슬킷 캔버스뷰
     let canvas: PKCanvasView
     let toolPicker: PKToolPicker
     let offsetY: CGFloat

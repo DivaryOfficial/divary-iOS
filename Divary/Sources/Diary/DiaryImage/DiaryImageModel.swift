@@ -23,14 +23,14 @@ final class FramedImageDTO: ObservableObject, Identifiable {
     }
 }
 
-enum FrameColor: CaseIterable {
-    case origin
-    case white
-    case ivory
-    case pastelPink
-    case pastelBlue
-    case wood
-    case black
+enum FrameColor: Int, CaseIterable, Codable {
+    case origin = 0
+    case white = 1
+    case ivory = 2
+    case pastelPink = 3
+    case pastelBlue = 4
+    case wood = 5
+    case black = 6
     
     var frameColor: Color {
         switch self {
@@ -49,10 +49,6 @@ enum FrameColor: CaseIterable {
         case .black:
             return Color(.black)
         }
-    }
-    
-    var innerCornerRadius: CGFloat {
-        return 1.6
     }
 }
 

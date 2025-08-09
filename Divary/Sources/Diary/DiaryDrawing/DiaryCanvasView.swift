@@ -8,7 +8,7 @@
 import SwiftUI
 import PencilKit
 
-struct DiaryCanvasView: View { // 일기메인뷰에서 연필 버튼 누르면 뜨는 그리는 공간
+struct DiaryCanvasView: View { // 일기메인뷰에서 연필 버튼 누르면 뜨는 그리는 공간 (CanvasView를 사용)
     @ObservedObject var viewModel: DiaryCanvasViewModel
     let offsetY: CGFloat
     var onSaved: ((PKDrawing, CGFloat) -> Void)?
@@ -57,7 +57,6 @@ struct DiaryCanvasView: View { // 일기메인뷰에서 연필 버튼 누르면 
             
             // 저장 버튼
             Button(action: {
-                
                 viewModel.saveDrawingWithOffset(offsetY: offsetY)
                 onSaved?(viewModel.canvas.drawing, offsetY)
                 viewModel.dismissCanvas()
