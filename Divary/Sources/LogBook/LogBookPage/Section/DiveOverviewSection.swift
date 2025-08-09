@@ -12,6 +12,11 @@ struct DiveOverviewSection: View {
     @Binding var isSaved: Bool
     
     var status: SectionStatus {
+        Self.getStatus(overview: overview, isSaved: isSaved)
+    }
+    
+    // Static 메서드로 분리
+    static func getStatus(overview: DiveOverview?, isSaved: Bool) -> SectionStatus {
         if isSaved { // 사용자가 저장했으면 무조건 .complete
             return .complete
         }

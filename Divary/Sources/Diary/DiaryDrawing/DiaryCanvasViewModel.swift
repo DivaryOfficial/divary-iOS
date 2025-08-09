@@ -18,11 +18,13 @@ final class DiaryCanvasViewModel: ObservableObject {
     @Published var canRedo: Bool = false
     
     @Binding var showCanvas: Bool
+    private let diaryId: Int
 
     private var timer: Timer?
 
-    init(showCanvas: Binding<Bool>) {
+    init(showCanvas: Binding<Bool>, diaryId: Int) {
         _showCanvas = showCanvas
+        self.diaryId = diaryId
         startMonitoringUndoRedo()
     }
 
@@ -39,11 +41,11 @@ final class DiaryCanvasViewModel: ObservableObject {
     }
 
     func dismissCanvas() {
-//        toolPicker.setVisible(!toolPicker.isVisible, forFirstResponder: canvas)
         toolPicker.setVisible(false, forFirstResponder: canvas)
         showCanvas = false
     }
 
+    // Undo, Redo 버튼 활성화 모니터링
     private func startMonitoringUndoRedo() {
         timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
             guard let self else { return }
@@ -54,86 +56,20 @@ final class DiaryCanvasViewModel: ObservableObject {
     
     func saveDrawingWithOffset(offsetY: CGFloat) {
         let drawing = canvas.drawing
-        print(drawing.bounds.origin)
-        print(drawing.bounds.size)
-        let data = drawing.dataRepresentation()
-        let base64 = data.base64EncodedString()
-        let meta = DrawingMeta(base64: base64, offsetY: offsetY)
-        print("캔버스뷰모델 \(meta.offsetY)")
-
-        if let encoded = try? JSONEncoder().encode(meta) {
-            UserDefaults.standard.set(encoded, forKey: "SavedDrawingMeta")
-        }
-    }
-    
-    // 스트링
-//    func saveDrawingAsString() -> String {
-//        let drawing = canvas.drawing
-//        let data = drawing.dataRepresentation()
-//        let base64String = data.base64EncodedString()
-//        return base64String
-//    }
-    
-    func loadDrawingFromString(_ base64String: String) {
-        guard let data = Data(base64Encoded: base64String) else {
-            print("base64 복호화 실패")
-            return
-        }
-        
         do {
-            let drawing = try PKDrawing(data: data)
-            canvas.drawing = drawing
-//            canvas.contentOffset.y =
+            try DrawingStore.save(diaryId: diaryId, drawing: drawing, offsetY: offsetY)
         } catch {
-            print("PKDrawing 복원 실패: \(error.localizedDescription)")
+            print("saveDrawingWithOffset error: \(error)")
         }
     }
     
-    // 파일
-//    func saveDrawingToFile() {
-//        let drawing = canvas.drawing
-//        let data = drawing.dataRepresentation()
-////        guard let data = JSONManager.shared.encode(codable: drawing) else {
-////            return
-////        }
-//        print(data.base64EncodedString())
-//        let url = drawingFileURL()
-//
-//        do {
-//            try data.write(to: url)
-//            showCanvas = false
-//        } catch {
-//            print(error.localizedDescription)
-//        }
-//    }
-//
-//    func loadDrawingFromFile() {
-////        let pkDrawingString = "d3Jk8AEACAAS"
-////
-////        guard let data = Data(base64Encoded: pkDrawingString) else {
-////            return
-////        }
-////
-////        canvas.drawing = try! PKDrawing(data: data)
-//
-//
-//        let url = drawingFileURL()
-//
-//        guard FileManager.default.fileExists(atPath: url.path) else {
-//            return
-//        }
-//
-//        do {
-//            let data = try Data(contentsOf: url)
-//            let drawing = try PKDrawing(data: data)
-//            canvas.drawing = drawing
-//        } catch {
-//            print(error.localizedDescription)
-//        }
-//    }
-//
-//    private func drawingFileURL() -> URL {
-//        let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-//        return directory.appendingPathComponent("drawing.pkdraw")
-//    }
+    func loadDrawingIfExists() {
+        guard DrawingStore.exists(diaryId: diaryId) else { return }
+        do {
+            let loaded = try DrawingStore.load(diaryId: diaryId)
+            canvas.drawing = loaded.drawing
+        } catch {
+            print("loadDrawingIfExists error: \(error)")
+        }
+    }
 }

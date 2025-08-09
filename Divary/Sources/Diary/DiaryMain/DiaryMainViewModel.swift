@@ -1,3 +1,4 @@
+
 //
 //  DiaryMainViewModel.swift
 //  Divary
@@ -5,6 +6,8 @@
 
 import SwiftUI
 import PhotosUI
+import ImageIO
+import UniformTypeIdentifiers
 import RichTextKit
 import Observation
 import PencilKit
@@ -30,6 +33,80 @@ class DiaryMainViewModel {
     
     var savedDrawing: PKDrawing? = nil
     var drawingOffsetY: CGFloat = 0
+    
+    // MARK: - 사진 처리
+    func makeFramedDTOs(from items: [PhotosPickerItem]) async -> [FramedImageDTO] {
+        let indexed = Array(items.enumerated())
+        var temp = Array<FramedImageDTO?>(repeating: nil, count: indexed.count)
+
+        await withTaskGroup(of: (Int, FramedImageDTO?) .self) { group in
+            for (idx, item) in indexed {
+                group.addTask { [weak self] in
+                    guard let self else { return (idx, nil) }
+                    guard
+                        let data = try? await item.loadTransferable(type: Data.self),
+                        let uiImage = UIImage(data: data)
+                    else {
+                        return (idx, nil)
+                    }
+
+                    let dateString = await self.formattedPhotoDateString(from: item)
+                    let dto = FramedImageDTO(
+                        image: Image(uiImage: uiImage),
+                        caption: "",
+                        frameColor: .origin,
+                        date: dateString
+                    )
+                    return (idx, dto)
+                }
+            }
+
+            for await (idx, dto) in group {
+                temp[idx] = dto
+            }
+        }
+
+        return temp.compactMap { $0 } // 실패 항목 제거
+    }
+    
+    func extractPhotoDate(from item: PhotosPickerItem) async -> Date? {
+        do {
+            // 1. 파일 URL 가져오기
+            if let url = try await item.loadTransferable(type: URL.self) {
+                let imageSource = CGImageSourceCreateWithURL(url as CFURL, nil)
+                guard let imageSource else { return nil }
+
+                // 2. 메타데이터 읽기
+                let metadata = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, nil) as? [CFString: Any]
+                let exif = metadata?[kCGImagePropertyExifDictionary] as? [CFString: Any]
+
+                // 3. 날짜 파싱
+                if let dateTimeString = exif?[kCGImagePropertyExifDateTimeOriginal] as? String {
+                    let formatter = DateFormatter()
+                    formatter.dateFormat = "yyyy:MM:dd HH:mm:ss"
+                    return formatter.date(from: dateTimeString)
+                }
+            }
+        } catch {
+            print("extractPhotoDate error: \(error)")
+        }
+        return nil
+    }
+    
+    private let formatter: DateFormatter = {
+        let df = DateFormatter()
+        df.locale = Locale(identifier: "ko_KR") // 한글 기준 정렬
+        df.dateFormat = "yyyy.M.d H:mm" // 2025.5.25 7:32
+        return df
+    }()
+    
+    func formattedPhotoDateString(from item: PhotosPickerItem) async -> String {
+        if let date = await extractPhotoDate(from: item) {
+            return formatter.string(from: date)
+        } else {
+            return formatter.string(from: Date())
+        }
+    }
 
     // MARK: - Block Management
     
@@ -65,11 +142,14 @@ class DiaryMainViewModel {
         editingTextBlock = nil
     }
 
-    func addImage(_ image: UIImage) {
-        let block = DiaryBlock(content: .image(image))
-        blocks.append(block)
+    func addImages(_ images: [FramedImageDTO]) {
+        images.forEach { image in
+            let block = DiaryBlock(content: .image(image))
+            blocks.append(block)
+        }
     }
 
+    
     func startEditing(_ block: DiaryBlock) {
         if case .text(let content) = block.content {
             editingTextBlock = block
@@ -437,16 +517,15 @@ class DiaryMainViewModel {
     
     // MARK: - Drawing
     
-    func loadSavedDrawing() {
-        guard let data = UserDefaults.standard.data(forKey: "SavedDrawingMeta"),
-              let meta = try? JSONDecoder().decode(DrawingMeta.self, from: data),
-              let drawingData = Data(base64Encoded: meta.base64),
-              let drawing = try? PKDrawing(data: drawingData) else {
-            return
+    func loadSavedDrawing(diaryId: Int) {
+        do {
+            let result = try DrawingStore.load(diaryId: diaryId)
+            self.savedDrawing = result.drawing
+            self.drawingOffsetY = result.offsetY
+        } catch {
+            // 파일이 없거나 실패하면 그냥 표시 안 함
+            self.savedDrawing = nil
+            self.drawingOffsetY = 0
         }
-        self.savedDrawing = drawing
-        self.drawingOffsetY = meta.offsetY
-//        print("drawingOffsetY = \(drawingOffsetY)")
-//        print("meta.offsetY = \(meta.offsetY)")
     }
 }

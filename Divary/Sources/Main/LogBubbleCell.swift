@@ -16,6 +16,7 @@ struct LogBubbleCell: View {
     
     // 추가: 탭 콜백
     var onTap: (() -> Void)?
+    var onLongTap: (() -> Void)?
     
     // 추가: 임시저장 상태 표시를 위한 프로퍼티
     var hasTempSave: Bool = false
@@ -49,7 +50,7 @@ struct LogBubbleCell: View {
                       Text(" ")
                   }
               }
-              .scaleEffect(showDeleteButton ? 1.3 : 1.0)
+              .scaleEffect(showDeleteButton ? 1.1 : 1.0)
               .animation(.easeInOut(duration: 0.2), value: showDeleteButton)
               .onTapGesture {
                   if !showDeleteButton {
@@ -60,6 +61,7 @@ struct LogBubbleCell: View {
                   if iconType != .plus {
                       withAnimation {
                           showDeleteButton = true
+                          
                       }
                   }
               }
@@ -68,11 +70,13 @@ struct LogBubbleCell: View {
                     Button(action: {
                         showDeleteButton = false
                         showDeletePopup = true
+                        onLongTap?()
                     }) {
                         Image(.deleteFloating)
                             .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 2)
                     }
-                    .offset(x: 70, y: -30)
+//                    .offset(x: 25, y: -45)
+                    .offset(x: 25, y: -27)
                 }
             }
         }

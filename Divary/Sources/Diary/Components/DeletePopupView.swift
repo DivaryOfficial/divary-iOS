@@ -8,12 +8,14 @@
 import SwiftUI
 
 struct DeletePopupView: View {
+    @Environment(\.dismiss) private var dismiss
     @Binding var isPresented: Bool
     var deleteText: String
     
-    func onDelete() {
-        isPresented = false
-    }
+//    func onDelete() {
+//        isPresented = false
+//    }
+    var onDelete: () -> Void = { }
 
     var body: some View {
         ZStack {
@@ -21,8 +23,9 @@ struct DeletePopupView: View {
                 .ignoresSafeArea()
                 .onTapGesture { isPresented = false }
             
-            VStack(spacing: 16) {
+            VStack {
                 Text(deleteText)
+                    .multilineTextAlignment(.center)
                     .padding(.top, 24)
                     .font(.omyu.regular(size: 24))
                 
@@ -39,7 +42,9 @@ struct DeletePopupView: View {
                             .font(.omyu.regular(size: 16))
                     }
                     
-                    Button(action: onDelete) {
+                    Button {
+                        onDelete()
+                    } label: {
                         Text("삭제")
                             .frame(maxWidth: .infinity)
                             .padding()

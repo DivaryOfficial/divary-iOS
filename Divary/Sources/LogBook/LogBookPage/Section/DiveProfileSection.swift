@@ -12,31 +12,31 @@ struct DiveProfileSection: View {
     @Binding var profile: DiveProfile?
     @Binding var isSaved: Bool
 
-    var status: SectionStatus
-
-    init(profile: Binding<DiveProfile?>, isSaved: Binding<Bool>) {
-        self._profile = profile
-        self._isSaved = isSaved
-
-        let p = profile.wrappedValue
+    var status: SectionStatus {
+        Self.getStatus(profile: profile, isSaved: isSaved)
+    }
+    
+    // Static 메서드로 분리
+    static func getStatus(profile: DiveProfile?, isSaved: Bool) -> SectionStatus {
+        if isSaved { // 사용자가 저장했으면 무조건 .complete
+            return .complete
+        }
         
         let values: [Any?] = [
-            p?.diveTime,
-            p?.maxDepth,
-            p?.avgDepth,
-            p?.decoStop,
-            p?.startPressure,
-            p?.endPressure
+            profile?.diveTime,
+            profile?.maxDepth,
+            profile?.avgDepth,
+            profile?.decoStop,
+            profile?.startPressure,
+            profile?.endPressure
         ]
-
-        if isSaved.wrappedValue { // 사용자가 저장했으면 무조건 .complete
-            self.status = .complete
-        } else if values.allSatisfy({ $0 == nil }) {
-            self.status = .empty
+        
+        if values.allSatisfy({ $0 == nil }) {
+            return .empty
         } else if values.allSatisfy({ $0 != nil }) {
-            self.status = .complete
+            return .complete
         } else {
-            self.status = .partial
+            return .partial
         }
     }
         

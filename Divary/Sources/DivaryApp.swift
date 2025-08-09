@@ -3,32 +3,29 @@ import SwiftUI
 @main
 struct DivaryApp: App {
     @StateObject private var router = AppRouter()
-    // DIContainer 인스턴스 생성
     private var container: DIContainer
     
-    
     init() {
-        // DIContainer 생성
-        let router = AppRouter()
-        self._router = StateObject(wrappedValue: router)
-        self.container = DIContainer(router: router)
+        // 동일한 router 인스턴스 사용
+        let appRouter = AppRouter()
+        self._router = StateObject(wrappedValue: appRouter)
+        self.container = DIContainer(router: appRouter)
     }
     
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $router.path) {
-                OceanCatalogView()
-//                DiaryMainView()
-//                    .navigationDestination(for: Route.self) { route in
-//                        switch route {
-//                            
-//                        case .login:
-//                            LoginView()
-//                            
-//                        }
-//                    }
+                LoginWrapperView()
+                    .navigationDestination(for: Route.self) { route in
+                        switch route {
+                        case .login:
+                            LoginWrapperView()
+                        case .main:
+                            MainView()
+                        }
+                    }
             }
-
+            .environment(\.diContainer, container)
         }
     }
 }

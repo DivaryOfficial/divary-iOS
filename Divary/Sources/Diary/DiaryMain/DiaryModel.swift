@@ -1,3 +1,4 @@
+
 //
 //  DiaryModel.swift
 //  Divary
@@ -15,14 +16,14 @@ final class DiaryBlock: ObservableObject, Identifiable, Equatable {
     
     enum Content: Equatable {
         case text(RichTextContent)
-        case image(UIImage)
+        case image(FramedImageDTO)
         
         static func == (lhs: Content, rhs: Content) -> Bool {
             switch (lhs, rhs) {
             case (.text(let lhsContent), .text(let rhsContent)):
                 return lhsContent == rhsContent
-            case (.image(let lhsImage), .image(let rhsImage)):
-                return lhsImage.pngData() == rhsImage.pngData()
+            case (.image(let lhsFramed), .image(let rhsFramed)):
+                return lhsFramed.id == rhsFramed.id
             default:
                 return false
             }
@@ -90,7 +91,7 @@ struct DiaryBlockDTO: Codable {
 
     enum DiaryContentDTO: Codable {
         case text(RichTextContentDTO)
-        case image(URL)
+        case image(FramedImageContentDTO)
 
         enum CodingKeys: String, CodingKey {
             case type, data
@@ -108,8 +109,7 @@ struct DiaryBlockDTO: Codable {
                 let data = try container.decode(RichTextContentDTO.self, forKey: .data)
                 self = .text(data)
             case .image:
-                let url = try container.decode(URL.self, forKey: .data)
-                self = .image(url)
+                self = .image(try container.decode(FramedImageContentDTO.self, forKey: .data))
             }
         }
 
@@ -119,9 +119,9 @@ struct DiaryBlockDTO: Codable {
             case .text(let data):
                 try container.encode(ContentType.text, forKey: .type)
                 try container.encode(data, forKey: .data)
-            case .image(let url):
+            case .image(let dto):
                 try container.encode(ContentType.image, forKey: .type)
-                try container.encode(url, forKey: .data)
+                try container.encode(dto, forKey: .data)
             }
         }
     }
@@ -131,7 +131,7 @@ struct RichTextContentDTO: Codable {
     let rtfData: Data           // RTF 형태 (서식 + 내용)
     let plainText: String       // 순수 텍스트 내용
     let contentLength: Int      // 텍스트 길이
-    
+
     init(rtfData: Data, plainText: String) {
         self.rtfData = rtfData
         self.plainText = plainText
@@ -139,32 +139,47 @@ struct RichTextContentDTO: Codable {
     }
 }
 
+struct FramedImageContentDTO: Codable {
+    let url: URL
+    let caption: String
+    let frameColor: Int
+    let date: String
+}
+
 // MARK: - DiaryBlock과 DTO 간 변환
 
 extension DiaryBlock {
     // DiaryBlock을 DTO로 변환 (서버 전송용)
-    func toDTO() -> DiaryBlockDTO {
+    func toDTO(uploadedImageURL: URL? = nil) -> DiaryBlockDTO {
         let contentDTO: DiaryBlockDTO.DiaryContentDTO
-        
+
         switch content {
         case .text(let richTextContent):
             let rtfData = richTextContent.rtfData ?? Data()
             let plainText = richTextContent.plainText
             contentDTO = .text(RichTextContentDTO(rtfData: rtfData, plainText: plainText))
-            
-        case .image(_):
+
+        case .image(let framed):
             // 이미지는 별도 업로드 후 URL 받아서 처리
             // 실제 구현에서는 이미지 업로드 API 호출 후 URL 받아와야 함
-            contentDTO = .image(URL(string: "https://example.com/placeholder")!)
+            // ⚠️ 실제에선 업로드해서 URL 받아야 함. 여기선 파라미터/플레이스홀더 사용
+            let url = uploadedImageURL ?? URL(string: "https://example.com/placeholder")!
+            let imageDTO = FramedImageContentDTO(
+                url: url,
+                caption: framed.caption,
+                frameColor: framed.frameColor.rawValue,
+                date: framed.date
+            )
+            contentDTO = .image(imageDTO)
         }
-        
+
         return DiaryBlockDTO(id: id.uuidString, content: contentDTO)
     }
-    
+
     // DTO에서 DiaryBlock으로 변환 (서버에서 받은 데이터)
     static func fromDTO(_ dto: DiaryBlockDTO) -> DiaryBlock? {
         guard let uuid = UUID(uuidString: dto.id) else { return nil }
-        
+
         let content: Content
         switch dto.content {
         case .text(let textDTO):
@@ -176,13 +191,21 @@ extension DiaryBlock {
                 let fallbackText = NSAttributedString(string: textDTO.plainText)
                 content = .text(RichTextContent(text: fallbackText))
             }
-            
-        case .image(let url):
+
+        case .image(let img):
             // URL에서 이미지 로드 (실제 구현에서는 async 처리 필요)
-            // 여기서는 placeholder로 처리
-            content = .image(UIImage())
-        }
-        
+            // URL → Image 로드는 비동기가 맞지만, 여기선 placeholder 처리
+            let swiftUIImage: Image = .init(systemName: "photo") // 실제 앱에선 async 로더로 교체
+            let frameColor: FrameColor = FrameColor(rawValue: img.frameColor) ?? .origin
+            let framed = FramedImageDTO(
+               image: swiftUIImage,
+               caption: img.caption,
+               frameColor: frameColor,
+               date: img.date
+            )
+            content = .image(framed)
+            }
+
         let block = DiaryBlock(content: content)
         return block
     }
