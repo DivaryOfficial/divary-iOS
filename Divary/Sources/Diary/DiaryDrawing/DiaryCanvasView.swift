@@ -8,10 +8,10 @@
 import SwiftUI
 import PencilKit
 
-struct DiaryCanvasView: View { // 그리는 공간
+struct DiaryCanvasView: View { // 일기메인뷰에서 연필 버튼 누르면 뜨는 그리는 공간
     @ObservedObject var viewModel: DiaryCanvasViewModel
     let offsetY: CGFloat
-    var onSaved: ((PKDrawing, CGFloat) -> Void)?    // ← 추가
+    var onSaved: ((PKDrawing, CGFloat) -> Void)?
 
     var body: some View {
         ZStack(alignment: .bottom){

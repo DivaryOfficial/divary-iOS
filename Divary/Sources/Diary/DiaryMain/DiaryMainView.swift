@@ -67,7 +67,6 @@ struct DiaryMainView: View {
         }
         .fullScreenCover(isPresented: $navigateToImageSelectView) {
             NavigationStack {
-                let _ = print(FramedImageSelectList.count)
                 ImageSelectView(viewModel: viewModel, framedImages: FramedImageSelectList)
                     .background(Color.white)
             }
@@ -90,15 +89,15 @@ struct DiaryMainView: View {
     private var diaryMain: some View {
         ScrollView(.vertical, showsIndicators: false) {
             ZStack {
-                GeometryReader { geometry in
-                    Image("gridBackground")
-                        .resizable(resizingMode: .tile)
-                        .scaledToFill()
-                        .frame(
-                            width: geometry.size.width,
-                            height: max(geometry.size.height, UIScreen.main.bounds.height)
-                        )
-                }.ignoresSafeArea()
+//                GeometryReader { geometry in
+//                    Image("gridBackground")
+//                        .resizable(resizingMode: .tile)
+//                        .scaledToFill()
+//                        .frame(
+//                            width: geometry.size.width,
+//                            height: max(geometry.size.height, UIScreen.main.bounds.height)
+//                        )
+//                }.ignoresSafeArea()
                 
                 LazyVStack(spacing: 8) {
                     ForEach(viewModel.blocks) { block in
@@ -133,6 +132,10 @@ struct DiaryMainView: View {
                     Spacer(minLength: 100)
                 }
                 .frame(maxWidth: .infinity, minHeight: UIScreen.main.bounds.height)
+                .background(
+                    Image("gridBackground")
+                        .resizable(resizingMode: .tile)
+                )
                 
                 if let drawing = viewModel.savedDrawing {
                     DrawingScreenView(drawing: drawing)
@@ -145,7 +148,7 @@ struct DiaryMainView: View {
                     }
                 }
             }
-            // 기존
+            // MARK: - 사진 띄우기
             .onChange(of: viewModel.selectedItems) { _, newItems in
                 guard !newItems.isEmpty else { return }
                 Task {
@@ -173,10 +176,6 @@ struct DiaryMainView: View {
         }
     }
 }
-
-//#Preview {
-//    DiaryMainView()
-//}
 
 #Preview {
     PreviewWrapper()

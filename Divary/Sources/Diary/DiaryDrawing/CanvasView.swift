@@ -14,14 +14,21 @@ struct CanvasView: UIViewRepresentable { // UIKit 에서 가져온 펜슬킷 실
     let toolPicker: PKToolPicker
     let offsetY: CGFloat
     
+    private let minCanvasHeight: CGFloat = 20000
+    
     func makeUIView(context: Context) -> PKCanvasView {
         canvas.isOpaque = false
+//        canvas.alwaysBounceVertical = true
         
         toolPicker.setVisible(true, forFirstResponder: canvas)
         toolPicker.addObserver(canvas)
         canvas.becomeFirstResponder()
         
         DispatchQueue.main.async {
+            if canvas.contentSize.height < minCanvasHeight {
+                canvas.contentSize = CGSize(width: canvas.bounds.width, height: minCanvasHeight)
+            }
+            
             canvas.contentOffset.y = offsetY
         }
         
