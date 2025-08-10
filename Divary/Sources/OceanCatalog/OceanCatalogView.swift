@@ -11,10 +11,12 @@ struct OceanCatalogView: View {
     @State private var viewModel = OceanCatalogViewModel()
     
     @State private var selectedCategory: SeaCreatureCategory = .all
-    @State private var selectedCard: SeaCreatureCard? = nil
-    @State private var selectedCreature: SeaCreatureDetail? = nil
-    @State private var detailCreature: SeaCreatureDetail? = nil
+    @State private var selectedCard: SeaCreatureCard?
+    @State private var selectedCreature: SeaCreatureDetail?
+    @State private var detailCreature: SeaCreatureDetail?
     @State private var navigateToDetail: Bool = false
+    
+    @State private var sheetVersion = 0
     
     // api 연결 전 목데이터
 //    private let allItems: [SeaCreatureCard] = [
@@ -49,10 +51,24 @@ struct OceanCatalogView: View {
                         items: viewModel.gridItems,
                         selectedCard: $selectedCard,
                         onSelect: { card in
-                            selectedCreature = viewModel.buildPreview(for: card)
+                            if let entity = viewModel.creatureCards.first(where: { $0.id == card.id }) {
+                                selectedCreature = SeaCreatureDetail.fromEntity(entity)
+                            } else {
+                                // 없어도 최소 정보로 시트 생성
+                                selectedCreature = SeaCreatureDetail.fromEntity(
+                                    CreatureCardEntity(id: card.id, name: card.name, type: card.type, dogamProfileUrl: card.imageUrl)
+                                )
+                            }
+                            viewModel.getCardDetail(id: card.id)
+//                            selectedCreature = viewModel.buildPreview(for: card)
                         }
                     )
                 }
+            }
+            .onChange(of: viewModel.lastDetail) {
+                guard let d = viewModel.lastDetail, let current = selectedCreature, d.id == current.id else { return }
+                selectedCreature = d
+                sheetVersion &+= 1
             }
             .sheet(item: $selectedCreature, onDismiss: {
                 selectedCard = nil
@@ -67,6 +83,7 @@ struct OceanCatalogView: View {
                         }
                     }
                 )
+                .id(sheetVersion)
                 .presentationDetents([.fraction(0.45)])
                 .presentationDragIndicator(.visible)
             }

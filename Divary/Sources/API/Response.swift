@@ -8,10 +8,10 @@
 import Foundation
 
 struct DefaultResponse<T: Codable>: Codable {
-    let timestamp: String
+    let timestamp: String?
     let status: Int
     let code: String
     let message: String
-    let path: String
+    let path: String?
     let data: T?
 }

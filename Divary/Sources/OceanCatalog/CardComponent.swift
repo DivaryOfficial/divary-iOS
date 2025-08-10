@@ -10,9 +10,9 @@ import SwiftUI
 struct CardComponent: View {
     let name: String
     let type: String
-    let image: Image
+//    let image: Image
+    let imageURL: URL?
     @Binding var isSelected: Bool
-//    let isBottomSheetPresented: Bool
     let onTap: () -> Void
     
 //    @State private var isSelected: Bool = false
@@ -27,9 +27,37 @@ struct CardComponent: View {
                         RoundedRectangle(cornerRadius: 8)
                             .stroke(Color(.seaBlue), lineWidth: isSelected ? 1 : 0)
                     )
-                image
-                    .resizable()
-                    .scaledToFit()
+                if let url = imageURL {
+//                    let _ = print("🔗 Image URL:", url.absoluteString)
+                    AsyncImage(url: url) { phase in
+                        switch phase {
+                        case .success(let img):
+                            img
+                                .resizable()
+                                .scaledToFit()
+                        case .empty:
+                            // 로딩 상태
+                            ProgressView()
+                        case .failure:
+                            // 실패 시 플레이스홀더
+                            Image("placeholder")
+                                .resizable()
+                                .scaledToFit()
+                        @unknown default:
+                            Image("placeholder")
+                                .resizable()
+                                .scaledToFit()
+                        }
+                    }
+                } else {
+                    // URL 없으면 플레이스홀더
+                    Image("placeholder")
+                        .resizable()
+                        .scaledToFit()
+                }
+//                image
+//                    .resizable()
+//                    .scaledToFit()
             }
             .aspectRatio(1, contentMode: .fit)
             .padding(.bottom, 10)

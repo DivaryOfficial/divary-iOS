@@ -55,8 +55,8 @@ struct OceanCreatureDetailView: View {
 //                            .frame(height: 220)
 //                            .clipped()
                     } else {
-//                        Color.gray
-                        Image("testImage")
+                        Color.gray
+//                        Image("testImage")
                     }
                 }
                 .tag(index)
@@ -81,7 +81,7 @@ struct OceanCreatureDetailView: View {
     // MARK: - 상단 블록
     private var titleBlock: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("\(creature.name) (\(creature.appearance.pattern))")
+            Text("\(creature.name)")
                 .font(.omyu.regular(size: 24))
             Text(creature.type)
                 .font(.NanumSquareNeo.NanumSquareNeoBold(size: 14))

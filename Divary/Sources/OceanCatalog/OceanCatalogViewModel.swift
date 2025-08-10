@@ -21,6 +21,9 @@ class OceanCatalogViewModel {
     var creatureCards: [CreatureCardEntity] = []
     var creatureCardDetail: CreatureCardEntity?
     
+    var isLoadingDetail = false
+    var lastDetail: SeaCreatureDetail?
+    
     // MARK: - getCardList 함수들
     var gridItems: [SeaCreatureCard] {
         creatureCards.map {
@@ -28,7 +31,7 @@ class OceanCatalogViewModel {
                 id: $0.id,
                 name: $0.name,
                 type: $0.type,
-                imageUrl: $0.dogamProfileUrl ?? URL(string: "about:blank")!
+                imageUrl: $0.dogamProfileUrl
             )
         }
     }
@@ -72,21 +75,25 @@ class OceanCatalogViewModel {
     }
 
     // 상세 미리보기(현재는 목업 예시 그대로)
-    func buildPreview(for card: SeaCreatureCard) -> SeaCreatureDetail {
-        SeaCreatureDetail.mock(for: card)
-    }
+//    func buildPreview(for card: SeaCreatureCard) -> SeaCreatureDetail {
+//        SeaCreatureDetail.mock(for: card)
+//    }
     
     // MARK: - getCardDetail 함수들
+    
     func getCardDetail(id: Int) {
+        guard !isLoadingDetail else { return }
+        isLoadingDetail = true
+
         service.getCardDetail(id: id)
-            .sinkHandledCompletion(receiveValue: { [weak self] entity in
-                print("detail:", entity)
-                self?.creatureCardDetail = entity
-                if let index = self?.creatureCards.firstIndex(where: { $0.id == entity.id }) {
-                    self?.creatureCards[index] = entity
-                } else {
-                    self?.creatureCards.append(entity)
+            .sink(receiveCompletion: { [weak self] comp in
+                self?.isLoadingDetail = false
+                if case let .failure(err) = comp {
+                    print("detail error:", err)
                 }
+            }, receiveValue: { [weak self] detail in
+                print("✅ detail received:", detail)
+                self?.lastDetail = detail
             })
             .store(in: &cancellable)
     }

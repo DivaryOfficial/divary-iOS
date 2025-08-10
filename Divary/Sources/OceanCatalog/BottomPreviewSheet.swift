@@ -13,7 +13,7 @@ struct BottomPreviewSheet: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("\(creature.name) (\(creature.appearance.pattern))")
+            Text("\(creature.name)")
                 .font(.omyu.regular(size: 24))
                 .bold()
             Text(creature.type)
@@ -27,10 +27,7 @@ struct BottomPreviewSheet: View {
                             .resizable()
                             .scaledToFill()
                     } else {
-//                        Color.gray.opacity(0.2)
-                        Image(.test)
-                            .resizable()
-                            .scaledToFill()
+                        Color.gray.opacity(0.2)
                     }
                 }
                 .cornerRadius(10)
@@ -40,7 +37,6 @@ struct BottomPreviewSheet: View {
                     LabelledText(title: "출몰시기", value: creature.appearPeriod)
                     LabelledText(title: "서식", value: creature.place)
                 }
-                .font(.subheadline)
             }
 
             Button(action: onDetailTapped) {

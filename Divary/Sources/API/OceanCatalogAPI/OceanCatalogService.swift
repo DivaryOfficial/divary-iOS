@@ -24,14 +24,17 @@ final class OceanCatalogService {
             .manageThread()
     }
     
-    func getCardDetail(id: Int) -> AnyPublisher<CreatureCardEntity, Error> {
+    func getCardDetail(id: Int) -> AnyPublisher<SeaCreatureDetail, Error> {
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+
         return provider.requestPublisher(.getCardDetail(cardId: id))
             .handleEvents(receiveOutput: { response in
                 print("getCardDetail response:", response)
             })
             .eraseToAnyPublisher()
-            .extractData(CreatureCardDTO.self)
-            .map({ $0.entity })
+            .extractData(CreatureDetailDTO.self, using: decoder)
+            .map { $0.entity }  // CreatureDetailDTO -> SeaCreatureDetail
             .manageThread()
     }
 }
