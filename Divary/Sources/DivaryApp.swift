@@ -14,19 +14,18 @@ struct DivaryApp: App {
     
     var body: some Scene {
         WindowGroup {
-            OceanCatalogView()
-//            NavigationStack(path: $router.path) {
-//                LoginWrapperView()
-//                    .navigationDestination(for: Route.self) { route in
-//                        switch route {
-//                        case .login:
-//                            LoginWrapperView()
-//                        case .main:
-//                            MainView()
-//                        }
-//                    }
-//            }
-//            .environment(\.diContainer, container)
+            NavigationStack(path: $router.path) {
+                LoginWrapperView()
+                    .navigationDestination(for: Route.self) { route in
+                        switch route {
+                        case .login:
+                            LoginWrapperView()
+                        case .main:
+                            MainView()
+                        }
+                    }
+            }
+            .environment(\.diContainer, container)
         }
     }
 }
