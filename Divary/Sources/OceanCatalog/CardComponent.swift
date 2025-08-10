@@ -25,7 +25,7 @@ struct CardComponent: View {
                     .cornerRadius(8)
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color(.seaBlue), lineWidth: isSelected ? 1 : 0)
+                            .stroke(Color(.seaBlue), lineWidth: isSelected ? 2 : 0)
                     )
                 if let url = imageURL {
 //                    let _ = print("🔗 Image URL:", url.absoluteString)

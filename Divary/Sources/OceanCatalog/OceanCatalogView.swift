@@ -84,7 +84,8 @@ struct OceanCatalogView: View {
                     }
                 )
                 .id(sheetVersion)
-                .presentationDetents([.fraction(0.45)])
+                .presentationDetents([.fraction(0.5)])
+                .presentationSizing(.automatic)
                 .presentationDragIndicator(.visible)
             }
             .navigationDestination(isPresented: $navigateToDetail) {

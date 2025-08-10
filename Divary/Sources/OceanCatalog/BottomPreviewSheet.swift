@@ -19,26 +19,30 @@ struct BottomPreviewSheet: View {
             Text(creature.type)
                 .foregroundStyle(Color(.grayscaleG600))
                 .font(.NanumSquareNeo.NanumSquareNeoRegular(size: 14))
-
-            HStack(spacing: 12) {
+            
+            HStack(alignment: .center, spacing: 12) {
                 AsyncImage(url: creature.imageUrls.first) { phase in
                     if let image = phase.image {
                         image
                             .resizable()
-                            .scaledToFill()
+                            .scaledToFit()
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
                     } else {
                         Color.gray.opacity(0.2)
                     }
                 }
-                .cornerRadius(10)
-
+                .frame(maxWidth: 260)
+                .id(creature.imageUrls.first)
+                
                 VStack(alignment: .leading, spacing: 6) {
                     LabelledText(title: "크기", value: creature.size)
                     LabelledText(title: "출몰시기", value: creature.appearPeriod)
                     LabelledText(title: "서식", value: creature.place)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-
+            .frame(height: nil) // 높이 제한 두지 않음
+            
             Button(action: onDetailTapped) {
                 Text("자세히보기")
                     .font(.omyu.regular(size: 20))
@@ -50,12 +54,13 @@ struct BottomPreviewSheet: View {
             }
             .padding(.top, 8)
         }
-        .padding()
+        .fixedSize(horizontal: false, vertical: false)
+        .padding(16)
         .background(
             RoundedRectangle(cornerRadius: 20)
                 .fill(Color(.systemBackground))
         )
-        .frame(maxHeight: 280) // 높이 제한
+//        .frame(maxHeight: 280) // 높이 제한
     }
 }
 
