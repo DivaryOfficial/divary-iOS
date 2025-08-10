@@ -92,7 +92,7 @@ class OceanCatalogViewModel {
                     print("detail error:", err)
                 }
             }, receiveValue: { [weak self] detail in
-                print("✅ detail received:", detail)
+//                print("✅ detail received:", detail)
                 self?.lastDetail = detail
             })
             .store(in: &cancellable)

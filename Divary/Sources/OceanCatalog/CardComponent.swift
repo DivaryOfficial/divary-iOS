@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct CardComponent: View {
     let name: String
@@ -29,26 +30,12 @@ struct CardComponent: View {
                     )
                 if let url = imageURL {
 //                    let _ = print("🔗 Image URL:", url.absoluteString)
-                    AsyncImage(url: url) { phase in
-                        switch phase {
-                        case .success(let img):
-                            img
-                                .resizable()
-                                .scaledToFit()
-                        case .empty:
-                            // 로딩 상태
-                            ProgressView()
-                        case .failure:
-                            // 실패 시 플레이스홀더
-                            Image("placeholder")
-                                .resizable()
-                                .scaledToFit()
-                        @unknown default:
-                            Image("placeholder")
-                                .resizable()
-                                .scaledToFit()
-                        }
-                    }
+                    KFImage(url)
+                        .placeholder { ProgressView() }
+                        .retry(maxCount: 2, interval: .seconds(1))
+                        .resizable()
+                        .scaledToFit()
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                 } else {
                     // URL 없으면 플레이스홀더
                     Image("placeholder")

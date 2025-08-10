@@ -60,7 +60,6 @@ struct OceanCatalogView: View {
                                 )
                             }
                             viewModel.getCardDetail(id: card.id)
-//                            selectedCreature = viewModel.buildPreview(for: card)
                         }
                     )
                 }

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct OceanCreatureDetailView: View {
     let creature: SeaCreatureDetail
@@ -51,17 +52,15 @@ struct OceanCreatureDetailView: View {
             
             TabView(selection: $currentIndex) {
                 ForEach(Array(creature.imageUrls.enumerated()), id: \.offset) { index, url in
-                    AsyncImage(url: url) { phase in
-                        if let image = phase.image {
-                            image
-                                .resizable()
-                                .scaledToFill()
-                        } else {
-                            Color.gray
-                        }
-                    }
-                    .tag(index)
-                    .id(url)
+                    KFImage(url)
+                        .placeholder { Color.gray }
+                        .retry(maxCount: 2, interval: .seconds(1))
+                        .resizable()
+                        .scaledToFill()
+                        .id(url)
+                        .tag(index)
+                        .frame(width: width, height: height)
+                        .clipped()
                 }
             }
             .frame(width: width, height: height)

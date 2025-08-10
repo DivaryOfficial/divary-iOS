@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct BottomPreviewSheet: View {
     let creature: SeaCreatureDetail
@@ -21,18 +22,20 @@ struct BottomPreviewSheet: View {
                 .font(.NanumSquareNeo.NanumSquareNeoRegular(size: 14))
             
             HStack(alignment: .center, spacing: 12) {
-                AsyncImage(url: creature.imageUrls.first) { phase in
-                    if let image = phase.image {
-                        image
-                            .resizable()
-                            .scaledToFit()
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                    } else {
-                        Color.gray.opacity(0.2)
-                    }
+                if let url = creature.imageUrls.first {
+                    KFImage(url)
+                        .placeholder { ProgressView() }
+                        .retry(maxCount: 2, interval: .seconds(1))
+                        .resizable()
+                        .scaledToFit()
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .frame(maxWidth: 260)
+                        .id(url)
+                } else {
+                    Color.gray.opacity(0.2)
+                        .frame(maxWidth: 260)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
-                .frame(maxWidth: 260)
-                .id(creature.imageUrls.first)
                 
                 VStack(alignment: .leading, spacing: 6) {
                     LabelledText(title: "크기", value: creature.size)
@@ -91,7 +94,7 @@ private struct LabelledText: View {
         appearPeriod: "봄, 가을에 주로 관찰",
         place: "따뜻한 연안, 바위 틈",
         imageUrls: [
-            URL(string: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Nudibranch_flabellina.jpg/640px-Nudibranch_flabellina.jpg")!
+            URL(string: "")!
         ],
         appearance: Appearance(
             body: "부드럽고 납작한 몸체",
