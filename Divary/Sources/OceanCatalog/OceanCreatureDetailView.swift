@@ -53,7 +53,7 @@ struct OceanCreatureDetailView: View {
             TabView(selection: $currentIndex) {
                 ForEach(Array(creature.imageUrls.enumerated()), id: \.offset) { index, url in
                     KFImage(url)
-                        .placeholder { Color.gray }
+                        .placeholder { ProgressView() }
                         .retry(maxCount: 2, interval: .seconds(1))
                         .resizable()
                         .scaledToFill()
