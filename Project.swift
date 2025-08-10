@@ -5,7 +5,8 @@ let project = Project(
     packages: [
         .package(url: "https://github.com/Moya/Moya.git", .upToNextMinor(from: "15.0.3")),
         .package(url: "https://github.com/google/GoogleSignIn-iOS", .upToNextMinor(from: "7.0.0")),
-        .package(url: "https://github.com/danielsaidi/RichTextKit.git", .upToNextMinor(from: "1.2.0"))
+        .package(url: "https://github.com/danielsaidi/RichTextKit.git", .upToNextMinor(from: "1.2.0")),
+        .package(url: "https://github.com/onevcat/Kingfisher.git", .upToNextMajor(from: "8.0.0"))
     ],
     settings: .settings(
         base: [
@@ -45,9 +46,11 @@ let project = Project(
             resources: ["Divary/Resources/**"],
             dependencies: [
                 .package(product: "Moya"),
+                .package(product: "CombineMoya"),
                 .package(product: "GoogleSignIn"),
                 .package(product: "GoogleSignInSwift"), // 선택적
-                .package(product: "RichTextKit")        // 실제 product명이 맞는지 꼭 확인
+                .package(product: "RichTextKit"),        // 실제 product명이 맞는지 꼭 확인
+                .package(product: "Kingfisher")
             ]
         ),
         .target(

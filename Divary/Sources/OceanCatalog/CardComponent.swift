@@ -6,13 +6,14 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct CardComponent: View {
     let name: String
     let type: String
-    let image: Image
+//    let image: Image
+    let imageURL: URL?
     @Binding var isSelected: Bool
-//    let isBottomSheetPresented: Bool
     let onTap: () -> Void
     
 //    @State private var isSelected: Bool = false
@@ -25,11 +26,25 @@ struct CardComponent: View {
                     .cornerRadius(8)
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color(.seaBlue), lineWidth: isSelected ? 1 : 0)
+                            .stroke(Color(.seaBlue), lineWidth: isSelected ? 2 : 0)
                     )
-                image
-                    .resizable()
-                    .scaledToFit()
+                if let url = imageURL {
+//                    let _ = print("🔗 Image URL:", url.absoluteString)
+                    KFImage(url)
+                        .placeholder { ProgressView() }
+                        .retry(maxCount: 2, interval: .seconds(1))
+                        .resizable()
+                        .scaledToFit()
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                } else {
+                    // URL 없으면 플레이스홀더
+                    Image("placeholder")
+                        .resizable()
+                        .scaledToFit()
+                }
+//                image
+//                    .resizable()
+//                    .scaledToFit()
             }
             .aspectRatio(1, contentMode: .fit)
             .padding(.bottom, 10)
