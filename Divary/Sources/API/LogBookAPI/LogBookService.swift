@@ -9,46 +9,49 @@ import Foundation
 import Moya
 
 final class LogBookService {
+    static let shared = LogBookService()
     private let provider = MoyaProvider<LogBookAPI>()
     
-    // 로그 리스트 조회
-    func getLogList(year: Int, completion: @escaping (Result<LogListResponseDTO, Error>) -> Void) {
-        provider.request(.getLogList(year: year)) { result in
-            self.handleResponse(result, completion: completion)
+    private init() {}
+    
+    // 로그 리스트 조회 (연도별)
+    func getLogList(year: Int, saveStatus: String? = nil, completion: @escaping (Result<[LogListResponseDTO], Error>) -> Void) {
+        provider.request(.getLogList(year: year, saveStatus: saveStatus)) { result in
+            self.handleWrappedResponse(result, completion: completion)
         }
     }
     
-    // 로그 상세 조회
-    func getLogDetail(id: Int, completion: @escaping (Result<LogDetailResponseDTO, Error>) -> Void) {
-        provider.request(.getLogDetail(id: id)) { result in
-            self.handleResponse(result, completion: completion)
+    // 로그베이스 상세 조회 (로그북들 포함)
+    func getLogBaseDetail(logBaseInfoId: Int, completion: @escaping (Result<[LogBaseDetailDTO], Error>) -> Void) {
+        provider.request(.getLogBaseDetail(logBaseInfoId: logBaseInfoId)) { result in
+            self.handleWrappedResponse(result, completion: completion)
         }
     }
     
-    // 초기 로그 생성
-    func createLog(iconType: String, name: String, date: String, completion: @escaping (Result<LogItemDTO, Error>) -> Void) {
-        provider.request(.createLog(iconType: iconType, name: name, date: date)) { result in
-            self.handleResponse(result, completion: completion)
+    // 초기 로그베이스 생성
+    func createLogBase(iconType: String, name: String, date: String, completion: @escaping (Result<LogCreateResponseDTO, Error>) -> Void) {
+        provider.request(.createLogBase(iconType: iconType, name: name, date: date)) { result in
+            self.handleWrappedResponse(result, completion: completion)
         }
     }
     
-    // 로그북 전체 수정
-    func updateLog(id: Int, logData: LogUpdateRequestDTO, completion: @escaping (Result<LogDetailResponseDTO, Error>) -> Void) {
-        provider.request(.updateLog(id: id, logData: logData)) { result in
-            self.handleResponse(result, completion: completion)
+    // 빈 로그북 3개 생성
+    func createEmptyLogBooks(logBaseInfoId: Int, completion: @escaping (Result<EmptyLogCreateResponseDTO, Error>) -> Void) {
+        provider.request(.createEmptyLogBooks(logBaseInfoId: logBaseInfoId)) { result in
+            self.handleWrappedResponse(result, completion: completion)
         }
     }
     
-    // 빈 세부 로그북 페이지 생성
-    func createEmptyLog(id: Int, completion: @escaping (Result<LogDetailResponseDTO, Error>) -> Void) {
-        provider.request(.createEmptyLog(id: id)) { result in
-            self.handleResponse(result, completion: completion)
+    // 개별 로그북 수정
+    func updateLogBook(logBookId: Int, logData: LogUpdateRequestDTO, completion: @escaping (Result<EmptyLogCreateResponseDTO, Error>) -> Void) {
+        provider.request(.updateLogBook(logBookId: logBookId, logData: logData)) { result in
+            self.handleWrappedResponse(result, completion: completion)
         }
     }
     
-    // 로그북 삭제
-    func deleteLog(id: Int, completion: @escaping (Result<Void, Error>) -> Void) {
-        provider.request(.deleteLog(id: id)) { result in
+    // 로그베이스 삭제
+    func deleteLogBase(logBaseInfoId: Int, completion: @escaping (Result<Void, Error>) -> Void) {
+        provider.request(.deleteLogBase(logBaseInfoId: logBaseInfoId)) { result in
             switch result {
             case .success:
                 completion(.success(()))
@@ -58,30 +61,23 @@ final class LogBookService {
         }
     }
     
-    // 로그북 이름 변경
-    func updateLogName(id: Int, name: String, completion: @escaping (Result<LogItemDTO, Error>) -> Void) {
-        provider.request(.updateLogName(id: id, name: name)) { result in
-            self.handleResponse(result, completion: completion)
-        }
-    }
-    
-    // 특정 날짜 로그북 존재 여부
+    // 특정 날짜 로그 존재 여부
     func checkLogExists(date: String, completion: @escaping (Result<LogExistsResponseDTO, Error>) -> Void) {
         provider.request(.checkLogExists(date: date)) { result in
-            self.handleResponse(result, completion: completion)
+            self.handleWrappedResponse(result, completion: completion)
         }
     }
     
-    // Generic Response Handler
-    private func handleResponse<T: Decodable>(_ result: Result<Response, MoyaError>, completion: @escaping (Result<T, Error>) -> Void) {
+    // 래핑된 응답 처리
+    private func handleWrappedResponse<T: Codable>(_ result: Result<Response, MoyaError>, completion: @escaping (Result<T, Error>) -> Void) {
         switch result {
         case .success(let response):
             if let jsonString = String(data: response.data, encoding: .utf8) {
                 print("📦 로그북 서버 응답: \(jsonString)")
             }
             do {
-                let decodedData = try JSONDecoder().decode(T.self, from: response.data)
-                completion(.success(decodedData))
+                let wrappedResponse = try JSONDecoder().decode(APIResponse<T>.self, from: response.data)
+                completion(.success(wrappedResponse.data))
             } catch {
                 print("❌ 로그북 디코딩 실패: \(error)")
                 completion(.failure(error))

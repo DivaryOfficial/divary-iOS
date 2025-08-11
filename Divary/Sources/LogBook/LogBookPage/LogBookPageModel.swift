@@ -28,6 +28,10 @@ enum SectionStatus {
 
 @Observable
 class DiveLogData {
+    // API 연동을 위한 ID 추가
+    var logBookId: Int?
+    var saveStatus: SaveStatus = .complete
+    
     var overview: DiveOverview?
     var participants: DiveParticipants?
     var equipment: DiveEquipment?
@@ -35,12 +39,16 @@ class DiveLogData {
     var profile: DiveProfile?
 
     init(
+        logBookId: Int? = nil,
+        saveStatus: SaveStatus = .complete,
         overview: DiveOverview? = nil,
         participants: DiveParticipants? = nil,
         equipment: DiveEquipment? = nil,
         environment: DiveEnvironment? = nil,
         profile: DiveProfile? = nil
     ) {
+        self.logBookId = logBookId
+        self.saveStatus = saveStatus
         self.overview = overview
         self.participants = participants
         self.equipment = equipment
@@ -177,6 +185,3 @@ class DiveProfile {
         self.endPressure = endPressure
     }
 }
-
-
-

@@ -61,7 +61,7 @@ struct LogBookMainView: View {
                     case .logbook:
                         LogBookPageView(viewModel: viewModel)
                     case .diary:
-                        DiaryMainView()
+                        DiaryMainView() //흠?
                     }
                 }
             }
@@ -176,10 +176,31 @@ struct LogBookMainView: View {
                     .zIndex(35)
                 }
             }
+            
+            // 로딩 인디케이터
+            if viewModel.isLoading {
+                Color.black.opacity(0.3)
+                    .ignoresSafeArea()
+                
+                ProgressView("처리 중...")
+                    .progressViewStyle(CircularProgressViewStyle())
+                    .foregroundColor(.white)
+                    .padding()
+                    .background(Color.black.opacity(0.7))
+                    .cornerRadius(10)
+                    .zIndex(40)
+            }
+        }
+        .alert("오류", isPresented: .constant(viewModel.errorMessage != nil)) {
+            Button("확인") {
+                viewModel.clearError()
+            }
+        } message: {
+            Text(viewModel.errorMessage ?? "")
         }
     }
 }
 
 #Preview {
-    LogBookMainView(logBaseId: "log_base_1")
+    LogBookMainView(logBaseId: "1")
 }
