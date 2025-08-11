@@ -17,7 +17,11 @@ enum NewLogCreationStep {
     case titleAndIcon
 }
 
-// 새 로그 생성 뷰모델
+//
+//  NewLogCreationViewModel.swift - 수정
+//  API 호출로 변경
+//
+
 @Observable
 class NewLogCreationViewModel {
     var currentStep: NewLogCreationStep = .calendar
@@ -25,43 +29,55 @@ class NewLogCreationViewModel {
     var selectedTitle: String = ""
     var selectedIcon: IconType? = nil
     var showNewLogCreation: Bool = false
+    var isLoading: Bool = false
     
-    // MockDataManager 사용
-    private let dataManager = MockDataManager.shared
+    private let dataManager = LogBookDataManager.shared
     
-    // 기존 로그가 있는지 확인
-    func hasExistingLog(for date: Date) -> Bool {
-        return dataManager.hasExistingLog(for: date)
+    // 기존 로그가 있는지 확인 (비동기)
+    func checkExistingLog() async -> Bool {
+        isLoading = true
+        let exists = await dataManager.hasExistingLog(for: selectedDate)
+        await MainActor.run {
+            self.isLoading = false
+        }
+        return exists
     }
     
     // 기존 로그 찾기
-    func findExistingLog(for date: Date) -> LogBookBaseMock? {
+    func findExistingLog(for date: Date) -> LogBookBase? {
         return dataManager.findLogBase(for: date)
     }
     
-    // 다음 단계로
-    func proceedToNextStep() {
-        if hasExistingLog(for: selectedDate) {
-            currentStep = .existingLogConfirm
-        } else {
-            currentStep = .titleAndIcon
+    // 다음 단계로 (비동기 확인 포함)
+    func proceedToNextStep() async {
+        let hasExisting = await checkExistingLog()
+        await MainActor.run {
+            if hasExisting {
+                self.currentStep = .existingLogConfirm
+            } else {
+                self.currentStep = .titleAndIcon
+            }
         }
     }
     
-    // 새 로그 생성 완료
-    func createNewLog() -> String {
-        guard let icon = selectedIcon else { return "" }
+    // 새 로그 생성 완료 (비동기)
+    func createNewLog() async -> String? {
+        guard let icon = selectedIcon else { return nil }
         
-        // MockDataManager에 새 로그베이스 추가
-        let newLogBaseId = dataManager.addNewLogBase(
+        isLoading = true
+        let newLogBaseId = await dataManager.createNewLog(
             date: selectedDate,
             title: selectedTitle,
             iconType: icon
         )
         
-        print("새 로그 생성: ID=\(newLogBaseId), 날짜=\(selectedDate), 제목=\(selectedTitle), 아이콘=\(icon.rawValue)")
+        await MainActor.run {
+            self.isLoading = false
+            if newLogBaseId != nil {
+                self.resetData()
+            }
+        }
         
-        resetData()
         return newLogBaseId
     }
     
@@ -72,5 +88,6 @@ class NewLogCreationViewModel {
         selectedIcon = nil
         currentStep = .calendar
         showNewLogCreation = false
+        isLoading = false
     }
 }

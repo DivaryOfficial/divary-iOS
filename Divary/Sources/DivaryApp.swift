@@ -6,7 +6,6 @@ struct DivaryApp: App {
     private var container: DIContainer
     
     init() {
-        // 동일한 router 인스턴스 사용
         let appRouter = AppRouter()
         self._router = StateObject(wrappedValue: appRouter)
         self.container = DIContainer(router: appRouter)
@@ -22,6 +21,10 @@ struct DivaryApp: App {
                             LoginWrapperView()
                         case .main:
                             MainView()
+                        case .logBookMain(let logBaseId):
+                            LogBookMainView(logBaseId: logBaseId)
+                        case .characterView:
+                            CharacterView(isPetEditingMode: .constant(false))
                         }
                     }
             }

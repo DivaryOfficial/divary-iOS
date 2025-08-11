@@ -22,7 +22,8 @@ struct YearlyLogBubble: View {
     
     let columns = Array(repeating: GridItem(.flexible(), spacing: 0), count: 4)
     
-    @Bindable var dataManager = MockDataManager.shared
+    // 상단 수정
+    @State private var dataManager = LogBookDataManager.shared
     @Binding var showDeletePopup: Bool
     
     // 추가: 버블 탭 콜백
@@ -32,10 +33,11 @@ struct YearlyLogBubble: View {
     
     var body: some View {
 
-        // MockDataManager에서 데이터 가져오기 + 연도 필터링 추가
+        // body에서 데이터 소스 변경
         let filteredLogs = dataManager.logBookBases.filter { logBase in
             Calendar.current.component(.year, from: logBase.date) == selectedYear
         }
+        
         let sortedLogs = filteredLogs.sorted { $0.date > $1.date }
         
         // 맨 앞에 .plus 추가

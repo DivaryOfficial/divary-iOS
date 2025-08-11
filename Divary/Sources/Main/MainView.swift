@@ -1,5 +1,5 @@
 //
-//  MainView.swift
+//  MainView.swift - API 연결로 수정
 //  Divary
 //
 //  Created by 김나영 on 7/31/25.
@@ -8,32 +8,32 @@
 import SwiftUI
 
 struct MainView: View {
+    @Environment(\.diContainer) private var container
+    
     @State private var selectedYear: Int = 2025
     @State private var showSwipeTooltip = false
     @State private var showDeletePopup = false
     @State private var showNotification = false
-    @State private var notificationView = NotificationView()
+    @State private var isLoading = false
     
-    // 추가: 네비게이션 상태
+    // 선택된 로그 ID (삭제용)
     @State private var selectedLogBaseId: String? = nil
-    @State private var showLogBookMain = false
     
-    // 새 로그 생성 상태 추가
+    // 새 로그 생성 상태
     @State private var newLogViewModel = NewLogCreationViewModel()
     
-    // 나의바다로 가기 위한 변수들
-    @State private var showCharacterView = false
-    @State private var isEditing = false
+    // API 데이터 매니저
+    @State private var dataManager = LogBookDataManager.shared
     
     // 연도별 필터링된 로그베이스들
-    private var filteredLogBases: [LogBookBaseMock] {
-       MockDataManager.shared.logBookBases.filter { logBase in
+    private var filteredLogBases: [LogBookBase] {
+       dataManager.logBookBases.filter { logBase in
            Calendar.current.component(.year, from: logBase.date) == selectedYear
        }
     }
     
-    private var selectedLogBase: LogBookBaseMock? {
-        MockDataManager.shared.logBookBases.first(where: { $0.id == selectedLogBaseId })
+    private var selectedLogBase: LogBookBase? {
+        dataManager.logBookBases.first(where: { $0.id == selectedLogBaseId })
     }
     
     private var canSubYear: Bool {
@@ -44,117 +44,151 @@ struct MainView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                YearlyLogBubble(
-                    selectedYear: selectedYear, // 선택된 연도 전달
-                    showDeletePopup: $showDeletePopup,
-                    onBubbleTap: { logBaseId in
-                      selectedLogBaseId = logBaseId
-                      showLogBookMain = true
-                    },
-                    onPlusButtonTap: {// + 버튼 탭 시 새 로그 생성 플로우 시작
-                      newLogViewModel.showNewLogCreation = true
-                    },
-                    onDeleteTap: { logBaseId in
-                      selectedLogBaseId = logBaseId
-                        showDeletePopup = true
-                    }
-                )
-                .padding(.top, 110)
-                
-                if showSwipeTooltip {
-                    VStack {
-                        Spacer()
-                        HStack {
-                            Spacer()
-                            Image(.swipeTooltip)
-                                .padding(.trailing, 20)
-                                .transition(.opacity)
-                        }
-                        .padding(.bottom, 200)
-                    }
+        ZStack {
+            // 로딩 화면
+            if isLoading {
+                VStack {
+                    ProgressView("로딩 중...")
+                        .scaleEffect(1.5)
+                        .progressViewStyle(CircularProgressViewStyle())
                 }
-                
-                yearSelectbar
-                
-                // 새 로그 생성 플로우
-                if newLogViewModel.showNewLogCreation {
-                    NewLogCreationView(
-                        viewModel: newLogViewModel, onNavigateToExistingLog: { logBaseId in
-                            // 기존 로그로 이동
-                            selectedLogBaseId = logBaseId
-                            showLogBookMain = true
-                            newLogViewModel.resetData()
-                        },
-                        onCreateNewLog: {
-                            // 새 로그 생성 후 해당 로그로 이동
-                            let newLogBaseId = newLogViewModel.createNewLog()
-                            if !newLogBaseId.isEmpty {
-                                selectedLogBaseId = newLogBaseId
-                                showLogBookMain = true
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color.white.opacity(0.8))
+                .zIndex(100)
+            }
+            
+            YearlyLogBubble(
+                selectedYear: selectedYear,
+                showDeletePopup: $showDeletePopup,
+                onBubbleTap: { logBaseId in
+                    // 라우터로 네비게이션
+                    container.router.push(.logBookMain(logBaseId: logBaseId))
+                },
+                onPlusButtonTap: {
+                    newLogViewModel.showNewLogCreation = true
+                },
+                onDeleteTap: { logBaseId in
+                    selectedLogBaseId = logBaseId
+                    showDeletePopup = true
+                }
+            )
+            .padding(.top, 110)
+            
+            if showSwipeTooltip {
+                VStack {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        Image(.swipeTooltip)
+                            .padding(.trailing, 20)
+                            .transition(.opacity)
+                    }
+                    .padding(.bottom, 200)
+                }
+            }
+            
+            yearSelectbar
+            
+            // 새 로그 생성 플로우
+            if newLogViewModel.showNewLogCreation {
+                NewLogCreationView(
+                    viewModel: newLogViewModel,
+                    onNavigateToExistingLog: { logBaseId in
+                        // 라우터로 네비게이션
+                        container.router.push(.logBookMain(logBaseId: logBaseId))
+                        newLogViewModel.resetData()
+                    },
+                    onCreateNewLog: {
+                        Task {
+                            if let newLogBaseId = await newLogViewModel.createNewLog() {
+                                await MainActor.run {
+                                    // 라우터로 네비게이션
+                                    container.router.push(.logBookMain(logBaseId: newLogBaseId))
+                                }
                             }
                         }
-                    )
-                }
-            }
-            .background(
-                Image("seaBack")
-                    .resizable()
-                    .ignoresSafeArea()
-                    .scaledToFill()
-            )
-            .task {
-                // 최초 실행 시 한 번만 표시
-                let launched = UserDefaults.standard.bool(forKey: "launchedBefore")
-                if !launched {
-                    showSwipeTooltip = true
-                    UserDefaults.standard.set(true, forKey: "launchedBefore")
-                }
-            }
-            .overlay { // 로그 삭제 확인 팝업
-                if showDeletePopup, let log = selectedLogBase {
-                    let text: String = {
-                        let formatter = DateFormatter()
-                        formatter.dateFormat = "M/d"
-                        return "\(formatter.string(from: log.date)) [\(log.title)] 을/를\n삭제하시겠습니까?"
-                    }()
-                    
-                    DeletePopupView(isPresented: $showDeletePopup, deleteText: text)
-                }
-                else if showDeletePopup {
-                    DeletePopupView(isPresented: $showDeletePopup, deleteText: "삭제하시겠습니까?")
-                }
-            }
-            .navigationDestination(isPresented: $showLogBookMain) {
-                if let logBaseId = selectedLogBaseId {
-                    LogBookMainView(logBaseId: logBaseId)
-                        .navigationBarBackButtonHidden(true)
-                }
-            }
-            .fullScreenCover(isPresented: $showNotification) {
-                NotificationView()
-            }
-            .gesture( // 나의 바다 뷰로 이동
-                DragGesture(minimumDistance: 30, coordinateSpace: .local)
-                    .onEnded { value in
-                        // 오른쪽 → 왼쪽 스와이프 감지
-                        if value.translation.width < -50 {
-                            let _ = print("스와이프햇다1")
-                            showCharacterView = true
-                        }
                     }
-            )
-            .navigationDestination(isPresented: $showCharacterView) { // 나의 바다 뷰로 이동
-                CharacterView(isPetEditingMode: $isEditing)
+                )
             }
         }
-        
+        .background(
+            Image("seaBack")
+                .resizable()
+                .ignoresSafeArea()
+                .scaledToFill()
+        )
+        .task {
+            await dataManager.loadLogs(for: selectedYear)
+            
+            let launched = UserDefaults.standard.bool(forKey: "launchedBefore")
+            if !launched {
+                showSwipeTooltip = true
+                UserDefaults.standard.set(true, forKey: "launchedBefore")
+            }
+        }
+        .onChange(of: selectedYear) { oldValue, newValue in
+            Task {
+                isLoading = true
+                await dataManager.loadLogs(for: newValue)
+                isLoading = false
+            }
+        }
+        .overlay {
+            // 삭제 확인 팝업
+            if showDeletePopup, let log = selectedLogBase {
+                let text: String = {
+                    let formatter = DateFormatter()
+                    formatter.dateFormat = "M/d"
+                    return "\(formatter.string(from: log.date)) [\(log.title)] 을/를\n삭제하시겠습니까?"
+                }()
+                
+                DeletePopupView(
+                    isPresented: $showDeletePopup,
+                    deleteText: text,
+                    onConfirm: {
+                        Task {
+                            if let logId = selectedLogBaseId {
+                                let success = await dataManager.deleteLog(id: logId)
+                                if success {
+                                    selectedLogBaseId = nil
+                                }
+                            }
+                        }
+                    }
+                )
+            }
+            else if showDeletePopup {
+                DeletePopupView(
+                    isPresented: $showDeletePopup,
+                    deleteText: "삭제하시겠습니까?",
+                    onConfirm: {
+                        Task {
+                            if let logId = selectedLogBaseId {
+                                let success = await dataManager.deleteLog(id: logId)
+                                if success {
+                                    selectedLogBaseId = nil
+                                }
+                            }
+                        }
+                    }
+                )
+            }
+        }
+        .fullScreenCover(isPresented: $showNotification) {
+            NotificationView()
+        }
+        .gesture(
+            DragGesture(minimumDistance: 30, coordinateSpace: .local)
+                .onEnded { value in
+                    if value.translation.width < -50 {
+                        // 라우터로 네비게이션
+                        container.router.push(.characterView)
+                    }
+                }
+        )
     }
     
-    
     private var yearSelectbar: some View {
-        
         VStack(spacing: 0) {
             HStack {
                 Spacer()
@@ -166,7 +200,6 @@ struct MainView: View {
                             .foregroundStyle(.black)
                     }
                     
-                    // 안 읽은 알림이 있으면 빨간점 표시
                     if NotificationManager.shared.unreadCount > 0 {
                         Circle()
                             .fill(Color.red)
@@ -174,7 +207,6 @@ struct MainView: View {
                             .offset(x: 8, y: -8)
                     }
                 }
-                
             }
             .padding(.trailing)
             
@@ -208,9 +240,5 @@ struct MainView: View {
             Spacer()
         }
     }
-
 }
 
-#Preview {
-    MainView()
-}

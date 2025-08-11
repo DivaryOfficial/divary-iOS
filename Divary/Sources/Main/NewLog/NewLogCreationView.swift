@@ -8,6 +8,7 @@
 // NewLogCreationView.swift - 중앙 정렬 버전
 
 import SwiftUI
+import Foundation
 
 struct NewLogCreationView: View {
     @Bindable var viewModel: NewLogCreationViewModel
@@ -97,10 +98,23 @@ struct NewLogCalendarView: View {
             )
             .padding(.horizontal)
             
-            // 완료 버튼
-            Button("날짜 선택 완료") {
-                viewModel.proceedToNextStep()
+            // 완료 버튼 수정
+            Button(action: {
+                Task {
+                    await viewModel.proceedToNextStep()
+                }
+            }) {
+                if viewModel.isLoading {
+                    HStack {
+                        ProgressView()
+                            .scaleEffect(0.8)
+                        Text("확인 중...")
+                    }
+                } else {
+                    Text("날짜 선택 완료")
+                }
             }
+            .disabled(viewModel.isLoading)
             .font(Font.omyu.regular(size: 16))
             .frame(maxWidth: .infinity)
             .padding()

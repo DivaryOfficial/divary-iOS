@@ -84,10 +84,23 @@ struct TitleAndIconSelectionView: View {
                 .foregroundColor(Color.grayscale_g500)
                 .cornerRadius(8)
                 
-                Button("작성하러 가기") {
-                    viewModel.createNewLog()
-                    onComplete?()
+                // "작성하러 가기" 버튼 수정
+                Button(action: {
+                    Task {
+                        onComplete?()
+                    }
+                }) {
+                    if viewModel.isLoading {
+                        HStack {
+                            ProgressView()
+                                .scaleEffect(0.8)
+                            Text("생성 중...")
+                        }
+                    } else {
+                        Text("작성하러 가기")
+                    }
                 }
+                .disabled(viewModel.selectedTitle.isEmpty || viewModel.selectedIcon == nil || viewModel.isLoading)
                 .font(Font.omyu.regular(size: 16))
                 .frame(maxWidth: .infinity)
                 .padding()

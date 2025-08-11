@@ -1,5 +1,5 @@
 //
-//  DeletePopupView.swift
+//  DeletePopupView.swift - API 삭제 로직 추가
 //  Divary
 //
 //  Created by 김나영 on 7/7/25.
@@ -10,8 +10,10 @@ import SwiftUI
 struct DeletePopupView: View {
     @Binding var isPresented: Bool
     var deleteText: String
+    var onConfirm: (() -> Void)? // 삭제 확인 콜백 추가
     
     func onDelete() {
+        onConfirm?() // 실제 삭제 로직 호출
         isPresented = false
     }
 
@@ -65,6 +67,10 @@ struct DeletePopupView: View {
 }
 
 #Preview {
-//    DeletePopupView(viewModel: DiaryImageSelectViewModel(), deleteText: "지금 돌아가면 변경 내용이 모두 삭제됩니다.")
-//    DeletePopupView(isPresented: $isPresented, deleteText: "지금 돌아가면 변경 내용이 모두 삭제됩니다.")
+    @Previewable @State var isPresented = true
+    DeletePopupView(
+        isPresented: $isPresented,
+        deleteText: "지금 돌아가면 변경 내용이 모두 삭제됩니다.",
+        onConfirm: { print("삭제 확인") }
+    )
 }
