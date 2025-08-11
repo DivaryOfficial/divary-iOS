@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct OceanCreatureDetailView: View {
     let creature: SeaCreatureDetail
@@ -45,43 +46,44 @@ struct OceanCreatureDetailView: View {
     
     // MARK: - 이미지 슬라이드
     private var imageSlider: some View {
-        TabView(selection: $currentIndex) {
-            ForEach(Array(creature.imageUrls.enumerated()), id: \.offset) { index, url in
-                AsyncImage(url: url) { phase in
-                    if let image = phase.image {
-                        image
-//                            .resizable()
-//                            .scaledToFill()
-//                            .frame(height: 220)
-//                            .clipped()
-                    } else {
-//                        Color.gray
-                        Image("testImage")
-                    }
+        GeometryReader { geo in
+            let width = geo.size.width
+            let height = width * 3/4
+            
+            TabView(selection: $currentIndex) {
+                ForEach(Array(creature.imageUrls.enumerated()), id: \.offset) { index, url in
+                    KFImage(url)
+                        .placeholder { ProgressView() }
+                        .retry(maxCount: 2, interval: .seconds(1))
+                        .resizable()
+                        .scaledToFill()
+                        .id(url)
+                        .tag(index)
+                        .frame(width: width, height: height)
+                        .clipped()
                 }
-                .tag(index)
             }
+            .frame(width: width, height: height)
+            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+            .overlay(
+                Text("\(currentIndex + 1)｜\(creature.imageUrls.count)")
+                    .font(.NanumSquareNeo.NanumSquareNeoBold(size: 10))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(.black)
+                    .cornerRadius(10)
+                    .padding(8),
+                alignment: .bottomTrailing
+            )
         }
-        .frame(height: 220)
-        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-        .clipped()
-        .overlay(
-            Text("\(currentIndex + 1)｜\(creature.imageUrls.count)")
-                .font(.NanumSquareNeo.NanumSquareNeoBold(size: 10))
-                .foregroundColor(.white)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(.black)
-                .cornerRadius(10)
-                .padding(8),
-            alignment: .bottomTrailing
-        )
+        .frame(height: UIScreen.main.bounds.width * 3/4)
     }
     
     // MARK: - 상단 블록
     private var titleBlock: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("\(creature.name) (\(creature.appearance.pattern))")
+            Text("\(creature.name)")
                 .font(.omyu.regular(size: 24))
             Text(creature.type)
                 .font(.NanumSquareNeo.NanumSquareNeoBold(size: 14))
@@ -126,6 +128,7 @@ struct OceanCreatureDetailView: View {
                                 RoundedCorners(tl: 12, tr: 12, bl: 0, br: 0)
                                     .fill(isSelected ? Color(.primarySeaBlue) : Color(.grayscaleG100))
                             )
+                            .animation(nil, value: isSelected)
                     }
                 }
             }

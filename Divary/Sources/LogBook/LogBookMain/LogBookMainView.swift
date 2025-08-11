@@ -60,6 +60,9 @@ struct LogBookMainView: View {
                         LogBookPageView(viewModel: viewModel)
                     } else {
                         DiaryMainView()
+                    //case .diary:
+                       // DiaryMainView(diaryId: 0)
+                      //DiaryMainView()
                     }
             }
 

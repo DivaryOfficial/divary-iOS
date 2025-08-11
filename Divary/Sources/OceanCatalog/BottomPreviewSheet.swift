@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct BottomPreviewSheet: View {
     let creature: SeaCreatureDetail
@@ -13,36 +14,38 @@ struct BottomPreviewSheet: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("\(creature.name) (\(creature.appearance.pattern))")
+            Text("\(creature.name)")
                 .font(.omyu.regular(size: 24))
                 .bold()
             Text(creature.type)
                 .foregroundStyle(Color(.grayscaleG600))
                 .font(.NanumSquareNeo.NanumSquareNeoRegular(size: 14))
-
-            HStack(spacing: 12) {
-                AsyncImage(url: creature.imageUrls.first) { phase in
-                    if let image = phase.image {
-                        image
-                            .resizable()
-                            .scaledToFill()
-                    } else {
-//                        Color.gray.opacity(0.2)
-                        Image(.test)
-                            .resizable()
-                            .scaledToFill()
-                    }
+            
+            HStack(alignment: .center, spacing: 12) {
+                if let url = creature.imageUrls.first {
+                    KFImage(url)
+                        .placeholder { ProgressView() }
+                        .retry(maxCount: 2, interval: .seconds(1))
+                        .resizable()
+                        .scaledToFit()
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .frame(maxWidth: 260)
+                        .id(url)
+                } else {
+                    Color.gray.opacity(0.2)
+                        .frame(maxWidth: 260)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
-                .cornerRadius(10)
-
+                
                 VStack(alignment: .leading, spacing: 6) {
                     LabelledText(title: "크기", value: creature.size)
                     LabelledText(title: "출몰시기", value: creature.appearPeriod)
                     LabelledText(title: "서식", value: creature.place)
                 }
-                .font(.subheadline)
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-
+            .frame(height: nil) // 높이 제한 두지 않음
+            
             Button(action: onDetailTapped) {
                 Text("자세히보기")
                     .font(.omyu.regular(size: 20))
@@ -54,12 +57,13 @@ struct BottomPreviewSheet: View {
             }
             .padding(.top, 8)
         }
-        .padding()
+        .fixedSize(horizontal: false, vertical: false)
+        .padding(16)
         .background(
             RoundedRectangle(cornerRadius: 20)
                 .fill(Color(.systemBackground))
         )
-        .frame(maxHeight: 280) // 높이 제한
+//        .frame(maxHeight: 280) // 높이 제한
     }
 }
 
@@ -90,7 +94,7 @@ private struct LabelledText: View {
         appearPeriod: "봄, 가을에 주로 관찰",
         place: "따뜻한 연안, 바위 틈",
         imageUrls: [
-            URL(string: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Nudibranch_flabellina.jpg/640px-Nudibranch_flabellina.jpg")!
+            URL(string: "")!
         ],
         appearance: Appearance(
             body: "부드럽고 납작한 몸체",

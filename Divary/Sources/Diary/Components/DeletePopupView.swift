@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct DeletePopupView: View {
+    @Environment(\.dismiss) private var dismiss
     @Binding var isPresented: Bool
     var deleteText: String
     var onConfirm: (() -> Void)? = nil  // 추가: 삭제 확인 콜백
@@ -42,7 +43,9 @@ struct DeletePopupView: View {
                             .font(.omyu.regular(size: 16))
                     }
                     
-                    Button(action: onDelete) {
+                    Button {
+                        onDelete()
+                    } label: {
                         Text("삭제")
                             .frame(maxWidth: .infinity)
                             .padding()

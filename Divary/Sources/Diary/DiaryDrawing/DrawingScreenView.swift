@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import PencilKit
 
-struct DrawingCanvasView: UIViewRepresentable {
+struct DrawingScreenView: UIViewRepresentable { // 그렸던 그림 띄워주는 뷰 (그리기 불가, 보여주기용)
     let drawing: PKDrawing
 
     func makeUIView(context: Context) -> PKCanvasView {
