@@ -10,29 +10,28 @@ import SwiftUI
 //상단 탭 enum
 enum DiveLogTab: String, CaseIterable {
     case logbook = "로그북"
-    case diary = "일기"
+    case diary   = "일기"
 }
 
 struct LogBookMainView: View {
+    @Environment(\.diContainer) private var container
+
     @State var selectedTab: DiveLogTab = .logbook
     @State var viewModel: LogBookMainViewModel
     @State private var isCalendarPresented = false
     @State private var showCanvas = false
-    
+
     // 저장 관련 상태
     @State private var showSavePopup = false
     @State private var showSavedMessage = false
-    
-    //날짜 변경 취소를 위한 백업데이터
+
+    // 날짜 변경 취소를 위한 백업데이터
     @State private var backupDate: Date = Date()
-    
-    // 백업데이터 변경없이 month 이동을 위한 사용자가 현재 보고있는 월 데이터 - 캘린더 month 변경시 변경
+
+    // 백업데이터 변경없이 month 이동을 위한 사용자가 현재 보고있는 월 데이터
     @State private var tempMonth = Date()
-    
-    // 추가: 뒤로가기를 위한 환경변수
-    @Environment(\.dismiss) private var dismiss
-    
-    // 수정: logBaseId를 받는 init
+
+    // logBaseId를 받는 init
     init(logBaseId: String) {
         _viewModel = State(initialValue: LogBookMainViewModel(logBaseId: logBaseId))
     }
@@ -44,28 +43,26 @@ struct LogBookMainView: View {
                     selectedDate: $viewModel.selectedDate,
                     isCalendarPresented: $isCalendarPresented,
                     onBackTap: {
-                        dismiss()
+                        // 라우터 pop으로 일원화
+                        container.router.pop()
                     },
                     isTempSaved: viewModel.isTempSaved,
                     onSaveTap: {
-                        // 저장 버튼 클릭 처리
                         viewModel.handleSaveButtonTap()
                     }
                 )
                 .zIndex(1)
+
                 TabSelector(selectedTab: $selectedTab)
                     .padding(.horizontal)
 
-                Group {
-                    switch selectedTab {
-                    case .logbook:
+                    if selectedTab == .logbook {
                         LogBookPageView(viewModel: viewModel)
-                    case .diary:
-                        DiaryMainView() //흠?
+                    } else {
+                        DiaryMainView()
                     }
-                }
             }
-            
+
             // 날짜 클릭시 팝업
             if isCalendarPresented {
                 Color.white.opacity(0.8)
@@ -79,7 +76,7 @@ struct LogBookMainView: View {
                     CalenderNavBar(selectedDate: $backupDate, isCalendarPresented: $isCalendarPresented)
                         .zIndex(1)
                         .padding(.bottom, 1)
-                    
+
                     CalenderView(
                         currentMonth: $tempMonth,
                         selectedDate: $backupDate,
@@ -88,7 +85,6 @@ struct LogBookMainView: View {
                     )
                     .padding(.bottom, 20)
                     .padding(.horizontal)
-                    
 
                     HStack(spacing: 16) {
                         Button("취소") {
@@ -100,7 +96,6 @@ struct LogBookMainView: View {
                         .background(Color.grayscale_g200)
                         .foregroundStyle(Color.grayscale_g500)
                         .cornerRadius(8)
-                        
 
                         Button("저장") {
                             viewModel.selectedDate = backupDate
@@ -113,75 +108,55 @@ struct LogBookMainView: View {
                         .foregroundStyle(.white)
                         .cornerRadius(8)
                     }
-                    
+
                     Spacer()
                 }
             }
-            
+
             // SavePop 팝업
             if viewModel.showSavePopup {
-                GeometryReader { geometry in
+                GeometryReader { _ in
                     Color.white.opacity(0.5)
                         .ignoresSafeArea()
-                        .onTapGesture {
-                            // 배경 터치로 닫기 방지
-                        }
-                    
+
                     VStack {
                         Spacer()
-                        
                         SavePop(
-                            onCompleteSave: {
-                                viewModel.handleCompleteSave()
-                            },
-                            onTempSave: {
-                                viewModel.handleTempSaveFromSavePopup()
-                            },
-                            onClose: {
-                                viewModel.showSavePopup = false
-                            }
+                            onCompleteSave: { viewModel.handleCompleteSave() },
+                            onTempSave: { viewModel.handleTempSaveFromSavePopup() },
+                            onClose: { viewModel.showSavePopup = false }
                         )
                         .padding(.horizontal, 24)
-                        
                         Spacer()
                     }
                     .transition(.opacity)
                     .zIndex(25)
                 }
             }
-            
+
             // 저장 완료 메시지 (ComPop 사용)
             if viewModel.showSavedMessage {
-                GeometryReader { geometry in
+                GeometryReader { _ in
                     Color.white.opacity(0.5)
                         .ignoresSafeArea()
-                        .onTapGesture {
-                            // 배경 터치로 닫기 방지
-                        }
-                    
+
                     VStack {
                         Spacer()
-                        
-                        ComPop(
-                            onClose: {
-                                viewModel.showSavedMessage = false
-                            }
-                        )
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 24)
-                        
+                        ComPop(onClose: { viewModel.showSavedMessage = false })
+                            .padding(.horizontal, 24)
+                            .padding(.vertical, 24)
                         Spacer()
                     }
                     .transition(.opacity)
                     .zIndex(35)
                 }
             }
-            
+
             // 로딩 인디케이터
             if viewModel.isLoading {
                 Color.black.opacity(0.3)
                     .ignoresSafeArea()
-                
+
                 ProgressView("처리 중...")
                     .progressViewStyle(CircularProgressViewStyle())
                     .foregroundColor(.white)
@@ -192,15 +167,11 @@ struct LogBookMainView: View {
             }
         }
         .alert("오류", isPresented: .constant(viewModel.errorMessage != nil)) {
-            Button("확인") {
-                viewModel.clearError()
-            }
+            Button("확인") { viewModel.clearError() }
         } message: {
             Text(viewModel.errorMessage ?? "")
         }
     }
 }
 
-#Preview {
-    LogBookMainView(logBaseId: "1")
-}
+#Preview { LogBookMainView(logBaseId: "1") }

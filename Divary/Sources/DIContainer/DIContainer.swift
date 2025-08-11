@@ -30,7 +30,7 @@ final class DIContainer: ObservableObject {
         // 각 서비스 초기화
         self.loginService = LoginService()
         self.notificationService = NotificationService()
-        self.logBookService = LogBookService()
+        self.logBookService = LogBookService.shared
         self.avatarService = AvatarService()
        
     }

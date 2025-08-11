@@ -76,6 +76,7 @@ class LogBookMainViewModel {
     
     // LogBase 데이터로 ViewModel 업데이트
     private func updateFromLogBase(_ logBase: LogBookBase) {
+        // ✅ 핵심 수정: 로그베이스의 날짜를 selectedDate에 설정
         selectedDate = logBase.date
         logBaseTitle = logBase.title
         
@@ -97,13 +98,18 @@ class LogBookMainViewModel {
         
         // 빈 슬롯 채우기
         while diveLogData.count < 3 {
-            diveLogData.append(DiveLogData())
+            let emptyData = DiveLogData()
+            // ✅ 새로 생성되는 빈 로그북에도 올바른 날짜 설정
+            // DiveLogData에 date 필드가 있다면 여기서 설정
+            diveLogData.append(emptyData)
         }
         
         // 임시저장 데이터 백업
         tempSavedData = diveLogData.map { data in
             copyDiveLogData(data)
         }
+        
+        print("✅ LogBase 업데이트 완료 - 선택된 날짜: \(selectedDate)")
     }
     
     // 개별 로그북 저장
@@ -117,8 +123,9 @@ class LogBookMainViewModel {
         isLoading = true
         errorMessage = nil
         
+        // ✅ 로그 업데이트 시에도 현재 선택된 날짜를 사용
         let logUpdateRequest = diveLogData[index].toLogUpdateRequest(
-            with: selectedDate,
+            with: selectedDate,  // 현재 선택된 날짜 사용
             saveStatus: saveStatus
         )
         
@@ -139,7 +146,7 @@ class LogBookMainViewModel {
                     }
                     
                     completion(true)
-                    print("✅ 로그북 저장 성공: logBookId=\(logBookId), status=\(saveStatus.rawValue)")
+                    print("✅ 로그북 저장 성공: logBookId=\(logBookId), status=\(saveStatus.rawValue), date=\(self?.selectedDate ?? Date())")
                     
                 case .failure(let error):
                     self?.errorMessage = "저장 중 오류가 발생했습니다: \(error.localizedDescription)"

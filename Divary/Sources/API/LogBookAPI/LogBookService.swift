@@ -68,13 +68,38 @@ final class LogBookService {
         }
     }
     
-    // 래핑된 응답 처리
+    // 래핑된 응답 처리 (에러 처리 개선)
     private func handleWrappedResponse<T: Codable>(_ result: Result<Response, MoyaError>, completion: @escaping (Result<T, Error>) -> Void) {
         switch result {
         case .success(let response):
             if let jsonString = String(data: response.data, encoding: .utf8) {
                 print("📦 로그북 서버 응답: \(jsonString)")
             }
+            
+            // ✅ 상태코드 체크 추가
+            if response.statusCode >= 400 {
+                // 에러 응답 처리
+                do {
+                    let errorResponse = try JSONDecoder().decode(APIErrorResponse.self, from: response.data)
+                    let error = APIError(
+                        code: errorResponse.code,
+                        message: errorResponse.message,
+                        statusCode: response.statusCode
+                    )
+                    completion(.failure(error))
+                } catch {
+                    // 에러 응답 파싱도 실패한 경우
+                    let fallbackError = APIError(
+                        code: "UNKNOWN_ERROR",
+                        message: "서버 오류가 발생했습니다. (Status: \(response.statusCode))",
+                        statusCode: response.statusCode
+                    )
+                    completion(.failure(fallbackError))
+                }
+                return
+            }
+            
+            // 성공 응답 처리
             do {
                 let wrappedResponse = try JSONDecoder().decode(APIResponse<T>.self, from: response.data)
                 completion(.success(wrappedResponse.data))
@@ -82,8 +107,28 @@ final class LogBookService {
                 print("❌ 로그북 디코딩 실패: \(error)")
                 completion(.failure(error))
             }
+            
         case .failure(let error):
             completion(.failure(error))
         }
+    }
+}
+
+// MARK: - 에러 처리를 위한 추가 모델들
+struct APIErrorResponse: Codable {
+    let timestamp: String
+    let status: Int
+    let code: String
+    let message: String
+    let path: String?
+}
+
+struct APIError: Error, LocalizedError {
+    let code: String
+    let message: String
+    let statusCode: Int
+    
+    var errorDescription: String? {
+        return message
     }
 }
