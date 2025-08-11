@@ -45,18 +45,26 @@ class LogBookPageViewModel {
     
     // 임시저장하고 나가기
     func handleTempSave() {
-        mainViewModel.tempSave()
-        
-        // 임시저장 완료 메시지 표시
-        withAnimation {
-            showTempSavedMessage = true
-            activeInputSection = nil
-        }
-        
-        // 2초 후 메시지 숨기기
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            withAnimation {
-                self.showTempSavedMessage = false
+        // API 기반 임시저장
+        mainViewModel.saveLogBook(at: selectedPage, saveStatus: .temp) { [weak self] success in
+            DispatchQueue.main.async {
+                if success {
+                    // 임시저장 완료 메시지 표시
+                    withAnimation {
+                        self?.showTempSavedMessage = true
+                        self?.activeInputSection = nil
+                    }
+                    
+                    // 2초 후 메시지 숨기기
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                        withAnimation {
+                            self?.showTempSavedMessage = false
+                        }
+                    }
+                } else {
+                    // 에러는 mainViewModel에서 처리됨
+                    self?.activeInputSection = nil
+                }
             }
         }
     }

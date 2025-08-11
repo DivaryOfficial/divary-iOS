@@ -4,14 +4,13 @@ import SwiftUI
 struct DivaryApp: App {
     @StateObject private var router = AppRouter()
     private var container: DIContainer
-    
+
     init() {
-        // 동일한 router 인스턴스 사용
         let appRouter = AppRouter()
         self._router = StateObject(wrappedValue: appRouter)
         self.container = DIContainer(router: appRouter)
     }
-    
+
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $router.path) {
@@ -21,7 +20,14 @@ struct DivaryApp: App {
                         case .login:
                             LoginWrapperView()
                         case .main:
-                            MainView()
+                            MainWrapperView()    // <- 아래 #3에서 추가할 래퍼
+                        case .logBookMain(let id):
+                            LogBookMainView(logBaseId: id)
+                                .navigationBarBackButtonHidden(true)
+                        case .character(let isEditing):
+                            CharacterView(isPetEditingMode: .constant(isEditing))
+                        case .notifications:
+                            NotificationView()
                         }
                     }
             }

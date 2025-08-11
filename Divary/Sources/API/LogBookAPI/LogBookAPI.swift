@@ -9,13 +9,12 @@ import Foundation
 import Moya
 
 enum LogBookAPI {
-    case getLogList(year: Int)
-    case getLogDetail(id: Int)
-    case createLog(iconType: String, name: String, date: String)
-    case updateLog(id: Int, logData: LogUpdateRequestDTO)
-    case createEmptyLog(id: Int)
-    case deleteLog(id: Int)
-    case updateLogName(id: Int, name: String)
+    case getLogList(year: Int, saveStatus: String?)
+    case getLogBaseDetail(logBaseInfoId: Int)
+    case createLogBase(iconType: String, name: String, date: String)
+    case createEmptyLogBooks(logBaseInfoId: Int)
+    case updateLogBook(logBookId: Int, logData: LogUpdateRequestDTO)
+    case deleteLogBase(logBaseInfoId: Int)
     case checkLogExists(date: String)
 }
 
@@ -32,12 +31,14 @@ extension LogBookAPI: TargetType {
         switch self {
         case .getLogList:
             return "/api/v1/logs"
-        case .getLogDetail(let id), .updateLog(let id, _), .deleteLog(let id), .updateLogName(let id, _):
-            return "/api/v1/logs/\(id)"
-        case .createLog:
+        case .getLogBaseDetail(let logBaseInfoId), .deleteLogBase(let logBaseInfoId):
+            return "/api/v1/logs/\(logBaseInfoId)"
+        case .createLogBase:
             return "/api/v1/logs"
-        case .createEmptyLog(let id):
-            return "/api/v1/logs/\(id)"
+        case .createEmptyLogBooks(let logBaseInfoId):
+            return "/api/v1/logs/\(logBaseInfoId)"
+        case .updateLogBook(let logBookId, _):
+            return "/api/v1/logs/\(logBookId)"
         case .checkLogExists:
             return "/api/v1/logs/exists"
         }
@@ -45,25 +46,27 @@ extension LogBookAPI: TargetType {
 
     var method: Moya.Method {
         switch self {
-        case .getLogList, .getLogDetail, .checkLogExists:
+        case .getLogList, .getLogBaseDetail, .checkLogExists:
             return .get
-        case .createLog, .createEmptyLog:
+        case .createLogBase, .createEmptyLogBooks:
             return .post
-        case .updateLog:
+        case .updateLogBook:
             return .put
-        case .deleteLog:
+        case .deleteLogBase:
             return .delete
-        case .updateLogName:
-            return .patch
         }
     }
 
     var task: Task {
         switch self {
-        case .getLogList(let year):
-            return .requestParameters(parameters: ["year": year], encoding: URLEncoding.queryString)
+        case .getLogList(let year, let saveStatus):
+            var params: [String: Any] = ["year": year]
+            if let saveStatus = saveStatus {
+                params["saveStatus"] = saveStatus
+            }
+            return .requestParameters(parameters: params, encoding: URLEncoding.queryString)
             
-        case .createLog(let iconType, let name, let date):
+        case .createLogBase(let iconType, let name, let date):
             let params: [String: Any] = [
                 "iconType": iconType,
                 "name": name,
@@ -71,17 +74,13 @@ extension LogBookAPI: TargetType {
             ]
             return .requestParameters(parameters: params, encoding: JSONEncoding.default)
             
-        case .updateLog(_, let logData):
+        case .updateLogBook(_, let logData):
             return .requestJSONEncodable(logData)
-            
-        case .updateLogName(_, let name):
-            let params: [String: Any] = ["name": name]
-            return .requestParameters(parameters: params, encoding: JSONEncoding.default)
             
         case .checkLogExists(let date):
             return .requestParameters(parameters: ["date": date], encoding: URLEncoding.queryString)
             
-        case .getLogDetail, .createEmptyLog, .deleteLog:
+        case .getLogBaseDetail, .createEmptyLogBooks, .deleteLogBase:
             return .requestPlain
         }
     }
