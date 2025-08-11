@@ -20,7 +20,7 @@ struct DiaryMainView: View {
     @State private var footerBarType: DiaryFooterBarType = .main
     
     @State private var navigateToImageSelectView = false
-    @State private var FramedImageSelectList: [FramedImageDTO] = []
+    @State private var FramedImageSelectList: [FramedImageContent] = []
     
     @State var showCanvas: Bool = false
     @State private var currentOffsetY: CGFloat = 0

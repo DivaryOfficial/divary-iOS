@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 struct FramedImageComponent: View {
-    @ObservedObject var framedImage: FramedImageDTO
+    @ObservedObject var framedImage: FramedImageContent
     var isEditing: Bool = false
     
     var body: some View {
@@ -65,7 +65,7 @@ struct FramedImageComponent: View {
 }
 
 #Preview {
-    let testImage = FramedImageDTO(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .pastelBlue, date: "2025.08.07 7:32")
+    let testImage = FramedImageContent(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .pastelBlue, date: "2025.08.07 7:32")
     
     return FramedImageComponent(framedImage: testImage)
 }

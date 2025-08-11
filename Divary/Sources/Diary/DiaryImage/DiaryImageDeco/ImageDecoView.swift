@@ -10,14 +10,14 @@ import SwiftUI
 struct ImageDecoView: View {
     @Environment(\.dismiss) private var dismiss
     
-    @State var framedImages: [FramedImageDTO]
-    @State private var originalImagesCopied: [FramedImageDTO] = [] // 변경 내용 원상복귀용 임시 배열(스냅샷)
+    @State var framedImages: [FramedImageContent]
+    @State private var originalImagesCopied: [FramedImageContent] = [] // 변경 내용 원상복귀용 임시 배열(스냅샷)
     @State var selectedFrame: FrameColor = .origin
     
     @State private var showDeletePopup = false
     @Binding var currentIndex: Int
     
-    var onApply: ([FramedImageDTO]) -> Void = { _ in }
+    var onApply: ([FramedImageContent]) -> Void = { _ in }
     var onCancel: () -> Void = {}
     
     var body: some View {
@@ -92,8 +92,8 @@ struct ImageDecoView: View {
     @Previewable @State var index = 0
     
     let testImages = [
-        FramedImageDTO(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .pastelBlue, date: "2025.08.07 7:32"),
-        FramedImageDTO(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .pastelBlue, date: "2025.08.07 7:32")
+        FramedImageContent(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .pastelBlue, date: "2025.08.07 7:32"),
+        FramedImageContent(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .pastelBlue, date: "2025.08.07 7:32")
     ]
     
     ImageDecoView(framedImages: testImages, currentIndex: $index)

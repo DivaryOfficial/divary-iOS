@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-final class FramedImageDTO: ObservableObject, Identifiable {
+final class FramedImageContent: ObservableObject, Identifiable {
     let id = UUID()
     @Published var image: Image
     @Published var caption: String
@@ -52,9 +52,9 @@ enum FrameColor: Int, CaseIterable, Codable {
     }
 }
 
-extension FramedImageDTO {
-    func copy() -> FramedImageDTO {
-        FramedImageDTO(
+extension FramedImageContent {
+    func copy() -> FramedImageContent {
+        FramedImageContent(
             image: self.image,
             caption: self.caption,
             frameColor: self.frameColor,
@@ -63,8 +63,8 @@ extension FramedImageDTO {
     }
 }
 
-extension Array where Element == FramedImageDTO {
-    func deepCopied() -> [FramedImageDTO] {
+extension Array where Element == FramedImageContent {
+    func deepCopied() -> [FramedImageContent] {
         map { $0.copy() }
     }
 }

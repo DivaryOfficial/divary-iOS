@@ -73,11 +73,6 @@ class OceanCatalogViewModel {
             return category.rawValue
         }
     }
-
-    // 상세 미리보기(현재는 목업 예시 그대로)
-//    func buildPreview(for card: SeaCreatureCard) -> SeaCreatureDetail {
-//        SeaCreatureDetail.mock(for: card)
-//    }
     
     // MARK: - getCardDetail 함수들
     

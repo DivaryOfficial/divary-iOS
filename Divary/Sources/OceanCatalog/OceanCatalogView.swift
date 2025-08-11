@@ -18,26 +18,6 @@ struct OceanCatalogView: View {
     
     @State private var sheetVersion = 0
     
-    // api 연결 전 목데이터
-//    private let allItems: [SeaCreatureCard] = [
-//        SeaCreatureCard(id: 1, name: "흰동가리", type: "어류", imageUrl: URL(string: "https://example.com")!),
-//        SeaCreatureCard(id: 2, name: "갯민숭달팽이", type: "크크", imageUrl: URL(string: "https://example.com")!),
-//        SeaCreatureCard(id: 3, name: "문어", type: "연체동물", imageUrl: URL(string: "https://example.com")!),
-//        SeaCreatureCard(id: 4, name: "흰동가리", type: "어류", imageUrl: URL(string: "https://example.com")!)
-//    ]
-//    
-//    var filteredItems: [SeaCreatureCard] {
-//        switch selectedCategory {
-//        case .all:
-//            return allItems
-//        case .other:
-//            let excluded = ["어류", "갑각류", "연체동물"]
-//            return allItems.filter { !excluded.contains($0.type) }
-//        default:
-//            return allItems.filter { $0.type == selectedCategory.rawValue }
-//        }
-//    }
-    
     var body: some View {
         NavigationStack {
             ZStack(alignment: .bottom) {

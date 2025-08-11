@@ -35,11 +35,11 @@ class DiaryMainViewModel {
     var drawingOffsetY: CGFloat = 0
     
     // MARK: - 사진 처리
-    func makeFramedDTOs(from items: [PhotosPickerItem]) async -> [FramedImageDTO] {
+    func makeFramedDTOs(from items: [PhotosPickerItem]) async -> [FramedImageContent] {
         let indexed = Array(items.enumerated())
-        var temp = Array<FramedImageDTO?>(repeating: nil, count: indexed.count)
+        var temp = Array<FramedImageContent?>(repeating: nil, count: indexed.count)
 
-        await withTaskGroup(of: (Int, FramedImageDTO?) .self) { group in
+        await withTaskGroup(of: (Int, FramedImageContent?) .self) { group in
             for (idx, item) in indexed {
                 group.addTask { [weak self] in
                     guard let self else { return (idx, nil) }
@@ -51,7 +51,7 @@ class DiaryMainViewModel {
                     }
 
                     let dateString = await self.formattedPhotoDateString(from: item)
-                    let dto = FramedImageDTO(
+                    let dto = FramedImageContent(
                         image: Image(uiImage: uiImage),
                         caption: "",
                         frameColor: .origin,
@@ -142,7 +142,7 @@ class DiaryMainViewModel {
         editingTextBlock = nil
     }
 
-    func addImages(_ images: [FramedImageDTO]) {
+    func addImages(_ images: [FramedImageContent]) {
         images.forEach { image in
             let block = DiaryBlock(content: .image(image))
             blocks.append(block)

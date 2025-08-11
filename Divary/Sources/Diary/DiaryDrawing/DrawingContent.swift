@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct DrawingContentDTO: Codable {
+struct DrawingContent: Codable {
     let base64: String
     let offsetY: CGFloat
 }

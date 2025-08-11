@@ -11,7 +11,7 @@ struct ImageSelectView: View {
     @Environment(\.dismiss) private var dismiss
     
     @Bindable var viewModel: DiaryMainViewModel
-    @State var framedImages: [FramedImageDTO]
+    @State var framedImages: [FramedImageContent]
     
     @State private var showDeletePopup = false
     @State private var currentIndex = 0
@@ -153,8 +153,8 @@ struct FooterItem: View {
 #Preview {
     @Bindable var viewModel = DiaryMainViewModel()
     let testImages = [
-        FramedImageDTO(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .pastelBlue, date: "2025.08.07 7:32"),
-        FramedImageDTO(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .origin, date: "2025.08.07 7:32")
+        FramedImageContent(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .pastelBlue, date: "2025.08.07 7:32"),
+        FramedImageContent(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .origin, date: "2025.08.07 7:32")
     ]
     
     ImageSelectView(viewModel: viewModel, framedImages: testImages)
