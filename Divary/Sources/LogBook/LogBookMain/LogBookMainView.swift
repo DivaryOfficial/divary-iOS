@@ -14,8 +14,6 @@ enum DiveLogTab: String, CaseIterable {
 }
 
 struct LogBookMainView: View {
-    @Environment(\.diContainer) private var container
-    
     @State var selectedTab: DiveLogTab = .logbook
     @State var viewModel: LogBookMainViewModel
     @State private var isCalendarPresented = false
@@ -25,8 +23,14 @@ struct LogBookMainView: View {
     @State private var showSavePopup = false
     @State private var showSavedMessage = false
     
+    //날짜 변경 취소를 위한 백업데이터
     @State private var backupDate: Date = Date()
+    
+    // 백업데이터 변경없이 month 이동을 위한 사용자가 현재 보고있는 월 데이터 - 캘린더 month 변경시 변경
     @State private var tempMonth = Date()
+    
+    // 추가: 뒤로가기를 위한 환경변수
+    @Environment(\.dismiss) private var dismiss
     
     // 수정: logBaseId를 받는 init
     init(logBaseId: String) {
@@ -35,28 +39,16 @@ struct LogBookMainView: View {
 
     var body: some View {
         ZStack {
-            // 로딩 화면
-            if viewModel.isLoading {
-                VStack {
-                    ProgressView("로딩 중...")
-                        .scaleEffect(1.5)
-                        .progressViewStyle(CircularProgressViewStyle())
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color.white.opacity(0.8))
-                .zIndex(100)
-            }
-            
             VStack(spacing: 0) {
                 LogBookNavBar(
                     selectedDate: $viewModel.selectedDate,
                     isCalendarPresented: $isCalendarPresented,
                     onBackTap: {
-                        // 라우터로 뒤로가기
-                        container.router.pop()
+                        dismiss()
                     },
                     isTempSaved: viewModel.isTempSaved,
                     onSaveTap: {
+                        // 저장 버튼 클릭 처리
                         viewModel.handleSaveButtonTap()
                     }
                 )
@@ -74,12 +66,12 @@ struct LogBookMainView: View {
                 }
             }
             
-            // 기존 팝업들...
+            // 날짜 클릭시 팝업
             if isCalendarPresented {
                 Color.white.opacity(0.8)
                     .edgesIgnoringSafeArea(.all)
                     .onTapGesture {
-                        backupDate = viewModel.selectedDate
+                        backupDate = viewModel.selectedDate  // 백업
                         isCalendarPresented = false
                     }
 
@@ -97,6 +89,7 @@ struct LogBookMainView: View {
                     .padding(.bottom, 20)
                     .padding(.horizontal)
                     
+
                     HStack(spacing: 16) {
                         Button("취소") {
                             isCalendarPresented = false
@@ -108,6 +101,7 @@ struct LogBookMainView: View {
                         .foregroundStyle(Color.grayscale_g500)
                         .cornerRadius(8)
                         
+
                         Button("저장") {
                             viewModel.selectedDate = backupDate
                             isCalendarPresented = false
@@ -129,6 +123,9 @@ struct LogBookMainView: View {
                 GeometryReader { geometry in
                     Color.white.opacity(0.5)
                         .ignoresSafeArea()
+                        .onTapGesture {
+                            // 배경 터치로 닫기 방지
+                        }
                     
                     VStack {
                         Spacer()
@@ -153,11 +150,14 @@ struct LogBookMainView: View {
                 }
             }
             
-            // ComPop 팝업
+            // 저장 완료 메시지 (ComPop 사용)
             if viewModel.showSavedMessage {
                 GeometryReader { geometry in
                     Color.white.opacity(0.5)
                         .ignoresSafeArea()
+                        .onTapGesture {
+                            // 배경 터치로 닫기 방지
+                        }
                     
                     VStack {
                         Spacer()
@@ -177,8 +177,9 @@ struct LogBookMainView: View {
                 }
             }
         }
-        .task {
-            await viewModel.loadLogDetail()
-        }
     }
+}
+
+#Preview {
+    LogBookMainView(logBaseId: "log_base_1")
 }

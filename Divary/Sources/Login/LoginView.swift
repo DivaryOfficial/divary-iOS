@@ -39,8 +39,7 @@ struct LoginView: View {
                     Spacer()
                     Button(action:{
                         KeyChainManager.shared.save("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJoeWVvbmd5dTIwMDJAZ21haWwuY29tIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTc1NDY1NzcwNiwiZXhwIjoxNzU0NjcyMTA2fQ.Qb4KM1SdYQrfBXGw7CSniNMsnnCrs8B4n6NnF6H4UEc", forKey: KeyChainKey.accessToken)
-                        //container.router.push(.main)
-                        container.router.navigateToMain()
+                        container.router.push(.main)
                     }){
                         Text("테스트 계정")
                     }
