@@ -164,7 +164,8 @@ struct MainView: View {
             DragGesture(minimumDistance: 30, coordinateSpace: .local)
                 .onEnded { value in
                     if value.translation.width < -50 {
-                        container.router.push(.character(isEditing: isEditing))
+                        // 라우터로 네비게이션
+                        container.router.push(.CharacterViewWrapper)
                     }
                 }
         )

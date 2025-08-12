@@ -9,7 +9,9 @@ import SwiftUI
 
 struct StoreNavBar: View {
     @Binding var showSheet: Bool
-
+    @Environment(\.diContainer) private var container
+    @Bindable var viewModel:CharacterViewModel
+    
     var body: some View {
         ZStack{
             Text("상점")
@@ -17,15 +19,16 @@ struct StoreNavBar: View {
                 .foregroundStyle(Color.bw_black)
             
             HStack{
-                Image("chevron.left")
+                Button(action: {
+                    container.router.pop()
+                    viewModel.saveAvatarToServer()
+                }){
+                    Image("chevron.left")
+                        .foregroundStyle(Color.bw_black)
+                }
                 Spacer()
             }
         }
         .padding(12)
     }
-}
-
-#Preview {
-    
-    StoreNavBar(showSheet: .constant(true))
 }

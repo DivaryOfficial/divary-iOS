@@ -15,17 +15,19 @@ struct GoogleSignInButtonView: View {
 
     var body: some View {
         let isPad = hSizeClass == .regular
-        let btnHeight: CGFloat = isPad ? 56 : 44
-        let fontSize: CGFloat = isPad ? 16 : 14
+        let btnHeight: CGFloat = isPad ? 56 : 54
+        let fontSize: CGFloat = isPad ? 20 : 20
 
         Button(action: action) {
             HStack(spacing: 12) {
+                Spacer()
                 Image("google_g_logo")
                     .resizable()
                     .frame(width: 20, height: 20)
                 Text("Continue with Google")
                     .font(Font.RobotoMedium.RobotoMedium(size: fontSize))
                     .foregroundStyle(Color.black)
+                Spacer()
             }
             .frame(height: btnHeight)
             .padding(.horizontal, 16)
