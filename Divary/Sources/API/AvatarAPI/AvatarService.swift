@@ -47,7 +47,7 @@ final class AvatarService {
             do {
                 // 먼저 에러 응답인지 확인 (status가 200이 아니거나 에러 코드인 경우)
                 if response.statusCode != 200 {
-                    let errorResponse = try JSONDecoder().decode(ApiErrorResponse.self, from: response.data)
+                    let errorResponse = try JSONDecoder().decode(AvatarApiErrorResponse.self, from: response.data)
                     let error = ServerError.apiError(
                         code: errorResponse.code,
                         message: errorResponse.message,
@@ -59,7 +59,7 @@ final class AvatarService {
                 
                 // 먼저 data 필드가 있는 구조로 시도
                 do {
-                    let successResponse = try JSONDecoder().decode(ApiSuccessResponse<AvatarResponseDTO>.self, from: response.data)
+                    let successResponse = try JSONDecoder().decode(AvatarApiSuccessResponse<AvatarResponseDTO>.self, from: response.data)
                     
                     if successResponse.code == "SUCCESS" {
                         print("✅ data 필드가 있는 성공 응답 처리")

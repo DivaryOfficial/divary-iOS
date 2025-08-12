@@ -8,7 +8,7 @@
 import Foundation
 
 // 성공 응답 구조 (data 필드 포함)
-struct ApiSuccessResponse<T: Codable>: Codable {
+struct AvatarApiSuccessResponse<T: Codable>: Codable {
     let timestamp: String
     let status: Int
     let code: String
@@ -17,7 +17,7 @@ struct ApiSuccessResponse<T: Codable>: Codable {
 }
 
 // 에러 응답 구조 (data 필드 없음)
-struct ApiErrorResponse: Codable {
+struct AvatarApiErrorResponse: Codable {
     let timestamp: String
     let status: Int
     let code: String
