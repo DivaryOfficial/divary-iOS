@@ -100,10 +100,9 @@ extension LogBaseDetailDTO {
 
         // Equipment
         if hasEquipmentData() {
-            let equipmentList = self.equipment?.components(separatedBy: ",") ?? []
             diveData.equipment = DiveEquipment(
                 suitType: self.suitType,
-                Equipment: equipmentList,
+                Equipment: self.equipment,
                 weight: self.weight,
                 pweight: self.perceivedWeight
             )
@@ -175,7 +174,7 @@ extension DiveLogData {
             divePurpose: self.overview?.purpose,
             companions: self.participants?.toCompanionRequestDTOs(), // ← name 키로 직렬화
             suitType: self.equipment?.suitType,
-            equipment: self.equipment?.Equipment?.joined(separator: ","),
+            equipment: self.equipment?.Equipment,
             weight: self.equipment?.weight,
             perceivedWeight: self.equipment?.pweight,
             weather: self.environment?.weather,

@@ -80,11 +80,11 @@ struct  EquipmentInputView: View {
                             }
                             
                             //착용
-                            ListInputField(
+                            TextInputField(
                                 title: "착용",
                                 placeholder: "ex) 후드, 장갑, 베스트 등",
-                                list: $equipment.Equipment,
-                                    value: $equipmentInput
+                                unit: "",
+                                value: $equipment.Equipment
                             )
                             
                             //웨이트
@@ -136,7 +136,7 @@ struct  EquipmentInputView: View {
     
     @Previewable @State var previewOverview = DiveEquipment(
        suitType: "웻슈트 3mm",
-       Equipment: [],
+       Equipment:"",
        weight: nil
     )
     

@@ -108,14 +108,14 @@ class DiveParticipants {
 @Observable
 class DiveEquipment {
     var suitType: String?   // 슈트 종류 (예: 드라이, 웻슈트 등)
-    var Equipment: [String]?
+    var Equipment: String?
     var weight: Int?     // 웨이트 무게 (kg 단위)
     var pweight: String? // 체감 무게
     
     
     init(
         suitType: String? = nil,
-        Equipment: [String]? = nil,
+        Equipment:String? = nil,
         weight: Int? = nil,
         pweight: String? = nil
         

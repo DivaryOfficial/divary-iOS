@@ -56,7 +56,7 @@ struct DiveEquipmentSection: View {
                 equipmentRow(title: "슈트 종류", value: equipment?.suitType)
                 DashedDivider()
 
-                equipmentRow(title: "착용", value: (equipment?.Equipment ?? [" "]).joined(separator: ", "))
+                equipmentRow(title: "착용", value: (equipment?.Equipment ?? " "))
                 DashedDivider()
 
                 equipmentRow(title: "웨이트", value: equipment?.weight.map { "\($0)" }, unit: "kg")
@@ -107,7 +107,7 @@ struct DiveEquipmentSection: View {
     DiveEquipmentSection(
         equipment: .constant(DiveEquipment(
             suitType: "웻슈트 3mm",
-            Equipment: ["BCD", "레귤레이터", "마스크", "핀", "스노클", "장갑", "부츠", "후드", "다이브 컴퓨터"],
+            Equipment: "BCD",
             weight: 6
         )),
         isSaved: .constant(false)
