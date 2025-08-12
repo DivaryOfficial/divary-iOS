@@ -5,10 +5,9 @@
 //  Created by chohaeun on 8/5/25.
 //
 
-// NewLogCreationView.swift - 중앙 정렬 버전
+// NewLogCreationView.swift - API 연동 버전
 
 import SwiftUI
-import Foundation
 
 struct NewLogCreationView: View {
     @Bindable var viewModel: NewLogCreationViewModel
@@ -73,6 +72,26 @@ struct NewLogCreationView: View {
                 
                 Spacer() // 하단 여백
             }
+            
+            // 로딩 인디케이터
+            if viewModel.isLoading {
+                Color.black.opacity(0.3)
+                    .ignoresSafeArea()
+                
+                ProgressView("처리 중...")
+                    .progressViewStyle(CircularProgressViewStyle())
+                    .foregroundColor(.white)
+                    .padding()
+                    .background(Color.black.opacity(0.7))
+                    .cornerRadius(10)
+            }
+        }
+        .alert("오류", isPresented: .constant(viewModel.errorMessage != nil)) {
+            Button("확인") {
+                viewModel.clearError()
+            }
+        } message: {
+            Text(viewModel.errorMessage ?? "")
         }
     }
 }
@@ -98,23 +117,10 @@ struct NewLogCalendarView: View {
             )
             .padding(.horizontal)
             
-            // 완료 버튼 수정
-            Button(action: {
-                Task {
-                    await viewModel.proceedToNextStep()
-                }
-            }) {
-                if viewModel.isLoading {
-                    HStack {
-                        ProgressView()
-                            .scaleEffect(0.8)
-                        Text("확인 중...")
-                    }
-                } else {
-                    Text("날짜 선택 완료")
-                }
+            // 완료 버튼
+            Button("날짜 선택 완료") {
+                viewModel.proceedToNextStep()
             }
-            .disabled(viewModel.isLoading)
             .font(Font.omyu.regular(size: 16))
             .frame(maxWidth: .infinity)
             .padding()
@@ -123,6 +129,7 @@ struct NewLogCalendarView: View {
             .cornerRadius(8)
             .padding(.horizontal)
             .padding(.bottom, 20)
+            .disabled(viewModel.isLoading)
         }
     }
 }
@@ -135,7 +142,6 @@ struct ExistingLogConfirmView: View {
     var body: some View {
         VStack(spacing: 20) {
             VStack(spacing: 16) {
-                
                 Text("선택한 날짜에 로그가 존재합니다.")
                     .font(Font.omyu.regular(size: 24))
                     .multilineTextAlignment(.center)
@@ -149,8 +155,8 @@ struct ExistingLogConfirmView: View {
             // 버튼들
             VStack(spacing: 12) {
                 Button("기존 로그 이동") {
-                    if let existingLog = viewModel.findExistingLog(for: viewModel.selectedDate) {
-                        onNavigateToExisting?(existingLog.id)
+                    if let existingLogId = viewModel.getExistingLogBaseId() {
+                        onNavigateToExisting?(existingLogId)
                     }
                 }
                 .font(Font.omyu.regular(size: 20))
@@ -176,12 +182,10 @@ struct ExistingLogConfirmView: View {
     }
 }
 
+// TitleAndIconSelectionView는 기존 구현을 그대로 사용하되,
+// onComplete에서 viewModel.createNewLog()를 호출하도록 수정 필요
 
-// 3. NewLogCreationView Preview
 #Preview {
     @Previewable @State var viewModel = NewLogCreationViewModel()
-    //NewLogCreationView(viewModel: viewModel)
-    //ExistingLogConfirmView(viewModel: viewModel)
-    NewLogCalendarView(viewModel: viewModel)
+    NewLogCreationView(viewModel: viewModel)
 }
-

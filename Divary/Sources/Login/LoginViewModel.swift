@@ -64,9 +64,7 @@ final class LoginViewModel: ObservableObject {
                     case .success(let response):
                         KeyChainManager.shared.save(response.data.token, forKey: KeyChainKey.accessToken)
                         //KeyChainManager.shared.save(response.refreshToken, forKey: KeyChainKey.refreshToken) - 리프레시토큰 로직
-                        DispatchQueue.main.async {  // ✅ UI 업데이트는 메인 스레드에서
-                            self.router.navigateToMain()  // ✅ 이렇게 변경
-                        }
+                        self.router.push(.main)
                         print("로그인 성공 (서버): \(response.data.token)")
                     case .failure(let error):
                         print("❌ 서버 로그인 실패: \(error)")

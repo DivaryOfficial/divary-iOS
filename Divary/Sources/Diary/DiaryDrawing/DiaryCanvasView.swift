@@ -8,9 +8,10 @@
 import SwiftUI
 import PencilKit
 
-struct DiaryCanvasView: View {
+struct DiaryCanvasView: View { // 일기메인뷰에서 연필 버튼 누르면 뜨는 그리는 공간 (CanvasView를 사용)
     @ObservedObject var viewModel: DiaryCanvasViewModel
     let offsetY: CGFloat
+    var onSaved: ((PKDrawing, CGFloat) -> Void)?
 
     var body: some View {
         ZStack(alignment: .bottom){
@@ -18,17 +19,8 @@ struct DiaryCanvasView: View {
             drawingBar
                 .padding(.bottom, canvasView.frame.height)
         }
-        .onAppear {
-            if let data = UserDefaults.standard.data(forKey: "SavedDrawingMeta"),
-               let meta = try? JSONDecoder().decode(DrawingMeta.self, from: data) {
-                viewModel.loadDrawingFromString(meta.base64)
-            }
-            
-//            if let saved = UserDefaults.standard.string(forKey: "SavedDrawing") {
-//                viewModel.loadDrawingFromString(saved)
-//            }
-            
-//            viewModel.loadDrawingFromFile()
+        .task {
+            viewModel.loadDrawingIfExists()
         }
     }
     
@@ -65,13 +57,8 @@ struct DiaryCanvasView: View {
             
             // 저장 버튼
             Button(action: {
-//                viewModel.saveDrawingToFile()
-                
-//                let base64 = viewModel.saveDrawingAsString()
-//                UserDefaults.standard.set(base64, forKey: "SavedDrawing")
-                
                 viewModel.saveDrawingWithOffset(offsetY: offsetY)
-                
+                onSaved?(viewModel.canvas.drawing, offsetY)
                 viewModel.dismissCanvas()
             }) {
                 Image("humbleicons_check")
@@ -87,8 +74,8 @@ struct DiaryCanvasView: View {
 
 #Preview {
     DiaryCanvasView(
-        viewModel: DiaryCanvasViewModel(showCanvas: .constant(true)),
-        offsetY: 300
+        viewModel: DiaryCanvasViewModel(showCanvas: .constant(true), diaryId: 0),
+        offsetY: 0
     )
 }
 

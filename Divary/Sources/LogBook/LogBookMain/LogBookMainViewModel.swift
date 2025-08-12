@@ -1,15 +1,18 @@
 //
-//  LogBookMainViewModel.swift - 기존 코드를 API 연결로 수정
+//  LogBookMainViewModel.swift
+//  Divary
+//
+//  Created by 바견규 on 7/17/25.
 //
 
 import SwiftUI
-import Foundation
 
 @Observable
 class LogBookMainViewModel {
-    var diveLogData: [DiveLogData]
+    var diveLogData: [DiveLogData] = []
     var selectedDate = Date()
     var logBaseId: String
+    var logBaseInfoId: Int
     var logBaseTitle: String = ""
     var isTempSaved: Bool = false
     var tempSavedData: [DiveLogData] = []
@@ -18,9 +21,11 @@ class LogBookMainViewModel {
     var showSavePopup = false
     var showSavedMessage = false
     
-    // API 관련 추가
-    var isLoading: Bool = false
-    private let service = LogBookService()
+    // API 연동 관련
+    private let dataManager = LogBookDataManager.shared
+    private let service = LogBookService.shared
+    private(set) var isLoading = false
+    private(set) var errorMessage: String?
     
     var logCount: Int {
         3 - diveLogData.filter { $0.isEmpty }.count
@@ -29,102 +34,216 @@ class LogBookMainViewModel {
     // 기존 init (기본값용)
     init() {
         self.logBaseId = ""
-        self.diveLogData = [DiveLogData(), DiveLogData(), DiveLogData()] // Mock 데이터 대신 빈 데이터
+        self.logBaseInfoId = 0
+        self.diveLogData = Array(repeating: DiveLogData(), count: 3)
         self.logBaseTitle = "다이빙 로그북"
         self.tempSavedData = Array(repeating: DiveLogData(), count: 3)
     }
     
-    // logBaseId를 받는 init - API 연결로 수정
+    // logBaseId를 받는 init
     init(logBaseId: String) {
         self.logBaseId = logBaseId
-        self.diveLogData = [DiveLogData(), DiveLogData(), DiveLogData()]
-        self.logBaseTitle = "새 다이빙 로그"
+        self.logBaseInfoId = Int(logBaseId) ?? 0
+        self.diveLogData = Array(repeating: DiveLogData(), count: 3)
         self.tempSavedData = Array(repeating: DiveLogData(), count: 3)
         
-        // API에서 데이터를 로드하는 것은 별도의 함수에서 처리
+        // 초기 데이터 로드
+        loadLogBaseDetail()
     }
     
-    // MARK: - API 관련 메서드 추가
+    // MARK: - API 연동 메서드
     
-    // 로그 상세 데이터 로드
-    func loadLogDetail() async {
-        guard let id = Int(logBaseId) else { return }
+    // 로그베이스 상세 데이터 로드
+    func loadLogBaseDetail() {
+        isLoading = true
+        errorMessage = nil
         
-        await MainActor.run {
-            isLoading = true
-        }
-        
-        do {
-            let response = try await withCheckedThrowingContinuation { continuation in
-                service.getLogDetail(id: id) { result in
-                    continuation.resume(with: result)
+        dataManager.fetchLogBaseDetail(logBaseInfoId: logBaseInfoId) { [weak self] result in
+            DispatchQueue.main.async {
+                self?.isLoading = false
+                
+                switch result {
+                case .success(let logBase):
+                    self?.updateFromLogBase(logBase)
+                    
+                case .failure(let error):
+                    self?.errorMessage = "로그 데이터를 불러올 수 없습니다: \(error.localizedDescription)"
+                    print("❌ 로그베이스 상세 조회 실패: \(error)")
                 }
             }
-            
-            await MainActor.run {
-                self.parseLogDetailResponse(response)
-                self.isLoading = false
-            }
-        } catch {
-            print("❌ 로그 상세 로드 실패: \(error)")
-            await MainActor.run {
-                self.isLoading = false
-            }
         }
     }
     
-    // 빈 로그 페이지 생성
-    func createEmptyLogPage() async {
-        guard let id = Int(logBaseId) else { return }
+    // LogBase 데이터로 ViewModel 업데이트
+    private func updateFromLogBase(_ logBase: LogBookBase) {
+        // ✅ 핵심 수정: 로그베이스의 날짜를 selectedDate에 설정
+        selectedDate = logBase.date
+        logBaseTitle = logBase.title
         
-        do {
-            let response = try await withCheckedThrowingContinuation { continuation in
-                service.createEmptyLog(id: id) { result in
-                    continuation.resume(with: result)
+        // 로그북 데이터 업데이트 (최대 3개)
+        diveLogData = Array(repeating: DiveLogData(), count: 3)
+        
+        for (index, logBook) in logBase.logBooks.enumerated() {
+            if index < 3 {
+                diveLogData[index] = logBook.diveData
+                diveLogData[index].logBookId = logBook.logBookId
+                diveLogData[index].saveStatus = logBook.saveStatus
+                
+                // 임시저장 상태 확인
+                if logBook.saveStatus == .temp {
+                    isTempSaved = true
                 }
             }
-            
-            await MainActor.run {
-                self.parseLogDetailResponse(response)
-            }
-        } catch {
-            print("❌ 빈 로그 페이지 생성 실패: \(error)")
         }
+        
+        // 빈 슬롯 채우기
+        while diveLogData.count < 3 {
+            let emptyData = DiveLogData()
+            // ✅ 새로 생성되는 빈 로그북에도 올바른 날짜 설정
+            // DiveLogData에 date 필드가 있다면 여기서 설정
+            diveLogData.append(emptyData)
+        }
+        
+        // 임시저장 데이터 백업
+        tempSavedData = diveLogData.map { data in
+            copyDiveLogData(data)
+        }
+        
+        print("✅ LogBase 업데이트 완료 - 선택된 날짜: \(selectedDate)")
     }
     
-    // 로그 데이터 저장 (API)
-    func saveLogDataToAPI() async -> Bool {
-        guard let id = Int(logBaseId),
-              let updateData = createUpdateRequestDTO() else { return false }
+    // 개별 로그북 저장
+    func saveLogBook(at index: Int, saveStatus: SaveStatus, completion: @escaping (Bool) -> Void) {
+        guard index < diveLogData.count,
+              let logBookId = diveLogData[index].logBookId else {
+            completion(false)
+            return
+        }
         
-        do {
-            let response = try await withCheckedThrowingContinuation { continuation in
-                service.updateLog(id: id, logData: updateData) { result in
-                    continuation.resume(with: result)
+        isLoading = true
+        errorMessage = nil
+        
+        // ✅ 로그 업데이트 시에도 현재 선택된 날짜를 사용
+        let logUpdateRequest = diveLogData[index].toLogUpdateRequest(
+            with: selectedDate,  // 현재 선택된 날짜 사용
+            saveStatus: saveStatus
+        )
+        
+        service.updateLogBook(logBookId: logBookId, logData: logUpdateRequest) { [weak self] result in
+            DispatchQueue.main.async {
+                self?.isLoading = false
+                
+                switch result {
+                case .success:
+                    // 저장 상태 업데이트
+                    self?.diveLogData[index].saveStatus = saveStatus
+                    
+                    if saveStatus == .temp {
+                        self?.isTempSaved = true
+                    } else {
+                        // 완전저장 시 임시저장 상태 해제
+                        self?.isTempSaved = false
+                    }
+                    
+                    completion(true)
+                    print("✅ 로그북 저장 성공: logBookId=\(logBookId), status=\(saveStatus.rawValue), date=\(self?.selectedDate ?? Date())")
+                    
+                case .failure(let error):
+                    self?.errorMessage = "저장 중 오류가 발생했습니다: \(error.localizedDescription)"
+                    completion(false)
+                    print("❌ 로그북 저장 실패: \(error)")
                 }
             }
-            
-            await MainActor.run {
-                self.parseLogDetailResponse(response)
-                self.isTempSaved = false
-            }
-            return true
-        } catch {
-            print("❌ 로그 저장 실패: \(error)")
-            return false
         }
     }
     
-    // MARK: - 기존 저장 관련 메서드 (API 연결 추가)
+    // MARK: - 저장 관련 메서드
     
     // 저장 버튼 처리
     func handleSaveButtonTap() {
+        // 1. 모든 섹션이 완성되어 있는지 확인
         if areAllSectionsCompleteForAllPages() {
+            // 모든 섹션이 완성됨 -> 바로 저장
             handleCompleteSave()
         } else {
+            // 일부 섹션이 미완성 -> SavePop 표시
             showSavePopup = true
         }
     }
+    
+    // 작성 완료하기 (완전 저장)
+    func handleCompleteSave() {
+        var completedCount = 0
+        let totalSaves = diveLogData.filter { !$0.isEmpty }.count
+        
+        guard totalSaves > 0 else {
+            showSavedMessage = true
+            return
+        }
+        
+        for (index, data) in diveLogData.enumerated() {
+            if !data.isEmpty {
+                saveLogBook(at: index, saveStatus: .complete) { success in
+                    if success {
+                        completedCount += 1
+                        if completedCount == totalSaves {
+                            DispatchQueue.main.async {
+                                self.showSavedMessage = true
+                                self.showSavePopup = false
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    // 임시 저장하기 (SavePop에서 호출)
+    func handleTempSaveFromSavePopup() {
+        tempSave()
+        
+        // SavePop 닫기
+        withAnimation {
+            showSavePopup = false
+        }
+    }
+    
+    // 임시저장
+    func tempSave() {
+        var completedCount = 0
+        let totalSaves = diveLogData.filter { !$0.isEmpty }.count
+        
+        guard totalSaves > 0 else {
+            isTempSaved = true
+            return
+        }
+        
+        for (index, data) in diveLogData.enumerated() {
+            if !data.isEmpty {
+                saveLogBook(at: index, saveStatus: .temp) { success in
+                    if success {
+                        completedCount += 1
+                        if completedCount == totalSaves {
+                            // 모든 임시저장 완료
+                            DispatchQueue.main.async {
+                                self.updateTempSavedData()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    // 임시저장 데이터 백업 업데이트
+    private func updateTempSavedData() {
+        tempSavedData = diveLogData.map { data in
+            copyDiveLogData(data)
+        }
+        isTempSaved = true
+    }
+    
+    // MARK: - 기존 메서드들 (UI 호환성 유지)
     
     // 모든 페이지의 모든 섹션이 완성되었는지 확인
     private func areAllSectionsCompleteForAllPages() -> Bool {
@@ -136,59 +255,7 @@ class LogBookMainViewModel {
         return true
     }
     
-    // 작성 완료하기 (진짜 저장) - API 호출 추가
-    func handleCompleteSave() {
-        Task {
-            let success = await saveLogDataToAPI()
-            await MainActor.run {
-                if success {
-                    self.isTempSaved = false
-                    withAnimation {
-                        self.showSavedMessage = true
-                        self.showSavePopup = false
-                    }
-                } else {
-                    // 실패 처리 (토스트 메시지 등)
-                    print("저장에 실패했습니다.")
-                }
-            }
-        }
-    }
-    
-    // 임시 저장하기 (SavePop에서 호출) - API 호출 추가
-    func handleTempSaveFromSavePopup() {
-        Task {
-            // 임시 상태로 API에 저장
-            await saveTempDataToAPI()
-            
-            await MainActor.run {
-                self.tempSave() // 로컬에도 임시저장
-                withAnimation {
-                    self.showSavePopup = false
-                }
-            }
-        }
-    }
-    
-    // 임시 데이터를 API에 저장
-    private func saveTempDataToAPI() async {
-        guard let id = Int(logBaseId),
-              let updateData = createUpdateRequestDTO(saveStatus: "TEMP") else { return }
-        
-        do {
-            let _ = try await withCheckedThrowingContinuation { continuation in
-                service.updateLog(id: id, logData: updateData) { result in
-                    continuation.resume(with: result)
-                }
-            }
-            print("임시저장 완료")
-        } catch {
-            print("❌ 임시저장 실패: \(error)")
-        }
-    }
-    
-    // MARK: - 기존 메서드들 유지
-    
+    // 모든 섹션이 완성되었는지 체크
     func areAllSectionsComplete(for index: Int) -> Bool {
         guard index < diveLogData.count else { return false }
         
@@ -200,6 +267,7 @@ class LogBookMainViewModel {
         }
     }
     
+    // 섹션별 상태 가져오기
     private func getSectionStatus(for data: DiveLogData, section: InputSectionType) -> SectionStatus {
         switch section {
         case .overview:
@@ -215,6 +283,7 @@ class LogBookMainViewModel {
         }
     }
     
+    // 임시저장 후 변경사항이 있는지 체크
     func hasChangesFromTempSave(for index: Int) -> Bool {
         guard index < diveLogData.count && index < tempSavedData.count else { return false }
         
@@ -224,7 +293,7 @@ class LogBookMainViewModel {
         return !areDataEqual(current, tempSaved)
     }
     
-    // 기존의 모든 비교 및 임시저장 메서드들 유지...
+    // 두 DiveLogData가 같은지 비교
     private func areDataEqual(_ data1: DiveLogData, _ data2: DiveLogData) -> Bool {
         return areOverviewEqual(data1.overview, data2.overview) &&
                areParticipantsEqual(data1.participants, data2.participants) &&
@@ -232,6 +301,99 @@ class LogBookMainViewModel {
                areEnvironmentEqual(data1.environment, data2.environment) &&
                areProfileEqual(data1.profile, data2.profile)
     }
+    
+    // 현재 페이지의 모든 필드 초기화
+    func clearAllFields(for index: Int) {
+        guard index < diveLogData.count else { return }
+        
+        let logBookId = diveLogData[index].logBookId
+        diveLogData[index] = DiveLogData()
+        diveLogData[index].logBookId = logBookId // ID는 유지
+        
+        // 임시저장 데이터도 초기화
+        if index < tempSavedData.count {
+            tempSavedData[index] = DiveLogData()
+            tempSavedData[index].logBookId = logBookId
+        }
+    }
+    
+    // 임시저장된 데이터로 되돌리기
+    func restoreFromTempSave(for index: Int) {
+        guard index < diveLogData.count && index < tempSavedData.count else { return }
+        
+        diveLogData[index] = copyDiveLogData(tempSavedData[index])
+    }
+    
+    // DiveLogData 깊은 복사
+    private func copyDiveLogData(_ data: DiveLogData) -> DiveLogData {
+        let newData = DiveLogData()
+        newData.logBookId = data.logBookId
+        newData.saveStatus = data.saveStatus
+        
+        // Overview 복사
+        if let overview = data.overview {
+            newData.overview = DiveOverview(
+                title: overview.title,
+                point: overview.point,
+                purpose: overview.purpose,
+                method: overview.method
+            )
+        }
+        
+        // Participants 복사
+        if let participants = data.participants {
+            newData.participants = DiveParticipants(
+                leader: participants.leader,
+                buddy: participants.buddy,
+                companion: participants.companion
+            )
+        }
+        
+        // Equipment 복사
+        if let equipment = data.equipment {
+            newData.equipment = DiveEquipment(
+                suitType: equipment.suitType,
+                Equipment: equipment.Equipment,
+                weight: equipment.weight,
+                pweight: equipment.pweight
+            )
+        }
+        
+        // Environment 복사
+        if let environment = data.environment {
+            newData.environment = DiveEnvironment(
+                weather: environment.weather,
+                wind: environment.wind,
+                current: environment.current,
+                wave: environment.wave,
+                airTemp: environment.airTemp,
+                feelsLike: environment.feelsLike,
+                waterTemp: environment.waterTemp,
+                visibility: environment.visibility
+            )
+        }
+        
+        // Profile 복사
+        if let profile = data.profile {
+            newData.profile = DiveProfile(
+                diveTime: profile.diveTime,
+                maxDepth: profile.maxDepth,
+                avgDepth: profile.avgDepth,
+                decoStop: profile.decoStop,
+                startPressure: profile.startPressure,
+                endPressure: profile.endPressure
+            )
+        }
+        
+        return newData
+    }
+    
+    // 에러 메시지 클리어
+    func clearError() {
+        errorMessage = nil
+    }
+    
+    // MARK: - 비교 메서드들 (기존 코드 유지)
     
     private func areOverviewEqual(_ overview1: DiveOverview?, _ overview2: DiveOverview?) -> Bool {
         if overview1 == nil && overview2 == nil { return true }
@@ -286,264 +448,5 @@ class LogBookMainViewModel {
                p1.decoStop == p2.decoStop &&
                p1.startPressure == p2.startPressure &&
                p1.endPressure == p2.endPressure
-    }
-    
-    func clearAllFields(for index: Int) {
-        guard index < diveLogData.count else { return }
-        
-        diveLogData[index] = DiveLogData()
-        isTempSaved = false
-        
-        if index < tempSavedData.count {
-            tempSavedData[index] = DiveLogData()
-        }
-    }
-    
-    func tempSave() {
-        tempSavedData = diveLogData.map { data in
-            let newData = DiveLogData()
-            
-            if let overview = data.overview {
-                newData.overview = DiveOverview(
-                    title: overview.title,
-                    point: overview.point,
-                    purpose: overview.purpose,
-                    method: overview.method
-                )
-            }
-            
-            if let participants = data.participants {
-                newData.participants = DiveParticipants(
-                    leader: participants.leader,
-                    buddy: participants.buddy,
-                    companion: participants.companion
-                )
-            }
-            
-            if let equipment = data.equipment {
-                newData.equipment = DiveEquipment(
-                    suitType: equipment.suitType,
-                    Equipment: equipment.Equipment,
-                    weight: equipment.weight,
-                    pweight: equipment.pweight
-                )
-            }
-            
-            if let environment = data.environment {
-                newData.environment = DiveEnvironment(
-                    weather: environment.weather,
-                    wind: environment.wind,
-                    current: environment.current,
-                    wave: environment.wave,
-                    airTemp: environment.airTemp,
-                    feelsLike: environment.feelsLike,
-                    waterTemp: environment.waterTemp,
-                    visibility: environment.visibility
-                )
-            }
-            
-            if let profile = data.profile {
-                newData.profile = DiveProfile(
-                    diveTime: profile.diveTime,
-                    maxDepth: profile.maxDepth,
-                    avgDepth: profile.avgDepth,
-                    decoStop: profile.decoStop,
-                    startPressure: profile.startPressure,
-                    endPressure: profile.endPressure
-                )
-            }
-            
-            return newData
-        }
-        
-        isTempSaved = true
-    }
-    
-    func restoreFromTempSave(for index: Int) {
-        guard index < diveLogData.count && index < tempSavedData.count else { return }
-        
-        let tempData = tempSavedData[index]
-        let newData = DiveLogData()
-        
-        if let overview = tempData.overview {
-            newData.overview = DiveOverview(
-                title: overview.title,
-                point: overview.point,
-                purpose: overview.purpose,
-                method: overview.method
-            )
-        }
-        
-        if let participants = tempData.participants {
-            newData.participants = DiveParticipants(
-                leader: participants.leader,
-                buddy: participants.buddy,
-                companion: participants.companion
-            )
-        }
-        
-        if let equipment = tempData.equipment {
-            newData.equipment = DiveEquipment(
-                suitType: equipment.suitType,
-                Equipment: equipment.Equipment,
-                weight: equipment.weight,
-                pweight: equipment.pweight
-            )
-        }
-        
-        if let environment = tempData.environment {
-            newData.environment = DiveEnvironment(
-                weather: environment.weather,
-                wind: environment.wind,
-                current: environment.current,
-                wave: environment.wave,
-                airTemp: environment.airTemp,
-                feelsLike: environment.feelsLike,
-                waterTemp: environment.waterTemp,
-                visibility: environment.visibility
-            )
-        }
-        
-        if let profile = tempData.profile {
-            newData.profile = DiveProfile(
-                diveTime: profile.diveTime,
-                maxDepth: profile.maxDepth,
-                avgDepth: profile.avgDepth,
-                decoStop: profile.decoStop,
-                startPressure: profile.startPressure,
-                endPressure: profile.endPressure
-            )
-        }
-        
-        diveLogData[index] = newData
-    }
-    
-    // MARK: - API 변환 Helper Methods
-    
-    private func parseLogDetailResponse(_ response: LogDetailResponseDTO) {
-        let logData = DiveLogData()
-        
-        // 데이터가 있는 경우에만 섹션 생성
-        if response.place != nil || response.divePoint != nil || response.diveMethod != nil || response.divePurpose != nil {
-            logData.overview = DiveOverview(
-                title: response.place,
-                point: response.divePoint,
-                purpose: response.divePurpose,
-                method: response.diveMethod
-            )
-        }
-        
-        if let companions = response.companions, !companions.isEmpty {
-            let leader = companions.first { $0.type == "LEADER" }?.name
-            let buddy = companions.first { $0.type == "BUDDY" }?.name
-            let companionNames = companions.filter { $0.type == "COMPANION" }.map { $0.name }
-            
-            logData.participants = DiveParticipants(
-                leader: leader,
-                buddy: buddy,
-                companion: companionNames.isEmpty ? nil : companionNames
-            )
-        }
-        
-        if response.suitType != nil || response.equipment != nil || response.weight != nil || response.perceivedWeight != nil {
-            logData.equipment = DiveEquipment(
-                suitType: response.suitType,
-                Equipment: response.equipment?.components(separatedBy: ","),
-                weight: response.weight,
-                pweight: response.perceivedWeight
-            )
-        }
-        
-        if response.weather != nil || response.wind != nil || response.tide != nil || response.wave != nil ||
-           response.temperature != nil || response.perceivedTemp != nil || response.waterTemperature != nil || response.sight != nil {
-            logData.environment = DiveEnvironment(
-                weather: response.weather,
-                wind: response.wind,
-                current: response.tide,
-                wave: response.wave,
-                airTemp: response.temperature,
-                feelsLike: response.perceivedTemp,
-                waterTemp: response.waterTemperature,
-                visibility: response.sight
-            )
-        }
-        
-        if response.diveTime != nil || response.maxDepth != nil || response.avgDepth != nil ||
-           response.decompressTime != nil || response.startPressure != nil || response.finishPressure != nil {
-            logData.profile = DiveProfile(
-                diveTime: response.diveTime,
-                maxDepth: response.maxDepth,
-                avgDepth: response.avgDepth,
-                decoStop: response.decompressTime,
-                startPressure: response.startPressure,
-                endPressure: response.finishPressure
-            )
-        }
-        
-        // 저장 상태 설정
-        isTempSaved = response.saveStatus == "TEMP"
-        
-        // 로그 데이터 업데이트 (기존 3개 배열 구조 유지)
-        if diveLogData.isEmpty {
-            diveLogData = [logData, DiveLogData(), DiveLogData()]
-        } else {
-            diveLogData[0] = logData
-        }
-    }
-    
-    private func createUpdateRequestDTO(saveStatus: String? = nil) -> LogUpdateRequestDTO? {
-        guard !diveLogData.isEmpty else { return nil }
-        
-        let logData = diveLogData[0] // 첫 번째 로그 데이터 사용
-        
-        // Companions 변환
-        var companions: [CompanionDTO] = []
-        if let participants = logData.participants {
-            if let leader = participants.leader {
-                companions.append(CompanionDTO(name: leader, type: "LEADER"))
-            }
-            if let buddy = participants.buddy {
-                companions.append(CompanionDTO(name: buddy, type: "BUDDY"))
-            }
-            if let companionList = participants.companion {
-                companions.append(contentsOf: companionList.map { CompanionDTO(name: $0, type: "COMPANION") })
-            }
-        }
-        
-        return LogUpdateRequestDTO(
-            date: formatDate(selectedDate), // selectedDate 사용
-            saveStatus: saveStatus ?? (isTempSaved ? "TEMP" : "COMPLETE"),
-            place: logData.overview?.title,
-            divePoint: logData.overview?.point,
-            diveMethod: logData.overview?.method,
-            divePurpose: logData.overview?.purpose,
-            companions: companions.isEmpty ? nil : companions,
-            suitType: logData.equipment?.suitType,
-            equipment: logData.equipment?.Equipment?.joined(separator: ","),
-            weight: logData.equipment?.weight,
-            perceivedWeight: logData.equipment?.pweight,
-            weather: logData.environment?.weather,
-            wind: logData.environment?.wind,
-            tide: logData.environment?.current,
-            wave: logData.environment?.wave,
-            temperature: logData.environment?.airTemp,
-            waterTemperature: logData.environment?.waterTemp,
-            perceivedTemp: logData.environment?.feelsLike,
-            sight: logData.environment?.visibility,
-            diveTime: logData.profile?.diveTime,
-            maxDepth: logData.profile?.maxDepth,
-            avgDepth: logData.profile?.avgDepth,
-            decompressDepth: nil, // API에 있지만 모델에 없음
-            decompressTime: logData.profile?.decoStop,
-            startPressure: logData.profile?.startPressure,
-            finishPressure: logData.profile?.endPressure,
-            consumption: nil // 계산이 필요한 값
-        )
-    }
-    
-    private func formatDate(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        return formatter.string(from: date)
     }
 }
