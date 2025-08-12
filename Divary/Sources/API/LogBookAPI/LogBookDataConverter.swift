@@ -73,18 +73,18 @@ extension Array where Element == LogBaseDetailDTO {
     }
 }
 
-// MARK: - LogBaseDetailDTO → DiveLogData 변환
+// MARK: - LogBaseDetailDTO → DiveLogData 변환 (백엔드 → UI)
 extension LogBaseDetailDTO {
     func toDiveLogData() -> DiveLogData {
         let diveData = DiveLogData()
 
-        // Overview
+        // Overview - 백엔드 enum → UI 표시용 텍스트 변환
         if hasOverviewData() {
             diveData.overview = DiveOverview(
                 title: self.name,
                 point: self.divePoint,
-                purpose: self.divePurpose,
-                method: self.diveMethod
+                purpose: self.divePurpose != nil ? String.displayName(fromDivingPurposeEnum: self.divePurpose!) : nil,
+                method: self.diveMethod != nil ? String.displayName(fromDivingMethodEnum: self.diveMethod!) : nil
             )
         }
 
@@ -98,27 +98,27 @@ extension LogBaseDetailDTO {
             )
         }
 
-        // Equipment
+        // Equipment - 백엔드 enum → UI 표시용 텍스트 변환
         if hasEquipmentData() {
             diveData.equipment = DiveEquipment(
-                suitType: self.suitType,
+                suitType: self.suitType != nil ? String.displayName(fromSuitTypeEnum: self.suitType!) : nil,
                 Equipment: self.equipment,
                 weight: self.weight,
-                pweight: self.perceivedWeight
+                pweight: self.perceivedWeight != nil ? String.displayName(fromPerceivedWeightEnum: self.perceivedWeight!) : nil
             )
         }
 
-        // Environment
+        // Environment - 백엔드 enum → UI 표시용 텍스트 변환
         if hasEnvironmentData() {
             diveData.environment = DiveEnvironment(
-                weather: self.weather,
-                wind: self.wind,
-                current: self.tide,
-                wave: self.wave,
+                weather: self.weather != nil ? String.displayName(fromWeatherEnum: self.weather!) : nil,
+                wind: self.wind != nil ? String.displayName(fromWindEnum: self.wind!) : nil,
+                current: self.tide != nil ? String.displayName(fromCurrentEnum: self.tide!) : nil,
+                wave: self.wave != nil ? String.displayName(fromWaveEnum: self.wave!) : nil,
                 airTemp: self.temperature,
-                feelsLike: self.perceivedTemp,
+                feelsLike: self.perceivedTemp != nil ? String.displayName(fromFeelsLikeEnum: self.perceivedTemp!) : nil,
                 waterTemp: self.waterTemperature,
-                visibility: self.sight
+                visibility: self.sight != nil ? String.displayName(fromVisibilityEnum: self.sight!) : nil
             )
         }
 
@@ -160,7 +160,7 @@ extension LogBaseDetailDTO {
     }
 }
 
-// MARK: - DiveLogData → LogUpdateRequestDTO 변환
+// MARK: - DiveLogData → LogUpdateRequestDTO 변환 (UI → 백엔드)
 extension DiveLogData {
     func toLogUpdateRequest(with date: Date, saveStatus: SaveStatus) -> LogUpdateRequestDTO {
         let dateString = DateFormatter.apiDateFormatter.string(from: date)
@@ -170,21 +170,24 @@ extension DiveLogData {
             saveStatus: saveStatus.rawValue,
             place: self.overview?.point,        // TODO: place 별도 필드가 생기면 교체
             divePoint: self.overview?.point,
-            diveMethod: self.overview?.method,
-            divePurpose: self.overview?.purpose,
+            // ✅ UI 표시용 텍스트 → 백엔드 enum 변환
+            diveMethod: self.overview?.method?.toDivingMethodEnum(),
+            divePurpose: self.overview?.purpose?.toDivingPurposeEnum(),
             companions: self.participants?.toCompanionRequestDTOs(), // ← name 키로 직렬화
-            suitType: self.equipment?.suitType,
+            // ✅ UI 표시용 텍스트 → 백엔드 enum 변환
+            suitType: self.equipment?.suitType?.toSuitTypeEnum(),
             equipment: self.equipment?.Equipment,
             weight: self.equipment?.weight,
-            perceivedWeight: self.equipment?.pweight,
-            weather: self.environment?.weather,
-            wind: self.environment?.wind,
-            tide: self.environment?.current,
-            wave: self.environment?.wave,
+            perceivedWeight: self.equipment?.pweight?.toPerceivedWeightEnum(),
+            // ✅ UI 표시용 텍스트 → 백엔드 enum 변환
+            weather: self.environment?.weather?.toWeatherEnum(),
+            wind: self.environment?.wind?.toWindEnum(),
+            tide: self.environment?.current?.toCurrentEnum(),
+            wave: self.environment?.wave?.toWaveEnum(),
             temperature: self.environment?.airTemp,
             waterTemperature: self.environment?.waterTemp,
-            perceivedTemp: self.environment?.feelsLike,
-            sight: self.environment?.visibility,
+            perceivedTemp: self.environment?.feelsLike?.toFeelsLikeEnum(),
+            sight: self.environment?.visibility?.toVisibilityEnum(),
             diveTime: self.profile?.diveTime,
             maxDepth: self.profile?.maxDepth,
             avgDepth: self.profile?.avgDepth,

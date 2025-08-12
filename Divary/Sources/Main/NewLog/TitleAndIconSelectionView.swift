@@ -15,12 +15,24 @@ struct TitleAndIconSelectionView: View {
     
     let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: 4)
     
-    // 아이콘 목록 (plus 제외)
+    // 아이콘 목록 (plus 제외, ICON_TYPE 기준)
     let availableIcons: [IconType] = [
-        .clownfish, .butterflyfish, .octopus, .anchovy,
-        .seaSlug, .turtle, .blowfish, .dolphin,
-        .longhornCowfish, .combJelly, .shrimp, .crab,
-        .lionfish, .squid, .clam, .starfish
+        .clownfish,        // 흰동가리
+        .butterflyfish,    // 나비고기
+        .octopus,          // 문어
+        .cleanerWrasse,    // 청줄놀래기 (이미지: anchovy)
+        .blackRockfish,    // 쏨배기 (이미지: blowfish)
+        .seaHare,          // 군소 (이미지: clam)
+        .pufferfish,       // 복어 (이미지: blowfish)
+        .stripedBeakfish,  // 돌돔 (이미지: longhornCowfish)
+        .nudibranch,       // 갯민숭달팽이 (이미지: seaSlug)
+        .moonJellyfish,    // 보름달물해파리 (이미지: combJelly)
+        .yellowtailScad,   // 줄전갱이 (이미지: dolphin)
+        .mantisShrimp,     // 끄덕새우 (이미지: shrimp)
+        .seaTurtle,        // 바다거북 (이미지: turtle)
+        .starfish,         // 불가사리 (이미지: starfish)
+        .redLionfish,      // 쏠배감펭 (이미지: lionfish)
+        .seaUrchin         // 성게 (이미지: squid)
     ]
     
     var body: some View {

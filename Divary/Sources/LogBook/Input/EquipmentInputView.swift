@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct  EquipmentInputView: View {
+struct EquipmentInputView: View {
     
     //슈트 아이콘
     private func suitTypeImage(for suitType: String?) -> Image {
@@ -45,95 +45,81 @@ struct  EquipmentInputView: View {
         }
     }
     
-    
     @Binding var equipment: DiveEquipment
     @State private var equipmentInput: String? = nil
     
     var body: some View {
-        //GeometryReader { geometry in
-            ZStack {
-//                Color.gray.opacity(0.8)
-//                    .edgesIgnoringSafeArea(.all)
-                
-                VStack{
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 20) {
+        ZStack {
+            VStack{
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 20) {
+                        
+                        VStack(alignment: .leading, spacing: 10){
                             
-                            VStack(alignment: .leading, spacing: 10){
-                                
-                                //슈트 종류
-                                Text("슈트 종류")
-                                    .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
-                                    
-                                
-                                HStack{
-                                    
-                                    IconButton(
-                                    options: ["웻슈트 3mm", "웻슈트 5mm", "드라이 슈트", "기타"],
+                            //슈트 종류
+                            Text("슈트 종류")
+                                .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
+                            
+                            HStack{
+                                IconButton(
+                                    options: SuitType.allDisplayNames,
                                     selected: equipment.suitType,
                                     imageProvider: suitTypeImage(for:),
                                     onSelect: { equipment.suitType = $0 },
-                                    size: 30, //폰트 12
-                                    isImage: true
-                                )
-                            }
-                            }
-                            
-                            //착용
-                            TextInputField(
-                                title: "착용",
-                                placeholder: "ex) 후드, 장갑, 베스트 등",
-                                unit: "",
-                                value: $equipment.Equipment
-                            )
-                            
-                            //웨이트
-                            NumberInputField(
-                                title: "웨이트",
-                                placeholder: "0",
-                                unit: "kg",
-                                value: $equipment.weight
-                            )
-                            
-                            VStack(alignment: .leading, spacing: 10){
-                                
-                                //체감 무게
-                                Text("체감 무게")
-                                    .font(Font.omyu.regular(size: 12))
-                                    .foregroundStyle(Color("grayscale_g500"))
-                                
-                                IconButton(
-                                    options: ["가벼움", "보통", "무거움"],
-                                    selected: equipment.pweight,
-                                    imageProvider: pweightImage(for:),
-                                    onSelect: { equipment.pweight = $0 },
-                                    size: 30, //폰트 12
+                                    size: 30,
                                     isImage: true
                                 )
                             }
                         }
                         
+                        //착용
+                        TextInputField(
+                            title: "착용",
+                            placeholder: "ex) 후드, 장갑, 베스트 등",
+                            unit: "",
+                            value: $equipment.Equipment
+                        )
+                        
+                        //웨이트
+                        NumberInputField(
+                            title: "웨이트",
+                            placeholder: "0",
+                            unit: "kg",
+                            value: $equipment.weight
+                        )
+                        
+                        VStack(alignment: .leading, spacing: 10){
+                            
+                            //체감 무게
+                            Text("체감 무게")
+                                .font(Font.omyu.regular(size: 12))
+                                .foregroundStyle(Color("grayscale_g500"))
+                            
+                            IconButton(
+                                options: PerceivedWeightType.allDisplayNames,
+                                selected: equipment.pweight,
+                                imageProvider: pweightImage(for:),
+                                onSelect: { equipment.pweight = $0 },
+                                size: 30,
+                                isImage: true
+                            )
+                        }
                     }
-                    .padding(.horizontal, 11)
-                    .padding(.vertical, 22)
-                    .background(
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(Color(.white))
-                            //.stroke(Color.grayscale_g300)
-                    )
-                    //.frame(maxHeight: geometry.size.height * 0.67)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.horizontal)
-                    
                 }
+                .padding(.horizontal, 11)
+                .padding(.vertical, 22)
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(Color(.white))
+                )
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.horizontal)
             }
         }
     }
-
-
+}
 
 #Preview {
-    
     @Previewable @State var previewOverview = DiveEquipment(
        suitType: "웻슈트 3mm",
        Equipment:"",
@@ -142,4 +128,3 @@ struct  EquipmentInputView: View {
     
     EquipmentInputView(equipment: $previewOverview)
 }
-
