@@ -28,28 +28,35 @@ class LogBookMainViewModel {
     private(set) var errorMessage: String?
     
     var logCount: Int {
-        3 - diveLogData.filter { $0.isEmpty }.count
+        diveLogData.filter { !$0.isEmpty }.count
+    }
+    
+    // 계산된 프로퍼티명을 다른 이름으로 변경
+    var displayTitle: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "M/d"
+        return "\(formatter.string(from: selectedDate)) \(logBaseTitle)"
     }
     
     // 기존 init (기본값용)
-    init() {
-        self.logBaseId = ""
-        self.logBaseInfoId = 0
-        self.diveLogData = Array(repeating: DiveLogData(), count: 3)
-        self.logBaseTitle = "다이빙 로그북"
-        self.tempSavedData = Array(repeating: DiveLogData(), count: 3)
-    }
-    
-    // logBaseId를 받는 init
-    init(logBaseId: String) {
-        self.logBaseId = logBaseId
-        self.logBaseInfoId = Int(logBaseId) ?? 0
-        self.diveLogData = Array(repeating: DiveLogData(), count: 3)
-        self.tempSavedData = Array(repeating: DiveLogData(), count: 3)
-        
-        // 초기 데이터 로드
-        loadLogBaseDetail()
-    }
+     init() {
+         self.logBaseId = ""
+         self.logBaseInfoId = 0
+         self.diveLogData = [] // 빈 배열로 시작
+         self.logBaseTitle = "다이빙 로그북"
+         self.tempSavedData = []
+     }
+     
+     // logBaseId를 받는 init
+     init(logBaseId: String) {
+         self.logBaseId = logBaseId
+         self.logBaseInfoId = Int(logBaseId) ?? 0
+         self.diveLogData = [] // 빈 배열로 시작
+         self.tempSavedData = []
+         
+         // 초기 데이터 로드
+         loadLogBaseDetail()
+     }
     
     // MARK: - API 연동 메서드
     
@@ -58,58 +65,94 @@ class LogBookMainViewModel {
         isLoading = true
         errorMessage = nil
         
-        dataManager.fetchLogBaseDetail(logBaseInfoId: logBaseInfoId) { [weak self] result in
-            DispatchQueue.main.async {
-                self?.isLoading = false
+        dataManager.fetchLogBaseDetail(logBaseInfoId: logBaseInfoId) { result in
+            self.isLoading = false
+            
+            switch result {
+            case .success(let logBase):
+                self.updateFromLogBase(logBase)
                 
-                switch result {
-                case .success(let logBase):
-                    self?.updateFromLogBase(logBase)
-                    
-                case .failure(let error):
-                    self?.errorMessage = "로그 데이터를 불러올 수 없습니다: \(error.localizedDescription)"
-                    print("❌ 로그베이스 상세 조회 실패: \(error)")
-                }
+            case .failure(let error):
+                self.errorMessage = "로그 데이터를 불러올 수 없습니다: \(error.localizedDescription)"
+                print("❌ 로그베이스 상세 조회 실패: \(error)")
             }
         }
     }
     
     // LogBase 데이터로 ViewModel 업데이트
     private func updateFromLogBase(_ logBase: LogBookBase) {
-        // ✅ 핵심 수정: 로그베이스의 날짜를 selectedDate에 설정
         selectedDate = logBase.date
         logBaseTitle = logBase.title
         
-        // 로그북 데이터 업데이트 (최대 3개)
-        diveLogData = Array(repeating: DiveLogData(), count: 3)
+        // 로그북 데이터 업데이트 (동적 개수)
+        diveLogData = []
         
-        for (index, logBook) in logBase.logBooks.enumerated() {
-            if index < 3 {
-                diveLogData[index] = logBook.diveData
-                diveLogData[index].logBookId = logBook.logBookId
-                diveLogData[index].saveStatus = logBook.saveStatus
-                
-                // 임시저장 상태 확인
-                if logBook.saveStatus == .temp {
-                    isTempSaved = true
-                }
+        for logBook in logBase.logBooks {
+            let logData = logBook.diveData
+            logData.logBookId = logBook.logBookId
+            logData.saveStatus = logBook.saveStatus
+            diveLogData.append(logData)
+            
+            // 임시저장 상태 확인
+            if logBook.saveStatus == .temp {
+                isTempSaved = true
             }
         }
         
-        // 빈 슬롯 채우기
-        while diveLogData.count < 3 {
-            let emptyData = DiveLogData()
-            // ✅ 새로 생성되는 빈 로그북에도 올바른 날짜 설정
-            // DiveLogData에 date 필드가 있다면 여기서 설정
-            diveLogData.append(emptyData)
+        // ✅ 로그북이 없으면 첫 번째 로그북 자동 생성 (기존 로직 제거)
+        // 이제 로그베이스 생성 시 자동으로 빈 로그북 1개가 생성되므로 여기서 별도 생성 불필요
+        if diveLogData.isEmpty {
+            // 빈 데이터라도 일단 하나 추가하여 UI가 정상 동작하도록 함
+            let emptyLogData = DiveLogData()
+            diveLogData.append(emptyLogData)
         }
         
         // 임시저장 데이터 백업
+        updateTempSavedDataArray()
+        
+        print("✅ LogBase 업데이트 완료 - 로그북 개수: \(diveLogData.count)")
+    }
+    
+    // 임시저장 데이터 배열 업데이트
+    private func updateTempSavedDataArray() {
         tempSavedData = diveLogData.map { data in
             copyDiveLogData(data)
         }
+    }
+    
+    // ✅ 새 로그북 추가 (슬라이드 시 사용 - DataManager의 addNewLogBook 호출)
+    func addNewLogBook(completion: @escaping (Bool) -> Void) {
+        guard diveLogData.count < 3 else {
+            completion(false)
+            return
+        }
         
-        print("✅ LogBase 업데이트 완료 - 선택된 날짜: \(selectedDate)")
+        isLoading = true
+        errorMessage = nil
+        
+        // DataManager의 addNewLogBook 메서드 사용
+        dataManager.addNewLogBook(logBaseInfoId: logBaseInfoId) { result in
+            self.isLoading = false
+            
+            switch result {
+            case .success(let logBookId):
+                // 새 로그북 데이터 추가
+                let newLogData = DiveLogData()
+                newLogData.logBookId = logBookId
+                newLogData.saveStatus = .temp
+                
+                self.diveLogData.append(newLogData)
+                self.tempSavedData.append(DiveLogData())
+                
+                completion(true)
+                print("✅ 새 로그북 추가 성공: logBookId=\(logBookId)")
+                
+            case .failure(let error):
+                self.errorMessage = error.localizedDescription
+                completion(false)
+                print("❌ 새 로그북 추가 실패: \(error)")
+            }
+        }
     }
     
     // 개별 로그북 저장
@@ -123,36 +166,33 @@ class LogBookMainViewModel {
         isLoading = true
         errorMessage = nil
         
-        // ✅ 로그 업데이트 시에도 현재 선택된 날짜를 사용
         let logUpdateRequest = diveLogData[index].toLogUpdateRequest(
-            with: selectedDate,  // 현재 선택된 날짜 사용
+            with: selectedDate,
             saveStatus: saveStatus
         )
         
-        service.updateLogBook(logBookId: logBookId, logData: logUpdateRequest) { [weak self] result in
-            DispatchQueue.main.async {
-                self?.isLoading = false
+        service.updateLogBook(logBookId: logBookId, logData: logUpdateRequest) { result in
+            self.isLoading = false
+            
+            switch result {
+            case .success:
+                // 저장 상태 업데이트
+                self.diveLogData[index].saveStatus = saveStatus
                 
-                switch result {
-                case .success:
-                    // 저장 상태 업데이트
-                    self?.diveLogData[index].saveStatus = saveStatus
-                    
-                    if saveStatus == .temp {
-                        self?.isTempSaved = true
-                    } else {
-                        // 완전저장 시 임시저장 상태 해제
-                        self?.isTempSaved = false
-                    }
-                    
-                    completion(true)
-                    print("✅ 로그북 저장 성공: logBookId=\(logBookId), status=\(saveStatus.rawValue), date=\(self?.selectedDate ?? Date())")
-                    
-                case .failure(let error):
-                    self?.errorMessage = "저장 중 오류가 발생했습니다: \(error.localizedDescription)"
-                    completion(false)
-                    print("❌ 로그북 저장 실패: \(error)")
+                if saveStatus == .temp {
+                    self.isTempSaved = true
+                } else {
+                    // 완전저장 시 임시저장 상태 해제
+                    self.isTempSaved = false
                 }
+                
+                completion(true)
+                print("✅ 로그북 저장 성공: logBookId=\(logBookId)")
+                
+            case .failure(let error):
+                self.errorMessage = "저장 중 오류가 발생했습니다: \(error.localizedDescription)"
+                completion(false)
+                print("❌ 로그북 저장 실패: \(error)")
             }
         }
     }
@@ -161,12 +201,9 @@ class LogBookMainViewModel {
     
     // 저장 버튼 처리
     func handleSaveButtonTap() {
-        // 1. 모든 섹션이 완성되어 있는지 확인
         if areAllSectionsCompleteForAllPages() {
-            // 모든 섹션이 완성됨 -> 바로 저장
             handleCompleteSave()
         } else {
-            // 일부 섹션이 미완성 -> SavePop 표시
             showSavePopup = true
         }
     }
@@ -187,10 +224,8 @@ class LogBookMainViewModel {
                     if success {
                         completedCount += 1
                         if completedCount == totalSaves {
-                            DispatchQueue.main.async {
-                                self.showSavedMessage = true
-                                self.showSavePopup = false
-                            }
+                            self.showSavedMessage = true
+                            self.showSavePopup = false
                         }
                     }
                 }
@@ -202,7 +237,6 @@ class LogBookMainViewModel {
     func handleTempSaveFromSavePopup() {
         tempSave()
         
-        // SavePop 닫기
         withAnimation {
             showSavePopup = false
         }
@@ -224,10 +258,7 @@ class LogBookMainViewModel {
                     if success {
                         completedCount += 1
                         if completedCount == totalSaves {
-                            // 모든 임시저장 완료
-                            DispatchQueue.main.async {
-                                self.updateTempSavedData()
-                            }
+                            self.updateTempSavedData()
                         }
                     }
                 }
@@ -237,9 +268,7 @@ class LogBookMainViewModel {
     
     // 임시저장 데이터 백업 업데이트
     private func updateTempSavedData() {
-        tempSavedData = diveLogData.map { data in
-            copyDiveLogData(data)
-        }
+        updateTempSavedDataArray()
         isTempSaved = true
     }
     
@@ -308,9 +337,8 @@ class LogBookMainViewModel {
         
         let logBookId = diveLogData[index].logBookId
         diveLogData[index] = DiveLogData()
-        diveLogData[index].logBookId = logBookId // ID는 유지
+        diveLogData[index].logBookId = logBookId
         
-        // 임시저장 데이터도 초기화
         if index < tempSavedData.count {
             tempSavedData[index] = DiveLogData()
             tempSavedData[index].logBookId = logBookId

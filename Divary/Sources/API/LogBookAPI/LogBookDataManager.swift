@@ -16,6 +16,10 @@ class LogBookDataManager {
     private(set) var isLoading = false
     private(set) var errorMessage: String?
     
+    // ✅ 중복 생성 방지를 위한 플래그들
+    private var isCreatingLogBase = false
+    private var creatingLogBaseForDate: String?
+    
     private init() {}
     
     // MARK: - 연도별 로그 리스트 조회
@@ -84,15 +88,13 @@ class LogBookDataManager {
     private func createTemporaryLogBase(logBaseInfoId: Int, completion: @escaping (Result<LogBookBase, Error>) -> Void) {
         // 캐시에서 기본 정보를 찾아서 임시 로그베이스 생성
         if let cachedLogBase = logBookBases.first(where: { $0.logBaseInfoId == logBaseInfoId }) {
-            // 빈 로그북 3개로 임시 로그베이스 생성
-            let emptyLogBooks = Array(0..<3).map { index in
-                LogBook(
-                    id: "temp_\(logBaseInfoId)_\(index)",
-                    logBookId: -1, // 임시 ID
-                    saveStatus: .complete,
-                    diveData: DiveLogData()
-                )
-            }
+            // 빈 로그북 1개로 임시 로그베이스 생성
+            let emptyLogBook = LogBook(
+                id: "temp_\(logBaseInfoId)_0",
+                logBookId: -1, // 임시 ID
+                saveStatus: .temp,
+                diveData: DiveLogData()
+            )
             
             let tempLogBase = LogBookBase(
                 id: cachedLogBase.id,
@@ -101,7 +103,7 @@ class LogBookDataManager {
                 title: cachedLogBase.title,
                 iconType: cachedLogBase.iconType,
                 accumulation: cachedLogBase.accumulation,
-                logBooks: emptyLogBooks
+                logBooks: [emptyLogBook] // 1개만 생성
             )
             
             // 캐시 업데이트
@@ -116,23 +118,51 @@ class LogBookDataManager {
         }
     }
     
-    // MARK: - 새 로그베이스 생성 (수정됨)
+    // MARK: - ✅ 새 로그베이스 생성 (빈 로그북 1개만 생성) - 중복 방지 강화
     func createLogBase(iconType: IconType, name: String, date: Date, completion: @escaping (Result<String, Error>) -> Void) {
+        
         let dateString = DateFormatter.apiDateFormatter.string(from: date)
+        
+        // ✅ 중복 생성 방지: 같은 날짜로 이미 생성 중인지 확인
+        if isCreatingLogBase && creatingLogBaseForDate == dateString {
+            print("⚠️ 같은 날짜(\(dateString))로 이미 로그베이스 생성 중이므로 요청 무시")
+            let error = NSError(domain: "DuplicateCreation", code: -1, userInfo: [NSLocalizedDescriptionKey: "이미 같은 날짜로 로그를 생성 중입니다."])
+            completion(.failure(error))
+            return
+        }
+        
+        // ✅ 캐시에서 이미 존재하는지 확인
+        if let existingLog = findLogBase(for: date) {
+            print("⚠️ 이미 존재하는 로그베이스를 발견: \(existingLog.id)")
+            completion(.success(existingLog.id))
+            return
+        }
+        
+        // 중복 생성 방지 플래그 설정
+        isCreatingLogBase = true
+        creatingLogBaseForDate = dateString
+        
+        print("🚀 데이터매니저의 로그베이스 생성 시작: \(name), 날짜: \(dateString)")
         
         service.createLogBase(iconType: iconType.rawValue, name: name, date: dateString) { [weak self] result in
             DispatchQueue.main.async {
+                // 플래그 해제
+                self?.isCreatingLogBase = false
+                self?.creatingLogBaseForDate = nil
+                
                 switch result {
                 case .success(let createResponse):
                     let logBaseInfoId = createResponse.logBaseInfoId
                     
-                    // ✅ 빈 로그북 3개 생성 (3번 API 호출)
-                    self?.createThreeEmptyLogBooks(
+                    print("✅ 로그베이스 생성 성공: logBaseInfoId=\(logBaseInfoId)")
+                    
+                    // ✅ 빈 로그북 1개만 생성
+                    self?.createOneEmptyLogBook(
                         logBaseInfoId: logBaseInfoId,
                         date: date,
                         name: name,
                         iconType: iconType,
-                        accumulation: createResponse.accumulation
+                        accumulation: createResponse.accumulation ?? 0
                     ) { emptyResult in
                         switch emptyResult {
                         case .success:
@@ -147,7 +177,7 @@ class LogBookDataManager {
                                 date: date,
                                 title: name,
                                 iconType: iconType,
-                                accumulation: createResponse.accumulation,
+                                accumulation: createResponse.accumulation ?? 0,
                                 logBooks: []
                             )
                             self?.logBookBases.append(newLogBase)
@@ -156,15 +186,15 @@ class LogBookDataManager {
                     }
                     
                 case .failure(let error):
-                    completion(.failure(error))
                     print("❌ 로그베이스 생성 실패: \(error)")
+                    completion(.failure(error))
                 }
             }
         }
     }
     
-    // ✅ 빈 로그북 3개 생성 (3번 API 호출)
-    private func createThreeEmptyLogBooks(
+    // ✅ 빈 로그북 1개만 생성하는 메서드
+    private func createOneEmptyLogBook(
         logBaseInfoId: Int,
         date: Date,
         name: String,
@@ -172,42 +202,74 @@ class LogBookDataManager {
         accumulation: Int,
         completion: @escaping (Result<Void, Error>) -> Void
     ) {
-        var completedCount = 0
-        var hasError = false
-        var firstError: Error?
+        // 1번만 API 호출
+        service.createEmptyLogBooks(logBaseInfoId: logBaseInfoId) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let response):
+                    print("✅ 빈 로그북 1개 생성 성공: logBookId=\(response.logBookId)")
+                    
+                    // 빈 로그북 1개로 로그베이스 생성
+                    let emptyLogBook = LogBook(
+                        id: String(response.logBookId),
+                        logBookId: response.logBookId,
+                        saveStatus: .temp,
+                        diveData: DiveLogData()
+                    )
+                    
+                    let newLogBase = LogBookBase(
+                        id: String(logBaseInfoId),
+                        logBaseInfoId: logBaseInfoId,
+                        date: date,
+                        title: name,
+                        iconType: iconType,
+                        accumulation: accumulation,
+                        logBooks: [emptyLogBook] // 1개만 포함
+                    )
+                    
+                    self?.logBookBases.append(newLogBase)
+                    completion(.success(()))
+                    
+                case .failure(let error):
+                    print("❌ 빈 로그북 생성 실패: \(error)")
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
+    
+    // MARK: - ✅ 기존 로그베이스에 새 로그북 추가 (슬라이드 시 사용)
+    func addNewLogBook(logBaseInfoId: Int, completion: @escaping (Result<Int, Error>) -> Void) {
+        // 현재 로그북 개수 확인
+        if let logBase = logBookBases.first(where: { $0.logBaseInfoId == logBaseInfoId }) {
+            if logBase.logBooks.count >= 3 {
+                let error = NSError(domain: "MaxLogBookError", code: -1, userInfo: [NSLocalizedDescriptionKey: "최대 3개까지만 추가할 수 있습니다."])
+                completion(.failure(error))
+                return
+            }
+        }
         
-        // 3번 연속 API 호출
-        for i in 1...3 {
-            service.createEmptyLogBooks(logBaseInfoId: logBaseInfoId) { result in
-                DispatchQueue.main.async {
-                    switch result {
-                    case .success(let response):
-                        completedCount += 1
-                        print("✅ 빈 로그북 \(i)번째 생성 성공: logBookId=\(response.logBookId)")
-                        
-                        // 3개 모두 완료되면 캐시에 로그베이스 추가
-                        if completedCount == 3 && !hasError {
-                            let newLogBase = LogBookBase(
-                                id: String(logBaseInfoId),
-                                logBaseInfoId: logBaseInfoId,
-                                date: date,
-                                title: name,
-                                iconType: iconType,
-                                accumulation: accumulation,
-                                logBooks: [] // 빈 로그북들은 상세 조회에서 가져옴
-                            )
-                            self.logBookBases.append(newLogBase)
-                            completion(.success(()))
-                        }
-                        
-                    case .failure(let error):
-                        if !hasError {
-                            hasError = true
-                            firstError = error
-                            print("❌ 빈 로그북 \(i)번째 생성 실패: \(error)")
-                            completion(.failure(firstError!))
-                        }
+        service.createEmptyLogBooks(logBaseInfoId: logBaseInfoId) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let response):
+                    // 새 로그북을 기존 로그베이스에 추가
+                    if let index = self?.logBookBases.firstIndex(where: { $0.logBaseInfoId == logBaseInfoId }) {
+                        let newLogBook = LogBook(
+                            id: String(response.logBookId),
+                            logBookId: response.logBookId,
+                            saveStatus: .temp,
+                            diveData: DiveLogData()
+                        )
+                        self?.logBookBases[index].logBooks.append(newLogBook)
                     }
+                    
+                    completion(.success(response.logBookId))
+                    print("✅ 새 로그북 추가 성공: logBookId=\(response.logBookId)")
+                    
+                case .failure(let error):
+                    completion(.failure(error))
+                    print("❌ 새 로그북 추가 실패: \(error)")
                 }
             }
         }
@@ -298,4 +360,7 @@ class LogBookDataManager {
             }
         }
     }
+    
+    // MARK: - ❌ 사용하지 않는 메서드 (기존 createLogBaseOnly는 더 이상 사용하지 않음)
+    // createLogBase가 이미 빈 로그북 1개만 생성하므로 별도 메서드 불필요
 }

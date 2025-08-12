@@ -2,7 +2,7 @@
 //  LogBookResponse.swift
 //  Divary
 //
-//  Created by 바견규 on 8/8/25.
+//  Updated by
 //
 
 import Foundation
@@ -30,14 +30,28 @@ struct LogCreateResponseDTO: Codable {
     let name: String
     let date: String
     let iconType: String
-    let accumulation: Int
+    let accumulation: Int?
     let logBaseInfoId: Int
 }
 
-// MARK: - 빈 로그북 생성 응답
+// MARK: - 빈 로그북 생성/수정 응답 공통
 struct EmptyLogCreateResponseDTO: Codable {
     let logBookId: Int
     let message: String
+}
+
+// MARK: - 동행자 정보 (응답)
+/// 상세조회 응답에서는 key가 `companion`
+struct CompanionResponseDTO: Codable {
+    let companion: String?
+    let type: String // 서버 ENUM 문자열 (LEADER/BUDDY/COMPANION)
+}
+
+// MARK: - 동행자 정보 (요청)
+/// 수정/생성 요청에서는 key가 `name`
+struct CompanionRequestDTO: Codable {
+    let name: String
+    let type: String // 서버 ENUM 문자열 (LEADER/BUDDY/COMPANION)
 }
 
 // MARK: - 로그베이스 상세 조회 응답 (로그북들 포함)
@@ -47,17 +61,17 @@ struct LogBaseDetailDTO: Codable {
     let icon: String
     let date: String
     let accumulation: Int
-    
+
     // 개별 로그북 정보
     let logBookId: Int
-    let saveStatus: String
-    
+    let saveStatus: String? // null 가능
+
     // 다이빙 세부 정보
     let place: String?
     let divePoint: String?
     let diveMethod: String?
     let divePurpose: String?
-    let companions: [CompanionDTO]?
+    let companions: [CompanionResponseDTO]?
     let suitType: String?
     let equipment: String?
     let weight: Int?
@@ -80,12 +94,6 @@ struct LogBaseDetailDTO: Codable {
     let consumption: Int?
 }
 
-// MARK: - 동행자 정보
-struct CompanionDTO: Codable {
-    let companion: String
-    let type: String
-}
-
 // MARK: - 로그북 수정 요청
 struct LogUpdateRequestDTO: Codable {
     let date: String
@@ -94,7 +102,7 @@ struct LogUpdateRequestDTO: Codable {
     let divePoint: String?
     let diveMethod: String?
     let divePurpose: String?
-    let companions: [CompanionDTO]?
+    let companions: [CompanionRequestDTO]? // ← name 키 사용
     let suitType: String?
     let equipment: String?
     let weight: Int?
