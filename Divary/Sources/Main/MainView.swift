@@ -150,7 +150,7 @@ struct MainView: View {
                     return "\(formatter.string(from: log.date)) [\(log.title)] 을/를\n삭제하시겠습니까?"
                 }()
 
-                DeletePopupView(
+                DelPop(
                     isPresented: $showDeletePopup,
                     deleteText: text,
                     onConfirm: { deleteSelectedLog() }

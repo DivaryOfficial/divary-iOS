@@ -68,7 +68,7 @@ class LogBookDataManager {
                     
                 case .failure(let error):
                     // 서버 에러인 경우 임시 로그베이스 생성하여 반환
-                    if let apiError = error as? APIError, apiError.statusCode == 500 {
+                    if let apiError = error as? LogBookAPIError, apiError.statusCode == 500 {
                         print("⚠️ 서버 에러로 인해 임시 로그베이스 생성: \(logBaseInfoId)")
                         self?.createTemporaryLogBase(logBaseInfoId: logBaseInfoId, completion: completion)
                     } else {
