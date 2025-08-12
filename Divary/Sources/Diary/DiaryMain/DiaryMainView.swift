@@ -14,7 +14,10 @@ enum DiaryFooterBarType {
 }
 
 struct DiaryMainView: View {
-    let diaryId: Int
+    @Environment(\.diContainer) private var di
+    @State private var didInject = false
+    
+    let diaryLogId: Int
     @State private var viewModel = DiaryMainViewModel()
     @FocusState private var isRichTextEditorFocused: Bool
     @State private var footerBarType: DiaryFooterBarType = .main
@@ -65,6 +68,17 @@ struct DiaryMainView: View {
                 activeFooterBar
             }
         }
+        .onAppear {
+            if !didInject {
+                viewModel.inject(
+                    diaryService: di.logDiaryService,   // DI에 이미 들어있음 :contentReference[oaicite:0]{index=0}
+                    imageService: di.imageService,
+                    token: KeyChainManager.shared.read(forKey: "accessToken") ?? ""
+                )
+                viewModel.loadFromServer(logId: diaryLogId)
+                didInject = true
+            }
+        }
         .fullScreenCover(
             isPresented: Binding(
                 get: { navigateToImageSelectView },
@@ -94,7 +108,7 @@ struct DiaryMainView: View {
         }
         .overlay(
             showCanvas ? DiaryCanvasView(
-                viewModel: DiaryCanvasViewModel(showCanvas: $showCanvas, diaryId: diaryId),
+                viewModel: DiaryCanvasViewModel(showCanvas: $showCanvas, diaryId: diaryLogId),
                 offsetY: currentOffsetY,
                 onSaved: { drawing, offset in
                     // 메인 뷰 즉시 업데이트
@@ -146,7 +160,7 @@ struct DiaryMainView: View {
                             }
                            
                         case .image(let framed):
-                            FramedImageComponent(framedImage: framed)
+                            FramedImageComponentView(framedImage: framed)
                                 .onTapGesture { // 이미지 탭 시 편집 진입
                                     viewModel.editingImageBlock = block
                                     FramedImageSelectList = [framed]
@@ -190,7 +204,7 @@ struct DiaryMainView: View {
                 }
             }
             .task {
-                viewModel.loadSavedDrawing(diaryId: diaryId)
+                viewModel.loadSavedDrawing(diaryId: diaryLogId)
             }
         }
         .disabled(showCanvas)
@@ -211,6 +225,6 @@ private struct PreviewWrapper: View {
     @State private var showCanvas = false
 
     var body: some View {
-        DiaryMainView(diaryId: 0)
+        DiaryMainView(diaryLogId: 0)
     }
 }

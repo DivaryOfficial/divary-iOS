@@ -85,7 +85,7 @@ struct ImageSelectView: View {
             TabView(selection: $currentIndex) {
                 ForEach(framedImages.indices, id: \.self) { index in
                     ZStack(alignment: .topTrailing) {
-                        FramedImageComponent(framedImage: framedImages[index])
+                        FramedImageComponentView(framedImage: framedImages[index])
                             .padding(.horizontal, 23)
                             .tag(index)
                         

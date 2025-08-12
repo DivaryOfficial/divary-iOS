@@ -11,6 +11,7 @@ import UniformTypeIdentifiers
 import RichTextKit
 import Observation
 import PencilKit
+import Combine
 
 @Observable
 class DiaryMainViewModel {
@@ -35,6 +36,87 @@ class DiaryMainViewModel {
     var savedDrawing: PKDrawing? = nil
     var drawingOffsetY: CGFloat = 0
     
+    // MARK: - API 연결
+    
+    private var injected = false
+    private var bag = Set<AnyCancellable>()
+    private var diaryService: LogDiaryService?
+    private var imageService: ImageService?
+    private var token: String?
+
+    func inject(diaryService: LogDiaryService, imageService: ImageService, token: String) {
+        guard !injected else { return }
+        self.diaryService = diaryService
+        self.imageService = imageService
+        self.token = token
+        injected = true
+    }
+    
+    // 1) 서버에서 읽기
+    func loadFromServer(logId: Int) {
+        guard let diaryService, let token else { return }
+        diaryService.getDiary(logId: logId, token: token)
+            .receive(on: DispatchQueue.main)
+            .sink { comp in
+                if case let .failure(err) = comp {
+                    print("❌ getDiary error:", err)
+                }
+            } receiveValue: { [weak self] dto in
+                self?.applyServerDiary(dto)
+            }
+            .store(in: &bag)
+    }
+
+    // 2) 응답 → 화면 상태 매핑
+    private func applyServerDiary(_ dto: DiaryResponseDTO) {
+        var newBlocks: [DiaryBlock] = []
+
+        for c in dto.contents {
+            switch c.type {
+            case .text:
+                if let base64 = c.rtfData,
+                   let data = Data(base64Encoded: base64),
+                   let rich = RichTextContent(rtfData: data) {
+                    newBlocks.append(DiaryBlock(content: .text(rich)))
+                } else {
+                    newBlocks.append(DiaryBlock(content: .text(RichTextContent())))
+                }
+
+            case .image:
+                if let img = c.imageData {
+                    let frame = mapFrameColor(from: img.frameColor)
+                    // 원격 이미지는 우선 placeholder로 만들고, 필요하면 비동기로 로드해서 교체
+                    let item = FramedImageContent(
+                        image: Image(systemName: "photo"),
+                        caption: img.caption,
+                        frameColor: frame,
+                        date: img.date
+                    )
+                    // 업로드/서버 경로 저장 (이후 저장 시 tempFilename으로 사용)
+                    item.tempFilename = img.tempFilename
+                    newBlocks.append(DiaryBlock(content: .image(item)))
+                }
+
+            case .drawing:
+                if let d = c.drawingData,
+                   let bin = Data(base64Encoded: d.base64),
+                   let pk = try? PKDrawing(data: bin) {
+                    self.savedDrawing = pk
+                    self.drawingOffsetY = d.scrollY
+                }
+            }
+        }
+
+        self.blocks = newBlocks
+    }
+
+    // frameColor: 서버는 "0","1",... 문자열 → 앱 enum으로 변환
+    private func mapFrameColor(from raw: String) -> FrameColor {
+        if let i = Int(raw), let mapped = FrameColor(rawValue: i) {
+            return mapped
+        }
+        return .origin
+    }
     // MARK: - 사진 처리
     func makeFramedDTOs(from items: [PhotosPickerItem]) async -> [FramedImageContent] {
         let indexed = Array(items.enumerated())

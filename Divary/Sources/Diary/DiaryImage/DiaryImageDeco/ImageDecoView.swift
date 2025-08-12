@@ -78,7 +78,7 @@ struct ImageDecoView: View {
     private var imageDecoSlideGroup: some View {
         TabView(selection: $currentIndex) {
             ForEach(framedImages.indices, id: \.self) { index in
-                FramedImageComponent(framedImage: framedImages[index], isEditing: true)
+                FramedImageComponentView(framedImage: framedImages[index], isEditing: true)
                     .padding(.horizontal, 23)
                     .tag(index)
                     .frame(maxWidth: .infinity)
