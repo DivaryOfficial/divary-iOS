@@ -65,10 +65,31 @@ struct DiaryMainView: View {
                 activeFooterBar
             }
         }
-        .fullScreenCover(isPresented: $navigateToImageSelectView) {
+        .fullScreenCover(
+            isPresented: Binding(
+                get: { navigateToImageSelectView },
+                set: { navigateToImageSelectView = $0
+                    if !$0 { viewModel.editingImageBlock = nil } } // 닫히면 편집 상태 해제
+            )
+        ) {
             NavigationStack {
-                ImageSelectView(viewModel: viewModel, framedImages: FramedImageSelectList)
-                    .background(Color.white)
+                ImageSelectView(
+                    viewModel: viewModel,
+                    framedImages: FramedImageSelectList,
+                    onComplete: { results in
+                        // 편집 모드: 단일 결과만 사용
+                        if let editing = viewModel.editingImageBlock, let edited = results.first {
+                            viewModel.updateImageBlock(id: editing.id, to: edited)
+                        } else {
+                            // 생성 모드: 여러 장 추가 가능
+                            viewModel.addImages(results)
+                        }
+                        // 닫기
+                        navigateToImageSelectView = false
+                        viewModel.editingImageBlock = nil
+                    }
+                )
+                .background(Color.white)
             }
         }
         .overlay(
@@ -124,8 +145,13 @@ struct DiaryMainView: View {
                                     }
                             }
                            
-                        case .image(let dto):
-                            FramedImageComponent(framedImage: dto)
+                        case .image(let framed):
+                            FramedImageComponent(framedImage: framed)
+                                .onTapGesture { // 이미지 탭 시 편집 진입
+                                    viewModel.editingImageBlock = block
+                                    FramedImageSelectList = [framed]
+                                    navigateToImageSelectView = true
+                                }
                         }
                     }
                     

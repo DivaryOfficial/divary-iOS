@@ -22,6 +22,9 @@ final class DIContainer: ObservableObject {
     let notificationService: NotificationService
     let logBookService: LogBookService
     let avatarService: AvatarService
+    let imageService: ImageService
+    let logDiaryService: LogDiaryService
+    let oceanCatalogService: OceanCatalogService
   
 
     init(router: AppRouter) {
@@ -32,6 +35,9 @@ final class DIContainer: ObservableObject {
         self.notificationService = NotificationService()
         self.logBookService = LogBookService()
         self.avatarService = AvatarService()
+        self.imageService = ImageService()
+        self.logDiaryService = LogDiaryService()
+        self.oceanCatalogService = OceanCatalogService()
        
     }
 }

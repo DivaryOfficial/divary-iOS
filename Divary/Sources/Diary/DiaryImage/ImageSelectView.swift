@@ -18,6 +18,8 @@ struct ImageSelectView: View {
     
     @State private var showImageDecoView = false
     
+    var onComplete: (([FramedImageContent]) -> Void)? = nil
+    
     var body: some View {
         VStack(spacing: 0) {
             imageSlideGroup
@@ -116,7 +118,12 @@ struct ImageSelectView: View {
             }
             
             Button(action: {
-                viewModel.addImages(framedImages)
+//                viewModel.addImages(framedImages)
+                if let onComplete = onComplete {
+                    onComplete(framedImages)   // ✅ 콜백 실행
+                } else {
+                    viewModel.addImages(framedImages) // 기존 로직
+                }
                 dismiss()
             }) {
                 FooterItem(image: Image(.upload), title: "업로드")

@@ -17,6 +17,7 @@ class DiaryMainViewModel {
     var blocks: [DiaryBlock] = []
     var selectedItems: [PhotosPickerItem] = []
     var editingTextBlock: DiaryBlock? = nil
+    var editingImageBlock: DiaryBlock? = nil
     var richTextContext = RichTextContext()
     var forceUIUpdate: Bool = false
     var currentTextAlignment: NSTextAlignment = .left
@@ -67,6 +68,14 @@ class DiaryMainViewModel {
         }
 
         return temp.compactMap { $0 } // 실패 항목 제거
+    }
+    
+    // 이미지 수정
+    func updateImageBlock(id: UUID, to newContent: FramedImageContent) {
+        guard let idx = blocks.firstIndex(where: { $0.id == id }) else { return }
+        blocks[idx].content = .image(newContent)
+        // 필요 시 리렌더 트리거
+        forceUIUpdate.toggle()
     }
     
     func extractPhotoDate(from item: PhotosPickerItem) async -> Date? {

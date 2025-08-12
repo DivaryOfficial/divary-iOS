@@ -10,7 +10,7 @@ import Moya
 import Combine
 import CombineMoya
 
-final class ImageUploadService {
+final class ImageService {
     private let provider = MoyaProvider<ImageAPI>()
 
     // OceanCatalogService 패턴: requestPublisher + extractData + manageThread
