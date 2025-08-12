@@ -10,8 +10,9 @@ import SwiftUI
 enum Route: Hashable {
     case login
     case main
-    case logBookMain(logBaseId: String)  // 추가
-    case characterView                   // 추가
+    case logBookMain(logBaseId: String)  
+    case CharacterViewWrapper
+    case Store(viewModel: CharacterViewModel)
 }
 
 class AppRouter: ObservableObject {

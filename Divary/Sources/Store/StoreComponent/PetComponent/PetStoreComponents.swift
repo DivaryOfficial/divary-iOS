@@ -131,7 +131,7 @@ struct PetSelectionCard: View {
             return "아기해마"
         case .axolotl:
             return "우파루파"
-        case .whale:
+        case .anglerFish:
             return "등불아귀"
         case .hermitCrab:
             return "소라게"

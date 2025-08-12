@@ -182,7 +182,7 @@ struct MainView: View {
                 .onEnded { value in
                     if value.translation.width < -50 {
                         // 라우터로 네비게이션
-                        container.router.push(.characterView)
+                        container.router.push(.CharacterViewWrapper)
                     }
                 }
         )

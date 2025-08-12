@@ -21,10 +21,14 @@ struct DivaryApp: App {
                             LoginWrapperView()
                         case .main:
                             MainView()
+                                .navigationBarBackButtonHidden(true)
                         case .logBookMain(let logBaseId):
                             LogBookMainView(logBaseId: logBaseId)
-                        case .characterView:
-                            CharacterView(isPetEditingMode: .constant(false))
+                        case .CharacterViewWrapper:
+                            CharacterViewWrapper()
+                        case .Store(let viewModel):
+                            StoreMainView(viewModel: viewModel)
+                                .navigationBarBackButtonHidden(true)
                         }
                     }
             }

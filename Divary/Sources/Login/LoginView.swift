@@ -38,7 +38,7 @@ struct LoginView: View {
                 VStack {
                     Spacer()
                     Button(action:{
-                        KeyChainManager.shared.save("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJoeWVvbmd5dTIwMDJAZ21haWwuY29tIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTc1NDY1NzcwNiwiZXhwIjoxNzU0NjcyMTA2fQ.Qb4KM1SdYQrfBXGw7CSniNMsnnCrs8B4n6NnF6H4UEc", forKey: KeyChainKey.accessToken)
+                        KeyChainManager.shared.save("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJoeWVvbmd5dTIwMDJAZ21haWwuY29tIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTc1NDkyOTY5OCwiZXhwIjoxNzU2MzY5Njk4fQ.PsAdWP1d_GYxw6sQjM4XS4DiaZ7QhRQ9uSSglIqeaSI", forKey: KeyChainKey.accessToken)
                         //container.router.push(.main)
                         container.router.navigateToMain()
                     }){
@@ -47,6 +47,7 @@ struct LoginView: View {
                     HStack {
                         Spacer()
                         GoogleSignInButtonView(action: viewModel.signInWithGoogle)
+                            .padding(18)
                         Spacer()
                     }
                     
