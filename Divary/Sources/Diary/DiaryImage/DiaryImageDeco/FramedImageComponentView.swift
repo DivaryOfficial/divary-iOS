@@ -81,13 +81,13 @@ struct FramedImageComponentView: View {
                     ProgressView()
                 case .failure(_):
                     // 실패/플레이스홀더
-                    framedImage.image.resizable().scaledToFill()
+                    Image(systemName: "photo").resizable().scaledToFill()
                 @unknown default:
-                    framedImage.image.resizable().scaledToFill()
+                    Image(systemName: "photo").resizable().scaledToFill()
                 }
             }
         } else {
-            framedImage.image.resizable().scaledToFill()
+            (framedImage.image ?? Image(systemName: "photo")).resizable().scaledToFill()
         }
     }
 }

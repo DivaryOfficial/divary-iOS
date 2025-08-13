@@ -65,12 +65,12 @@ struct DiaryMainView: View {
     }
     
     var body: some View {
-        NavigationStack {
+//        NavigationStack {
             VStack(spacing: 0) {
                 diaryMain
                 activeFooterBar
             }
-        }
+//        }
         .onAppear {
             if !didInject {
                 viewModel.inject(
@@ -79,6 +79,7 @@ struct DiaryMainView: View {
                     token: KeyChainManager.shared.read(forKey: "accessToken") ?? ""
                 )
                 viewModel.loadFromServer(logId: diaryLogId)
+                viewModel.recomputeCanSave()
                 didInject = true
             }
         }

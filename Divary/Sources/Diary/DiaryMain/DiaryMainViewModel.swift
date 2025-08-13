@@ -80,16 +80,21 @@ class DiaryMainViewModel {
             .sink { [weak self] comp in
                 if case let .failure(err) = comp {
                     print("❌ getDiary error:", err)
-                    self?.hasDiary = false // 생성 POST 으로
+                    Task { @MainActor in
+                        self?.hasDiary = false // 생성 POST 으로
+                    }
                 }
             } receiveValue: { [weak self] dto in
-                self?.applyServerDiary(dto)
-                self?.hasDiary = true // 수정 PUT 으로
+                Task { @MainActor in
+                    self?.applyServerDiary(dto)
+                    self?.hasDiary = true // 수정 PUT 으로
+                }
             }
             .store(in: &bag)
     }
 
     // 2) 응답 → 화면 상태 매핑
+    @MainActor
     private func applyServerDiary(_ dto: DiaryResponseDTO) {
         var newBlocks: [DiaryBlock] = []
 
@@ -118,6 +123,14 @@ class DiaryMainViewModel {
                     item.tempFilename = img.tempFilename
                     newBlocks.append(DiaryBlock(content: .image(item)))
                 }
+                
+                if let s = self.blocks.compactMap({
+                    if case let .image(f) = $0.content { return f.tempFilename } else { return nil }
+                }).first, let u = URL(string: s) {
+                    URLSession.shared.dataTask(with: u) { _, resp, err in
+                        print("🔎 IMG resp:", (resp as? HTTPURLResponse)?.statusCode ?? -1, "err:", err as Any)
+                    }.resume()
+                }
 
             case .drawing:
                 if let d = c.drawingData,
@@ -131,6 +144,10 @@ class DiaryMainViewModel {
 
         self.blocks = newBlocks
         self.recomputeCanSave()
+        // 🔎 디버그: 첫 이미지 URL 확인
+        if case let .image(f)? = self.blocks.first?.content {
+            print("🖼 tempFilename:", f.tempFilename ?? "nil")
+        }
         print("✅ blocks:", blocks.count, "drawing:", savedDrawing != nil)
     }
 
@@ -193,8 +210,10 @@ class DiaryMainViewModel {
             .sink { comp in
                 if case let .failure(err) = comp { print("❌ manualSave error:", err) }
             } receiveValue: { [weak self] dto in
-                self?.applyServerDiary(dto)  // 서버 정규화 반영
-                self?.hasDiary = true        // 최초 생성 후엔 항상 PUT
+                Task { @MainActor in
+                    self?.applyServerDiary(dto)  // 서버 정규화 반영
+                    self?.hasDiary = true        // 최초 생성 후엔 항상 PUT
+                }
                 print("✅ 저장 완료")
             }
             .store(in: &bag)

@@ -10,19 +10,21 @@ import SwiftUI
 
 final class FramedImageContent: ObservableObject, Identifiable {
     let id = UUID()
-    @Published var image: Image
+    @Published var image: Image? = Image(systemName: "photo")
     @Published var caption: String
     @Published var frameColor: FrameColor
     @Published var date: String
     
-    var originalData: Data?        // 포토에서 가져온 원본(업로드용)
-    var tempFilename: String?      // 업로드 결과 URL(서버가 요구)
+    @Published var originalData: Data?        // 포토에서 가져온 원본(업로드용)
+    @Published var tempFilename: String?      // 업로드 결과 URL(서버가 요구)
     
-    init(image: Image, caption: String, frameColor: FrameColor, date: String) {
+    init(image: Image? = Image(systemName: "photo"), caption: String, frameColor: FrameColor, date: String, tempFilename: String? = nil, originalData: Data? = nil) {
         self.image = image
         self.caption = caption
         self.frameColor = frameColor
         self.date = date
+        self.originalData = originalData
+        self.tempFilename = tempFilename
     }
 }
 
