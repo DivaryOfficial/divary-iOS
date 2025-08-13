@@ -8,7 +8,7 @@
 import Foundation
 import Moya
 
-/*
+
 enum APIError: Error {
     case resultNil
     case moya(error: MoyaError)
@@ -27,4 +27,4 @@ extension APIError: LocalizedError {
         }
     }
 }
-*/
+
