@@ -9,25 +9,35 @@ import SwiftUI
 
 struct MainTabbarView: View {
     @EnvironmentObject var container: DIContainer
-
+    
     var body: some View {
         VStack(spacing: 0) {
-            TabView(selection: $container.selectedTab) {
-                MainWrapperView()
-                    .tag("기록")
-                
-                ChatBotView()
-                    .tag("챗봇")
-                
-                OceanCatalogView()
-                    .tag("해양도감")
-                
-                // 마이페이지 뷰 추가 필요
-                MyPageView() // 또는 적절한 뷰
-                    .tag("My")
+            // 조건부 렌더링으로 뷰 전환
+            Group {
+                switch container.selectedTab {
+                case "기록":
+                    MainWrapperView()
+                        .gesture(
+                            DragGesture(minimumDistance: 30, coordinateSpace: .local)
+                                .onEnded { value in
+                                    if value.translation.width < -50 {
+                                        // 기록 탭에서만 캐릭터 뷰로 이동
+                                        container.router.push(.CharacterViewWrapper)
+                                    }
+                                }
+                        )
+                case "챗봇":
+                    ChatBotView()
+                case "해양도감":
+                    OceanCatalogView()
+                case "My":
+                    MyPageView()
+                default:
+                    MainWrapperView()
+                }
             }
-            .tabViewStyle(.page(indexDisplayMode: .never))
             
+            // 탭 버튼들
             HStack {
                 tabButton(title: "기록", selectedImage: "tabBarLogSelected", nonSelectedImage: "tabBarLogUnSelected")
                 tabButton(title: "챗봇", selectedImage: "tabBarChatBotSelected", nonSelectedImage: "tabBarChatBotUnSelected")
@@ -72,4 +82,5 @@ struct MyPageView: View {
 
 #Preview {
     MainTabbarView()
+        .environmentObject(DIContainer(router: AppRouter()))
 }

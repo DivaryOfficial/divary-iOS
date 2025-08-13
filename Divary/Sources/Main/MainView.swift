@@ -157,16 +157,6 @@ struct MainView: View {
                 DeletePopupView(isPresented: $showDeletePopup, deleteText: "삭제하시겠습니까?")
             }
         }
-        // 스와이프 제스처로 캐릭터(나의 바다) 이동
-        .gesture(
-            DragGesture(minimumDistance: 30, coordinateSpace: .local)
-                .onEnded { value in
-                    if value.translation.width < -50 {
-                        // 라우터로 네비게이션
-                        container.router.push(.CharacterViewWrapper)
-                    }
-                }
-        )
         .alert("오류", isPresented: .constant(errorMessage != nil)) {
             Button("확인") { errorMessage = nil }
         } message: {
