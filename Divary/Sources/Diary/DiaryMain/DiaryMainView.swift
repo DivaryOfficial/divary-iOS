@@ -174,7 +174,7 @@ struct DiaryMainView: View {
                                 }
                         }
                     }
-                    .id(UUID())
+//                    .id(UUID())
                     
                     Spacer(minLength: 100)
                 }
@@ -232,6 +232,7 @@ private struct PreviewWrapper: View {
     @State private var vm = DiaryMainViewModel()
 
     var body: some View {
-        DiaryMainView(viewModel: vm, diaryLogId: 50)
+        DiaryMainView(viewModel: vm, diaryLogId: 51)
+//        DiaryMainView(diaryLogId: 51)
     }
 }

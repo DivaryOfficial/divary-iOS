@@ -49,7 +49,9 @@ struct LogBookMainView: View {
                         dismiss()
                     },
                     isTempSaved: (selectedTab == .diary ? diaryVM.canSave : viewModel.isTempSaved),
+//                    isTempSaved: viewModel.isTempSaved,
                     onSaveTap: {
+//                        viewModel.handleSaveButtonTap()
                         if selectedTab == .diary {
                             diaryVM.manualSave() // 일기 저장
                         } else {
@@ -67,8 +69,8 @@ struct LogBookMainView: View {
                         LogBookPageView(viewModel: viewModel)
                     case .diary:
 //                        DiaryMainView(diaryLogId: 0)
-                        DiaryMainView(viewModel: diaryVM, diaryLogId: 51)
-//                        DiaryMainView()
+                        DiaryMainView(viewModel: diaryVM, diaryLogId: 52)
+//                        DiaryMainView(diaryLogId: 51)
                     }
                 }
             }

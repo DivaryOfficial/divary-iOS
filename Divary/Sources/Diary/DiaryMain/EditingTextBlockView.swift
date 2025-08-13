@@ -17,6 +17,8 @@ struct EditingTextBlockView: View {
     @State private var lastTextLength: Int = 0
     @State private var lastCursorPosition: Int = 0
     
+    @State private var cursorTimer: Timer?
+    
     var body: some View {
         RichTextEditor(
             text: Binding(
@@ -41,21 +43,37 @@ struct EditingTextBlockView: View {
         .task {
             setupTextViewAppearance()
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                $isRichTextEditorFocused.wrappedValue = true
-                viewModel.currentTextAlignment = viewModel.getCurrentTextAlignment()
-                
-                // 새 텍스트 블록용 초기 설정
-                setupInitialTypingAttributes()
+            // 1틱: 포커스/정렬 동기화
+            DispatchQueue.main.async {
+                self.$isRichTextEditorFocused.wrappedValue = true
+                self.viewModel.currentTextAlignment = self.viewModel.getCurrentTextAlignment()
+
+                // 2틱: 타이핑 속성 적용
+                DispatchQueue.main.async {
+                    self.setupInitialTypingAttributes()
+                }
             }
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+//                $isRichTextEditorFocused.wrappedValue = true
+//                viewModel.currentTextAlignment = viewModel.getCurrentTextAlignment()
+//                
+//                // 새 텍스트 블록용 초기 설정
+//                setupInitialTypingAttributes()
+//            }
         }
         .onChange(of: isRichTextEditorFocused) { _, newValue in
             if newValue {
-                setupInitialTypingAttributes()
-                startCursorMonitoring()
+                // 편집 진입 시: UI 관련은 다음 틱
+                DispatchQueue.main.async {
+                    setupInitialTypingAttributes()
+                    startCursorMonitoring()
+                }
             } else {
-                viewModel.saveCurrentEditingBlock()
-                stopCursorMonitoring()
+                // 편집 종료 시: 모델 저장/정리도 다음 틱
+                DispatchQueue.main.async {
+                    viewModel.saveCurrentEditingBlock()
+                    stopCursorMonitoring()
+                }
             }
         }
         .onChange(of: viewModel.forceUIUpdate) { _, _ in
@@ -82,8 +100,11 @@ struct EditingTextBlockView: View {
             handleTextInput(newValue, currentText: currentText)
         } else {
             // 텍스트 삭제
-            viewModel.richTextContext.setAttributedString(to: newValue)
-            viewModel.handleTextChange(isDeleteOperation: true)
+            // 동기 변이 금지 → 다음 틱으로 미룸
+            DispatchQueue.main.async {
+                self.viewModel.richTextContext.setAttributedString(to: newValue)
+                self.viewModel.handleTextChange(isDeleteOperation: true)
+            }
         }
         
         lastTextLength = newLength
@@ -91,7 +112,9 @@ struct EditingTextBlockView: View {
     
     private func handleTextInput(_ newValue: NSAttributedString, currentText: NSAttributedString) {
         guard let textView = findTextView() else {
-            viewModel.richTextContext.setAttributedString(to: newValue)
+            DispatchQueue.main.async {
+                self.viewModel.richTextContext.setAttributedString(to: newValue)
+            }
             return
         }
         
@@ -99,7 +122,9 @@ struct EditingTextBlockView: View {
         
         // 선택된 텍스트가 있으면 기본 처리
         if selectedRange.length > 0 {
-            viewModel.richTextContext.setAttributedString(to: newValue)
+            DispatchQueue.main.async {
+                self.viewModel.richTextContext.setAttributedString(to: newValue)
+            }
             return
         }
         
@@ -123,9 +148,9 @@ struct EditingTextBlockView: View {
         
         // 업데이트 적용
         isInternalUpdate = true
-        viewModel.richTextContext.setAttributedString(to: mutableNewValue)
         
         DispatchQueue.main.async {
+            self.viewModel.richTextContext.setAttributedString(to: mutableNewValue)
             self.isInternalUpdate = false
             self.setupTypingAttributes()
         }
@@ -224,7 +249,8 @@ struct EditingTextBlockView: View {
     
     private func startCursorMonitoring() {
         // 커서 위치 변경 모니터링
-        Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
+        cursorTimer?.invalidate()
+        cursorTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
             guard isRichTextEditorFocused else {
                 timer.invalidate()
                 return
@@ -234,14 +260,19 @@ struct EditingTextBlockView: View {
                 let currentPosition = textView.selectedRange.location
                 if currentPosition != lastCursorPosition && textView.selectedRange.length == 0 {
                     lastCursorPosition = currentPosition
-                    viewModel.handleCursorPositionChange()
+                    DispatchQueue.main.async {
+                        self.viewModel.handleCursorPositionChange()
+                    }
                 }
             }
         }
+        RunLoop.main.add(cursorTimer!, forMode: .common)
     }
     
     private func stopCursorMonitoring() {
         // 타이머는 자동으로 해제됨 (isRichTextEditorFocused 체크로)
+        cursorTimer?.invalidate()
+        cursorTimer = nil
     }
     
     // MARK: - Setup

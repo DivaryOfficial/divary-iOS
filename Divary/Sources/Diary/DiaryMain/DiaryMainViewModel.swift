@@ -13,7 +13,7 @@ import Observation
 import PencilKit
 import Combine
 
-@Observable
+@Observable /*@MainActor*/
 class DiaryMainViewModel {
     var blocks: [DiaryBlock] = []
     var selectedItems: [PhotosPickerItem] = []
