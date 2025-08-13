@@ -13,7 +13,7 @@ struct EditingTextBlockView: View {
     let content: RichTextContent
     
     // 한글 입력 상태 추적
-    @State private var isInternalUpdate: Bool = false
+    @State private var isInternalUpdate: Bool = true
     @State private var lastTextLength: Int = 0
     @State private var lastCursorPosition: Int = 0
     
@@ -42,24 +42,16 @@ struct EditingTextBlockView: View {
         .background(Color.clear)
         .task {
             setupTextViewAppearance()
+            viewModel.richTextContext.setAttributedString(to: content.text)
             
-            // 1틱: 포커스/정렬 동기화
-            DispatchQueue.main.async {
-                self.$isRichTextEditorFocused.wrappedValue = true
-                self.viewModel.currentTextAlignment = self.viewModel.getCurrentTextAlignment()
-
-                // 2틱: 타이핑 속성 적용
-                DispatchQueue.main.async {
-                    self.setupInitialTypingAttributes()
-                }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                isInternalUpdate = false
+                $isRichTextEditorFocused.wrappedValue = true
+                viewModel.currentTextAlignment = viewModel.getCurrentTextAlignment()
+                
+                // 새 텍스트 블록용 초기 설정
+                setupInitialTypingAttributes()
             }
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-//                $isRichTextEditorFocused.wrappedValue = true
-//                viewModel.currentTextAlignment = viewModel.getCurrentTextAlignment()
-//                
-//                // 새 텍스트 블록용 초기 설정
-//                setupInitialTypingAttributes()
-//            }
         }
         .onChange(of: isRichTextEditorFocused) { _, newValue in
             if newValue {
@@ -92,8 +84,8 @@ struct EditingTextBlockView: View {
         let oldLength = currentText.length
         let lengthDifference = newLength - oldLength
         
-        // 삭제 작업 감지
-        let isDeleteOperation = lengthDifference < 0
+        // 삭제 작업 감지 (-> 이거 왜 사용 안하고있다고 경고뜸)
+//        let isDeleteOperation = lengthDifference < 0
         
         if lengthDifference >= 0 {
             // 텍스트 추가 또는 한글 조합

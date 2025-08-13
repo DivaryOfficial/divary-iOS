@@ -62,6 +62,11 @@ struct ImageSelectView: View {
                 )
             }
         }
+        .onAppear {
+            for (i, f) in framedImages.enumerated() {
+                print("[\(i)] hasLocal=\(f.originalData != nil) temp=\(f.tempFilename ?? "nil") imageNil=\(f.image == nil)")
+            }
+        }
 
     }
     

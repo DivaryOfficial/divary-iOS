@@ -72,17 +72,19 @@ struct FramedImageComponentView: View {
     
     @ViewBuilder
     private var photoView: some View {
-        if let urlStr = framedImage.tempFilename, let url = URL(string: urlStr), !urlStr.isEmpty {
+        // 1) 로컬 원본이 있으면 그걸 최우선 (새로 선택/교체한 경우)
+        if let _ = framedImage.originalData, let local = framedImage.image {
+            local.resizable().scaledToFill()
+        }
+        // 2) 그 외엔 서버/임시 URL
+        else if let urlStr = framedImage.tempFilename, let url = URL(string: urlStr), !urlStr.isEmpty {
             AsyncImage(url: url) { phase in
                 switch phase {
                 case .success(let image):
                     image.resizable().scaledToFill()
                 case .empty:
                     ProgressView()
-                case .failure(_):
-                    // 실패/플레이스홀더
-                    Image(systemName: "photo").resizable().scaledToFill()
-                @unknown default:
+                default:
                     Image(systemName: "photo").resizable().scaledToFill()
                 }
             }

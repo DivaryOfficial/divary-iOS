@@ -45,15 +45,29 @@ class DiaryMainViewModel {
     // 저장
     private var currentLogId: Int = 0
     private var hasDiary: Bool = false // 서버에 일기 존재 여부(POST/PUT 분기)
+    
+    // 기존 이미지(파일 교체 안 함)는 temp가 비어 있어도 저장 허용
     var canSave: Bool {
         let imagesReady = blocks.allSatisfy { block in
             if case .image(let f) = block.content {
-                return (f.tempFilename?.isEmpty == false)
+                let hasTemp = (f.tempFilename?.isEmpty == false)
+                let isExistingImage = (f.originalData == nil)   // 서버에서 불러온 기존 이미지
+                return hasTemp || isExistingImage
             }
             return true
         }
         return imagesReady && diaryService != nil && (token?.isEmpty == false)
     }
+
+//    var canSave: Bool {
+//        let imagesReady = blocks.allSatisfy { block in
+//            if case .image(let f) = block.content {
+//                return (f.tempFilename?.isEmpty == false)
+//            }
+//            return true
+//        }
+//        return imagesReady && diaryService != nil && (token?.isEmpty == false)
+//    }
     
     // 저장버튼 뷰에 내려주기 위한 파생 값
     var canSavePublic: Bool = false
@@ -192,6 +206,12 @@ class DiaryMainViewModel {
     }
 
     func manualSave() {
+        // 편집 중인 텍스트를 먼저 커밋
+        if editingTextBlock != nil {
+            saveCurrentEditingBlock()
+            // 선택: 커밋까지 같이
+             commitEditingTextBlock()
+        }
         guard canSave else {
             print("⚠️ 저장 불가: 이미지 업로드 미완료 또는 토큰/서비스 없음")
             return
@@ -258,10 +278,47 @@ class DiaryMainViewModel {
     // 이미지 수정
     func updateImageBlock(id: UUID, to newContent: FramedImageContent) {
         guard let idx = blocks.firstIndex(where: { $0.id == id }) else { return }
+
+        // 교체된 콘텐츠 반영
         blocks[idx].content = .image(newContent)
-        // 필요 시 리렌더 트리거
+
+        // 새 파일로 바꾼 경우엔 임시 URL 다시 발급 필요
+        let isReplacingFile = (newContent.originalData != nil)
+
+        if isReplacingFile {
+            // 업로드 전에는 비워두고 저장버튼 비활성화 유도
+            newContent.tempFilename = nil
+            recomputeCanSave()
+
+            if let data = newContent.originalData, let token, let imageService {
+                imageService.uploadTemp(files: [data], token: token)
+                    .map { $0.first?.fileUrl ?? "" }
+                    .receive(on: DispatchQueue.main)
+                    .sink { comp in
+                        if case let .failure(err) = comp {
+                            print("❌ uploadTemp (edit) error:", err)
+                        }
+                    } receiveValue: { [weak self] url in
+                        newContent.tempFilename = url
+                        self?.recomputeCanSave()
+                        self?.forceUIUpdate.toggle()
+                    }
+                    .store(in: &bag)
+            }
+        } else {
+            // 캡션/프레임만 바꾼 경우
+            recomputeCanSave()
+        }
+
+        // 필요 시 리렌더
         forceUIUpdate.toggle()
     }
+//    func updateImageBlock(id: UUID, to newContent: FramedImageContent) {
+//        guard let idx = blocks.firstIndex(where: { $0.id == id }) else { return }
+//        blocks[idx].content = .image(newContent)
+//        // 필요 시 리렌더 트리거
+//        forceUIUpdate.toggle()
+//    }
     
     func extractPhotoDate(from item: PhotosPickerItem) async -> Date? {
         do {
@@ -361,17 +418,22 @@ class DiaryMainViewModel {
         }
     }
 
-    
     func startEditing(_ block: DiaryBlock) {
-        if case .text(let content) = block.content {
-            editingTextBlock = block
-            richTextContext = content.context
-            content.context.setAttributedString(to: content.text)
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                self.syncStyleFromCurrentPosition()
-                self.forceUIUpdate.toggle()
-            }
+        guard case .text(let content) = block.content else { return }
+
+        // 1) 편집 컨텍스트에 현재 텍스트를 먼저 주입
+        content.context.setAttributedString(to: content.text)
+
+        // 2) 뷰모델 컨텍스트 교체
+        self.richTextContext = content.context
+
+        // 3) 마지막에 편집 모드 플래그 (뷰 스위치 트리거)
+        self.editingTextBlock = block
+
+        // 4) (선택) 스타일 동기화/포커스
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.syncStyleFromCurrentPosition()
+            self.forceUIUpdate.toggle()
         }
     }
 

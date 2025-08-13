@@ -139,8 +139,6 @@ struct DiaryMainView: View {
 //                }.ignoresSafeArea()
                 
                 LazyVStack(spacing: 8) {
-                    let _ = print("🧱 rendering blocks:", viewModel.blocks.map(\.id))
-                    
                     ForEach(viewModel.blocks) { block in
                         switch block.content {
                         case .text(let content):
@@ -198,7 +196,8 @@ struct DiaryMainView: View {
             // MARK: - 사진 띄우기
             .onChange(of: viewModel.selectedItems) { _, newItems in
                 guard !newItems.isEmpty else { return }
-                Task {
+//                Task {
+                Task { @MainActor in
                     let dtos = await viewModel.makeFramedDTOs(from: newItems)
                     
                     await MainActor.run {

@@ -63,7 +63,9 @@ extension FramedImageContent {
             image: self.image,
             caption: self.caption,
             frameColor: self.frameColor,
-            date: self.date
+            date: self.date,
+            tempFilename: self.tempFilename,
+            originalData: self.originalData
         )
     }
 }
