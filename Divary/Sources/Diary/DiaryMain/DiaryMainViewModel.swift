@@ -802,4 +802,12 @@ class DiaryMainViewModel {
             self.drawingOffsetY = 0
         }
     }
+    
+    func commitDrawingFromCanvas(_ drawing: PKDrawing, offsetY: CGFloat, autosave: Bool = false) {
+        self.savedDrawing = drawing
+        self.drawingOffsetY = offsetY
+        if autosave, canSave { // 이미지 임시URL 등 조건 충족 시에만 즉시 저장
+            manualSave()
+        }
+    }
 }

@@ -113,11 +113,14 @@ struct DiaryMainView: View {
         .overlay(
             showCanvas ? DiaryCanvasView(
                 viewModel: DiaryCanvasViewModel(showCanvas: $showCanvas, diaryId: diaryLogId),
-                offsetY: currentOffsetY,
+//                offsetY: currentOffsetY,
+                offsetY: viewModel.drawingOffsetY,
+                initialDrawing: viewModel.savedDrawing,
                 onSaved: { drawing, offset in
                     // 메인 뷰 즉시 업데이트
-                    viewModel.savedDrawing = drawing
-                    viewModel.drawingOffsetY = offset
+//                    viewModel.savedDrawing = drawing
+//                    viewModel.drawingOffsetY = offset
+                    viewModel.commitDrawingFromCanvas(drawing, offsetY: offset, autosave: false)
                 }
             )
             .ignoresSafeArea(.container, edges: .bottom)
@@ -210,7 +213,10 @@ struct DiaryMainView: View {
                 }
             }
             .task {
-                viewModel.loadSavedDrawing(diaryId: diaryLogId)
+//                viewModel.loadSavedDrawing(diaryId: diaryLogId)
+                if viewModel.savedDrawing == nil {
+                    viewModel.loadSavedDrawing(diaryId: diaryLogId)
+                }
             }
         }
         .disabled(showCanvas)
