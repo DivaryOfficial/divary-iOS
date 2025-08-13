@@ -83,7 +83,7 @@ struct MainView: View {
             }
 
             yearSelectbar
-
+            
             // 새 로그 생성 플로우
             if newLogViewModel.showNewLogCreation {
                 NewLogCreationView(
@@ -91,15 +91,13 @@ struct MainView: View {
                     onNavigateToExistingLog: { logBaseId in
                         container.router.push(.logBookMain(logBaseId: logBaseId))
                         newLogViewModel.resetData()
-                        newLogViewModel.showNewLogCreation = false  // ✅ 오버레이 닫기
                     },
                     onCreateNewLog: {
                         newLogViewModel.createNewLog { newLogBaseId in
                             DispatchQueue.main.async {
                                 if let logBaseId = newLogBaseId, !logBaseId.isEmpty {
                                     container.router.push(.logBookMain(logBaseId: logBaseId))
-                                    newLogViewModel.resetData()                 // ✅
-                                    newLogViewModel.showNewLogCreation = false  // ✅
+                                    newLogViewModel.resetData()
                                     refreshLogData()
                                 }
                             }
@@ -150,7 +148,7 @@ struct MainView: View {
                     return "\(formatter.string(from: log.date)) [\(log.title)] 을/를\n삭제하시겠습니까?"
                 }()
 
-                DeletePopupView(
+                DelPop(
                     isPresented: $showDeletePopup,
                     deleteText: text,
                     onConfirm: { deleteSelectedLog() }

@@ -1,21 +1,21 @@
 //
-//  DeletePopupView.swift
+//  LogDeletePopupView.swift
 //  Divary
 //
-//  Created by 김나영 on 7/7/25.
 //
 
 import SwiftUI
 
-struct DeletePopupView: View {
+struct DelPop: View {
     @Environment(\.dismiss) private var dismiss
     @Binding var isPresented: Bool
     var deleteText: String
+    var onConfirm: (() -> Void)? = nil  // 추가: 삭제 확인 콜백
     
-//    func onDelete() {
-//        isPresented = false
-//    }
-    var onDelete: () -> Void = { }
+    func onDelete() {
+        onConfirm?()  // 삭제 확인 콜백 실행
+        isPresented = false
+    }
 
     var body: some View {
         ZStack {
@@ -69,6 +69,9 @@ struct DeletePopupView: View {
 }
 
 #Preview {
-//    DeletePopupView(viewModel: DiaryImageSelectViewModel(), deleteText: "지금 돌아가면 변경 내용이 모두 삭제됩니다.")
-//    DeletePopupView(isPresented: $isPresented, deleteText: "지금 돌아가면 변경 내용이 모두 삭제됩니다.")
+    @Previewable @State var isPresented = true
+    DeletePopupView(
+        isPresented: $isPresented,
+        deleteText: "지금 돌아가면 변경 내용이 모두 삭제됩니다."
+    )
 }

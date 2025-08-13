@@ -38,9 +38,9 @@ struct LoginView: View {
                 VStack {
                     Spacer()
                     Button(action:{
-                        KeyChainManager.shared.save("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJoeWVvbmd5dTIwMDJAZ21haWwuY29tIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTc1NDkyOTY5OCwiZXhwIjoxNzU2MzY5Njk4fQ.PsAdWP1d_GYxw6sQjM4XS4DiaZ7QhRQ9uSSglIqeaSI", forKey: KeyChainKey.accessToken)
-                        //container.router.push(.main)
-                        container.router.navigateToMain()
+                        KeyChainManager.shared.save("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzc2RvZGVuQGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX1VTRVIiLCJpYXQiOjE3NTQ5NzM3MzUsImV4cCI6MTc1NjQxMzczNX0.1O8bvpULHOOEVJbRkNUViOx3ugkiAhCmOGqAyZ-OnIs", forKey: KeyChainKey.accessToken)
+                        container.router.push(.main)
+                        
                     }){
                         Text("테스트 계정")
                     }

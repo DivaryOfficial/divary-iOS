@@ -182,8 +182,6 @@ struct ExistingLogConfirmView: View {
     }
 }
 
-// TitleAndIconSelectionView는 기존 구현을 그대로 사용하되,
-// onComplete에서 viewModel.createNewLog()를 호출하도록 수정 필요
 
 #Preview {
     @Previewable @State var viewModel = NewLogCreationViewModel()

@@ -53,23 +53,24 @@ struct LogBookResponse {
 }
 
 enum IconType: String, CaseIterable, Identifiable {
+    
     case plus // 추가 버튼
-    case clownfish = "CLOWNFISH"
-    case butterflyfish = "BUTTERFLYFISH"
-    case octopus = "OCTOPUS"
-    case anchovy = "ANCHOVY"
-    case seaSlug = "SEASLUG"
-    case turtle = "TURTLE"
-    case blowfish = "BLOWFISH"
-    case dolphin = "DOLPHIN"
-    case longhornCowfish = "LONGHORNCOWFISH"
-    case combJelly = "COMBJELLY"
-    case shrimp = "SHRIMP"
-    case crab = "CRAB"
-    case lionfish = "LIONFISH"
-    case squid = "SQUID"
-    case clam = "CLAM"
-    case starfish = "STARFISH"
+    case clownfish = "CLOWNFISH"            // clownfish → 흰동가리
+    case butterflyfish = "BUTTERFLYFISH"    // butterflyfish → 나비고기
+    case octopus = "OCTOPUS"                // octopus → 문어
+    case cleanerWrasse = "CLEANER_WRASSE"   // anchovy(이미지) → 청줄놀래기
+    case blackRockfish = "BLACK_ROCKFISH"   // blowfish(이미지) → 쏨배기
+    case seaHare = "SEA_HARE"               // clam(이미지) → 군소
+    case pufferfish = "PUFFERFISH"          // blowfish(이미지) → 복어
+    case stripedBeakfish = "STRIPED_BEAKFISH" // longhornCowfish(이미지) → 돌돔
+    case nudibranch = "NUDIBRANCH"          // seaSlug → 갯민숭달팽이
+    case moonJellyfish = "MOON_JELLYFISH"   // combJelly → 보름달물해파리
+    case yellowtailScad = "YELLOWTAIL_SCAD" // dolphin(이미지) → 줄전갱이
+    case mantisShrimp = "MANTIS_SHRIMP"     // shrimp → 끄덕새우
+    case seaTurtle = "SEA_TURTLE"           // turtle → 바다거북
+    case starfish = "STARFISH"              // starfish → 불가사리
+    case redLionfish = "RED_LIONFISH"       // lionfish → 쏠배감펭
+    case seaUrchin = "SEA_URCHIN"           // squid(이미지) → 성게
 
     var id: String { self.rawValue }
 
@@ -83,32 +84,32 @@ enum IconType: String, CaseIterable, Identifiable {
             return Image("butterflyfish")
         case .octopus:
             return Image("octopus")
-        case .anchovy:
-            return Image("anchovy")
-        case .seaSlug:
-            return Image("seaSlug")
-        case .turtle:
-            return Image("turtle")
-        case .blowfish:
-            return Image("blowfish")
-        case .dolphin:
-            return Image("dolphin")
-        case .longhornCowfish:
-            return Image("longhornCowfish")
-        case .combJelly:
-            return Image("combJelly")
-        case .shrimp:
-            return Image("shrimp")
-        case .crab:
-            return Image("crab")
-        case .lionfish:
-            return Image("lionfish")
-        case .squid:
-            return Image("squid")
-        case .clam:
-            return Image("clam")
+        case .cleanerWrasse:
+            return Image("anchovy") // 청줄놀래기
+        case .blackRockfish:
+            return Image("blowfish") // 쏨배기
+        case .seaHare:
+            return Image("clam") // 군소
+        case .pufferfish:
+            return Image("blowfish") // 복어
+        case .stripedBeakfish:
+            return Image("longhornCowfish") // 돌돔
+        case .nudibranch:
+            return Image("seaSlug") // 갯민숭달팽이
+        case .moonJellyfish:
+            return Image("combJelly") // 보름달물해파리
+        case .yellowtailScad:
+            return Image("dolphin") // 줄전갱이
+        case .mantisShrimp:
+            return Image("shrimp") // 끄덕새우
+        case .seaTurtle:
+            return Image("turtle") // 바다거북
         case .starfish:
-            return Image("starfish")
+            return Image("starfish") // 불가사리
+        case .redLionfish:
+            return Image("lionfish") // 쏠배감펭
+        case .seaUrchin:
+            return Image("squid") // 성게
         }
     }
 }

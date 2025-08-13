@@ -105,132 +105,118 @@ struct EnvironmentInputView: View {
         }
     }
     
-    
-    
-    
-    
     @Binding var environment: DiveEnvironment
     
     var body: some View {
-        //GeometryReader { geometry in
-            ZStack {
-//                Color.gray.opacity(0.8)
-//                    .edgesIgnoringSafeArea(.all)
-                
-                VStack{
-                    ScrollView {
-                        LazyVStack(alignment: .leading, spacing: 20) {
-                            
-                            // 날씨
-                            Text("날씨")
-                                .font(Font.omyu.regular(size: 20))
-                            
-                            IconButtonRow(
-                                options: ["맑음", "약간 흐림", "흐림", "비"],
-                                selected: environment.weather,
-                                imageProvider: weatherImage(for:),
-                                onSelect: { environment.weather = $0 },
-                                size: 30
-                            )
-                            
-                            // 바람
-                            Text("바람")
-                                .font(Font.omyu.regular(size: 20))
-                            
-                            IconButtonRow(
-                                options: ["약풍", "중풍", "강풍", "폭풍"],
-                                selected: environment.wind,
-                                imageProvider: windImage(for:),
-                                onSelect: { environment.wind = $0 },
-                                size: 30,
-                                isImage: true
-                            )
-                            
-                            // 조류
-                            Text("조류")
-                                .font(Font.omyu.regular(size: 20))
-                            
-                            IconButtonRow(
-                                options: ["없음", "미류", "중류", "격류"],
-                                selected: environment.current,
-                                imageProvider: currentImage(for:),
-                                onSelect: { environment.current = $0 },
-                                size: 30
-                            )
-                            
-                            // 파도
-                            Text("파도")
-                                .font(Font.omyu.regular(size: 20))
-                            
-                            IconButtonRow(
-                                options: ["약함", "중간", "강함"],
-                                selected: environment.wave,
-                                imageProvider: waveImage(for:),
-                                onSelect: { environment.wave = $0 },
-                                size: 45,
-                                isImage: true
-                            )
-                            
-                            // 기온
-                            TemperatureInputField(
-                                title: "기온",
-                                placeholder: "0",
-                                unit: "°C",
-                                value: $environment.airTemp
-                            )
-                            
-                            // 체감 온도
-                            IconButtonRow(
-                                options: ["추움", "보통", "더움"],
-                                selected: environment.feelsLike,
-                                imageProvider: feelsLikeTempImage(for:),
-                                onSelect: { environment.feelsLike = $0 },
-                                size: 45,
-                                isImage: true
-                            )
-                            
-                            
-                            //수온
-                            TemperatureInputField(
-                                title: "수온",
-                                placeholder: "0",
-                                unit: "°C",
-                                value: $environment.waterTemp
-                            )
-                            
-                            // 시야
-                            Text("시야")
-                                .font(Font.omyu.regular(size: 20))
-                            
-                            IconButtonRow(
-                                options: ["좋음", "보통", "나쁨"],
-                                selected: environment.visibility,
-                                imageProvider: visibilityImage(for:),
-                                onSelect: { environment.visibility = $0 },
-                                size: 45
-                            )
-                            
-                        }
+        ZStack {
+            VStack{
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: 20) {
                         
+                        // 날씨
+                        Text("날씨")
+                            .font(Font.omyu.regular(size: 20))
+                        
+                        IconButtonRow(
+                            options: WeatherType.allDisplayNames,
+                            selected: environment.weather,
+                            imageProvider: weatherImage(for:),
+                            onSelect: { environment.weather = $0 },
+                            size: 30
+                        )
+                        
+                        // 바람
+                        Text("바람")
+                            .font(Font.omyu.regular(size: 20))
+                        
+                        IconButtonRow(
+                            options: WindType.allDisplayNames,
+                            selected: environment.wind,
+                            imageProvider: windImage(for:),
+                            onSelect: { environment.wind = $0 },
+                            size: 30,
+                            isImage: true
+                        )
+                        
+                        // 조류
+                        Text("조류")
+                            .font(Font.omyu.regular(size: 20))
+                        
+                        IconButtonRow(
+                            options: CurrentType.allDisplayNames,
+                            selected: environment.current,
+                            imageProvider: currentImage(for:),
+                            onSelect: { environment.current = $0 },
+                            size: 30
+                        )
+                        
+                        // 파도
+                        Text("파도")
+                            .font(Font.omyu.regular(size: 20))
+                        
+                        IconButtonRow(
+                            options: WaveType.allDisplayNames,
+                            selected: environment.wave,
+                            imageProvider: waveImage(for:),
+                            onSelect: { environment.wave = $0 },
+                            size: 45,
+                            isImage: true
+                        )
+                        
+                        // 기온
+                        TemperatureInputField(
+                            title: "기온",
+                            placeholder: "0",
+                            unit: "°C",
+                            value: $environment.airTemp
+                        )
+                        
+                        // 체감 온도
+                        IconButtonRow(
+                            options: FeelsLikeType.allDisplayNames,
+                            selected: environment.feelsLike,
+                            imageProvider: feelsLikeTempImage(for:),
+                            onSelect: { environment.feelsLike = $0 },
+                            size: 45,
+                            isImage: true
+                        )
+                        
+                        //수온
+                        TemperatureInputField(
+                            title: "수온",
+                            placeholder: "0",
+                            unit: "°C",
+                            value: $environment.waterTemp
+                        )
+                        
+                        // 시야
+                        Text("시야")
+                            .font(Font.omyu.regular(size: 20))
+                        
+                        IconButtonRow(
+                            options: VisibilityType.allDisplayNames,
+                            selected: environment.visibility,
+                            imageProvider: visibilityImage(for:),
+                            onSelect: { environment.visibility = $0 },
+                            size: 45
+                        )
                         
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 22)
-                    .padding(.bottom, 22)
-                    .background(
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(Color(.white))
-                            .stroke(Color.grayscale_g300)
-                    )
-                    //.frame(maxHeight: geometry.size.height * 0.64)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.horizontal)
-                    
                 }
+                .padding(.horizontal, 16)
+                .padding(.top, 22)
+                .padding(.bottom, 22)
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(Color(.white))
+                        .stroke(Color.grayscale_g300)
+                )
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.horizontal)
             }
         }
     }
-//}
+}
 
 struct IconButtonRow: View {
     let options: [String]
@@ -281,7 +267,6 @@ struct IconButtonRow: View {
                     .foregroundStyle(selected == option ? Color.primary_sea_blue : Color.grayscale_g400)
                 }
                 .padding(.horizontal, 3)
-                
             }
         }
     }
@@ -332,10 +317,6 @@ struct TemperatureInputField: View {
         }
     }
 }
-
-
-
-
 
 #Preview {
     @Previewable @State var previewEnv = DiveEnvironment(

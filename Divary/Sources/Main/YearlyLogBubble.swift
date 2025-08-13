@@ -70,34 +70,35 @@ struct YearlyLogBubble: View {
     }
 }
 
-#Preview {
-    @Previewable @State var showDeletePopup = false
-    
-    // 프리뷰용 샘플 데이터
-    let sampleLogBases = [
-        LogBookBase(
-            id: "1",
-            logBaseInfoId: 1,
-            date: Calendar.current.date(from: DateComponents(year: 2025, month: 8, day: 1))!,
-            title: "제주도 다이빙",
-            iconType: .clownfish,
-            accumulation: 3,
-            logBooks: []
-        ),
-        LogBookBase(
-            id: "2",
-            logBaseInfoId: 2,
-            date: Calendar.current.date(from: DateComponents(year: 2025, month: 7, day: 15))!,
-            title: "울릉도 다이빙",
-            iconType: .turtle,
-            accumulation: 2,
-            logBooks: []
-        )
-    ]
-    
-    YearlyLogBubble(
-        selectedYear: 2025,
-        logBases: sampleLogBases,
-        showDeletePopup: $showDeletePopup
-    )
-}
+//
+//#Preview {
+//    @Previewable @State var showDeletePopup = false
+//    
+//    // 프리뷰용 샘플 데이터
+//    let sampleLogBases = [
+//        LogBookBase(
+//            id: "1",
+//            logBaseInfoId: 1,
+//            date: Calendar.current.date(from: DateComponents(year: 2025, month: 8, day: 1))!,
+//            title: "제주도 다이빙",
+//            iconType: .clownfish,
+//            accumulation: 3,
+//            logBooks: []
+//        ),
+//        LogBookBase(
+//            id: "2",
+//            logBaseInfoId: 2,
+//            date: Calendar.current.date(from: DateComponents(year: 2025, month: 7, day: 15))!,
+//            title: "울릉도 다이빙",
+//            iconType: .turtle,
+//            accumulation: 2,
+//            logBooks: []
+//        )
+//    ]
+//    
+//    YearlyLogBubble(
+//        selectedYear: 2025,
+//        logBases: sampleLogBases,
+//        showDeletePopup: $showDeletePopup
+//    )
+//}

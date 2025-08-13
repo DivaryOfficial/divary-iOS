@@ -81,7 +81,7 @@ final class LogBookService {
                 // 에러 응답 처리
                 do {
                     let errorResponse = try JSONDecoder().decode(APIErrorResponse.self, from: response.data)
-                    let error = APIError(
+                    let error = LogBookAPIError(
                         code: errorResponse.code,
                         message: errorResponse.message,
                         statusCode: response.statusCode
@@ -89,7 +89,7 @@ final class LogBookService {
                     completion(.failure(error))
                 } catch {
                     // 에러 응답 파싱도 실패한 경우
-                    let fallbackError = APIError(
+                    let fallbackError = LogBookAPIError(
                         code: "UNKNOWN_ERROR",
                         message: "서버 오류가 발생했습니다. (Status: \(response.statusCode))",
                         statusCode: response.statusCode
@@ -123,7 +123,7 @@ struct APIErrorResponse: Codable {
     let path: String?
 }
 
-struct APIError: Error, LocalizedError {
+struct LogBookAPIError: Error, LocalizedError {
     let code: String
     let message: String
     let statusCode: Int

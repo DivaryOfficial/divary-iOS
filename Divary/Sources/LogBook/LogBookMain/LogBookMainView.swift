@@ -58,11 +58,13 @@ struct LogBookMainView: View {
 
                     if selectedTab == .logbook {
                         LogBookPageView(viewModel: viewModel)
-                    } else {
-                        DiaryMainView()
-                    //case .diary:
-                       // DiaryMainView(diaryId: 0)
-                      //DiaryMainView()
+                    }
+                    else {
+                       // DiaryMainView()
+                        if selectedTab == .diary {
+                            DiaryMainView(diaryId: 0)
+                            //DiaryMainView()
+                        }
                     }
             }
 
