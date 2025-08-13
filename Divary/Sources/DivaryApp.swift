@@ -20,12 +20,15 @@ struct DivaryApp: App {
                         case .login:
                             LoginWrapperView()
                         case .main:
-                            MainWrapperView()    // <- 아래 #3에서 추가할 래퍼
-                        case .logBookMain(let id):
-                            LogBookMainView(logBaseId: id)
+                            MainView()
                                 .navigationBarBackButtonHidden(true)
-                        case .character(let isEditing):
-                            CharacterView(isPetEditingMode: .constant(isEditing))
+                        case .logBookMain(let logBaseId):
+                            LogBookMainView(logBaseId: logBaseId)
+                        case .CharacterViewWrapper:
+                            CharacterViewWrapper()
+                        case .Store(let viewModel):
+                            StoreMainView(viewModel: viewModel)
+                                .navigationBarBackButtonHidden(true)
                         case .notifications:
                             NotificationView()
                         }

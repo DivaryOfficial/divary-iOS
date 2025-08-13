@@ -52,13 +52,36 @@ extension CharacterCustomization {
     }
 }
 
-
 enum BackgroundType: String, CaseIterable, Decodable {
     case pinkLake = "BackgroundPinkLake"
     case coralForest = "BackgroundCoralForest"
-    case shipWreck = "BackgroundShipWreck"
     case emerald = "BackgroundEmerald"
+    case deepSea = "BackgroundDeepSea"
     case none = "none"
+    
+    // 서버 enum과의 매핑을 위한 computed property
+    var serverValue: String {
+        switch self {
+        case .pinkLake: return "PINK_LAKE"
+        case .coralForest: return "CORAL_FOREST"
+        case .emerald: return "EMERALD"
+        case .deepSea: return "DEEP_SEA"
+        case .none: return "CORAL_FOREST" // 기본값
+        }
+    }
+    
+    // 서버 값으로부터 클라이언트 enum 생성
+    static func fromServerValue(_ serverValue: String?) -> BackgroundType {
+        guard let serverValue = serverValue else { return .coralForest }
+        
+        switch serverValue {
+        case "PINK_LAKE": return .pinkLake
+        case "CORAL_FOREST": return .coralForest
+        case "EMERALD": return .emerald
+        case "DEEP_SEA": return .deepSea
+        default: return .coralForest
+        }
+    }
 }
 
 enum TankType: String, CaseIterable, Decodable {
@@ -68,6 +91,31 @@ enum TankType: String, CaseIterable, Decodable {
     case white = "TankWhite"
     case blue = "TankBlue"
     case pink = "TankPink"
+    
+    // 서버 enum과의 매핑
+    var serverValue: String? {
+        switch self {
+        case .none: return nil
+        case .yellow: return "YELLOW"
+        case .green: return "GREEN"
+        case .white: return "WHITE"
+        case .blue: return "BLUE"
+        case .pink: return "PINK"
+        }
+    }
+    
+    static func fromServerValue(_ serverValue: String?) -> TankType {
+        guard let serverValue = serverValue else { return .none }
+        
+        switch serverValue {
+        case "YELLOW": return .yellow
+        case "GREEN": return .green
+        case "WHITE": return .white
+        case "BLUE": return .blue
+        case "PINK": return .pink
+        default: return .none
+        }
+    }
 }
 
 enum PinType: String, CaseIterable, Decodable {
@@ -77,6 +125,30 @@ enum PinType: String, CaseIterable, Decodable {
     case white = "PinWhite"
     case yellow = "PinYellow"
     case green = "PinGreen"
+    
+    var serverValue: String? {
+        switch self {
+        case .none: return nil
+        case .pink: return "PINK"
+        case .blue: return "BLUE"
+        case .white: return "WHITE"
+        case .yellow: return "YELLOW"
+        case .green: return "GREEN"
+        }
+    }
+    
+    static func fromServerValue(_ serverValue: String?) -> PinType {
+        guard let serverValue = serverValue else { return .none }
+        
+        switch serverValue {
+        case "PINK": return .pink
+        case "BLUE": return .blue
+        case "WHITE": return .white
+        case "YELLOW": return .yellow
+        case "GREEN": return .green
+        default: return .none
+        }
+    }
 }
 
 enum RegulatorType: String, CaseIterable, Decodable {
@@ -86,15 +158,64 @@ enum RegulatorType: String, CaseIterable, Decodable {
     case pink = "RegulatorPink"
     case blue = "RegulatorBlue"
     case yellow = "RegulatorYellow"
+    
+    var serverValue: String? {
+        switch self {
+        case .none: return nil
+        case .green: return "GREEN"
+        case .white: return "WHITE"
+        case .pink: return "PINK"
+        case .blue: return "BLUE"
+        case .yellow: return "YELLOW"
+        }
+    }
+    
+    static func fromServerValue(_ serverValue: String?) -> RegulatorType {
+        guard let serverValue = serverValue else { return .none }
+        
+        switch serverValue {
+        case "GREEN": return .green
+        case "WHITE": return .white
+        case "PINK": return .pink
+        case "BLUE": return .blue
+        case "YELLOW": return .yellow
+        default: return .none
+        }
+    }
 }
 
 enum CheekType: String, CaseIterable, Decodable {
-    case pastelPink = "CheekPastelPink"
+    case none = "none"
     case salmon = "CheekSalmon"
     case orange = "CheekOrange"
     case coral = "CheekCoral"
-    case pink = "CheekPink"
-    case none = "none"
+    case pink = "CheekPeach"
+    case peach = "CheekPastelPink"
+    
+    
+    var serverValue: String? {
+        switch self {
+        case .none: return nil
+        case .salmon: return "SALMON"
+        case .orange: return "ORANGE"
+        case .coral: return "CORAL"
+        case .pink: return "PINK"
+        case .peach: return "PEACH"
+        }
+    }
+    
+    static func fromServerValue(_ serverValue: String?) -> CheekType {
+        guard let serverValue = serverValue else { return .none }
+        
+        switch serverValue {
+        case "PEACH": return .peach
+        case "CORAL": return .coral
+        case "SALMON": return .salmon
+        case "ORANGE": return .orange
+        case "PINK": return .pink
+        default: return .pink  // MARK: - 수정
+        }
+    }
 }
 
 enum MaskType: String, CaseIterable, Decodable {
@@ -104,27 +225,98 @@ enum MaskType: String, CaseIterable, Decodable {
     case green = "MaskGreen"
     case white = "MaskWhite"
     case yellow = "MaskYellow"
+    
+    var serverValue: String? {
+        switch self {
+        case .none: return nil
+        case .pink: return "PINK"
+        case .blue: return "BLUE"
+        case .green: return "GREEN"
+        case .white: return "WHITE"
+        case .yellow: return "GOLD"
+        }
+    }
+    
+    static func fromServerValue(_ serverValue: String?) -> MaskType {
+        guard let serverValue = serverValue else { return .none }
+        
+        switch serverValue {
+        case "WHITE": return .white
+        case "GOLD": return .yellow
+        case "GREEN": return .green
+        case "PINK": return .pink
+        case "BLUE": return .blue
+        case "YELLOW": return .yellow
+        default: return .none
+        }
+    }
 }
 
 enum CharacterBodyType: String, CaseIterable, Decodable {
     case ivory = "CharacterBodyIvory"
-    case yellow = "CharacterBodyYellow"
+    case cream = "CharacterBodyYellow"
     case pink = "CharacterBodyPink"
     case brown = "CharacterBodyBrown"
     case gray = "CharacterBodyGray"
     case none = "none"
+    
+    var serverValue: String {
+        switch self {
+        case .ivory: return "IVORY"
+        case .cream: return "CREAM"
+        case .pink: return "PINK"
+        case .brown: return "BROWN"
+        case .gray: return "GRAY"
+        case .none: return "IVORY" // 기본값
+        }
+    }
+    
+    static func fromServerValue(_ serverValue: String?) -> CharacterBodyType {
+        guard let serverValue = serverValue else { return .ivory }
+        
+        switch serverValue {
+        case "IVORY": return .ivory
+        case "CREAM": return .cream
+        case "PINK": return .pink
+        case "BROWN": return .brown
+        case "GRAY": return .gray
+        default: return .ivory
+        }
+    }
 }
 
 enum SpeechBubbleType: String, CaseIterable, Decodable {
     case none = "none"
-    case rectangle = "SpeechBubbleRectangle"
+    case roundSquare = "SpeechBubbleRectangle"
     case rectangleTail = "rectangleTail"
     case roundedTail = "roundedTail"
     case thought = "SpeechBubbleThought"
     
+    var serverValue: String? {
+        switch self {
+        case .none: return nil
+        case .roundSquare: return "ROUND_SQUARE"
+        case .rectangleTail: return "ROUND_SQUARE_TAILED"
+        case .roundedTail: return "OVAL_TAILED"
+        case .thought: return "OVAL_CIRCLE_TAILED"
+        }
+    }
+    
+    static func fromServerValue(_ serverValue: String?) -> SpeechBubbleType {
+        guard let serverValue = serverValue else { return .none }
+        
+        switch serverValue {
+        case "ROUND_SQUARE": return .roundSquare
+        case "ROUND_SQUARE_TAILED": return .rectangleTail
+        case "OVAL_TAILED": return .roundedTail
+        case "OVAL_CIRCLE_TAILED": return .thought
+        default: return .none
+        }
+    }
+    
     func view(text: String, binding: Binding<String>? = nil) -> some View {
         switch self {
-        case .rectangle:
+        case .roundSquare:
             return AnyView(RectangleSpeechBubble(text: text))
         case .rectangleTail:
             return AnyView(RectangleTailSpeechBubbleView(text: text))
@@ -139,7 +331,7 @@ enum SpeechBubbleType: String, CaseIterable, Decodable {
     
     func inputView(text: Binding<String>) -> some View {
         switch self {
-        case .rectangle:
+        case .roundSquare:
             return AnyView(RectangleSpeechBubbleInput(text: text))
         case .rectangleTail:
             return AnyView(RectangleTailSpeechBubbleInputView(text: text))
@@ -157,7 +349,7 @@ extension SpeechBubbleType {
     var defaultImageName: String {
         switch self {
         case .none: return "noneDefault"
-        case .rectangle: return "RectangleSpeechBubbleDefault"
+        case .roundSquare: return "RectangleSpeechBubbleDefault"
         case .rectangleTail: return "RectangleTailSpeechBubbleDefault"
         case .roundedTail: return "RoundedTailSpeechBubbleDefault"
         case .thought: return "ThoughtSpeechBubbleDefault"
@@ -167,15 +359,13 @@ extension SpeechBubbleType {
     var clickedImageName: String {
         switch self {
         case .none: return "noneClicked"
-        case .rectangle: return "RectangleSpeechBubbleClicked"
+        case .roundSquare: return "RectangleSpeechBubbleClicked"
         case .rectangleTail: return "RectangleTailSpeechBubbleClicked"
         case .roundedTail: return "RoundedTailSpeechBubbleClicked"
         case .thought: return "ThoughtSpeechBubbleClicked"
         }
     }
 }
-
-
 
 struct PetCustomization: Decodable {
     let type: PetType
@@ -222,7 +412,29 @@ enum PetType: String, CaseIterable, Decodable {
     case hermitCrab = "PetHermitCrab"
     case seahorse = "PetSeahorse"
     case axolotl = "PetAxolotl"
-    case whale = "PetWhale"
+    case anglerFish = "PetAnglerFish"
     
-   
+    var serverValue: String? {
+        switch self {
+        case .none: return nil
+        case .hermitCrab: return "HERMIT_CRAB"
+        case .seahorse: return "SEAHORSE"
+        case .axolotl: return "AXOLOTL"
+        case .anglerFish: return "ANGLERFISH"
+        case .expectedGray, .expectedBlue: return "COMING_SOON"
+        }
+    }
+    
+    static func fromServerValue(_ serverValue: String?) -> PetType {
+        guard let serverValue = serverValue else { return .none }
+        
+        switch serverValue {
+        case "HERMIT_CRAB": return .hermitCrab
+        case "SEAHORSE": return .seahorse
+        case "AXOLOTL": return .axolotl
+        case "anglerFish": return .anglerFish
+        case "COMING_SOON": return .expectedGray
+        default: return .none
+        }
+    }
 }

@@ -10,8 +10,9 @@ import SwiftUI
 enum Route: Hashable {
     case login
     case main
-    case logBookMain(logBaseId: String)
-    case character(isEditing: Bool = false)
+    case logBookMain(logBaseId: String)  
+    case CharacterViewWrapper
+    case Store(viewModel: CharacterViewModel)
     case notifications
 }
 
