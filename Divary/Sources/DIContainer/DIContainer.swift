@@ -23,6 +23,8 @@ final class DIContainer: ObservableObject {
     let logBookService: LogBookService
     let avatarService: AvatarService
   
+    //메인 탭바 변수
+    @Published var selectedTab: String = "기록"
 
     init(router: AppRouter) {
         self.router = router
