@@ -17,8 +17,11 @@ struct DiaryMainView: View {
     @Environment(\.diContainer) private var di
     @State private var didInject = false
     
+//    @State private var viewModel = DiaryMainViewModel()
+    @Bindable var viewModel: DiaryMainViewModel
+    
     let diaryLogId: Int
-    @State private var viewModel = DiaryMainViewModel()
+    
     @FocusState private var isRichTextEditorFocused: Bool
     @State private var footerBarType: DiaryFooterBarType = .main
     
@@ -135,6 +138,8 @@ struct DiaryMainView: View {
 //                }.ignoresSafeArea()
                 
                 LazyVStack(spacing: 8) {
+                    let _ = print("🧱 rendering blocks:", viewModel.blocks.map(\.id))
+                    
                     ForEach(viewModel.blocks) { block in
                         switch block.content {
                         case .text(let content):
@@ -168,6 +173,7 @@ struct DiaryMainView: View {
                                 }
                         }
                     }
+                    .id(UUID())
                     
                     Spacer(minLength: 100)
                 }
@@ -222,9 +228,9 @@ struct DiaryMainView: View {
 }
 
 private struct PreviewWrapper: View {
-    @State private var showCanvas = false
+    @State private var vm = DiaryMainViewModel()
 
     var body: some View {
-        DiaryMainView(diaryLogId: 0)
+        DiaryMainView(viewModel: vm, diaryLogId: 50)
     }
 }

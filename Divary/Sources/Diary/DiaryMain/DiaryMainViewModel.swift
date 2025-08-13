@@ -36,33 +36,55 @@ class DiaryMainViewModel {
     var savedDrawing: PKDrawing? = nil
     var drawingOffsetY: CGFloat = 0
     
-    // MARK: - API 연결
-    
     private var injected = false
     private var bag = Set<AnyCancellable>()
     private var diaryService: LogDiaryService?
     private var imageService: ImageService?
     private var token: String?
+    
+    // 저장
+    private var currentLogId: Int = 0
+    private var hasDiary: Bool = false // 서버에 일기 존재 여부(POST/PUT 분기)
+    var canSave: Bool {
+        let imagesReady = blocks.allSatisfy { block in
+            if case .image(let f) = block.content {
+                return (f.tempFilename?.isEmpty == false)
+            }
+            return true
+        }
+        return imagesReady && diaryService != nil && (token?.isEmpty == false)
+    }
+    
+    // 저장버튼 뷰에 내려주기 위한 파생 값
+    var canSavePublic: Bool = false
+    func recomputeCanSave() {
+        canSavePublic = canSave
+    }
 
+    // MARK: - API 연결
     func inject(diaryService: LogDiaryService, imageService: ImageService, token: String) {
         guard !injected else { return }
         self.diaryService = diaryService
         self.imageService = imageService
         self.token = token
         injected = true
+        recomputeCanSave()
     }
     
     // 1) 서버에서 읽기
     func loadFromServer(logId: Int) {
+        self.currentLogId = logId
         guard let diaryService, let token else { return }
         diaryService.getDiary(logId: logId, token: token)
             .receive(on: DispatchQueue.main)
-            .sink { comp in
+            .sink { [weak self] comp in
                 if case let .failure(err) = comp {
                     print("❌ getDiary error:", err)
+                    self?.hasDiary = false // 생성 POST 으로
                 }
             } receiveValue: { [weak self] dto in
                 self?.applyServerDiary(dto)
+                self?.hasDiary = true // 수정 PUT 으로
             }
             .store(in: &bag)
     }
@@ -108,15 +130,76 @@ class DiaryMainViewModel {
         }
 
         self.blocks = newBlocks
+        self.recomputeCanSave()
+        print("✅ blocks:", blocks.count, "drawing:", savedDrawing != nil)
     }
 
     // frameColor: 서버는 "0","1",... 문자열 → 앱 enum으로 변환
     private func mapFrameColor(from raw: String) -> FrameColor {
-        if let i = Int(raw), let mapped = FrameColor(rawValue: i) {
-            return mapped
-        }
-        return .origin
+//        if let i = Int(raw), let mapped = FrameColor(rawValue: i) {
+//            return mapped
+//        }
+//        return .origin
+        (Int(raw).flatMap { FrameColor(rawValue: $0) }) ?? .origin
     }
+    
+    private func makeRequestBody() -> DiaryRequestDTO {
+        var items: [DiaryContentDTO] = []
+
+        for block in blocks {
+            switch block.content {
+            case .text(let rich):
+                let base64 = (rich.rtfData ?? Data()).base64EncodedString()
+                items.append(.init(type: .text, rtfData: base64, imageData: nil, drawingData: nil))
+
+            case .image(let f):
+                // tempFilename 필수! (이미지 업로드 끝난 후 저장해야 함)
+                guard let temp = f.tempFilename, !temp.isEmpty else { continue }
+                let img = DiaryImageDataDTO(
+                    tempFilename: temp,
+                    caption: f.caption,
+                    frameColor: String(f.frameColor.rawValue),
+                    date: f.date
+                )
+                items.append(.init(type: .image, rtfData: nil, imageData: img, drawingData: nil))
+            }
+        }
+
+        if let d = savedDrawing {
+            let base64 = d.dataRepresentation().base64EncodedString()
+            let draw = DiaryDrawingDataDTO(base64: base64, scrollY: drawingOffsetY)
+            items.append(.init(type: .drawing, rtfData: nil, imageData: nil, drawingData: draw))
+        }
+
+        return DiaryRequestDTO(contents: items)
+    }
+
+    func manualSave() {
+        guard canSave else {
+            print("⚠️ 저장 불가: 이미지 업로드 미완료 또는 토큰/서비스 없음")
+            return
+        }
+        guard let diaryService, let token else { return }
+
+        let body = makeRequestBody()
+        let isUpdate = hasDiary   // ← 이 값은 2단계에서 설정함
+
+        let pub = isUpdate
+            ? diaryService.updateDiary(logId: currentLogId, body: body, token: token)
+            : diaryService.createDiary(logId: currentLogId, body: body, token: token)
+
+        pub
+            .receive(on: DispatchQueue.main)
+            .sink { comp in
+                if case let .failure(err) = comp { print("❌ manualSave error:", err) }
+            } receiveValue: { [weak self] dto in
+                self?.applyServerDiary(dto)  // 서버 정규화 반영
+                self?.hasDiary = true        // 최초 생성 후엔 항상 PUT
+                print("✅ 저장 완료")
+            }
+            .store(in: &bag)
+    }
+
     // MARK: - 사진 처리
     func makeFramedDTOs(from items: [PhotosPickerItem]) async -> [FramedImageContent] {
         let indexed = Array(items.enumerated())
@@ -140,6 +223,7 @@ class DiaryMainViewModel {
                         frameColor: .origin,
                         date: dateString
                     )
+                    dto.originalData = data
                     return (idx, dto)
                 }
             }
@@ -235,8 +319,26 @@ class DiaryMainViewModel {
 
     func addImages(_ images: [FramedImageContent]) {
         images.forEach { image in
+            // 화면에 먼저 추가
             let block = DiaryBlock(content: .image(image))
             blocks.append(block)
+            
+            // 업로드
+            if let data = image.originalData, let token, let imageService {
+                imageService.uploadTemp(files: [data], token: token)
+                    .map { $0.first?.fileUrl ?? "" }
+                    .receive(on: DispatchQueue.main)
+                    .sink { comp in
+                        if case let .failure(err) = comp { print("❌ uploadTemp error:", err) }
+                    } receiveValue: { [weak self] url in
+                        image.tempFilename = url
+                        self?.recomputeCanSave() // 업로드 후 재계산
+                    }
+                    .store(in: &bag)
+            }
+            else {
+                recomputeCanSave() // 블록만 추가했을 때도
+            }
         }
     }
 

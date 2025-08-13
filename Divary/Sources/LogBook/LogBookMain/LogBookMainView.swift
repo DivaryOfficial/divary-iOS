@@ -16,6 +16,8 @@ enum DiveLogTab: String, CaseIterable {
 struct LogBookMainView: View {
     @State var selectedTab: DiveLogTab = .logbook
     @State var viewModel: LogBookMainViewModel
+    @State private var diaryVM = DiaryMainViewModel()
+    
     @State private var isCalendarPresented = false
     @State private var showCanvas = false
     
@@ -46,10 +48,13 @@ struct LogBookMainView: View {
                     onBackTap: {
                         dismiss()
                     },
-                    isTempSaved: viewModel.isTempSaved,
+                    isTempSaved: (selectedTab == .diary ? diaryVM.canSave : viewModel.isTempSaved),
                     onSaveTap: {
-                        // 저장 버튼 클릭 처리
-                        viewModel.handleSaveButtonTap()
+                        if selectedTab == .diary {
+                            diaryVM.manualSave() // 일기 저장
+                        } else {
+                            viewModel.handleSaveButtonTap() // 로그북 저장
+                        }
                     }
                 )
                 .zIndex(1)
@@ -61,7 +66,8 @@ struct LogBookMainView: View {
                     case .logbook:
                         LogBookPageView(viewModel: viewModel)
                     case .diary:
-                        DiaryMainView(diaryLogId: 0)
+//                        DiaryMainView(diaryLogId: 0)
+                        DiaryMainView(viewModel: diaryVM, diaryLogId: 50)
 //                        DiaryMainView()
                     }
                 }

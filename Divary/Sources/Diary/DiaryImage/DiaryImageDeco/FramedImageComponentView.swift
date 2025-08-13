@@ -72,7 +72,7 @@ struct FramedImageComponentView: View {
     
     @ViewBuilder
     private var photoView: some View {
-        if let urlStr = framedImage.tempFilename, let url = URL(string: urlStr) {
+        if let urlStr = framedImage.tempFilename, let url = URL(string: urlStr), !urlStr.isEmpty {
             AsyncImage(url: url) { phase in
                 switch phase {
                 case .success(let image):
