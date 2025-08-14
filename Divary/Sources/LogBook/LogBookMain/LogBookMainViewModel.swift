@@ -250,6 +250,13 @@ class LogBookMainViewModel {
                     self.serverData[index] = self.copyDiveLogData(self.diveLogData[index])
                 }
                 
+                // ✅ 이 한 줄만 추가!
+                LogBookDataManager.shared.updateLogBookSaveStatusInCache(
+                    logBaseInfoId: self.logBaseInfoId,
+                    logBookId: logBookId,
+                    saveStatus: saveStatus
+                )
+                
                 // 서버 저장 상태 업데이트
                 if saveStatus == .temp {
                     self.isTempSaved = true

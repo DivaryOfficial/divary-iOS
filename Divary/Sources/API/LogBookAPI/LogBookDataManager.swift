@@ -361,6 +361,30 @@ class LogBookDataManager {
         }
     }
     
-    // MARK: - ❌ 사용하지 않는 메서드 (기존 createLogBaseOnly는 더 이상 사용하지 않음)
-    // createLogBase가 이미 빈 로그북 1개만 생성하므로 별도 메서드 불필요
+    // MARK: - 캐시 업데이트 (빨간점 표시용)
+    func updateLogBookSaveStatusInCache(logBaseInfoId: Int, logBookId: Int, saveStatus: SaveStatus) {
+        // 캐시에서 해당 logBase 찾기
+        if let logBaseIndex = logBookBases.firstIndex(where: { $0.logBaseInfoId == logBaseInfoId }) {
+            var logBase = logBookBases[logBaseIndex]
+            
+            // 해당 logBook의 saveStatus 업데이트
+            if let logBookIndex = logBase.logBooks.firstIndex(where: { $0.logBookId == logBookId }) {
+                logBase.logBooks[logBookIndex].saveStatus = saveStatus
+                
+                // 업데이트된 logBooks로 새로운 LogBookBase 생성 (struct라서 재생성 필요)
+                logBookBases[logBaseIndex] = LogBookBase(
+                    id: logBase.id,
+                    logBaseInfoId: logBase.logBaseInfoId,
+                    date: logBase.date,
+                    title: logBase.title,
+                    iconType: logBase.iconType,
+                    accumulation: logBase.accumulation,
+                    logBooks: logBase.logBooks
+                )
+                
+                print("✅ 캐시 업데이트 완료: logBookId=\(logBookId), saveStatus=\(saveStatus.rawValue)")
+                print("   hasTempSave: \(logBookBases[logBaseIndex].hasTempSave)")
+            }
+        }
+    }
 }

@@ -50,11 +50,9 @@ struct LogBookMainView: View {
                     selectedDate: $viewModel.selectedDate,
                     isCalendarPresented: $isCalendarPresented,
                     onBackTap: {
-                        // 라우터 pop으로 일원화
                         container.router.pop()
                     },
-                    // ✅ 프론트엔드 임시저장 상태로 변경
-                    isTempSaved: viewModel.hasFrontendChanges,
+                    isTempSaved: viewModel.isTempSaved,
                     onSaveTap: {
                         viewModel.handleSaveButtonTap(currentPageIndex: currentPageIndex)
                     }
