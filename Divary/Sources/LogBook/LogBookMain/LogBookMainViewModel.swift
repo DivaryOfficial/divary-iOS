@@ -300,6 +300,8 @@ class LogBookMainViewModel {
                 }
             }
         }
+        
+        hasFrontendTempSave = Array(repeating: false, count: diveLogData.count)
     }
     
     // ✅ 임시저장하기 (SavePop에서 호출 - 서버에 TEMP로 저장)
@@ -324,6 +326,8 @@ class LogBookMainViewModel {
                 }
             }
         }
+        
+        hasFrontendTempSave = Array(repeating: false, count: diveLogData.count)
     }
     
     // MARK: - 기존 메서드들 (UI 호환성 유지)
