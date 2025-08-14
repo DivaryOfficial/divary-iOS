@@ -46,7 +46,8 @@ struct LogBookMainView: View {
                         // 라우터 pop으로 일원화
                         container.router.pop()
                     },
-                    isTempSaved: viewModel.isTempSaved,
+                    // ✅ 프론트엔드 임시저장 상태로 변경
+                    isTempSaved: viewModel.hasFrontendChanges,
                     onSaveTap: {
                         viewModel.handleSaveButtonTap()
                     }

@@ -15,6 +15,9 @@ class LogBookMainViewModel {
     var logBaseInfoId: Int
     var logBaseTitle: String = ""
     
+    // ✅ 서버에서 받은 총 다이빙 횟수 추가
+    var totalDiveCount: Int = 0
+    
     // ✅ 단순화된 임시저장 구조
     var isTempSaved: Bool = false                    // 서버 저장 상태 표시용
     var frontendTempData: [DiveLogData] = []        // 프론트엔드 임시저장 데이터만 유지
@@ -31,8 +34,11 @@ class LogBookMainViewModel {
     private(set) var isLoading = false
     private(set) var errorMessage: String?
     
-    var logCount: Int {
-        diveLogData.filter { !$0.isEmpty }.count
+    // ✅ 기존 logCount는 제거하고 totalDiveCount 사용
+    
+    // ✅ 프론트엔드 임시저장이 있는지 확인하는 계산 프로퍼티 추가
+    var hasFrontendChanges: Bool {
+        return hasFrontendTempSave.contains(true)
     }
     
     // 계산된 프로퍼티명을 다른 이름으로 변경
@@ -48,6 +54,7 @@ class LogBookMainViewModel {
          self.logBaseInfoId = 0
          self.diveLogData = [] // 빈 배열로 시작
          self.logBaseTitle = "다이빙 로그북"
+         self.totalDiveCount = 0 // ✅ 추가
          self.frontendTempData = []
          self.hasFrontendTempSave = []
          self.serverData = []
@@ -58,6 +65,7 @@ class LogBookMainViewModel {
          self.logBaseId = logBaseId
          self.logBaseInfoId = Int(logBaseId) ?? 0
          self.diveLogData = [] // 빈 배열로 시작
+         self.totalDiveCount = 0 // ✅ 추가
          self.frontendTempData = []
          self.hasFrontendTempSave = []
          self.serverData = []
@@ -91,6 +99,7 @@ class LogBookMainViewModel {
     private func updateFromLogBase(_ logBase: LogBookBase) {
         selectedDate = logBase.date
         logBaseTitle = logBase.title
+        totalDiveCount = logBase.accumulation // ✅ 서버에서 받은 accumulation 값 저장
         
         // 로그북 데이터 업데이트 (동적 개수)
         diveLogData = []
@@ -114,7 +123,7 @@ class LogBookMainViewModel {
         frontendTempData = diveLogData.map { copyDiveLogData($0) }
         hasFrontendTempSave = Array(repeating: false, count: diveLogData.count)
         
-        print("✅ LogBase 업데이트 완료 - 로그북 개수: \(diveLogData.count)")
+        print("✅ LogBase 업데이트 완료 - 로그북 개수: \(diveLogData.count), 총 다이빙 횟수: \(totalDiveCount)")
     }
     
     // ✅ 새 로그북 추가 (슬라이드 시 사용 - DataManager의 addNewLogBook 호출)

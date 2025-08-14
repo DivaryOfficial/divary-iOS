@@ -88,20 +88,3 @@ struct TitleEditPopup: View {
     }
 }
 
-#Preview {
-    @Previewable @State var isPresented = true
-    @Previewable @State var title = "기존 제목"
-    
-    TitleEditPopup(
-        isPresented: $isPresented,
-        title: $title,
-        onSave: {
-            print("저장: \(title)")
-            isPresented = false
-        },
-        onCancel: {
-            print("취소")
-            isPresented = false
-        }
-    )
-}
