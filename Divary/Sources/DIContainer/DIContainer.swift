@@ -22,6 +22,9 @@ final class DIContainer: ObservableObject {
     let notificationService: NotificationService
     let logBookService: LogBookService
     let avatarService: AvatarService
+    let imageService: ImageService
+    let logDiaryService: LogDiaryService
+    let oceanCatalogService: OceanCatalogService
   
     //메인 탭바 변수
     @Published var selectedTab: String = "기록"
@@ -34,6 +37,9 @@ final class DIContainer: ObservableObject {
         self.notificationService = NotificationService()
         self.logBookService = LogBookService.shared
         self.avatarService = AvatarService()
+        self.imageService = ImageService()
+        self.logDiaryService = LogDiaryService()
+        self.oceanCatalogService = OceanCatalogService()
        
     }
 }

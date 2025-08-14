@@ -8,15 +8,16 @@
 import Foundation
 import SwiftUI
 
-struct FramedImageComponent: View {
-    @ObservedObject var framedImage: FramedImageDTO
+struct FramedImageComponentView: View {
+    @ObservedObject var framedImage: FramedImageContent
     var isEditing: Bool = false
     
     var body: some View {
         Group {
             if framedImage.frameColor == .origin {
-                framedImage.image
-                    .resizable()
+//                framedImage.image
+//                    .resizable()
+                photoView
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 300)
                     .cornerRadius(8)
@@ -27,14 +28,20 @@ struct FramedImageComponent: View {
                         .fill(framedImage.frameColor.frameColor)
                         .shadow(color: .black.opacity(0.25), radius: 2, x: 0, y: 4)
                     VStack {
-                        framedImage.image
-                            .resizable()
-                            .scaledToFill()
+                        photoView
                             .frame(width: 230, height: 230)
                             .clipped()
                             .cornerRadius(8)
                             .padding(.top, 15)
                             .padding(.bottom, 16)
+//                        framedImage.image
+//                            .resizable()
+//                            .scaledToFill()
+//                            .frame(width: 230, height: 230)
+//                            .clipped()
+//                            .cornerRadius(8)
+//                            .padding(.top, 15)
+//                            .padding(.bottom, 16)
                         
                         VStack(alignment: .leading, spacing: 7) {
                             if isEditing {
@@ -62,11 +69,34 @@ struct FramedImageComponent: View {
         }
         .padding(.vertical, 12)
     }
+    
+    @ViewBuilder
+    private var photoView: some View {
+        // 1) 로컬 원본이 있으면 그걸 최우선 (새로 선택/교체한 경우)
+        if let _ = framedImage.originalData, let local = framedImage.image {
+            local.resizable().scaledToFill()
+        }
+        // 2) 그 외엔 서버/임시 URL
+        else if let urlStr = framedImage.tempFilename, let url = URL(string: urlStr), !urlStr.isEmpty {
+            AsyncImage(url: url) { phase in
+                switch phase {
+                case .success(let image):
+                    image.resizable().scaledToFill()
+                case .empty:
+                    ProgressView()
+                default:
+                    Image(systemName: "photo").resizable().scaledToFill()
+                }
+            }
+        } else {
+            (framedImage.image ?? Image(systemName: "photo")).resizable().scaledToFill()
+        }
+    }
 }
 
 #Preview {
-    let testImage = FramedImageDTO(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .pastelBlue, date: "2025.08.07 7:32")
+    let testImage = FramedImageContent(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .pastelBlue, date: "2025.08.07 7:32")
     
-    return FramedImageComponent(framedImage: testImage)
+    return FramedImageComponentView(framedImage: testImage)
 }
 
