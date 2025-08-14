@@ -53,6 +53,7 @@ struct ImageSelectView: View {
                                     onComplete([]) // 메인뷰에 삭제 신호 보내기
                                 }
                                 dismiss()
+                                
                                 return
                             }
                             
@@ -92,9 +93,9 @@ struct ImageSelectView: View {
             
             TabView(selection: $currentIndex) {
                 ForEach(framedImages.indices, id: \.self) { index in
-                    ZStack(alignment: .topTrailing) {
+                    ZStack(alignment: .top/*Trailing*/) {
                         FramedImageComponentView(framedImage: framedImages[index])
-                            .padding(.horizontal, 23)
+//                            .padding(.horizontal, 23)
                             .tag(index)
                         
                         // delete 버튼 띄우기
@@ -102,11 +103,12 @@ struct ImageSelectView: View {
                             Image(.delete)
                                 .resizable()
                                 .frame(width: 30, height: 30)
+                                .padding(.top, 35)
+                                .padding(.leading, 260)
                         }
-                        .padding(.top, 35)
-                        .padding(.trailing, 45)
+                        
                     }
-                    .frame(maxWidth: .infinity)
+//                    .frame(maxWidth: .infinity)
                 }
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
@@ -168,8 +170,8 @@ struct FooterItem: View {
 #Preview {
     @Bindable var viewModel = DiaryMainViewModel()
     let testImages = [
-        FramedImageContent(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .pastelBlue, date: "2025.08.07 7:32"),
-        FramedImageContent(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .origin, date: "2025.08.07 7:32")
+        FramedImageContent(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .origin, date: "2025.08.07 7:32"),
+        FramedImageContent(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .pastelBlue, date: "2025.08.07 7:32")
     ]
     
     ImageSelectView(viewModel: viewModel, framedImages: testImages)

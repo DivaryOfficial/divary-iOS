@@ -19,7 +19,7 @@ struct FramedImageComponentView: View {
 //                    .resizable()
                 photoView
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: 300)
+                    .frame(width: 330)
                     .cornerRadius(8)
             }
             else {
@@ -29,10 +29,10 @@ struct FramedImageComponentView: View {
                         .shadow(color: .black.opacity(0.25), radius: 2, x: 0, y: 4)
                     VStack {
                         photoView
-                            .frame(width: 230, height: 230)
+                            .frame(width: 300, height: 300)
                             .clipped()
                             .cornerRadius(8)
-                            .padding(.top, 15)
+                            .padding(.top, 18)
                             .padding(.bottom, 16)
 //                        framedImage.image
 //                            .resizable()
@@ -61,7 +61,7 @@ struct FramedImageComponentView: View {
                                 .padding(.bottom, 18)
                         }
                     }
-                    .padding(.horizontal, 10)
+                    .padding(.horizontal, 18)
                 }
                 .frame(width: 260)
                 .fixedSize(horizontal: false, vertical: true)
