@@ -28,6 +28,10 @@ class LogBookMainViewModel {
     var showSavePopup = false
     var showSavedMessage = false
     
+    // ✅ 추가: 제목 관련 프론트엔드 임시저장
+    var frontendTempTitle: String? = nil
+    var hasTitleChanges: Bool = false
+    
     // API 연동 관련
     private let dataManager = LogBookDataManager.shared
     private let service = LogBookService.shared
@@ -38,14 +42,12 @@ class LogBookMainViewModel {
     
     // ✅ 프론트엔드 임시저장이 있는지 확인하는 계산 프로퍼티 추가
     var hasFrontendChanges: Bool {
-        return hasFrontendTempSave.contains(true)
+        return hasFrontendTempSave.contains(true) || hasTitleChanges
     }
     
-    // 계산된 프로퍼티명을 다른 이름으로 변경
+    // ✅ 수정: displayTitle 계산 프로퍼티 (38줄 부근)
     var displayTitle: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "M/d"
-        return "\(logBaseTitle)"
+        return frontendTempTitle ?? logBaseTitle
     }
     
     // 기존 init (기본값용)
@@ -198,20 +200,23 @@ class LogBookMainViewModel {
         return !areDataEqual(current, emptyData)
     }
     
-    // ✅ 입력 취소 (그냥 나가기) - 수정된 로직
+    // ✅ 수정: discardCurrentInput 메서드 (290줄 부근 - 제목 복원 로직 추가)
     func discardCurrentInput(for index: Int) {
         guard index < diveLogData.count else { return }
         
-        // 1. 프론트엔드 임시저장이 있으면 그것으로 복원
+        // 제목 변경사항 취소
+        frontendTempTitle = nil
+        hasTitleChanges = false
+        
+        // 기존 로직 (로그북 데이터 복원)
         if index < hasFrontendTempSave.count && hasFrontendTempSave[index] {
             diveLogData[index] = copyDiveLogData(frontendTempData[index])
             print("✅ 프론트엔드 임시저장으로 복원: 페이지 \(index)")
             return
         }
         
-        // 2. 프론트엔드 임시저장이 없으면 서버 최신 데이터 불러오기
         print("🔄 서버 최신 데이터로 복원 시작")
-        loadLogBaseDetail() // 서버에서 최신 데이터 다시 불러오기
+        loadLogBaseDetail()
     }
     
     // MARK: - ✅ 서버 저장 관련 메서드 (메인뷰에서만 사용)
@@ -277,57 +282,129 @@ class LogBookMainViewModel {
         }
     }
     
-    // 작성 완료하기 (완전 저장)
+    // ✅ 수정: handleCompleteSave 메서드 (240줄 부근 전체 교체)
     func handleCompleteSave() {
         var completedCount = 0
         let totalSaves = diveLogData.filter { !$0.isEmpty }.count
+        let needsTitleSave = hasTitleChanges
+        let totalOperations = totalSaves + (needsTitleSave ? 1 : 0)
         
-        guard totalSaves > 0 else {
+        guard totalOperations > 0 else {
             showSavedMessage = true
             return
         }
         
+        // 제목 저장
+        if needsTitleSave, let newTitle = frontendTempTitle {
+            updateLogBaseTitleToServer(newTitle: newTitle) { success in
+                if success {
+                    self.frontendTempTitle = nil
+                    self.hasTitleChanges = false
+                    completedCount += 1
+                    if completedCount == totalOperations {
+                        self.showSavedMessage = true
+                        self.showSavePopup = false
+                        self.hasFrontendTempSave = Array(repeating: false, count: self.diveLogData.count)
+                    }
+                }
+            }
+        }
+        
+        // 로그북 데이터 저장 (기존 로직)
         for (index, data) in diveLogData.enumerated() {
             if !data.isEmpty {
                 saveLogBook(at: index, saveStatus: .complete) { success in
                     if success {
                         completedCount += 1
-                        if completedCount == totalSaves {
+                        if completedCount == totalOperations {
                             self.showSavedMessage = true
                             self.showSavePopup = false
+                            self.hasFrontendTempSave = Array(repeating: false, count: self.diveLogData.count)
                         }
                     }
                 }
             }
         }
-        
-        hasFrontendTempSave = Array(repeating: false, count: diveLogData.count)
     }
     
-    // ✅ 임시저장하기 (SavePop에서 호출 - 서버에 TEMP로 저장)
+    // ✅ 수정: handleTempSaveFromSavePopup 메서드 (260줄 부근 전체 교체)
     func handleTempSaveFromSavePopup() {
         var completedCount = 0
         let totalSaves = diveLogData.filter { !$0.isEmpty }.count
+        let needsTitleSave = hasTitleChanges
+        let totalOperations = totalSaves + (needsTitleSave ? 1 : 0)
         
-        guard totalSaves > 0 else {
+        guard totalOperations > 0 else {
             showSavePopup = false
             return
         }
         
+        // 제목 저장
+        if needsTitleSave, let newTitle = frontendTempTitle {
+            updateLogBaseTitleToServer(newTitle: newTitle) { success in
+                if success {
+                    self.frontendTempTitle = nil
+                    self.hasTitleChanges = false
+                    completedCount += 1
+                    if completedCount == totalOperations {
+                        self.showSavePopup = false
+                        self.hasFrontendTempSave = Array(repeating: false, count: self.diveLogData.count)
+                    }
+                }
+            }
+        }
+        
+        // 로그북 데이터 저장 (기존 로직)
         for (index, data) in diveLogData.enumerated() {
             if !data.isEmpty {
                 saveLogBook(at: index, saveStatus: .temp) { success in
                     if success {
                         completedCount += 1
-                        if completedCount == totalSaves {
+                        if completedCount == totalOperations {
                             self.showSavePopup = false
+                            self.hasFrontendTempSave = Array(repeating: false, count: self.diveLogData.count)
                         }
                     }
                 }
             }
         }
+    }
+    
+    // MARK: - 제목 수정 관련 업데이트
+    
+    // ✅ 추가: 프론트엔드 제목 업데이트 메서드 (updateFromLogBase 메서드 다음에 추가)
+    func updateFrontendTitle(newTitle: String) {
+        let trimmedTitle = newTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmedTitle != logBaseTitle {
+            frontendTempTitle = trimmedTitle
+            hasTitleChanges = true
+        } else {
+            frontendTempTitle = nil
+            hasTitleChanges = false
+        }
+        print("✅ 프론트엔드 제목 임시저장: \(trimmedTitle)")
+    }
+    
+    // ✅ 추가: 서버 제목 업데이트 메서드 (기존 updateLogBaseTitle 메서드 대체/추가)
+    private func updateLogBaseTitleToServer(newTitle: String, completion: @escaping (Bool) -> Void) {
+        isLoading = true
+        errorMessage = nil
         
-        hasFrontendTempSave = Array(repeating: false, count: diveLogData.count)
+        service.updateLogBaseTitle(logBaseInfoId: logBaseInfoId, name: newTitle) { result in
+            self.isLoading = false
+            
+            switch result {
+            case .success:
+                self.logBaseTitle = newTitle
+                completion(true)
+                print("✅ 제목 서버 저장 성공: \(newTitle)")
+                
+            case .failure(let error):
+                self.errorMessage = "제목 수정 중 오류가 발생했습니다: \(error.localizedDescription)"
+                completion(false)
+                print("❌ 제목 서버 저장 실패: \(error)")
+            }
+        }
     }
     
     // MARK: - 기존 메서드들 (UI 호환성 유지)

@@ -81,7 +81,7 @@ extension LogBaseDetailDTO {
         // Overview - 백엔드 enum → UI 표시용 텍스트 변환
         if hasOverviewData() {
             diveData.overview = DiveOverview(
-                title: self.name,
+                title: self.place,
                 point: self.divePoint,
                 purpose: self.divePurpose != nil ? String.displayName(fromDivingPurposeEnum: self.divePurpose!) : nil,
                 method: self.diveMethod != nil ? String.displayName(fromDivingMethodEnum: self.diveMethod!) : nil
