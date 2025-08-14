@@ -60,6 +60,7 @@ struct BodyColorSection: View {
                                 ZStack {
                                     Circle()
                                         .stroke(isSelected ? Color.primary_sea_blue : Color.grayscale_g300, lineWidth: 1)
+                                        .padding(1)
                                     
                                     if isSelected {
                                         Image("humbleicons_check")
@@ -115,6 +116,7 @@ struct CheekColorSection: View {
                     ZStack {
                         Circle()
                             .stroke(isSelected ? Color.primary_sea_blue : Color.grayscale_g300, lineWidth: 1)
+                            .padding(1)
                         
                         if isSelected {
                             Image("humbleicons_check")
