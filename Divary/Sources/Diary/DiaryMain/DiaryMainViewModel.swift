@@ -11,12 +11,14 @@ import UniformTypeIdentifiers
 import RichTextKit
 import Observation
 import PencilKit
+import Combine
 
-@Observable
+@Observable /*@MainActor*/
 class DiaryMainViewModel {
     var blocks: [DiaryBlock] = []
     var selectedItems: [PhotosPickerItem] = []
     var editingTextBlock: DiaryBlock? = nil
+    var editingImageBlock: DiaryBlock? = nil
     var richTextContext = RichTextContext()
     var forceUIUpdate: Bool = false
     var currentTextAlignment: NSTextAlignment = .left
@@ -34,12 +36,225 @@ class DiaryMainViewModel {
     var savedDrawing: PKDrawing? = nil
     var drawingOffsetY: CGFloat = 0
     
-    // MARK: - 사진 처리
-    func makeFramedDTOs(from items: [PhotosPickerItem]) async -> [FramedImageDTO] {
-        let indexed = Array(items.enumerated())
-        var temp = Array<FramedImageDTO?>(repeating: nil, count: indexed.count)
+    private var injected = false
+    private var bag = Set<AnyCancellable>()
+    private var diaryService: LogDiaryService?
+    private var imageService: ImageService?
+    private var token: String?
+    
+    // 저장
+    private var currentLogId: Int = 0
+    private var hasDiary: Bool = false // 서버에 일기 존재 여부(POST/PUT 분기)
+    
+    // 기존 이미지(파일 교체 안 함)는 temp가 비어 있어도 저장 허용
+    var canSave: Bool {
+        let imagesReady = blocks.allSatisfy { block in
+            if case .image(let f) = block.content {
+                let hasTemp = (f.tempFilename?.isEmpty == false)
+                let isExistingImage = (f.originalData == nil)   // 서버에서 불러온 기존 이미지
+                return hasTemp || isExistingImage
+            }
+            return true
+        }
+        return imagesReady && diaryService != nil && (token?.isEmpty == false)
+    }
 
-        await withTaskGroup(of: (Int, FramedImageDTO?) .self) { group in
+//    var canSave: Bool {
+//        let imagesReady = blocks.allSatisfy { block in
+//            if case .image(let f) = block.content {
+//                return (f.tempFilename?.isEmpty == false)
+//            }
+//            return true
+//        }
+//        return imagesReady && diaryService != nil && (token?.isEmpty == false)
+//    }
+    
+    // 저장버튼 뷰에 내려주기 위한 파생 값
+    var canSavePublic: Bool = false
+    func recomputeCanSave() {
+        canSavePublic = canSave
+    }
+    
+    var hasUnsavedChanges: Bool = false
+    var saveButtonEnabled: Bool { hasUnsavedChanges && canSave }
+    
+    // 변경 발생 시 호출
+    private func markDirty() {
+        hasUnsavedChanges = true
+        recomputeCanSave()
+    }
+
+    // MARK: - API 연결
+    func inject(diaryService: LogDiaryService, imageService: ImageService, token: String) {
+        guard !injected else { return }
+        self.diaryService = diaryService
+        self.imageService = imageService
+        self.token = token
+        injected = true
+        recomputeCanSave()
+    }
+    
+    // 1) 서버에서 읽기
+    func loadFromServer(logId: Int) {
+        self.currentLogId = logId
+        guard let diaryService, let token else { return }
+        diaryService.getDiary(logId: logId, token: token)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] comp in
+                if case let .failure(err) = comp {
+                    print("❌ getDiary error:", err)
+                    Task { @MainActor in
+                        self?.hasDiary = false // 생성 POST 으로
+                    }
+                }
+            } receiveValue: { [weak self] dto in
+                Task { @MainActor in
+                    self?.applyServerDiary(dto)
+                    self?.hasDiary = true // 수정 PUT 으로
+                }
+            }
+            .store(in: &bag)
+    }
+
+    // 2) 응답 → 화면 상태 매핑
+    @MainActor
+    private func applyServerDiary(_ dto: DiaryResponseDTO) {
+        var newBlocks: [DiaryBlock] = []
+
+        for c in dto.contents {
+            switch c.type {
+            case .text:
+                if let base64 = c.rtfData,
+                   let data = Data(base64Encoded: base64),
+                   let rich = RichTextContent(rtfData: data) {
+                    newBlocks.append(DiaryBlock(content: .text(rich)))
+                } else {
+                    newBlocks.append(DiaryBlock(content: .text(RichTextContent())))
+                }
+
+            case .image:
+                if let img = c.imageData {
+                    let frame = mapFrameColor(from: img.frameColor)
+                    // 원격 이미지는 우선 placeholder로 만들고, 필요하면 비동기로 로드해서 교체
+                    let item = FramedImageContent(
+                        image: Image(systemName: "photo"),
+                        caption: img.caption,
+                        frameColor: frame,
+                        date: img.date
+                    )
+                    // 업로드/서버 경로 저장 (이후 저장 시 tempFilename으로 사용)
+                    item.tempFilename = img.tempFilename
+                    newBlocks.append(DiaryBlock(content: .image(item)))
+                }
+                
+                if let s = self.blocks.compactMap({
+                    if case let .image(f) = $0.content { return f.tempFilename } else { return nil }
+                }).first, let u = URL(string: s) {
+                    URLSession.shared.dataTask(with: u) { _, resp, err in
+                        print("🔎 IMG resp:", (resp as? HTTPURLResponse)?.statusCode ?? -1, "err:", err as Any)
+                    }.resume()
+                }
+
+            case .drawing:
+                if let d = c.drawingData,
+                   let bin = Data(base64Encoded: d.base64),
+                   let pk = try? PKDrawing(data: bin) {
+                    self.savedDrawing = pk
+                    self.drawingOffsetY = d.scrollY
+                }
+            }
+        }
+
+        self.blocks = newBlocks
+        self.recomputeCanSave()
+        self.hasUnsavedChanges = false
+        // 🔎 디버그: 첫 이미지 URL 확인
+        if case let .image(f)? = self.blocks.first?.content {
+            print("🖼 tempFilename:", f.tempFilename ?? "nil")
+        }
+        print("✅ blocks:", blocks.count, "drawing:", savedDrawing != nil)
+    }
+
+    // frameColor: 서버는 "0","1",... 문자열 → 앱 enum으로 변환
+    private func mapFrameColor(from raw: String) -> FrameColor {
+//        if let i = Int(raw), let mapped = FrameColor(rawValue: i) {
+//            return mapped
+//        }
+//        return .origin
+        (Int(raw).flatMap { FrameColor(rawValue: $0) }) ?? .origin
+    }
+    
+    private func makeRequestBody() -> DiaryRequestDTO {
+        var items: [DiaryContentDTO] = []
+
+        for block in blocks {
+            switch block.content {
+            case .text(let rich):
+                let base64 = (rich.rtfData ?? Data()).base64EncodedString()
+                items.append(.init(type: .text, rtfData: base64, imageData: nil, drawingData: nil))
+
+            case .image(let f):
+                // tempFilename 필수! (이미지 업로드 끝난 후 저장해야 함)
+                guard let temp = f.tempFilename, !temp.isEmpty else { continue }
+                let img = DiaryImageDataDTO(
+                    tempFilename: temp,
+                    caption: f.caption,
+                    frameColor: String(f.frameColor.rawValue),
+                    date: f.date
+                )
+                items.append(.init(type: .image, rtfData: nil, imageData: img, drawingData: nil))
+            }
+        }
+
+        if let d = savedDrawing {
+            let base64 = d.dataRepresentation().base64EncodedString()
+            let draw = DiaryDrawingDataDTO(base64: base64, scrollY: drawingOffsetY)
+            items.append(.init(type: .drawing, rtfData: nil, imageData: nil, drawingData: draw))
+        }
+
+        return DiaryRequestDTO(contents: items)
+    }
+
+    func manualSave() {
+        // 편집 중인 텍스트를 먼저 커밋
+        if editingTextBlock != nil {
+            saveCurrentEditingBlock()
+            // 선택: 커밋까지 같이
+             commitEditingTextBlock()
+        }
+        guard canSave else {
+            print("⚠️ 저장 불가: 이미지 업로드 미완료 또는 토큰/서비스 없음")
+            return
+        }
+        guard let diaryService, let token else { return }
+
+        let body = makeRequestBody()
+        let isUpdate = hasDiary   // ← 이 값은 2단계에서 설정함
+
+        let pub = isUpdate
+            ? diaryService.updateDiary(logId: currentLogId, body: body, token: token)
+            : diaryService.createDiary(logId: currentLogId, body: body, token: token)
+
+        pub
+            .receive(on: DispatchQueue.main)
+            .sink { comp in
+                if case let .failure(err) = comp { print("❌ manualSave error:", err) }
+            } receiveValue: { [weak self] dto in
+                Task { @MainActor in
+                    self?.applyServerDiary(dto)  // 서버 정규화 반영
+                    self?.hasDiary = true        // 최초 생성 후엔 항상 PUT
+                }
+                print("✅ 저장 완료")
+            }
+            .store(in: &bag)
+    }
+
+    // MARK: - 사진 처리
+    func makeFramedDTOs(from items: [PhotosPickerItem]) async -> [FramedImageContent] {
+        let indexed = Array(items.enumerated())
+        var temp = Array<FramedImageContent?>(repeating: nil, count: indexed.count)
+
+        await withTaskGroup(of: (Int, FramedImageContent?) .self) { group in
             for (idx, item) in indexed {
                 group.addTask { [weak self] in
                     guard let self else { return (idx, nil) }
@@ -51,12 +266,13 @@ class DiaryMainViewModel {
                     }
 
                     let dateString = await self.formattedPhotoDateString(from: item)
-                    let dto = FramedImageDTO(
+                    let dto = FramedImageContent(
                         image: Image(uiImage: uiImage),
                         caption: "",
                         frameColor: .origin,
                         date: dateString
                     )
+                    dto.originalData = data
                     return (idx, dto)
                 }
             }
@@ -68,6 +284,52 @@ class DiaryMainViewModel {
 
         return temp.compactMap { $0 } // 실패 항목 제거
     }
+    
+    // 이미지 수정
+    func updateImageBlock(id: UUID, to newContent: FramedImageContent) {
+        guard let idx = blocks.firstIndex(where: { $0.id == id }) else { return }
+
+        // 교체된 콘텐츠 반영
+        blocks[idx].content = .image(newContent)
+
+        // 새 파일로 바꾼 경우엔 임시 URL 다시 발급 필요
+        let isReplacingFile = (newContent.originalData != nil)
+
+        if isReplacingFile {
+            // 업로드 전에는 비워두고 저장버튼 비활성화 유도
+            newContent.tempFilename = nil
+            recomputeCanSave()
+
+            if let data = newContent.originalData, let token, let imageService {
+                imageService.uploadTemp(files: [data], token: token)
+                    .map { $0.first?.fileUrl ?? "" }
+                    .receive(on: DispatchQueue.main)
+                    .sink { comp in
+                        if case let .failure(err) = comp {
+                            print("❌ uploadTemp (edit) error:", err)
+                        }
+                    } receiveValue: { [weak self] url in
+                        newContent.tempFilename = url
+                        self?.recomputeCanSave()
+                        self?.forceUIUpdate.toggle()
+                    }
+                    .store(in: &bag)
+            }
+        } else {
+            // 캡션/프레임만 바꾼 경우
+            recomputeCanSave()
+        }
+
+        // 필요 시 리렌더
+        forceUIUpdate.toggle()
+        markDirty()
+    }
+//    func updateImageBlock(id: UUID, to newContent: FramedImageContent) {
+//        guard let idx = blocks.firstIndex(where: { $0.id == id }) else { return }
+//        blocks[idx].content = .image(newContent)
+//        // 필요 시 리렌더 트리거
+//        forceUIUpdate.toggle()
+//    }
     
     func extractPhotoDate(from item: PhotosPickerItem) async -> Date? {
         do {
@@ -124,6 +386,7 @@ class DiaryMainViewModel {
         DispatchQueue.main.async {
             self.applyCurrentStyleToTypingAttributes()
         }
+        markDirty()
     }
 
     func saveCurrentEditingBlock() {
@@ -134,6 +397,7 @@ class DiaryMainViewModel {
         if !content.text.isEqual(to: newText) {
             content.text = newText
             content.context = richTextContext
+            markDirty()
         }
     }
 
@@ -142,24 +406,48 @@ class DiaryMainViewModel {
         editingTextBlock = nil
     }
 
-    func addImages(_ images: [FramedImageDTO]) {
+    func addImages(_ images: [FramedImageContent]) {
         images.forEach { image in
+            // 화면에 먼저 추가
             let block = DiaryBlock(content: .image(image))
             blocks.append(block)
+            
+            // 업로드
+            if let data = image.originalData, let token, let imageService {
+                imageService.uploadTemp(files: [data], token: token)
+                    .map { $0.first?.fileUrl ?? "" }
+                    .receive(on: DispatchQueue.main)
+                    .sink { comp in
+                        if case let .failure(err) = comp { print("❌ uploadTemp error:", err) }
+                    } receiveValue: { [weak self] url in
+                        image.tempFilename = url
+                        self?.recomputeCanSave() // 업로드 후 재계산
+                    }
+                    .store(in: &bag)
+            }
+            else {
+                recomputeCanSave() // 블록만 추가했을 때도
+            }
         }
+        markDirty()
     }
 
-    
     func startEditing(_ block: DiaryBlock) {
-        if case .text(let content) = block.content {
-            editingTextBlock = block
-            richTextContext = content.context
-            content.context.setAttributedString(to: content.text)
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                self.syncStyleFromCurrentPosition()
-                self.forceUIUpdate.toggle()
-            }
+        guard case .text(let content) = block.content else { return }
+
+        // 1) 편집 컨텍스트에 현재 텍스트를 먼저 주입
+        content.context.setAttributedString(to: content.text)
+
+        // 2) 뷰모델 컨텍스트 교체
+        self.richTextContext = content.context
+
+        // 3) 마지막에 편집 모드 플래그 (뷰 스위치 트리거)
+        self.editingTextBlock = block
+
+        // 4) (선택) 스타일 동기화/포커스
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.syncStyleFromCurrentPosition()
+            self.forceUIUpdate.toggle()
         }
     }
 
@@ -168,6 +456,7 @@ class DiaryMainViewModel {
         if editingTextBlock?.id == block.id {
             editingTextBlock = nil
         }
+        markDirty()
     }
 
     // MARK: - Style Management
@@ -526,6 +815,15 @@ class DiaryMainViewModel {
             // 파일이 없거나 실패하면 그냥 표시 안 함
             self.savedDrawing = nil
             self.drawingOffsetY = 0
+        }
+    }
+    
+    func commitDrawingFromCanvas(_ drawing: PKDrawing, offsetY: CGFloat, autosave: Bool = false) {
+        self.savedDrawing = drawing
+        self.drawingOffsetY = offsetY
+        markDirty()
+        if autosave, canSave { // 이미지 임시URL 등 조건 충족 시에만 즉시 저장
+            manualSave()
         }
     }
 }

@@ -8,18 +8,23 @@
 import Foundation
 import SwiftUI
 
-final class FramedImageDTO: ObservableObject, Identifiable {
+final class FramedImageContent: ObservableObject, Identifiable {
     let id = UUID()
-    @Published var image: Image
+    @Published var image: Image? = Image(systemName: "photo")
     @Published var caption: String
     @Published var frameColor: FrameColor
     @Published var date: String
     
-    init(image: Image, caption: String, frameColor: FrameColor, date: String) {
+    @Published var originalData: Data?        // 포토에서 가져온 원본(업로드용)
+    @Published var tempFilename: String?      // 업로드 결과 URL(서버가 요구)
+    
+    init(image: Image? = Image(systemName: "photo"), caption: String, frameColor: FrameColor, date: String, tempFilename: String? = nil, originalData: Data? = nil) {
         self.image = image
         self.caption = caption
         self.frameColor = frameColor
         self.date = date
+        self.originalData = originalData
+        self.tempFilename = tempFilename
     }
 }
 
@@ -52,19 +57,21 @@ enum FrameColor: Int, CaseIterable, Codable {
     }
 }
 
-extension FramedImageDTO {
-    func copy() -> FramedImageDTO {
-        FramedImageDTO(
+extension FramedImageContent {
+    func copy() -> FramedImageContent {
+        FramedImageContent(
             image: self.image,
             caption: self.caption,
             frameColor: self.frameColor,
-            date: self.date
+            date: self.date,
+            tempFilename: self.tempFilename,
+            originalData: self.originalData
         )
     }
 }
 
-extension Array where Element == FramedImageDTO {
-    func deepCopied() -> [FramedImageDTO] {
+extension Array where Element == FramedImageContent {
+    func deepCopied() -> [FramedImageContent] {
         map { $0.copy() }
     }
 }

@@ -16,13 +16,14 @@ enum LogBookAPI {
     case updateLogBook(logBookId: Int, logData: LogUpdateRequestDTO)
     case deleteLogBase(logBaseInfoId: Int)
     case checkLogExists(date: String)
+    case updateLogBaseTitle(logBaseInfoId: Int, name: String) // ✅ 제목 수정 API 추가
 }
 
 extension LogBookAPI: TargetType {
     var baseURL: URL {
         guard let baseUrlString = Bundle.main.object(forInfoDictionaryKey: "API_URL") as? String,
               let url = URL(string: baseUrlString) else {
-            fatalError("❌ API_URL not found or invalid in Info.plist")
+            fatalError("⚠️ API_URL not found or invalid in Info.plist")
         }
         return url
     }
@@ -31,7 +32,7 @@ extension LogBookAPI: TargetType {
         switch self {
         case .getLogList:
             return "/api/v1/logs"
-        case .getLogBaseDetail(let logBaseInfoId), .deleteLogBase(let logBaseInfoId):
+        case .getLogBaseDetail(let logBaseInfoId), .deleteLogBase(let logBaseInfoId), .updateLogBaseTitle(let logBaseInfoId, _):
             return "/api/v1/logs/\(logBaseInfoId)"
         case .createLogBase:
             return "/api/v1/logs"
@@ -52,6 +53,8 @@ extension LogBookAPI: TargetType {
             return .post
         case .updateLogBook:
             return .put
+        case .updateLogBaseTitle: // ✅ PATCH 메서드
+            return .patch
         case .deleteLogBase:
             return .delete
         }
@@ -77,6 +80,10 @@ extension LogBookAPI: TargetType {
         case .updateLogBook(_, let logData):
             return .requestJSONEncodable(logData)
             
+        case .updateLogBaseTitle(_, let name): // ✅ 제목 수정 요청
+            let params: [String: Any] = ["name": name]
+            return .requestParameters(parameters: params, encoding: JSONEncoding.default)
+            
         case .checkLogExists(let date):
             return .requestParameters(parameters: ["date": date], encoding: URLEncoding.queryString)
             
@@ -94,7 +101,7 @@ extension LogBookAPI: TargetType {
         if let accessToken = KeyChainManager.shared.readAccessToken() {
             headers["Authorization"] = "Bearer \(accessToken)"
         } else {
-            print("❌ accessToken 없음: 인증이 필요한 요청입니다.")
+            print("⚠️ accessToken 없음: 인증이 필요한 요청입니다.")
         }
         
         return headers

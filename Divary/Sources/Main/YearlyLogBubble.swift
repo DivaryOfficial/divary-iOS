@@ -17,10 +17,8 @@ struct YearlyLogBubble: View {
     var onDeleteTap: ((String) -> Void)?
     
     // 그리드 컬럼 설정
-    private let columns = [
-        GridItem(.flexible(), spacing: 20),
-        GridItem(.flexible(), spacing: 20)
-    ]
+    let columns = Array(repeating: GridItem(.flexible(), spacing: 0), count: 4)
+
     
     var body: some View {
         // 전달받은 logBases에서 해당 연도 필터링

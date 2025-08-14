@@ -25,7 +25,7 @@ struct DrawingStore {
     static func save(diaryId: Int, drawing: PKDrawing, offsetY: CGFloat) throws {
         let data = drawing.dataRepresentation()
         let base64 = data.base64EncodedString()
-        let dto = DrawingContentDTO(base64: base64, offsetY: offsetY)
+        let dto = DrawingContent(base64: base64, offsetY: offsetY)
         let encoded = try JSONEncoder().encode(dto)
         try encoded.write(to: fileURL(for: diaryId), options: .atomic)
     }
@@ -33,7 +33,7 @@ struct DrawingStore {
     static func load(diaryId: Int) throws -> (drawing: PKDrawing, offsetY: CGFloat) {
         let url = fileURL(for: diaryId)
         let data = try Data(contentsOf: url)
-        let dto = try JSONDecoder().decode(DrawingContentDTO.self, from: data)
+        let dto = try JSONDecoder().decode(DrawingContent.self, from: data)
         guard let drawingData = Data(base64Encoded: dto.base64) else {
             throw NSError(domain: "DrawingStore", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid base64"])
         }

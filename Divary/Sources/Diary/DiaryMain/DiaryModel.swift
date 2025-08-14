@@ -16,7 +16,7 @@ final class DiaryBlock: ObservableObject, Identifiable, Equatable {
     
     enum Content: Equatable {
         case text(RichTextContent)
-        case image(FramedImageDTO)
+        case image(FramedImageContent)
         
         static func == (lhs: Content, rhs: Content) -> Bool {
             switch (lhs, rhs) {
@@ -197,7 +197,7 @@ extension DiaryBlock {
             // URL → Image 로드는 비동기가 맞지만, 여기선 placeholder 처리
             let swiftUIImage: Image = .init(systemName: "photo") // 실제 앱에선 async 로더로 교체
             let frameColor: FrameColor = FrameColor(rawValue: img.frameColor) ?? .origin
-            let framed = FramedImageDTO(
+            let framed = FramedImageContent(
                image: swiftUIImage,
                caption: img.caption,
                frameColor: frameColor,

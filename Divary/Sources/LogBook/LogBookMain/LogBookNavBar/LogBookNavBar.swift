@@ -92,6 +92,7 @@ struct LogBookNavBar: View {
                         .font(Font.omyu.regular(size: 20))
                         .foregroundStyle(isTempSaved ? Color.primary_sea_blue : .gray)
                 }
+                .disabled(!isTempSaved)
             }
         }
         .padding(12)

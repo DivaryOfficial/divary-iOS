@@ -12,14 +12,18 @@ struct LogBookPageView: View {
     @Bindable var mainViewModel: LogBookMainViewModel
     @State private var pageViewModel: LogBookPageViewModel
     
+    // ✅ 추가: 제목 클릭 콜백
+    var onTitleTap: (() -> Void)? = nil
+    
     // NewLogPop 관련 상태
     @State private var showNewLogPop = false
     @State private var showMaxLogError = false
     
-    // init에서 pageViewModel 초기화
-    init(viewModel: LogBookMainViewModel) {
+    // ✅ init 수정 - onTitleTap 파라미터 추가
+    init(viewModel: LogBookMainViewModel, onTitleTap: (() -> Void)? = nil) {
         self._mainViewModel = Bindable(viewModel)
         self._pageViewModel = State(initialValue: LogBookPageViewModel(mainViewModel: viewModel))
+        self.onTitleTap = onTitleTap
     }
     
     var body: some View {
@@ -40,11 +44,23 @@ struct LogBookPageView: View {
                             }.ignoresSafeArea()
                             
                             LazyVStack(alignment: .leading, spacing: 18) {
-                                Text(mainViewModel.displayTitle)
-                                    .font(Font.omyu.regular(size: 20))
-                                    .padding(12)
-                                    .frame(maxWidth: .infinity)
-                                    .multilineTextAlignment(.center)
+//                                Text(mainViewModel.displayTitle)
+//                                    .font(Font.omyu.regular(size: 20))
+//                                    .padding(12)
+//                                    .frame(maxWidth: .infinity)
+//                                    .multilineTextAlignment(.center)
+                                
+                                // ✅ 새로운 코드 추가
+                                Button(action: {
+                                    onTitleTap?()
+                                }) {
+                                    Text(mainViewModel.displayTitle)
+                                        .font(Font.omyu.regular(size: 20))
+                                        .foregroundColor(.black)
+                                        .padding(12)
+                                        .frame(maxWidth: .infinity)
+                                        .multilineTextAlignment(.center)
+                                }
 
                                 DiveOverviewSection(overview: data.overview, isSaved: $pageViewModel.isSaved).onTapGesture {
                                     pageViewModel.activeInputSection = .overview
@@ -66,7 +82,8 @@ struct LogBookPageView: View {
                                 
                                 HStack {
                                     Spacer()
-                                    Text("총 다이빙 횟수 \(mainViewModel.logCount) 회")
+                                    // ✅ 서버에서 받은 총 다이빙 횟수 사용
+                                    Text("총 다이빙 횟수 \(mainViewModel.totalDiveCount) 회")
                                         .font(Font.omyu.regular(size: 24))
                                     Spacer()
                                 }
