@@ -15,15 +15,19 @@ struct LogBookPageView: View {
     // ✅ 추가: 제목 클릭 콜백
     var onTitleTap: (() -> Void)? = nil
     
+    // ✅ 추가: 현재 페이지 변경 콜백
+    var onPageChanged: ((Int) -> Void)? = nil
+    
     // NewLogPop 관련 상태
     @State private var showNewLogPop = false
     @State private var showMaxLogError = false
     
-    // ✅ init 수정 - onTitleTap 파라미터 추가
-    init(viewModel: LogBookMainViewModel, onTitleTap: (() -> Void)? = nil) {
+    // ✅ init 수정 - onPageChanged 파라미터 추가
+    init(viewModel: LogBookMainViewModel, onTitleTap: (() -> Void)? = nil, onPageChanged: ((Int) -> Void)? = nil) {
         self._mainViewModel = Bindable(viewModel)
         self._pageViewModel = State(initialValue: LogBookPageViewModel(mainViewModel: viewModel))
         self.onTitleTap = onTitleTap
+        self.onPageChanged = onPageChanged
     }
     
     var body: some View {
@@ -44,13 +48,7 @@ struct LogBookPageView: View {
                             }.ignoresSafeArea()
                             
                             LazyVStack(alignment: .leading, spacing: 18) {
-//                                Text(mainViewModel.displayTitle)
-//                                    .font(Font.omyu.regular(size: 20))
-//                                    .padding(12)
-//                                    .frame(maxWidth: .infinity)
-//                                    .multilineTextAlignment(.center)
-                                
-                                // ✅ 새로운 코드 추가
+                                // ✅ 제목 버튼 (기존 코드 유지)
                                 Button(action: {
                                     onTitleTap?()
                                 }) {
@@ -62,28 +60,48 @@ struct LogBookPageView: View {
                                         .multilineTextAlignment(.center)
                                 }
 
-                                DiveOverviewSection(overview: data.overview, isSaved: $pageViewModel.isSaved).onTapGesture {
+                                // ✅ 각 로그북별로 개별 완전저장 상태 전달
+                                DiveOverviewSection(
+                                    overview: data.overview,
+                                    isSaved: .constant(mainViewModel.diveLogData[index].saveStatus == .complete)
+                                ).onTapGesture {
                                     pageViewModel.activeInputSection = .overview
                                 }
+                                
                                 HStack(alignment: .top) {
-                                    DiveParticipantsSection(participants: data.participants, isSaved: $pageViewModel.isSaved).onTapGesture {
+                                    DiveParticipantsSection(
+                                        participants: data.participants,
+                                        isSaved: .constant(mainViewModel.diveLogData[index].saveStatus == .complete)
+                                    ).onTapGesture {
                                         pageViewModel.activeInputSection = .participants
                                     }
-                                    DiveEquipmentSection(equipment: data.equipment, isSaved: $pageViewModel.isSaved).onTapGesture {
+                                    
+                                    DiveEquipmentSection(
+                                        equipment: data.equipment,
+                                        isSaved: .constant(mainViewModel.diveLogData[index].saveStatus == .complete)
+                                    ).onTapGesture {
                                         pageViewModel.activeInputSection = .equipment
                                     }
                                 }
-                                DiveEnvironmentSection(environment: data.environment, isSaved: $pageViewModel.isSaved).onTapGesture {
+                                
+                                DiveEnvironmentSection(
+                                    environment: data.environment,
+                                    isSaved: .constant(mainViewModel.diveLogData[index].saveStatus == .complete)
+                                ).onTapGesture {
                                     pageViewModel.activeInputSection = .environment
                                 }
-                                DiveProfileSection(profile: data.profile, isSaved: $pageViewModel.isSaved).onTapGesture {
+                                
+                                DiveProfileSection(
+                                    profile: data.profile,
+                                    isSaved: .constant(mainViewModel.diveLogData[index].saveStatus == .complete)
+                                ).onTapGesture {
                                     pageViewModel.activeInputSection = .profile
                                 }
                                 
                                 HStack {
                                     Spacer()
-                                    // ✅ 서버에서 받은 총 다이빙 횟수 사용
-                                    Text("총 다이빙 횟수 \(mainViewModel.totalDiveCount) 회")
+                                    // ✅ 서버에서 받은 이 다이빙 횟수 사용
+                                    Text("이 다이빙 횟수 \(mainViewModel.totalDiveCount) 회")
                                         .font(Font.omyu.regular(size: 24))
                                     Spacer()
                                 }
@@ -111,6 +129,10 @@ struct LogBookPageView: View {
                 }
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+            // ✅ 페이지 변경 감지하여 상위로 전달
+            .onChange(of: pageViewModel.selectedPage) { _, newPage in
+                onPageChanged?(newPage)
+            }
             
             // DiveInputPageView 팝업
             if let section = pageViewModel.activeInputSection {
@@ -280,6 +302,12 @@ struct LogBookPageView: View {
             }
         }
     }
+    
+    // ✅ 더 이상 필요하지 않음 - 직접 saveStatus 확인으로 대체
+    // private func isCompleteSaved(_ index: Int) -> Bool {
+    //     guard index < mainViewModel.diveLogData.count else { return false }
+    //     return mainViewModel.diveLogData[index].saveStatus == .complete
+    // }
     
     // 새 로그 추가 처리
     private func handleAddNewLog() {

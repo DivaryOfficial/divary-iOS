@@ -16,22 +16,20 @@ enum SaveStatus: String, CaseIterable {
 
 // 수정: API 구조에 맞게 조정
 struct LogBookBase: Identifiable {
-    let id: String                  // logBaseInfoId를 String으로 변환
-    let logBaseInfoId: Int          // 실제 API ID
+    let id: String
+    let logBaseInfoId: Int
     let date: Date
-    let title: String               // API의 name
+    let title: String
     let iconType: IconType
-    let accumulation: Int           // 총 다이빙 횟수
-    var logBooks: [LogBook]         // 개별 로그북들 (최대 3개)
+    let accumulation: Int
+    var logBooks: [LogBook]
     
-    // UI 호환성을 위한 computed property
-    var logs: [DiveLogData] {
-        return logBooks.map { $0.diveData }
-    }
+    // ✅ 추가: 연도별 조회용 saveStatus
+    let saveStatus: SaveStatus?
     
     // 임시저장 상태 확인
     var hasTempSave: Bool {
-        return logBooks.contains { $0.saveStatus == .temp }
+        return saveStatus == .temp
     }
 }
 
