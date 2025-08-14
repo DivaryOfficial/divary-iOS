@@ -35,11 +35,16 @@ struct OverViewInputView: View {
                     VStack(alignment: .leading, spacing: 20) {
                         
                         // 다이빙 지역
-                        TextInputField(
+                        LocationTextInputField(
                             title: "다이빙 지역",
                             placeholder: "다이빙 지역을 입력해주세요 ex) 강원도 강릉",
                             unit: "돋보기",
-                            value: $overview.title
+                            value: Binding(
+                                get: { overview.title ?? "" },
+                                set: { newValue in
+                                    overview.title = (newValue?.isEmpty == true) ? nil : newValue
+                                }
+                            )
                         )
                         
                         // 다이빙 포인트

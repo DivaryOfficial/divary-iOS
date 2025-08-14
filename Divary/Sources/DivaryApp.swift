@@ -31,8 +31,19 @@ struct DivaryApp: App {
                         case .notifications:
                             NotificationView()
                         case .MainTabBar:
-                                MainTabbarView()
-                                    .navigationBarBackButtonHidden(true)
+                            MainTabbarView()
+                                .navigationBarBackButtonHidden(true)
+                        case .locationSearch:
+                            LocationSearchView(
+                                       currentValue: container.router.locationSearchText,
+                                       placeholder: "다이빙 스팟 검색",
+                                       onLocationSelected: { selectedLocation in
+                                           // 선택된 위치를 AppRouter에 저장
+                                           container.router.locationSearchText = selectedLocation
+                                       }
+                                   )
+                                   .environment(\.diContainer, container)
+                            .navigationBarBackButtonHidden(true)
                         }
                     }
             }
