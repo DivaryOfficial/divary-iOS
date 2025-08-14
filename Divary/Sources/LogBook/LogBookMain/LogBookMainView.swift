@@ -97,7 +97,7 @@ struct LogBookMainView: View {
                     )
                     case .diary:
 //                        DiaryMainView(diaryLogId: 0)
-                        DiaryMainView(viewModel: diaryVM, diaryLogId: 62, showCanvas: $showCanvas)
+                        DiaryMainView(viewModel: diaryVM, diaryLogId: viewModel.logBaseInfoId, showCanvas: $showCanvas)
 //                        DiaryMainView(diaryLogId: 51)
                     }
                 }
