@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct OceanCatalogView: View {
+    @Environment(\.diContainer) private var di
+    
     @State private var viewModel = OceanCatalogViewModel()
     
     @State private var selectedCategory: SeaCreatureCategory = .all
@@ -21,10 +23,14 @@ struct OceanCatalogView: View {
     var body: some View {
             ZStack(alignment: .bottom) {
                 VStack {
+                    Text("해양도감")
+                        .font(Font.omyu.regular(size: 20))
+                        .padding()
                     CategoryTabBar(selectedCategory: Binding(
                         get: { viewModel.selectedCategory },
                         set: { viewModel.selectedCategory = $0 }
                     ))
+                    .padding(.bottom, 5)
                     
                     CardGridView(
                         items: viewModel.gridItems,
@@ -50,27 +56,33 @@ struct OceanCatalogView: View {
             }
             .sheet(item: $selectedCreature, onDismiss: {
                 selectedCard = nil
-            }) { creature in
-                BottomPreviewSheet(
-                    creature: creature,
-                    onDetailTapped: {
-                        detailCreature = creature // push 할 데이터를 따로 보존
-                        selectedCreature = nil // 시트 닫기
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { // 시트 닫은 뒤에 push
-                            navigateToDetail = true
+            }) { _ in
+                if let creature = selectedCreature {
+                    BottomPreviewSheet(
+                        creature: creature,
+                        onDetailTapped: {
+//                            detailCreature = creature // push 할 데이터를 따로 보존
+                            selectedCreature = nil // 시트 닫기
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { // 시트 닫은 뒤에 push
+    //                            navigateToDetail = true
+                                di.router.push(.oceanCreatureDetail(creature: creature))
+                            }
                         }
-                    }
-                )
-                .id(sheetVersion)
-                .presentationDetents([.fraction(0.5)])
-                .presentationSizing(.automatic)
-                .presentationDragIndicator(.visible)
+                    )
+                    .id(sheetVersion)
+                    .presentationDetents([.fraction(0.5)])
+                    .presentationSizing(.automatic)
+                    .presentationDragIndicator(.visible)
+                }
+                else {
+                    ProgressView()
+                }
             }
-            .navigationDestination(isPresented: $navigateToDetail) {
-                if let creature = detailCreature {
-                    OceanCreatureDetailView(creature: creature)
-            }
-        }
+//            .navigationDestination(isPresented: $navigateToDetail) {
+//                if let creature = detailCreature {
+//                    OceanCreatureDetailView(creature: creature)
+//                }
+//            }
         .task {
             viewModel.onAppear()
         }

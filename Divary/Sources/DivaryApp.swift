@@ -45,6 +45,10 @@ struct DivaryApp: App {
                                    )
                                    .environment(\.diContainer, container)
                             .navigationBarBackButtonHidden(true)
+                        case .oceanCatalog:
+                            OceanCatalogView()
+                        case .oceanCreatureDetail(let creature):
+                            OceanCreatureDetailView(creature: creature)
                         }
                     }
             }

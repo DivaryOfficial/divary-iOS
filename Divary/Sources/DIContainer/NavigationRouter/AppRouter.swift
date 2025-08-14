@@ -16,6 +16,8 @@ enum Route: Hashable {
     case Store(viewModel: CharacterViewModel)
     case notifications
     case locationSearch
+    case oceanCatalog
+    case oceanCreatureDetail(creature: SeaCreatureDetail)
 }
 
 class AppRouter: ObservableObject {

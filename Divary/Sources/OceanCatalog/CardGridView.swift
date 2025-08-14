@@ -39,6 +39,6 @@ struct CardGridView: View {
                 }
             }
         }
-        .padding()
+        .padding(.horizontal)
     }
 }

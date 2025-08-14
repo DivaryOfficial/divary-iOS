@@ -45,7 +45,7 @@ struct CategoryTabBar: View {
                     }
                 )
         }
-        .padding(.bottom, 1)
+        .padding(.vertical, 1)
     }
 }
 
