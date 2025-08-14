@@ -72,7 +72,8 @@ struct DiaryMainView: View {
                 activeFooterBar
             }
 //        }
-        .onAppear {
+//        .onAppear {
+            .task {
             if !didInject {
                 viewModel.inject(
                     diaryService: di.logDiaryService,   // DI에 이미 들어있음 :contentReference[oaicite:0]{index=0}

@@ -100,7 +100,8 @@ struct LocationSearchView: View {
             .listStyle(.plain)
         }
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear {
+//        .onAppear {
+        .task {
             locationManager.requestPermission()
             if searchText.isEmpty {
                 Task {
