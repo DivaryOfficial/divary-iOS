@@ -7,18 +7,26 @@
 
 import SwiftUI
 import PencilKit
+import UIKit
 
 struct DiaryCanvasView: View { // 일기메인뷰에서 연필 버튼 누르면 뜨는 그리는 공간 (CanvasView를 사용)
     @ObservedObject var viewModel: DiaryCanvasViewModel
     let offsetY: CGFloat
     let initialDrawing: PKDrawing?
     var onSaved: ((PKDrawing, CGFloat) -> Void)?
+    
+    // 기기 판별
+    private var isPad: Bool { UIDevice.current.userInterfaceIdiom == .pad }
 
     var body: some View {
         ZStack(alignment: .bottom){
             canvasView
+        }
+        // iPad는 상단, iPhone은 하단에 배치
+        .overlay(alignment: isPad ? .top : .bottom) {
             drawingBar
-                .padding(.bottom, canvasView.frame.height)
+                // iPhone에서는 PencilKit 툴피커가 가리는 높이만큼 여백 유지
+                .padding(isPad ? .top : .bottom, isPad ? 0 : canvasView.frame.height)
         }
         .task {
 //            viewModel.loadDrawingIfExists()
@@ -46,18 +54,32 @@ struct DiaryCanvasView: View { // 일기메인뷰에서 연필 버튼 누르면 
             
             Spacer()
             
-            // undo 버튼
-            Button(action: { viewModel.undo() }) {
-                Image("humbleicons_arrow-go-back")
-                    .foregroundColor(viewModel.canUndo ? .black : Color(.G_500))
+            if !isPad {
+                // undo 버튼
+                Button(action: { viewModel.undo() }) {
+                    Image("humbleicons_arrow-go-back")
+                        .foregroundColor(viewModel.canUndo ? .black : Color(.G_500))
+                }
+                .padding(.trailing, 18)
+                
+                // redo 버튼
+                Button(action: { viewModel.redo() }) {
+                    Image("humbleicons_arrow-go-forward")
+                        .foregroundColor(viewModel.canRedo ? .black : Color(.G_500))
+                }
             }
-            .padding(.trailing, 18)
-            
-            // redo 버튼
-            Button(action: { viewModel.redo() }) {
-                Image("humbleicons_arrow-go-forward")
-                    .foregroundColor(viewModel.canRedo ? .black : Color(.G_500))
-            }
+//            // undo 버튼
+//            Button(action: { viewModel.undo() }) {
+//                Image("humbleicons_arrow-go-back")
+//                    .foregroundColor(viewModel.canUndo ? .black : Color(.G_500))
+//            }
+//            .padding(.trailing, 18)
+//            
+//            // redo 버튼
+//            Button(action: { viewModel.redo() }) {
+//                Image("humbleicons_arrow-go-forward")
+//                    .foregroundColor(viewModel.canRedo ? .black : Color(.G_500))
+//            }
             
             Spacer()
             
