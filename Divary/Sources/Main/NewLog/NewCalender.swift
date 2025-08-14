@@ -45,6 +45,7 @@ struct NewCalenderView: View {
                 Text(currentMonth, formatter: Self.dateFormatter)
                     .font(Font.omyu.regular(size: 20))
 
+                
                 Image("chevron.down")
                     .frame(width: 20)
                     .foregroundStyle(Color.bw_black)
