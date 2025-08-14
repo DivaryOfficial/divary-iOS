@@ -69,7 +69,7 @@ struct LogBookMainView: View {
                         LogBookPageView(viewModel: viewModel)
                     case .diary:
 //                        DiaryMainView(diaryLogId: 0)
-                        DiaryMainView(viewModel: diaryVM, diaryLogId: 52)
+                        DiaryMainView(viewModel: diaryVM, diaryLogId: 62)
 //                        DiaryMainView(diaryLogId: 51)
                     }
                 }

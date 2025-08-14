@@ -96,9 +96,14 @@ struct DiaryMainView: View {
                     framedImages: FramedImageSelectList,
                     onComplete: { results in
                         // 편집 모드: 단일 결과만 사용
-                        if let editing = viewModel.editingImageBlock, let edited = results.first {
-                            viewModel.updateImageBlock(id: editing.id, to: edited)
-                        } else {
+                        if let editing = viewModel.editingImageBlock {
+                            if let edited = results.first {
+                                viewModel.updateImageBlock(id: editing.id, to: edited)
+                            } else {
+                                viewModel.deleteBlock(editing) // 편집 중 빈 결과면 삭제
+                            }
+                        }
+                        else {
                             // 생성 모드: 여러 장 추가 가능
                             viewModel.addImages(results)
                         }

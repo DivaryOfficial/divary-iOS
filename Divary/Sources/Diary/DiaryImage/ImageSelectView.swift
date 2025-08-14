@@ -49,6 +49,9 @@ struct ImageSelectView: View {
                             
                             if framedImages.isEmpty {
                                 showDeletePopup = false
+                                if let onComplete = onComplete {
+                                    onComplete([]) // 메인뷰에 삭제 신호 보내기
+                                }
                                 dismiss()
                                 return
                             }
