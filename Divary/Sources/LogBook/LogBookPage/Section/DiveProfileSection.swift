@@ -48,7 +48,8 @@ struct DiveProfileSection: View {
                 Text("다이빙 프로파일")
                     .font(Font.omyu.regular(size: 16))
                     .foregroundStyle(status != .empty ? Color.bw_black : Color.grayscale_g400)
-                if status == .partial {
+                // ✅ 완전저장된 상태에서는 "작성중" 표시하지 않음
+                if status == .partial && !isSaved {
                     Text("작성중")
                         .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 10))
                         .foregroundStyle(Color.role_color_nagative)
@@ -57,17 +58,17 @@ struct DiveProfileSection: View {
             }
 
             VStack(spacing: 0) {
-                DiveTimeView(diveTime: profile?.diveTime)
-                DiveDepthInfoView(profile: profile)
-                DashedDivider(color: profile?.diveTime != nil ? Color.primary_sea_blue : Color.grayscale_g300)
-                TankPressureView(profile: profile)
-                DashedDivider(color: profile?.diveTime != nil ? Color.primary_sea_blue : Color.grayscale_g300)
-                GasConsumptionView(start: profile?.startPressure, end: profile?.endPressure)
+                DiveTimeView(diveTime: profile?.diveTime, isSaved: isSaved)
+                DiveDepthInfoView(profile: profile, isSaved: isSaved)
+                DashedDivider(color: (profile?.diveTime != nil || isSaved) ? Color.primary_sea_blue : Color.grayscale_g300)
+                TankPressureView(profile: profile, isSaved: isSaved)
+                DashedDivider(color: (profile?.diveTime != nil || isSaved) ? Color.primary_sea_blue : Color.grayscale_g300)
+                GasConsumptionView(start: profile?.startPressure, end: profile?.endPressure, isSaved: isSaved)
             }
             .background(
                 RoundedRectangle(cornerRadius: 10)
                     .fill(Color.white)
-                    .stroke(((profile?.diveTime) != nil) ? Color.primary_sea_blue : Color.gray.opacity(0.4), lineWidth: 1)
+                    .stroke((profile?.diveTime != nil || isSaved) ? Color.primary_sea_blue : Color.gray.opacity(0.4), lineWidth: 1)
             )
         }
     }
@@ -76,6 +77,7 @@ struct DiveProfileSection: View {
 // DiveTimeView.swift
 struct DiveTimeView: View {
     let diveTime: Int?
+    let isSaved: Bool
 
     var body: some View {
         HStack {
@@ -91,7 +93,7 @@ struct DiveTimeView: View {
                 .foregroundStyle(.white)
         }
         .padding()
-        .background(diveTime != nil ? Color.primary_sea_blue : Color.grayscale_g400)
+        .background((diveTime != nil || isSaved) ? Color.primary_sea_blue : Color.grayscale_g400)
         .roundingCorner(8, corners: [.topLeft, .topRight])
     }
 }
@@ -100,19 +102,20 @@ struct DiveTimeView: View {
 // DiveDepthInfoView.swift
 struct DiveDepthInfoView: View {
     let profile: DiveProfile?
+    let isSaved: Bool
 
     var body: some View {
         HStack {
-            Image((profile?.maxDepth == nil && profile?.avgDepth == nil && profile?.decoStop == nil) ? "GrayDiveGraph" : "BlueDiveGraph")
+            Image((profile?.maxDepth == nil && profile?.avgDepth == nil && profile?.decoStop == nil && !isSaved) ? "GrayDiveGraph" : "BlueDiveGraph")
                 .frame(width: 165)
                 .padding(.top, 12)
 
             VStack(alignment: .trailing, spacing: 4) {
-                DepthRow(label: "최대수심", value: profile?.maxDepth, unit: "m")
-                DepthRow(label: "평균수심", value: profile?.avgDepth, unit: "m")
+                DepthRow(label: "최대수심", value: profile?.maxDepth, unit: "m", isSaved: isSaved)
+                DepthRow(label: "평균수심", value: profile?.avgDepth, unit: "m", isSaved: isSaved)
                 HStack {
-                    DepthRow(label: "감압정지", value: profile?.decoDepth, unit: "m")
-                    DepthRow(label: "", value: profile?.decoStop, unit: "분")
+                    DepthRow(label: "감압정지", value: profile?.decoDepth, unit: "m", isSaved: isSaved)
+                    DepthRow(label: "", value: profile?.decoStop, unit: "분", isSaved: isSaved)
                 }
             }
         }
@@ -124,20 +127,24 @@ struct DepthRow: View {
     let label: String
     let value: Int?
     let unit: String
+    let isSaved: Bool
 
     var body: some View {
         HStack {
             if !label.isEmpty {
                 Text(label)
-                    .foregroundStyle(value != nil ? Color.grayscale_g700 : Color.grayscale_g400)
+                    // ✅ 완전저장 시 항상 검정, 아니면 조건부
+                    .foregroundStyle(isSaved ? Color.grayscale_g700 : (value != nil ? Color.grayscale_g700 : Color.grayscale_g400))
                     .font(Font.omyu.regular(size: 16))
             }
             Text("\(value ?? 0)")
                 .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
-                .foregroundStyle(value != nil ? Color.bw_black : Color.grayscale_g400)
+                // ✅ 완전저장 시 항상 검정, 아니면 조건부
+                .foregroundStyle(isSaved ? Color.bw_black : (value != nil ? Color.bw_black : Color.grayscale_g400))
             Text(unit)
                 .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
-                .foregroundStyle(value != nil ? Color.bw_black : Color.grayscale_g400)
+                // ✅ 완전저장 시 항상 검정, 아니면 조건부
+                .foregroundStyle(isSaved ? Color.bw_black : (value != nil ? Color.bw_black : Color.grayscale_g400))
         }
         .padding(.vertical, 4)
     }
@@ -146,11 +153,22 @@ struct DepthRow: View {
 // TankPressureView.swift
 struct TankPressureView: View {
     let profile: DiveProfile?
+    let isSaved: Bool
 
     var body: some View {
         HStack(spacing: 20) {
-            TankView(title: "시작탱크 압력", imageName: profile?.startPressure != nil ? "BlueTank1" : "GrayTank1", pressure: profile?.startPressure)
-            TankView(title: "종료탱크 압력", imageName: profile?.endPressure != nil ? "BlueTank2" : "GrayTank2", pressure: profile?.endPressure)
+            TankView(
+                title: "시작탱크 압력",
+                imageName: (profile?.startPressure != nil || isSaved) ? "BlueTank1" : "GrayTank1",
+                pressure: profile?.startPressure,
+                isSaved: isSaved
+            )
+            TankView(
+                title: "종료탱크 압력",
+                imageName: (profile?.endPressure != nil || isSaved) ? "BlueTank2" : "GrayTank2",
+                pressure: profile?.endPressure,
+                isSaved: isSaved
+            )
         }
         .padding(.vertical)
     }
@@ -160,6 +178,7 @@ struct TankView: View {
     let title: String
     let imageName: String
     let pressure: Int?
+    let isSaved: Bool
 
     var body: some View {
         VStack {
@@ -177,7 +196,8 @@ struct TankView: View {
                     .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
             )
         }
-        .foregroundStyle(pressure != nil ? Color.bw_black : Color.grayscale_g400)
+        // ✅ 완전저장 시 항상 검정, 아니면 조건부
+        .foregroundStyle(isSaved ? Color.bw_black : (pressure != nil ? Color.bw_black : Color.grayscale_g400))
     }
 }
 
@@ -186,29 +206,35 @@ struct TankView: View {
 struct GasConsumptionView: View {
     let start: Int?
     let end: Int?
+    let isSaved: Bool
 
     var body: some View {
         HStack {
             if let start = start, let end = end {
                     Text("기체 소모량 ")
                         .font(Font.omyu.regular(size: 16))
-                        .foregroundStyle(Color.grayscale_g700)
+                        // ✅ 완전저장 시 항상 검정, 아니면 조건부
+                        .foregroundStyle(isSaved ? Color.grayscale_g700 : Color.grayscale_g700)
                     
                     Text("\(max(start - end, 0))")
                         .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
-                        .foregroundStyle(Color.bw_black)
+                        // ✅ 완전저장 시 항상 검정, 아니면 조건부
+                        .foregroundStyle(isSaved ? Color.bw_black : Color.bw_black)
                     +
                     Text(" bar")
                         .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
-                        .foregroundStyle(Color.bw_black)
+                        // ✅ 완전저장 시 항상 검정, 아니면 조건부
+                        .foregroundStyle(isSaved ? Color.bw_black : Color.bw_black)
             } else {
                 Text("기체 소모량 ")
                     .font(Font.omyu.regular(size: 16))
-                    .foregroundStyle(Color.grayscale_g400)
+                    // ✅ 완전저장 시 항상 검정, 아니면 조건부
+                    .foregroundStyle(isSaved ? Color.grayscale_g700 : Color.grayscale_g400)
 
                 Text("0 bar")
                     .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
-                    .foregroundStyle(Color.grayscale_g400)
+                    // ✅ 완전저장 시 항상 검정, 아니면 조건부
+                    .foregroundStyle(isSaved ? Color.bw_black : Color.grayscale_g400)
             }
             
         }
@@ -244,6 +270,3 @@ struct GasConsumptionView: View {
 //            isSaved: .constant(false)
 //        )
 //}
-
-
-

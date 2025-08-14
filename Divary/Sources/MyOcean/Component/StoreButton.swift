@@ -24,6 +24,8 @@ struct StoreButton: View {
             print("상점 버튼 클릭")
         }) {
             Image("storeIcon")
+                .resizable()
+                .frame(width:30, height: 30)
                 .scaleEffect(scale)
         }
         .offset(x: (150 * scaleX) + x, y: (-240 * scaleY) + y)

@@ -38,7 +38,7 @@ struct DiveOverviewSection: View {
                 Text("다이빙 개요")
                     .font(Font.omyu.regular(size: 16))
                     .foregroundStyle(status != .empty ? Color.bw_black : Color.grayscale_g400)
-                if status == .partial {
+                if status == .partial && !isSaved {  // ✅ 추가
                     Text("작성중")
                         .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 10))
                         .foregroundStyle(Color.role_color_nagative)
@@ -90,7 +90,7 @@ struct DiveOverviewSection: View {
 
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
-                .foregroundStyle(isEmpty ? Color.grayscale_g400 : Color.grayscale_g700)
+                .foregroundStyle(isSaved ? Color.grayscale_g700 : (isEmpty ? Color.grayscale_g400 : Color.grayscale_g700))
                 .font(Font.omyu.regular(size: 14))
                 .padding(.bottom, 10)
 
@@ -98,7 +98,7 @@ struct DiveOverviewSection: View {
                 Spacer()
                 Text(isEmpty ? " " : trimmed)
                     .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
-                    .foregroundStyle(isEmpty ? Color.grayscale_g400 : Color.bw_black)
+                    .foregroundStyle(isSaved ? Color.bw_black : (isEmpty ? Color.grayscale_g400 : Color.bw_black))
                     .multilineTextAlignment(.trailing)
             }
         }

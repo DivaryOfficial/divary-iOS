@@ -40,17 +40,19 @@ struct DiveEquipmentSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
+            // HStack 부분 수정
             HStack {
                 Text("착용")
                     .font(Font.omyu.regular(size: 16))
                     .foregroundStyle(status != .empty ? Color.bw_black : Color.grayscale_g400)
-                if status == .partial {
+                if status == .partial && !isSaved {  // ✅ 추가
                     Text("작성중")
                         .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 10))
                         .foregroundStyle(Color.role_color_nagative)
                         .padding(4)
                 }
             }
+
 
             VStack(spacing: 0) {
                 equipmentRow(title: "슈트 종류", value: equipment?.suitType)
@@ -69,26 +71,28 @@ struct DiveEquipmentSection: View {
         }
     }
 
+
+    // equipmentRow 메서드 수정
     private func equipmentRow(title: String, value: String?, unit: String? = nil) -> some View {
         let trimmedValue = value?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         let isEmpty = trimmedValue.isEmpty
 
         return HStack(alignment: .top) {
             Text(title)
-                .foregroundStyle(isEmpty ? Color.grayscale_g400 : Color.grayscale_g700)
+                .foregroundStyle(isSaved ? Color.grayscale_g700 : (isEmpty ? Color.grayscale_g400 : Color.grayscale_g700))
                 .font(Font.omyu.regular(size: 14))
 
             Spacer()
 
             HStack(alignment: .bottom, spacing: 2) {
                 Text(isEmpty ? " " : trimmedValue)
-                    .foregroundStyle(isEmpty ? Color.grayscale_g400 : Color.bw_black)
+                    .foregroundStyle(isSaved ? Color.bw_black : (isEmpty ? Color.grayscale_g400 : Color.bw_black))
                     .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
                     .lineSpacing(4)
 
                 if let unit = unit {
                     Text(unit)
-                        .foregroundStyle(isEmpty ? Color.grayscale_g400 : Color.bw_black)
+                        .foregroundStyle(isSaved ? Color.bw_black : (isEmpty ? Color.grayscale_g400 : Color.bw_black))
                         .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
                 }
             }
