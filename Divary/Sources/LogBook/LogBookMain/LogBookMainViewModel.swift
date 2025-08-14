@@ -423,6 +423,7 @@ class LogBookMainViewModel {
                 diveTime: profile.diveTime,
                 maxDepth: profile.maxDepth,
                 avgDepth: profile.avgDepth,
+                decoDepth: profile.decoDepth,
                 decoStop: profile.decoStop,
                 startPressure: profile.startPressure,
                 endPressure: profile.endPressure
@@ -497,6 +498,7 @@ class LogBookMainViewModel {
         return p1.diveTime == p2.diveTime &&
                p1.maxDepth == p2.maxDepth &&
                p1.avgDepth == p2.avgDepth &&
+               p1.decoDepth == p2.decoDepth &&
                p1.decoStop == p2.decoStop &&
                p1.startPressure == p2.startPressure &&
                p1.endPressure == p2.endPressure

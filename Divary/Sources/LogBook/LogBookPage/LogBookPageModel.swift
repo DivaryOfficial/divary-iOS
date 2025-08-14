@@ -162,8 +162,9 @@ class DiveEnvironment {
 @Observable
 class DiveProfile {
     var diveTime: Int?        // 다이빙 시간 (분)
-    var maxDepth: Int?     // 최대 수심 (m)
-    var avgDepth: Int?     // 평균 수심 (m)
+    var maxDepth: Int?       // 최대 수심 (m)
+    var avgDepth: Int?      // 평균 수심 (m)
+    var decoDepth: Int?
     var decoStop: Int?     // 감압 정지 시간 (분)
     var startPressure: Int?   // 시작 탱크 압력 (bar)
     var endPressure: Int?     // 종료 탱크 압력 (bar)
@@ -173,6 +174,7 @@ class DiveProfile {
         diveTime: Int? = nil,
         maxDepth: Int? = nil,
         avgDepth: Int? = nil,
+        decoDepth: Int? = nil,
         decoStop: Int? = nil,
         startPressure: Int? = nil,
         endPressure: Int? = nil
@@ -180,6 +182,7 @@ class DiveProfile {
         self.diveTime = diveTime
         self.maxDepth = maxDepth
         self.avgDepth = avgDepth
+        self.decoDepth = decoDepth
         self.decoStop = decoStop
         self.startPressure = startPressure
         self.endPressure = endPressure

@@ -65,14 +65,14 @@ struct ProfileInputView: View {
                                     title: "감압 정지",
                                     placeholder: "0",
                                     unit: "m",
-                                    value: $profile.decoStop
+                                    value: $profile.decoDepth
                                 )
                                 
                                 TemperatureInputField(
                                     title: " ",
                                     placeholder: "0",
                                     unit: "분",
-                                    value: $profile.diveTime
+                                    value: $profile.decoStop
                                 )
                             }
                             

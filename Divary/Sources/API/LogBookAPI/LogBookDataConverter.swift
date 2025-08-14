@@ -151,6 +151,7 @@ extension LogBaseDetailDTO {
                 diveTime: self.diveTime,
                 maxDepth: self.maxDepth,
                 avgDepth: self.avgDepth,
+                decoDepth: self.decompressDepth,  // 추가 (API의 decompressDepth -> UI의 decoDepth)
                 decoStop: self.decompressTime,
                 startPressure: self.startPressure,
                 endPressure: self.finishPressure
@@ -182,6 +183,7 @@ extension LogBaseDetailDTO {
 
     private func hasProfileData() -> Bool {
         return diveTime != nil || maxDepth != nil || avgDepth != nil ||
+        decompressDepth != nil ||  // 추가
                decompressTime != nil || startPressure != nil || finishPressure != nil
     }
 }
@@ -217,7 +219,7 @@ extension DiveLogData {
             diveTime: self.profile?.diveTime,
             maxDepth: self.profile?.maxDepth,
             avgDepth: self.profile?.avgDepth,
-            decompressDepth: nil,               // UI 미사용
+            decompressDepth: self.profile?.decoDepth,            // UI 미사용
             decompressTime: self.profile?.decoStop,
             startPressure: self.profile?.startPressure,
             finishPressure: self.profile?.endPressure,
