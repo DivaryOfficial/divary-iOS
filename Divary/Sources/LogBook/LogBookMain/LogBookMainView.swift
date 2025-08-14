@@ -25,6 +25,12 @@ struct LogBookMainView: View {
     @State private var showSavePopup = false
     @State private var showSavedMessage = false
     
+    @State private var showDiaryLeavePopup = false
+    private enum DiaryExitAction { case back, switchToLogbook }
+    @State private var pendingDiaryExit: DiaryExitAction? = nil
+    @State private var lastTab: DiveLogTab = .logbook
+    @State private var allowDiaryExitOnce = false
+    
     //날짜 변경 취소를 위한 백업데이터
     @State private var backupDate: Date = Date()
     
@@ -46,7 +52,13 @@ struct LogBookMainView: View {
                     selectedDate: $viewModel.selectedDate,
                     isCalendarPresented: $isCalendarPresented,
                     onBackTap: {
-                        dismiss()
+//                        dismiss()
+                        if selectedTab == .diary, diaryVM.hasUnsavedChanges {
+                            pendingDiaryExit = .back
+                            showDiaryLeavePopup = true
+                        } else {
+                            dismiss()
+                        }
                     },
 //                    isTempSaved: (selectedTab == .diary ? diaryVM.canSave : viewModel.isTempSaved),
                     isTempSaved: (selectedTab == .diary
@@ -161,6 +173,32 @@ struct LogBookMainView: View {
                 }
             }
             
+            // 일기 날라가는거 경고 팝업
+            if showDiaryLeavePopup {
+                DeletePopupView(
+                    isPresented: $showDiaryLeavePopup,
+                    deleteText: "지금 나가면 일기의 변경 내용이 모두 삭제됩니다.",
+                    onDelete: {
+                        showDiaryLeavePopup = false
+                        let action = pendingDiaryExit
+                        pendingDiaryExit = nil
+                        allowDiaryExitOnce = true
+                        
+                        DispatchQueue.main.async {
+                            switch action {
+                            case .back:
+                                dismiss()
+                            case .switchToLogbook:
+                                selectedTab = .logbook
+                            case .none:
+                                break
+                            }
+                        }
+                    }
+                )
+                .zIndex(999)
+            }
+            
             // 저장 완료 메시지 (ComPop 사용)
             if viewModel.showSavedMessage {
                 GeometryReader { geometry in
@@ -188,6 +226,20 @@ struct LogBookMainView: View {
                 }
             }
         }
+        .onChange(of: selectedTab) { oldTab, newTab in
+            if allowDiaryExitOnce {
+                allowDiaryExitOnce = false
+                return
+            }
+            
+            // 일기에서 나가려는 순간 + 변경사항 있음 → 팝업 띄우고 전환 취소
+            if oldTab == .diary, newTab == .logbook, diaryVM.hasUnsavedChanges {
+                selectedTab = .diary            // 되돌리기
+                pendingDiaryExit = .switchToLogbook
+                showDiaryLeavePopup = true
+            }
+        }
+
     }
 }
 
