@@ -138,7 +138,10 @@ extension LogBaseDetailDTO {
     }
 
     private func hasOverviewData() -> Bool {
-        return divePoint != nil || divePurpose != nil || diveMethod != nil
+        return place != nil ||           // ✅ 추가: place 체크
+               divePoint != nil ||
+               divePurpose != nil ||
+               diveMethod != nil
     }
 
     private func hasParticipantsData() -> Bool {
@@ -168,7 +171,7 @@ extension DiveLogData {
         return LogUpdateRequestDTO(
             date: dateString,
             saveStatus: saveStatus.rawValue,
-            place: self.overview?.point,        // TODO: place 별도 필드가 생기면 교체
+            place: self.overview?.title,        // TODO: place 별도 필드가 생기면 교체
             divePoint: self.overview?.point,
             // ✅ UI 표시용 텍스트 → 백엔드 enum 변환
             diveMethod: self.overview?.method?.toDivingMethodEnum(),
