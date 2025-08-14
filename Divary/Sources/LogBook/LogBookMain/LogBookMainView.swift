@@ -25,6 +25,10 @@ struct LogBookMainView: View {
     @State private var showSavePopup = false
     @State private var showSavedMessage = false
 
+    // ✅ 제목 수정 관련 상태
+    @State private var showTitleEditPopup = false
+    @State private var editingTitle = ""
+
     // 날짜 변경 취소를 위한 백업데이터
     @State private var backupDate: Date = Date()
 
@@ -46,7 +50,8 @@ struct LogBookMainView: View {
                         // 라우터 pop으로 일원화
                         container.router.pop()
                     },
-                    isTempSaved: viewModel.isTempSaved,
+                    // ✅ 프론트엔드 임시저장 상태로 변경
+                    isTempSaved: viewModel.hasFrontendChanges,
                     onSaveTap: {
                         viewModel.handleSaveButtonTap()
                     }
@@ -56,16 +61,23 @@ struct LogBookMainView: View {
                 TabSelector(selectedTab: $selectedTab)
                     .padding(.horizontal)
 
-                    if selectedTab == .logbook {
-                        LogBookPageView(viewModel: viewModel)
-                    }
-                    else {
-                       // DiaryMainView()
-                        if selectedTab == .diary {
-                            DiaryMainView(diaryId: 0)
-                            //DiaryMainView()
+                if selectedTab == .logbook {
+                    // ✅ onTitleTap 콜백 추가
+                    LogBookPageView(
+                        viewModel: viewModel,
+                        onTitleTap: {
+                            editingTitle = viewModel.displayTitle
+                            showTitleEditPopup = true
                         }
+                    )
+                }
+                else {
+                   // DiaryMainView()
+                    if selectedTab == .diary {
+                        DiaryMainView(diaryId: 0)
+                        //DiaryMainView()
                     }
+                }
             }
 
             // 날짜 클릭시 팝업
@@ -155,6 +167,22 @@ struct LogBookMainView: View {
                     .transition(.opacity)
                     .zIndex(35)
                 }
+            }
+
+            // ✅ 제목 수정 팝업 - updateFrontendTitle 메서드 사용
+            if showTitleEditPopup {
+                TitleEditPopup(
+                    isPresented: $showTitleEditPopup,
+                    title: $editingTitle,
+                    onSave: {
+                        viewModel.updateFrontendTitle(newTitle: editingTitle)
+                        showTitleEditPopup = false
+                    },
+                    onCancel: {
+                        showTitleEditPopup = false
+                    }
+                )
+                .zIndex(45)
             }
 
             // 로딩 인디케이터

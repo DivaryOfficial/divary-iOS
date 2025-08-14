@@ -105,7 +105,7 @@ enum WaveType: String, CaseIterable {
 
 enum FeelsLikeType: String, CaseIterable {
     case cold = "COLD"
-    case moderate = "MODERATE"
+    case moderate = "MEDIUM"
     case hot = "HOT"
     
     var displayName: String {

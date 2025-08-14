@@ -14,12 +14,23 @@ class LogBookMainViewModel {
     var logBaseId: String
     var logBaseInfoId: Int
     var logBaseTitle: String = ""
-    var isTempSaved: Bool = false
-    var tempSavedData: [DiveLogData] = []
+    
+    // ✅ 서버에서 받은 총 다이빙 횟수 추가
+    var totalDiveCount: Int = 0
+    
+    // ✅ 단순화된 임시저장 구조
+    var isTempSaved: Bool = false                    // 서버 저장 상태 표시용
+    var frontendTempData: [DiveLogData] = []        // 프론트엔드 임시저장 데이터만 유지
+    var hasFrontendTempSave: [Bool] = []            // 각 페이지별 프론트엔드 임시저장 여부
+    var serverData: [DiveLogData] = []              // 서버에서 불러온 원본 데이터 (그냥 나가기용)
     
     // 저장 관련 상태
     var showSavePopup = false
     var showSavedMessage = false
+    
+    // ✅ 추가: 제목 관련 프론트엔드 임시저장
+    var frontendTempTitle: String? = nil
+    var hasTitleChanges: Bool = false
     
     // API 연동 관련
     private let dataManager = LogBookDataManager.shared
@@ -27,15 +38,16 @@ class LogBookMainViewModel {
     private(set) var isLoading = false
     private(set) var errorMessage: String?
     
-    var logCount: Int {
-        diveLogData.filter { !$0.isEmpty }.count
+    // ✅ 기존 logCount는 제거하고 totalDiveCount 사용
+    
+    // ✅ 프론트엔드 임시저장이 있는지 확인하는 계산 프로퍼티 추가
+    var hasFrontendChanges: Bool {
+        return hasFrontendTempSave.contains(true) || hasTitleChanges
     }
     
-    // 계산된 프로퍼티명을 다른 이름으로 변경
+    // ✅ 수정: displayTitle 계산 프로퍼티 (38줄 부근)
     var displayTitle: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "M/d"
-        return "\(formatter.string(from: selectedDate)) \(logBaseTitle)"
+        return frontendTempTitle ?? logBaseTitle
     }
     
     // 기존 init (기본값용)
@@ -44,7 +56,10 @@ class LogBookMainViewModel {
          self.logBaseInfoId = 0
          self.diveLogData = [] // 빈 배열로 시작
          self.logBaseTitle = "다이빙 로그북"
-         self.tempSavedData = []
+         self.totalDiveCount = 0 // ✅ 추가
+         self.frontendTempData = []
+         self.hasFrontendTempSave = []
+         self.serverData = []
      }
      
      // logBaseId를 받는 init
@@ -52,7 +67,10 @@ class LogBookMainViewModel {
          self.logBaseId = logBaseId
          self.logBaseInfoId = Int(logBaseId) ?? 0
          self.diveLogData = [] // 빈 배열로 시작
-         self.tempSavedData = []
+         self.totalDiveCount = 0 // ✅ 추가
+         self.frontendTempData = []
+         self.hasFrontendTempSave = []
+         self.serverData = []
          
          // 초기 데이터 로드
          loadLogBaseDetail()
@@ -83,6 +101,7 @@ class LogBookMainViewModel {
     private func updateFromLogBase(_ logBase: LogBookBase) {
         selectedDate = logBase.date
         logBaseTitle = logBase.title
+        totalDiveCount = logBase.accumulation // ✅ 서버에서 받은 accumulation 값 저장
         
         // 로그북 데이터 업데이트 (동적 개수)
         diveLogData = []
@@ -93,31 +112,20 @@ class LogBookMainViewModel {
             logData.saveStatus = logBook.saveStatus
             diveLogData.append(logData)
             
-            // 임시저장 상태 확인
+            // 서버 저장 상태 확인 (TEMP든 COMPLETE든 서버에 저장된 상태)
             if logBook.saveStatus == .temp {
                 isTempSaved = true
             }
         }
         
-        // ✅ 로그북이 없으면 첫 번째 로그북 자동 생성 (기존 로직 제거)
-        // 이제 로그베이스 생성 시 자동으로 빈 로그북 1개가 생성되므로 여기서 별도 생성 불필요
-        if diveLogData.isEmpty {
-            // 빈 데이터라도 일단 하나 추가하여 UI가 정상 동작하도록 함
-            let emptyLogData = DiveLogData()
-            diveLogData.append(emptyLogData)
-        }
+        // ✅ 서버에서 불러온 원본 데이터 백업 (그냥 나가기용)
+        serverData = diveLogData.map { copyDiveLogData($0) }
         
-        // 임시저장 데이터 백업
-        updateTempSavedDataArray()
+        // ✅ 프론트엔드 임시저장 배열 초기화
+        frontendTempData = diveLogData.map { copyDiveLogData($0) }
+        hasFrontendTempSave = Array(repeating: false, count: diveLogData.count)
         
-        print("✅ LogBase 업데이트 완료 - 로그북 개수: \(diveLogData.count)")
-    }
-    
-    // 임시저장 데이터 배열 업데이트
-    private func updateTempSavedDataArray() {
-        tempSavedData = diveLogData.map { data in
-            copyDiveLogData(data)
-        }
+        print("✅ LogBase 업데이트 완료 - 로그북 개수: \(diveLogData.count), 총 다이빙 횟수: \(totalDiveCount)")
     }
     
     // ✅ 새 로그북 추가 (슬라이드 시 사용 - DataManager의 addNewLogBook 호출)
@@ -142,7 +150,9 @@ class LogBookMainViewModel {
                 newLogData.saveStatus = .temp
                 
                 self.diveLogData.append(newLogData)
-                self.tempSavedData.append(DiveLogData())
+                self.serverData.append(self.copyDiveLogData(newLogData))
+                self.frontendTempData.append(self.copyDiveLogData(newLogData))
+                self.hasFrontendTempSave.append(false)
                 
                 completion(true)
                 print("✅ 새 로그북 추가 성공: logBookId=\(logBookId)")
@@ -155,7 +165,63 @@ class LogBookMainViewModel {
         }
     }
     
-    // 개별 로그북 저장
+    // MARK: - ✅ 프론트엔드 임시저장 관련 메서드
+    
+    // 프론트엔드 임시저장
+    func saveFrontendTemp(for index: Int) {
+        guard index < diveLogData.count && index < frontendTempData.count else { return }
+        
+        frontendTempData[index] = copyDiveLogData(diveLogData[index])
+        hasFrontendTempSave[index] = true
+        
+        print("✅ 프론트엔드 임시저장 완료: 페이지 \(index)")
+    }
+    
+    // ✅ 변경사항 감지 로직 (단순화)
+    func hasChangesFromLastSave(for index: Int) -> Bool {
+        guard index < diveLogData.count else { return false }
+        
+        let current = diveLogData[index]
+        
+        // 1. 프론트엔드 임시저장이 있으면 그것과 비교
+        if index < hasFrontendTempSave.count && hasFrontendTempSave[index] {
+            let frontendTemp = frontendTempData[index]
+            return !areDataEqual(current, frontendTemp)
+        }
+        
+        // 2. 프론트엔드 임시저장이 없으면 서버 원본 데이터와 비교
+        if index < serverData.count {
+            let serverOriginal = serverData[index]
+            return !areDataEqual(current, serverOriginal)
+        }
+        
+        // 3. 둘 다 없으면 빈 데이터와 비교
+        let emptyData = DiveLogData()
+        return !areDataEqual(current, emptyData)
+    }
+    
+    // ✅ 수정: discardCurrentInput 메서드 (290줄 부근 - 제목 복원 로직 추가)
+    func discardCurrentInput(for index: Int) {
+        guard index < diveLogData.count else { return }
+        
+        // 제목 변경사항 취소
+        frontendTempTitle = nil
+        hasTitleChanges = false
+        
+        // 기존 로직 (로그북 데이터 복원)
+        if index < hasFrontendTempSave.count && hasFrontendTempSave[index] {
+            diveLogData[index] = copyDiveLogData(frontendTempData[index])
+            print("✅ 프론트엔드 임시저장으로 복원: 페이지 \(index)")
+            return
+        }
+        
+        print("🔄 서버 최신 데이터로 복원 시작")
+        loadLogBaseDetail()
+    }
+    
+    // MARK: - ✅ 서버 저장 관련 메서드 (메인뷰에서만 사용)
+    
+    // 개별 로그북 저장 (서버에)
     func saveLogBook(at index: Int, saveStatus: SaveStatus, completion: @escaping (Bool) -> Void) {
         guard index < diveLogData.count,
               let logBookId = diveLogData[index].logBookId else {
@@ -179,25 +245,33 @@ class LogBookMainViewModel {
                 // 저장 상태 업데이트
                 self.diveLogData[index].saveStatus = saveStatus
                 
+                // 서버 원본 데이터 업데이트
+                if index < self.serverData.count {
+                    self.serverData[index] = self.copyDiveLogData(self.diveLogData[index])
+                }
+                
+                // 서버 저장 상태 업데이트
                 if saveStatus == .temp {
                     self.isTempSaved = true
                 } else {
-                    // 완전저장 시 임시저장 상태 해제
-                    self.isTempSaved = false
+                    // ✅ 완전저장: 모든 로그북이 완전저장되었는지 확인
+                    self.updateTempSavedStatus()
                 }
                 
+                // ✅ 프론트엔드 임시저장은 서버 저장과 별개로 유지 (제거하지 않음)
+                
                 completion(true)
-                print("✅ 로그북 저장 성공: logBookId=\(logBookId)")
+                print("✅ 로그북 서버 저장 성공: logBookId=\(logBookId), saveStatus=\(saveStatus.rawValue)")
                 
             case .failure(let error):
                 self.errorMessage = "저장 중 오류가 발생했습니다: \(error.localizedDescription)"
                 completion(false)
-                print("❌ 로그북 저장 실패: \(error)")
+                print("❌ 로그북 서버 저장 실패: \(error)")
             }
         }
     }
     
-    // MARK: - 저장 관련 메서드
+    // MARK: - 저장 관련 메서드 (메인뷰 저장 버튼용)
     
     // 저장 버튼 처리
     func handleSaveButtonTap() {
@@ -208,24 +282,44 @@ class LogBookMainViewModel {
         }
     }
     
-    // 작성 완료하기 (완전 저장)
+    // ✅ 수정: handleCompleteSave 메서드 (240줄 부근 전체 교체)
     func handleCompleteSave() {
         var completedCount = 0
         let totalSaves = diveLogData.filter { !$0.isEmpty }.count
+        let needsTitleSave = hasTitleChanges
+        let totalOperations = totalSaves + (needsTitleSave ? 1 : 0)
         
-        guard totalSaves > 0 else {
+        guard totalOperations > 0 else {
             showSavedMessage = true
             return
         }
         
+        // 제목 저장
+        if needsTitleSave, let newTitle = frontendTempTitle {
+            updateLogBaseTitleToServer(newTitle: newTitle) { success in
+                if success {
+                    self.frontendTempTitle = nil
+                    self.hasTitleChanges = false
+                    completedCount += 1
+                    if completedCount == totalOperations {
+                        self.showSavedMessage = true
+                        self.showSavePopup = false
+                        self.hasFrontendTempSave = Array(repeating: false, count: self.diveLogData.count)
+                    }
+                }
+            }
+        }
+        
+        // 로그북 데이터 저장 (기존 로직)
         for (index, data) in diveLogData.enumerated() {
             if !data.isEmpty {
                 saveLogBook(at: index, saveStatus: .complete) { success in
                     if success {
                         completedCount += 1
-                        if completedCount == totalSaves {
+                        if completedCount == totalOperations {
                             self.showSavedMessage = true
                             self.showSavePopup = false
+                            self.hasFrontendTempSave = Array(repeating: false, count: self.diveLogData.count)
                         }
                     }
                 }
@@ -233,32 +327,42 @@ class LogBookMainViewModel {
         }
     }
     
-    // 임시 저장하기 (SavePop에서 호출)
+    // ✅ 수정: handleTempSaveFromSavePopup 메서드 (260줄 부근 전체 교체)
     func handleTempSaveFromSavePopup() {
-        tempSave()
-        
-        withAnimation {
-            showSavePopup = false
-        }
-    }
-    
-    // 임시저장
-    func tempSave() {
         var completedCount = 0
         let totalSaves = diveLogData.filter { !$0.isEmpty }.count
+        let needsTitleSave = hasTitleChanges
+        let totalOperations = totalSaves + (needsTitleSave ? 1 : 0)
         
-        guard totalSaves > 0 else {
-            isTempSaved = true
+        guard totalOperations > 0 else {
+            showSavePopup = false
             return
         }
         
+        // 제목 저장
+        if needsTitleSave, let newTitle = frontendTempTitle {
+            updateLogBaseTitleToServer(newTitle: newTitle) { success in
+                if success {
+                    self.frontendTempTitle = nil
+                    self.hasTitleChanges = false
+                    completedCount += 1
+                    if completedCount == totalOperations {
+                        self.showSavePopup = false
+                        self.hasFrontendTempSave = Array(repeating: false, count: self.diveLogData.count)
+                    }
+                }
+            }
+        }
+        
+        // 로그북 데이터 저장 (기존 로직)
         for (index, data) in diveLogData.enumerated() {
             if !data.isEmpty {
                 saveLogBook(at: index, saveStatus: .temp) { success in
                     if success {
                         completedCount += 1
-                        if completedCount == totalSaves {
-                            self.updateTempSavedData()
+                        if completedCount == totalOperations {
+                            self.showSavePopup = false
+                            self.hasFrontendTempSave = Array(repeating: false, count: self.diveLogData.count)
                         }
                     }
                 }
@@ -266,10 +370,41 @@ class LogBookMainViewModel {
         }
     }
     
-    // 임시저장 데이터 백업 업데이트
-    private func updateTempSavedData() {
-        updateTempSavedDataArray()
-        isTempSaved = true
+    // MARK: - 제목 수정 관련 업데이트
+    
+    // ✅ 추가: 프론트엔드 제목 업데이트 메서드 (updateFromLogBase 메서드 다음에 추가)
+    func updateFrontendTitle(newTitle: String) {
+        let trimmedTitle = newTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmedTitle != logBaseTitle {
+            frontendTempTitle = trimmedTitle
+            hasTitleChanges = true
+        } else {
+            frontendTempTitle = nil
+            hasTitleChanges = false
+        }
+        print("✅ 프론트엔드 제목 임시저장: \(trimmedTitle)")
+    }
+    
+    // ✅ 추가: 서버 제목 업데이트 메서드 (기존 updateLogBaseTitle 메서드 대체/추가)
+    private func updateLogBaseTitleToServer(newTitle: String, completion: @escaping (Bool) -> Void) {
+        isLoading = true
+        errorMessage = nil
+        
+        service.updateLogBaseTitle(logBaseInfoId: logBaseInfoId, name: newTitle) { result in
+            self.isLoading = false
+            
+            switch result {
+            case .success:
+                self.logBaseTitle = newTitle
+                completion(true)
+                print("✅ 제목 서버 저장 성공: \(newTitle)")
+                
+            case .failure(let error):
+                self.errorMessage = "제목 수정 중 오류가 발생했습니다: \(error.localizedDescription)"
+                completion(false)
+                print("❌ 제목 서버 저장 실패: \(error)")
+            }
+        }
     }
     
     // MARK: - 기존 메서드들 (UI 호환성 유지)
@@ -312,44 +447,15 @@ class LogBookMainViewModel {
         }
     }
     
-    // 임시저장 후 변경사항이 있는지 체크
-    func hasChangesFromTempSave(for index: Int) -> Bool {
-        guard index < diveLogData.count && index < tempSavedData.count else { return false }
-        
-        let current = diveLogData[index]
-        let tempSaved = tempSavedData[index]
-        
-        return !areDataEqual(current, tempSaved)
-    }
-    
-    // 두 DiveLogData가 같은지 비교
-    private func areDataEqual(_ data1: DiveLogData, _ data2: DiveLogData) -> Bool {
-        return areOverviewEqual(data1.overview, data2.overview) &&
-               areParticipantsEqual(data1.participants, data2.participants) &&
-               areEquipmentEqual(data1.equipment, data2.equipment) &&
-               areEnvironmentEqual(data1.environment, data2.environment) &&
-               areProfileEqual(data1.profile, data2.profile)
-    }
-    
-    // 현재 페이지의 모든 필드 초기화
-    func clearAllFields(for index: Int) {
-        guard index < diveLogData.count else { return }
-        
-        let logBookId = diveLogData[index].logBookId
-        diveLogData[index] = DiveLogData()
-        diveLogData[index].logBookId = logBookId
-        
-        if index < tempSavedData.count {
-            tempSavedData[index] = DiveLogData()
-            tempSavedData[index].logBookId = logBookId
+    // ✅ 전체 임시저장 상태 업데이트 (새로 추가)
+    private func updateTempSavedStatus() {
+        // 모든 로그북이 완전저장(COMPLETE) 상태인지 확인
+        let hasAnyTempSaved = diveLogData.contains { data in
+            data.saveStatus == .temp && !data.isEmpty
         }
-    }
-    
-    // 임시저장된 데이터로 되돌리기
-    func restoreFromTempSave(for index: Int) {
-        guard index < diveLogData.count && index < tempSavedData.count else { return }
         
-        diveLogData[index] = copyDiveLogData(tempSavedData[index])
+        isTempSaved = hasAnyTempSaved
+        print("✅ 임시저장 상태 업데이트: \(isTempSaved)")
     }
     
     // DiveLogData 깊은 복사
@@ -407,6 +513,7 @@ class LogBookMainViewModel {
                 diveTime: profile.diveTime,
                 maxDepth: profile.maxDepth,
                 avgDepth: profile.avgDepth,
+                decoDepth: profile.decoDepth,
                 decoStop: profile.decoStop,
                 startPressure: profile.startPressure,
                 endPressure: profile.endPressure
@@ -422,6 +529,14 @@ class LogBookMainViewModel {
     }
     
     // MARK: - 비교 메서드들 (기존 코드 유지)
+    
+    private func areDataEqual(_ data1: DiveLogData, _ data2: DiveLogData) -> Bool {
+        return areOverviewEqual(data1.overview, data2.overview) &&
+               areParticipantsEqual(data1.participants, data2.participants) &&
+               areEquipmentEqual(data1.equipment, data2.equipment) &&
+               areEnvironmentEqual(data1.environment, data2.environment) &&
+               areProfileEqual(data1.profile, data2.profile)
+    }
     
     private func areOverviewEqual(_ overview1: DiveOverview?, _ overview2: DiveOverview?) -> Bool {
         if overview1 == nil && overview2 == nil { return true }
@@ -473,6 +588,7 @@ class LogBookMainViewModel {
         return p1.diveTime == p2.diveTime &&
                p1.maxDepth == p2.maxDepth &&
                p1.avgDepth == p2.avgDepth &&
+               p1.decoDepth == p2.decoDepth &&
                p1.decoStop == p2.decoStop &&
                p1.startPressure == p2.startPressure &&
                p1.endPressure == p2.endPressure

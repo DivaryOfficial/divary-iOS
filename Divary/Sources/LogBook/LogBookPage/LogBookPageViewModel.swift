@@ -22,65 +22,50 @@ class LogBookPageViewModel {
         self.mainViewModel = mainViewModel
     }
     
-    // X 버튼 클릭 처리
+    // ✅ X 버튼 클릭 처리 (변경사항 감지 로직 개선)
     func handleCloseButtonTap() {
-        // 1. 임시저장 상태이고 변경사항이 없으면 그냥 닫기
-        if mainViewModel.isTempSaved && !mainViewModel.hasChangesFromTempSave(for: selectedPage) {
+        // 1. 변경사항이 없으면 그냥 닫기
+        if !mainViewModel.hasChangesFromLastSave(for: selectedPage) {
             withAnimation {
                 activeInputSection = nil
             }
             return
         }
         
-        // 2. 모든 섹션이 완성되었으면 그냥 닫기
-        if mainViewModel.areAllSectionsComplete(for: selectedPage) {
-            withAnimation {
-                activeInputSection = nil
-            }
-        } else {
-            // 3. 미완성이고 변경사항이 있으면 알림 표시
-            showUnsavedAlert = true
-        }
+        // 2. 변경사항이 있으면 알림 표시
+        showUnsavedAlert = true
     }
     
-    // 임시저장하고 나가기
+    // ✅ 프론트엔드 임시저장하고 나가기 (API 호출 없음)
     func handleTempSave() {
-        // API 기반 임시저장
-        mainViewModel.saveLogBook(at: selectedPage, saveStatus: .temp) { [weak self] success in
-            DispatchQueue.main.async {
-                if success {
-                    // 임시저장 완료 메시지 표시
-                    withAnimation {
-                        self?.showTempSavedMessage = true
-                        self?.activeInputSection = nil
-                    }
-                    
-                    // 2초 후 메시지 숨기기
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                        withAnimation {
-                            self?.showTempSavedMessage = false
-                        }
-                    }
-                } else {
-                    // 에러는 mainViewModel에서 처리됨
-                    self?.activeInputSection = nil
-                }
+        // 프론트엔드에만 임시저장 (API 호출 X)
+        mainViewModel.saveFrontendTemp(for: selectedPage)
+        
+        // 임시저장 완료 메시지 표시
+        withAnimation {
+            showTempSavedMessage = true
+            activeInputSection = nil
+        }
+        
+        // 2초 후 메시지 숨기기
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            withAnimation {
+                self.showTempSavedMessage = false
             }
         }
+        
+        print("✅ 프론트엔드 임시저장 완료: 페이지 \(selectedPage)")
     }
     
-    // 그냥 나가기 (변경사항 버리기)
+    // ✅ 그냥 나가기 (입력 취소)
     func handleDiscardChanges() {
-        // 임시저장된 상태가 있으면 임시저장된 데이터로 되돌리기
-        if mainViewModel.isTempSaved {
-            mainViewModel.restoreFromTempSave(for: selectedPage)
-        } else {
-            // 임시저장이 없으면 모든 필드 초기화
-            mainViewModel.clearAllFields(for: selectedPage)
-        }
+        // 현재 입력을 취소하고 이전 상태로 복원
+        mainViewModel.discardCurrentInput(for: selectedPage)
         
         withAnimation {
             activeInputSection = nil
         }
+        
+        print("✅ 입력 취소 완료: 페이지 \(selectedPage)")
     }
 }

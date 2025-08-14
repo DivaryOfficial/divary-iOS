@@ -49,6 +49,42 @@ final class LogBookService {
         }
     }
     
+    // ✅ 로그베이스 제목 수정
+    func updateLogBaseTitle(logBaseInfoId: Int, name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        provider.request(.updateLogBaseTitle(logBaseInfoId: logBaseInfoId, name: name)) { result in
+            switch result {
+            case .success(let response):
+                if let jsonString = String(data: response.data, encoding: .utf8) {
+                    print("📦 로그베이스 제목 수정 응답: \(jsonString)")
+                }
+                
+                if response.statusCode >= 400 {
+                    do {
+                        let errorResponse = try JSONDecoder().decode(APIErrorResponse.self, from: response.data)
+                        let error = LogBookAPIError(
+                            code: errorResponse.code,
+                            message: errorResponse.message,
+                            statusCode: response.statusCode
+                        )
+                        completion(.failure(error))
+                    } catch {
+                        let fallbackError = LogBookAPIError(
+                            code: "UNKNOWN_ERROR",
+                            message: "제목 수정 중 오류가 발생했습니다. (Status: \(response.statusCode))",
+                            statusCode: response.statusCode
+                        )
+                        completion(.failure(fallbackError))
+                    }
+                } else {
+                    completion(.success(()))
+                }
+                
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
     // 로그베이스 삭제
     func deleteLogBase(logBaseInfoId: Int, completion: @escaping (Result<Void, Error>) -> Void) {
         provider.request(.deleteLogBase(logBaseInfoId: logBaseInfoId)) { result in
