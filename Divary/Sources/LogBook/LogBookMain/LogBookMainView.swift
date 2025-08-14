@@ -24,6 +24,9 @@ struct LogBookMainView: View {
     // 저장 관련 상태
     @State private var showSavePopup = false
     @State private var showSavedMessage = false
+    
+    // 상태 변수 추가 (20줄 부근)
+    @State private var currentPageIndex = 0
 
     // ✅ 제목 수정 관련 상태
     @State private var showTitleEditPopup = false
@@ -53,7 +56,7 @@ struct LogBookMainView: View {
                     // ✅ 프론트엔드 임시저장 상태로 변경
                     isTempSaved: viewModel.hasFrontendChanges,
                     onSaveTap: {
-                        viewModel.handleSaveButtonTap()
+                        viewModel.handleSaveButtonTap(currentPageIndex: currentPageIndex)
                     }
                 )
                 .zIndex(1)
@@ -62,12 +65,14 @@ struct LogBookMainView: View {
                     .padding(.horizontal)
 
                 if selectedTab == .logbook {
-                    // ✅ onTitleTap 콜백 추가
                     LogBookPageView(
                         viewModel: viewModel,
                         onTitleTap: {
                             editingTitle = viewModel.displayTitle
                             showTitleEditPopup = true
+                        },
+                        onPageChanged: { pageIndex in
+                            currentPageIndex = pageIndex
                         }
                     )
                 }
@@ -139,8 +144,8 @@ struct LogBookMainView: View {
                     VStack {
                         Spacer()
                         SavePop(
-                            onCompleteSave: { viewModel.handleCompleteSave() },
-                            onTempSave: { viewModel.handleTempSaveFromSavePopup() },
+                            onCompleteSave: { viewModel.handleCompleteSave(currentPageIndex: currentPageIndex) },
+                            onTempSave: { viewModel.handleTempSaveFromSavePopup(currentPageIndex: currentPageIndex) },
                             onClose: { viewModel.showSavePopup = false }
                         )
                         .padding(.horizontal, 24)

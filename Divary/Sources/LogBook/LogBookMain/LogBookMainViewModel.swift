@@ -274,47 +274,91 @@ class LogBookMainViewModel {
     // MARK: - 저장 관련 메서드 (메인뷰 저장 버튼용)
     
     // 저장 버튼 처리
-    func handleSaveButtonTap() {
-        if areAllSectionsCompleteForAllPages() {
-            handleCompleteSave()
+    func handleSaveButtonTap(currentPageIndex: Int = -1) {
+        if currentPageIndex >= 0 {
+            // ✅ 현재 페이지만 체크
+            if areAllSectionsComplete(for: currentPageIndex) {
+                handleCompleteSave(currentPageIndex: currentPageIndex)
+            } else {
+                showSavePopup = true
+            }
         } else {
-            showSavePopup = true
+            // 기존 로직 (모든 페이지) - 하위 호환성
+            if areAllSectionsCompleteForAllPages() {
+                handleCompleteSave()
+            } else {
+                showSavePopup = true
+            }
         }
     }
     
-    // ✅ 수정: handleCompleteSave 메서드 (240줄 부근 전체 교체)
-    func handleCompleteSave() {
+    // ✅ 수정: handleCompleteSave 메서드
+    func handleCompleteSave(currentPageIndex: Int = -1) {
         var completedCount = 0
-        let totalSaves = diveLogData.filter { !$0.isEmpty }.count
         let needsTitleSave = hasTitleChanges
-        let totalOperations = totalSaves + (needsTitleSave ? 1 : 0)
         
-        guard totalOperations > 0 else {
-            showSavedMessage = true
-            return
-        }
-        
-        // 제목 저장
-        if needsTitleSave, let newTitle = frontendTempTitle {
-            updateLogBaseTitleToServer(newTitle: newTitle) { success in
-                if success {
-                    self.frontendTempTitle = nil
-                    self.hasTitleChanges = false
-                    completedCount += 1
-                    if completedCount == totalOperations {
-                        self.showSavedMessage = true
-                        self.showSavePopup = false
-                        self.hasFrontendTempSave = Array(repeating: false, count: self.diveLogData.count)
+        if currentPageIndex >= 0 {
+            // ✅ 현재 페이지만 저장
+            let needsLogBookSave = currentPageIndex < diveLogData.count && !diveLogData[currentPageIndex].isEmpty
+            let totalOperations = (needsTitleSave ? 1 : 0) + (needsLogBookSave ? 1 : 0)
+            
+            guard totalOperations > 0 else {
+                showSavedMessage = true
+                showSavePopup = false
+                return
+            }
+            
+            // 제목 저장
+            if needsTitleSave, let newTitle = frontendTempTitle {
+                updateLogBaseTitleToServer(newTitle: newTitle) { success in
+                    if success {
+                        self.frontendTempTitle = nil
+                        self.hasTitleChanges = false
+                        completedCount += 1
+                        if completedCount == totalOperations {
+                            self.showSavedMessage = true
+                            self.showSavePopup = false
+                            // ✅ 현재 페이지의 프론트엔드 임시저장만 클리어
+                            if currentPageIndex < self.hasFrontendTempSave.count {
+                                self.hasFrontendTempSave[currentPageIndex] = false
+                            }
+                        }
                     }
                 }
             }
-        }
-        
-        // 로그북 데이터 저장 (기존 로직)
-        for (index, data) in diveLogData.enumerated() {
-            if !data.isEmpty {
-                saveLogBook(at: index, saveStatus: .complete) { success in
+            
+            // ✅ 현재 페이지의 로그북만 저장
+            if needsLogBookSave {
+                saveLogBook(at: currentPageIndex, saveStatus: .complete) { success in
                     if success {
+                        completedCount += 1
+                        if completedCount == totalOperations {
+                            self.showSavedMessage = true
+                            self.showSavePopup = false
+                            // ✅ 현재 페이지의 프론트엔드 임시저장만 클리어
+                            if currentPageIndex < self.hasFrontendTempSave.count {
+                                self.hasFrontendTempSave[currentPageIndex] = false
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            // 기존 로직 (모든 페이지) - 하위 호환성
+            let totalSaves = diveLogData.filter { !$0.isEmpty }.count
+            let totalOperations = totalSaves + (needsTitleSave ? 1 : 0)
+            
+            guard totalOperations > 0 else {
+                showSavedMessage = true
+                return
+            }
+            
+            // 제목 저장
+            if needsTitleSave, let newTitle = frontendTempTitle {
+                updateLogBaseTitleToServer(newTitle: newTitle) { success in
+                    if success {
+                        self.frontendTempTitle = nil
+                        self.hasTitleChanges = false
                         completedCount += 1
                         if completedCount == totalOperations {
                             self.showSavedMessage = true
@@ -324,45 +368,108 @@ class LogBookMainViewModel {
                     }
                 }
             }
-        }
-    }
-    
-    // ✅ 수정: handleTempSaveFromSavePopup 메서드 (260줄 부근 전체 교체)
-    func handleTempSaveFromSavePopup() {
-        var completedCount = 0
-        let totalSaves = diveLogData.filter { !$0.isEmpty }.count
-        let needsTitleSave = hasTitleChanges
-        let totalOperations = totalSaves + (needsTitleSave ? 1 : 0)
-        
-        guard totalOperations > 0 else {
-            showSavePopup = false
-            return
-        }
-        
-        // 제목 저장
-        if needsTitleSave, let newTitle = frontendTempTitle {
-            updateLogBaseTitleToServer(newTitle: newTitle) { success in
-                if success {
-                    self.frontendTempTitle = nil
-                    self.hasTitleChanges = false
-                    completedCount += 1
-                    if completedCount == totalOperations {
-                        self.showSavePopup = false
-                        self.hasFrontendTempSave = Array(repeating: false, count: self.diveLogData.count)
+            
+            // 로그북 데이터 저장 (기존 로직)
+            for (index, data) in diveLogData.enumerated() {
+                if !data.isEmpty {
+                    saveLogBook(at: index, saveStatus: .complete) { success in
+                        if success {
+                            completedCount += 1
+                            if completedCount == totalOperations {
+                                self.showSavedMessage = true
+                                self.showSavePopup = false
+                                self.hasFrontendTempSave = Array(repeating: false, count: self.diveLogData.count)
+                            }
+                        }
                     }
                 }
             }
         }
+    }
+    
+    // ✅ 수정: handleTempSaveFromSavePopup 메서드
+    func handleTempSaveFromSavePopup(currentPageIndex: Int = -1) {
+        var completedCount = 0
+        let needsTitleSave = hasTitleChanges
         
-        // 로그북 데이터 저장 (기존 로직)
-        for (index, data) in diveLogData.enumerated() {
-            if !data.isEmpty {
-                saveLogBook(at: index, saveStatus: .temp) { success in
+        if currentPageIndex >= 0 {
+            // ✅ 현재 페이지만 임시저장
+            let needsLogBookSave = currentPageIndex < diveLogData.count && !diveLogData[currentPageIndex].isEmpty
+            let totalOperations = (needsTitleSave ? 1 : 0) + (needsLogBookSave ? 1 : 0)
+            
+            guard totalOperations > 0 else {
+                showSavePopup = false
+                return
+            }
+            
+            // 제목 저장
+            if needsTitleSave, let newTitle = frontendTempTitle {
+                updateLogBaseTitleToServer(newTitle: newTitle) { success in
+                    if success {
+                        self.frontendTempTitle = nil
+                        self.hasTitleChanges = false
+                        completedCount += 1
+                        if completedCount == totalOperations {
+                            self.showSavePopup = false
+                            // ✅ 현재 페이지의 프론트엔드 임시저장만 클리어
+                            if currentPageIndex < self.hasFrontendTempSave.count {
+                                self.hasFrontendTempSave[currentPageIndex] = false
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // ✅ 현재 페이지의 로그북만 임시저장
+            if needsLogBookSave {
+                saveLogBook(at: currentPageIndex, saveStatus: .temp) { success in
                     if success {
                         completedCount += 1
                         if completedCount == totalOperations {
                             self.showSavePopup = false
+                            // ✅ 현재 페이지의 프론트엔드 임시저장만 클리어
+                            if currentPageIndex < self.hasFrontendTempSave.count {
+                                self.hasFrontendTempSave[currentPageIndex] = false
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            // 기존 로직 (모든 페이지) - 하위 호환성
+            let totalSaves = diveLogData.filter { !$0.isEmpty }.count
+            let totalOperations = totalSaves + (needsTitleSave ? 1 : 0)
+            
+            guard totalOperations > 0 else {
+                showSavePopup = false
+                return
+            }
+            
+            // 제목 저장
+            if needsTitleSave, let newTitle = frontendTempTitle {
+                updateLogBaseTitleToServer(newTitle: newTitle) { success in
+                    if success {
+                        self.frontendTempTitle = nil
+                        self.hasTitleChanges = false
+                        completedCount += 1
+                        if completedCount == totalOperations {
+                            self.showSavePopup = false
                             self.hasFrontendTempSave = Array(repeating: false, count: self.diveLogData.count)
+                        }
+                    }
+                }
+            }
+            
+            // 로그북 데이터 저장 (기존 로직)
+            for (index, data) in diveLogData.enumerated() {
+                if !data.isEmpty {
+                    saveLogBook(at: index, saveStatus: .temp) { success in
+                        if success {
+                            completedCount += 1
+                            if completedCount == totalOperations {
+                                self.showSavePopup = false
+                                self.hasFrontendTempSave = Array(repeating: false, count: self.diveLogData.count)
+                            }
                         }
                     }
                 }
