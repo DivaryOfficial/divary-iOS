@@ -74,6 +74,15 @@ class DiaryMainViewModel {
     func recomputeCanSave() {
         canSavePublic = canSave
     }
+    
+    var hasUnsavedChanges: Bool = false
+    var saveButtonEnabled: Bool { hasUnsavedChanges && canSave }
+    
+    // 변경 발생 시 호출
+    private func markDirty() {
+        hasUnsavedChanges = true
+        recomputeCanSave()
+    }
 
     // MARK: - API 연결
     func inject(diaryService: LogDiaryService, imageService: ImageService, token: String) {
@@ -158,6 +167,7 @@ class DiaryMainViewModel {
 
         self.blocks = newBlocks
         self.recomputeCanSave()
+        self.hasUnsavedChanges = false
         // 🔎 디버그: 첫 이미지 URL 확인
         if case let .image(f)? = self.blocks.first?.content {
             print("🖼 tempFilename:", f.tempFilename ?? "nil")
@@ -312,6 +322,7 @@ class DiaryMainViewModel {
 
         // 필요 시 리렌더
         forceUIUpdate.toggle()
+        markDirty()
     }
 //    func updateImageBlock(id: UUID, to newContent: FramedImageContent) {
 //        guard let idx = blocks.firstIndex(where: { $0.id == id }) else { return }
@@ -375,6 +386,7 @@ class DiaryMainViewModel {
         DispatchQueue.main.async {
             self.applyCurrentStyleToTypingAttributes()
         }
+        markDirty()
     }
 
     func saveCurrentEditingBlock() {
@@ -385,6 +397,7 @@ class DiaryMainViewModel {
         if !content.text.isEqual(to: newText) {
             content.text = newText
             content.context = richTextContext
+            markDirty()
         }
     }
 
@@ -416,6 +429,7 @@ class DiaryMainViewModel {
                 recomputeCanSave() // 블록만 추가했을 때도
             }
         }
+        markDirty()
     }
 
     func startEditing(_ block: DiaryBlock) {
@@ -442,6 +456,7 @@ class DiaryMainViewModel {
         if editingTextBlock?.id == block.id {
             editingTextBlock = nil
         }
+        markDirty()
     }
 
     // MARK: - Style Management
@@ -806,6 +821,7 @@ class DiaryMainViewModel {
     func commitDrawingFromCanvas(_ drawing: PKDrawing, offsetY: CGFloat, autosave: Bool = false) {
         self.savedDrawing = drawing
         self.drawingOffsetY = offsetY
+        markDirty()
         if autosave, canSave { // 이미지 임시URL 등 조건 충족 시에만 즉시 저장
             manualSave()
         }

@@ -48,8 +48,10 @@ struct LogBookMainView: View {
                     onBackTap: {
                         dismiss()
                     },
-                    isTempSaved: (selectedTab == .diary ? diaryVM.canSave : viewModel.isTempSaved),
-//                    isTempSaved: viewModel.isTempSaved,
+//                    isTempSaved: (selectedTab == .diary ? diaryVM.canSave : viewModel.isTempSaved),
+                    isTempSaved: (selectedTab == .diary
+                                  ? (diaryVM.saveButtonEnabled && !showCanvas)
+                                  : viewModel.isTempSaved),
                     onSaveTap: {
 //                        viewModel.handleSaveButtonTap()
                         if selectedTab == .diary {
@@ -69,7 +71,7 @@ struct LogBookMainView: View {
                         LogBookPageView(viewModel: viewModel)
                     case .diary:
 //                        DiaryMainView(diaryLogId: 0)
-                        DiaryMainView(viewModel: diaryVM, diaryLogId: 62)
+                        DiaryMainView(viewModel: diaryVM, diaryLogId: 62, showCanvas: $showCanvas)
 //                        DiaryMainView(diaryLogId: 51)
                     }
                 }

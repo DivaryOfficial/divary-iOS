@@ -28,7 +28,8 @@ struct DiaryMainView: View {
     @State private var navigateToImageSelectView = false
     @State private var FramedImageSelectList: [FramedImageContent] = []
     
-    @State var showCanvas: Bool = false
+//    @State var showCanvas: Bool = false
+    @Binding var showCanvas: Bool
     @State private var currentOffsetY: CGFloat = 0
     
     @ViewBuilder
@@ -118,8 +119,8 @@ struct DiaryMainView: View {
         .overlay(
             showCanvas ? DiaryCanvasView(
                 viewModel: DiaryCanvasViewModel(showCanvas: $showCanvas, diaryId: diaryLogId),
-//                offsetY: currentOffsetY,
-                offsetY: viewModel.drawingOffsetY,
+                offsetY: currentOffsetY,
+//                offsetY: viewModel.drawingOffsetY,
                 initialDrawing: viewModel.savedDrawing,
                 onSaved: { drawing, offset in
                     // 메인 뷰 즉시 업데이트
@@ -240,9 +241,10 @@ struct DiaryMainView: View {
 
 private struct PreviewWrapper: View {
     @State private var vm = DiaryMainViewModel()
+    @State private var showCanvas = false
 
     var body: some View {
-        DiaryMainView(viewModel: vm, diaryLogId: 51)
+        DiaryMainView(viewModel: vm, diaryLogId: 51, showCanvas: $showCanvas)
 //        DiaryMainView(diaryLogId: 51)
     }
 }
