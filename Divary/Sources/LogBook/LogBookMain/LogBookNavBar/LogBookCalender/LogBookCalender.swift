@@ -26,6 +26,10 @@ struct CalenderView: View {
     @State private var selectedYear: Int
     @State private var selectedMonthIndex: Int
     
+    // 로그 데이터 관련 상태
+    @State private var existingLogDates: Set<String> = []
+    @State private var isLoadingLogs = false
+    
     // 사용 가능한 년도와 월 범위
     private var availableYears: [Int] {
         let startYear = Calendar.current.component(.year, from: startMonth)
@@ -70,6 +74,20 @@ struct CalenderView: View {
                 }
             }
         )
+        .opacity(isLoadingLogs ? 0.6 : 1.0)
+        .overlay(
+            Group {
+                if isLoadingLogs {
+                    ProgressView()
+                        .scaleEffect(0.8)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(Color.white.opacity(0.8))
+                }
+            }
+        )
+        .onAppear {
+            loadExistingLogs()
+        }
     }
 
     private var headerView: some View {
@@ -249,7 +267,8 @@ struct CalenderView: View {
                             isToday: false,
                             isSelected: false,
                             isWithinMonth: false,
-                            isDisabled: true
+                            isDisabled: true,
+                            hasLog: false
                         )
                     } else {
                         let rawDate = getDate(for: index - firstWeekday)
@@ -259,14 +278,16 @@ struct CalenderView: View {
                         let isWithinMonth = Calendar.current.isDate(rawDate, equalTo: currentMonth, toGranularity: .month)
                         let isFuture = rawDate > Date()
                         let isSelected = Calendar.current.isDate(rawDate, inSameDayAs: selectedDate)
-                        let isDisabled = !isWithinMonth || isFuture
+                        let hasLog = existingLogDates.contains(dateString(from: rawDate))
+                        let isDisabled = !isWithinMonth || isFuture || hasLog
 
                         CellView(
                             day: day,
                             isToday: isToday,
                             isSelected: isSelected,
                             isWithinMonth: isWithinMonth,
-                            isDisabled: isDisabled
+                            isDisabled: isDisabled,
+                            hasLog: hasLog
                         )
                         .contentShape(Rectangle())
                         .onTapGesture {
@@ -306,6 +327,32 @@ struct CalenderView: View {
             selectedMonthIndex = Calendar.current.component(.month, from: newMonth) - 1
         }
     }
+    
+    // 기존 로그 데이터 로드
+    private func loadExistingLogs() {
+        guard !isLoadingLogs else { return }
+        
+        isLoadingLogs = true
+        LogBookService.shared.getAllLogs { result in
+            DispatchQueue.main.async {
+                self.isLoadingLogs = false
+                switch result {
+                case .success(let logs):
+                    self.existingLogDates = Set(logs.map { $0.date })
+                    print("📅 로드된 로그 날짜들: \(self.existingLogDates)")
+                case .failure(let error):
+                    print("❌ 로그 로드 실패: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+    
+    // 날짜를 문자열로 변환 (서버 형식에 맞춤)
+    private func dateString(from date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter.string(from: date)
+    }
 
     static let dateFormatter: DateFormatter = {
         let f = DateFormatter()
@@ -323,11 +370,12 @@ private struct CellView: View {
     let isSelected: Bool
     let isWithinMonth: Bool
     let isDisabled: Bool
+    let hasLog: Bool
 
     var body: some View {
         VStack(spacing: 0) {
             ZStack {
-                if isSelected {
+                if isSelected && !isDisabled {
                     Circle()
                         .fill(Color.blue)
                         .frame(width: 30, height: 30)
@@ -336,7 +384,8 @@ private struct CellView: View {
                 Text("\(day)")
                     .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
                     .foregroundStyle(
-                        isDisabled ? Color.grayscale_g300 : (isSelected ? .white : Color.grayscale_g600)
+                        isDisabled ? Color.grayscale_g300 :
+                        (isSelected ? .white : Color.grayscale_g600)
                     )
                     .frame(width: 20, height: 20)
                     .padding(.horizontal, 11)
@@ -344,7 +393,7 @@ private struct CellView: View {
                     .padding(.bottom, 12)
             }
 
-            if isToday {
+            if isToday && !isDisabled {
                 Circle()
                     .fill(Color.blue)
                     .frame(width: 4, height: 4)

@@ -10,13 +10,14 @@ import Moya
 
 enum LogBookAPI {
     case getLogList(year: Int, saveStatus: String?)
+    case getAllLogs
     case getLogBaseDetail(logBaseInfoId: Int)
     case createLogBase(iconType: String, name: String, date: String)
     case createEmptyLogBooks(logBaseInfoId: Int)
     case updateLogBook(logBookId: Int, logData: LogUpdateRequestDTO)
     case deleteLogBase(logBaseInfoId: Int)
     case checkLogExists(date: String)
-    case updateLogBaseTitle(logBaseInfoId: Int, name: String) // ✅ 제목 수정 API 추가
+    case updateLogBaseTitle(logBaseInfoId: Int, name: String)
 }
 
 extension LogBookAPI: TargetType {
@@ -32,6 +33,8 @@ extension LogBookAPI: TargetType {
         switch self {
         case .getLogList:
             return "/api/v1/logs"
+        case .getAllLogs:
+            return "/api/v1/logs/all"
         case .getLogBaseDetail(let logBaseInfoId), .deleteLogBase(let logBaseInfoId), .updateLogBaseTitle(let logBaseInfoId, _):
             return "/api/v1/logs/\(logBaseInfoId)"
         case .createLogBase:
@@ -47,13 +50,13 @@ extension LogBookAPI: TargetType {
 
     var method: Moya.Method {
         switch self {
-        case .getLogList, .getLogBaseDetail, .checkLogExists:
+        case .getLogList, .getAllLogs, .getLogBaseDetail, .checkLogExists:
             return .get
         case .createLogBase, .createEmptyLogBooks:
             return .post
         case .updateLogBook:
             return .put
-        case .updateLogBaseTitle: // ✅ PATCH 메서드
+        case .updateLogBaseTitle:
             return .patch
         case .deleteLogBase:
             return .delete
@@ -80,14 +83,14 @@ extension LogBookAPI: TargetType {
         case .updateLogBook(_, let logData):
             return .requestJSONEncodable(logData)
             
-        case .updateLogBaseTitle(_, let name): // ✅ 제목 수정 요청
+        case .updateLogBaseTitle(_, let name):
             let params: [String: Any] = ["name": name]
             return .requestParameters(parameters: params, encoding: JSONEncoding.default)
             
         case .checkLogExists(let date):
             return .requestParameters(parameters: ["date": date], encoding: URLEncoding.queryString)
             
-        case .getLogBaseDetail, .createEmptyLogBooks, .deleteLogBase:
+        case .getAllLogs, .getLogBaseDetail, .createEmptyLogBooks, .deleteLogBase:
             return .requestPlain
         }
     }

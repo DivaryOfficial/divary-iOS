@@ -21,6 +21,13 @@ final class LogBookService {
         }
     }
     
+    // 전체 로그 리스트 조회
+    func getAllLogs(completion: @escaping (Result<[LogListResponseDTO], Error>) -> Void) {
+        provider.request(.getAllLogs) { result in
+            self.handleWrappedResponse(result, completion: completion)
+        }
+    }
+    
     // 로그베이스 상세 조회 (로그북들 포함)
     func getLogBaseDetail(logBaseInfoId: Int, completion: @escaping (Result<[LogBaseDetailDTO], Error>) -> Void) {
         provider.request(.getLogBaseDetail(logBaseInfoId: logBaseInfoId)) { result in
@@ -49,7 +56,7 @@ final class LogBookService {
         }
     }
     
-    // ✅ 로그베이스 제목 수정
+    // 로그베이스 제목 수정
     func updateLogBaseTitle(logBaseInfoId: Int, name: String, completion: @escaping (Result<Void, Error>) -> Void) {
         provider.request(.updateLogBaseTitle(logBaseInfoId: logBaseInfoId, name: name)) { result in
             switch result {
@@ -112,7 +119,7 @@ final class LogBookService {
                 print("📦 로그북 서버 응답: \(jsonString)")
             }
             
-            // ✅ 상태코드 체크 추가
+            // 상태코드 체크 추가
             if response.statusCode >= 400 {
                 // 에러 응답 처리
                 do {
