@@ -37,12 +37,20 @@ struct LoginView: View {
             GeometryReader { geometry in
                 VStack {
                     Spacer()
-                    Button(action:{
-                        KeyChainManager.shared.save("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzc2RvZGVuQGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX1VTRVIiLCJpYXQiOjE3NTQ5NzM3MzUsImV4cCI6MTc1NjQxMzczNX0.1O8bvpULHOOEVJbRkNUViOx3ugkiAhCmOGqAyZ-OnIs", forKey: KeyChainKey.accessToken)
+                    Button(action: {
+                        KeyChainManager.shared.save("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJoeWVvbmd5dTIwMDJAZ21haWwuY29tIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTc1NTE0OTY0OSwiZXhwIjoxNzU2NTg5NjQ5fQ.4Vf5BlC0mK59RQxZ0bnLqEcpn50sN1R7e3s0LawjL28", forKey: KeyChainKey.accessToken)
                         container.router.push(.MainTabBar)
-                    }){
+                    }) {
                         Text("테스트 계정")
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(Color.gray.opacity(0.8))
+                            .cornerRadius(8)
                     }
+                    .padding(.horizontal, 20)
+                    
                     HStack {
                         Spacer()
                         GoogleSignInButtonView(action: viewModel.signInWithGoogle)
