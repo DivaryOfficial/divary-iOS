@@ -33,7 +33,7 @@ struct LogBookMainView: View {
     @State private var lastTab: DiveLogTab = .logbook
     @State private var allowDiaryExitOnce = false
     
-    //날짜 변경 취소를 위한 백업데이터
+    @Environment(\.dismiss) private var dismiss
 
     // ✅ 제목 수정 관련 상태
     @State private var showTitleEditPopup = false
