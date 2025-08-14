@@ -432,7 +432,7 @@ enum PetType: String, CaseIterable, Decodable {
         case "HERMIT_CRAB": return .hermitCrab
         case "SEAHORSE": return .seahorse
         case "AXOLOTL": return .axolotl
-        case "anglerFish": return .anglerFish
+        case "ANGLERFISH": return .anglerFish
         case "COMING_SOON": return .expectedGray
         default: return .none
         }

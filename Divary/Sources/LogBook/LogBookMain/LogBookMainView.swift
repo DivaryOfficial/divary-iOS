@@ -120,7 +120,7 @@ struct LogBookMainView: View {
                     CalenderView(
                         currentMonth: $tempMonth,
                         selectedDate: $backupDate,
-                        startMonth: Calendar.current.date(byAdding: .month, value: -3, to: Date())!,
+                        startMonth: Calendar.current.date(byAdding: .month, value: -999, to: Date())!,
                         endMonth: Calendar.current.date(byAdding: .month, value: 3, to: Date())!
                     )
                     .padding(.bottom, 20)
