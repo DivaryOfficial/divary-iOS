@@ -11,7 +11,7 @@ struct DiveEnvironmentSection: View {
     @Binding var environment: DiveEnvironment?
     @Binding var isSaved: Bool
     
-    // 기입 상태
+    // 기존 상태
     var status: SectionStatus {
         Self.getStatus(environment: environment, isSaved: isSaved)
     }
@@ -75,7 +75,8 @@ struct DiveEnvironmentSection: View {
                 Text("환경정보")
                     .font(Font.omyu.regular(size: 16))
                     .foregroundStyle(status != .empty ? Color.bw_black : Color.grayscale_g400)
-                if status == .partial {
+                // ✅ 완전저장된 상태에서는 "작성중" 표시하지 않음
+                if status == .partial && !isSaved {
                     Text("작성중")
                         .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 10))
                         .foregroundStyle(Color.role_color_nagative)
@@ -88,7 +89,8 @@ struct DiveEnvironmentSection: View {
                     VStack(spacing: 4) {
                         Text("날씨")
                             .font(Font.omyu.regular(size: 16))
-                            .foregroundStyle(environment?.weather != nil ? Color.grayscale_g700 : Color.grayscale_g400)
+                            // ✅ 완전저장 시 항상 검정, 아니면 조건부
+                            .foregroundStyle(isSaved ? Color.grayscale_g700 : (environment?.weather != nil ? Color.grayscale_g700 : Color.grayscale_g400))
                             .padding(.bottom, 4)
                         weatherImage(for: environment?.weather)
                             .renderingMode(.template)
@@ -105,11 +107,13 @@ struct DiveEnvironmentSection: View {
                     VStack{
                         Text("바람")
                             .font(Font.omyu.regular(size: 16))
-                            .foregroundStyle(environment?.wind != nil ? Color.grayscale_g700 : Color.grayscale_g400)
+                            // ✅ 완전저장 시 항상 검정, 아니면 조건부
+                            .foregroundStyle(isSaved ? Color.grayscale_g700 : (environment?.wind != nil ? Color.grayscale_g700 : Color.grayscale_g400))
                             .padding(.bottom, 8)
                         Text(environment?.wind ?? " ")
                             .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
-                            .foregroundStyle(Color.bw_black)
+                            // ✅ 완전저장 시 항상 검정, 아니면 조건부
+                            .foregroundStyle(isSaved ? Color.bw_black : (environment?.wind != nil ? Color.bw_black : Color.grayscale_g400))
                     }
                     .frame(maxWidth: .infinity)
 
@@ -118,11 +122,13 @@ struct DiveEnvironmentSection: View {
                     VStack(spacing: 4) {
                         Text("조류")
                             .font(Font.omyu.regular(size: 16))
-                            .foregroundStyle(environment?.current != nil ? Color.grayscale_g700 : Color.grayscale_g400)
+                            // ✅ 완전저장 시 항상 검정, 아니면 조건부
+                            .foregroundStyle(isSaved ? Color.grayscale_g700 : (environment?.current != nil ? Color.grayscale_g700 : Color.grayscale_g400))
                             .padding(.bottom, 8)
                         Text(environment?.current ?? " ")
                             .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
-                            .foregroundStyle(Color.bw_black)
+                            // ✅ 완전저장 시 항상 검정, 아니면 조건부
+                            .foregroundStyle(isSaved ? Color.bw_black : (environment?.current != nil ? Color.bw_black : Color.grayscale_g400))
                     }
                     .frame(maxWidth: .infinity)
 
@@ -131,11 +137,13 @@ struct DiveEnvironmentSection: View {
                     VStack(spacing: 4) {
                         Text("파도")
                             .font(Font.omyu.regular(size: 16))
-                            .foregroundStyle(environment?.wave != nil ? Color.grayscale_g700 : Color.grayscale_g400)
+                            // ✅ 완전저장 시 항상 검정, 아니면 조건부
+                            .foregroundStyle(isSaved ? Color.grayscale_g700 : (environment?.wave != nil ? Color.grayscale_g700 : Color.grayscale_g400))
                             .padding(.bottom, 8)
                         Text(environment?.wave ?? " ")
                             .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
-                            .foregroundStyle(Color.bw_black)
+                            // ✅ 완전저장 시 항상 검정, 아니면 조건부
+                            .foregroundStyle(isSaved ? Color.bw_black : (environment?.wave != nil ? Color.bw_black : Color.grayscale_g400))
                     }
                     .frame(maxWidth: .infinity)
                 }
@@ -147,14 +155,17 @@ struct DiveEnvironmentSection: View {
                     HStack() {
                         Text("기온")
                             .font(Font.omyu.regular(size: 16))
-                            .foregroundStyle(environment?.airTemp != nil ? Color.grayscale_g700 : Color.grayscale_g400)
+                            // ✅ 완전저장 시 항상 검정, 아니면 조건부
+                            .foregroundStyle(isSaved ? Color.grayscale_g700 : (environment?.airTemp != nil ? Color.grayscale_g700 : Color.grayscale_g400))
                             .padding(14)
                         Group{
                             Text(environment?.airTemp != nil ? "\(environment!.airTemp!)" : "0")
                                 .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
                             Text("℃")
                                 .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
-                        }.foregroundStyle(environment?.airTemp != nil ? Color.bw_black : Color.grayscale_g400)
+                        }
+                        // ✅ 완전저장 시 항상 검정, 아니면 조건부
+                        .foregroundStyle(isSaved ? Color.bw_black : (environment?.airTemp != nil ? Color.bw_black : Color.grayscale_g400))
                     }
                     
                     Spacer()
@@ -162,14 +173,17 @@ struct DiveEnvironmentSection: View {
                     HStack() {
                         Text("수온")
                             .font(Font.omyu.regular(size: 16))
-                            .foregroundStyle(environment?.waterTemp != nil ? Color.grayscale_g700 : Color.grayscale_g400)
+                            // ✅ 완전저장 시 항상 검정, 아니면 조건부
+                            .foregroundStyle(isSaved ? Color.grayscale_g700 : (environment?.waterTemp != nil ? Color.grayscale_g700 : Color.grayscale_g400))
                             .padding(14)
                         Group{
                             Text(environment?.waterTemp != nil ? "\(environment!.waterTemp!)" : "0")
                                 .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
                             Text("℃")
                                 .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
-                        }.foregroundStyle(environment?.waterTemp != nil ? Color.bw_black : Color.grayscale_g400)
+                        }
+                        // ✅ 완전저장 시 항상 검정, 아니면 조건부
+                        .foregroundStyle(isSaved ? Color.bw_black : (environment?.waterTemp != nil ? Color.bw_black : Color.grayscale_g400))
                     }
                     
                     Spacer()
@@ -177,7 +191,8 @@ struct DiveEnvironmentSection: View {
                     HStack() {
                         Text("시야")
                             .font(Font.omyu.regular(size: 16))
-                            .foregroundStyle(environment?.visibility != nil ? Color.grayscale_g700 : Color.grayscale_g400)
+                            // ✅ 완전저장 시 항상 검정, 아니면 조건부
+                            .foregroundStyle(isSaved ? Color.grayscale_g700 : (environment?.visibility != nil ? Color.grayscale_g700 : Color.grayscale_g400))
                             .padding(14)
                         
                         visibilityImage(for: environment?.visibility)

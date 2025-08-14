@@ -44,13 +44,7 @@ struct LogBookPageView: View {
                             }.ignoresSafeArea()
                             
                             LazyVStack(alignment: .leading, spacing: 18) {
-//                                Text(mainViewModel.displayTitle)
-//                                    .font(Font.omyu.regular(size: 20))
-//                                    .padding(12)
-//                                    .frame(maxWidth: .infinity)
-//                                    .multilineTextAlignment(.center)
-                                
-                                // ✅ 새로운 코드 추가
+                                // ✅ 제목 버튼 (기존 코드 유지)
                                 Button(action: {
                                     onTitleTap?()
                                 }) {
@@ -62,28 +56,48 @@ struct LogBookPageView: View {
                                         .multilineTextAlignment(.center)
                                 }
 
-                                DiveOverviewSection(overview: data.overview, isSaved: $pageViewModel.isSaved).onTapGesture {
+                                // ✅ 완전저장 상태를 각 섹션에 전달
+                                DiveOverviewSection(
+                                    overview: data.overview,
+                                    isSaved: .constant(isCompleteSaved(index))
+                                ).onTapGesture {
                                     pageViewModel.activeInputSection = .overview
                                 }
+                                
                                 HStack(alignment: .top) {
-                                    DiveParticipantsSection(participants: data.participants, isSaved: $pageViewModel.isSaved).onTapGesture {
+                                    DiveParticipantsSection(
+                                        participants: data.participants,
+                                        isSaved: .constant(isCompleteSaved(index))
+                                    ).onTapGesture {
                                         pageViewModel.activeInputSection = .participants
                                     }
-                                    DiveEquipmentSection(equipment: data.equipment, isSaved: $pageViewModel.isSaved).onTapGesture {
+                                    
+                                    DiveEquipmentSection(
+                                        equipment: data.equipment,
+                                        isSaved: .constant(isCompleteSaved(index))
+                                    ).onTapGesture {
                                         pageViewModel.activeInputSection = .equipment
                                     }
                                 }
-                                DiveEnvironmentSection(environment: data.environment, isSaved: $pageViewModel.isSaved).onTapGesture {
+                                
+                                DiveEnvironmentSection(
+                                    environment: data.environment,
+                                    isSaved: .constant(isCompleteSaved(index))
+                                ).onTapGesture {
                                     pageViewModel.activeInputSection = .environment
                                 }
-                                DiveProfileSection(profile: data.profile, isSaved: $pageViewModel.isSaved).onTapGesture {
+                                
+                                DiveProfileSection(
+                                    profile: data.profile,
+                                    isSaved: .constant(isCompleteSaved(index))
+                                ).onTapGesture {
                                     pageViewModel.activeInputSection = .profile
                                 }
                                 
                                 HStack {
                                     Spacer()
-                                    // ✅ 서버에서 받은 총 다이빙 횟수 사용
-                                    Text("총 다이빙 횟수 \(mainViewModel.totalDiveCount) 회")
+                                    // ✅ 서버에서 받은 이 다이빙 횟수 사용
+                                    Text("이 다이빙 횟수 \(mainViewModel.totalDiveCount) 회")
                                         .font(Font.omyu.regular(size: 24))
                                     Spacer()
                                 }
@@ -279,6 +293,12 @@ struct LogBookPageView: View {
                 .zIndex(35)
             }
         }
+    }
+    
+    // ✅ 완전저장 상태 확인 메서드 추가
+    private func isCompleteSaved(_ index: Int) -> Bool {
+        guard index < mainViewModel.diveLogData.count else { return false }
+        return mainViewModel.diveLogData[index].saveStatus == .complete
     }
     
     // 새 로그 추가 처리
