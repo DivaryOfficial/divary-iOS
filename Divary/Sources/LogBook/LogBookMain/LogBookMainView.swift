@@ -10,17 +10,19 @@ import SwiftUI
 //상단 탭 enum
 enum DiveLogTab: String, CaseIterable {
     case logbook = "로그북"
-    case diary = "일기"
+    case diary   = "일기"
 }
 
 struct LogBookMainView: View {
+    @Environment(\.diContainer) private var container
+
     @State var selectedTab: DiveLogTab = .logbook
     @State var viewModel: LogBookMainViewModel
     @State private var diaryVM = DiaryMainViewModel()
     
     @State private var isCalendarPresented = false
     @State private var showCanvas = false
-    
+
     // 저장 관련 상태
     @State private var showSavePopup = false
     @State private var showSavedMessage = false
@@ -32,15 +34,18 @@ struct LogBookMainView: View {
     @State private var allowDiaryExitOnce = false
     
     //날짜 변경 취소를 위한 백업데이터
+
+    // ✅ 제목 수정 관련 상태
+    @State private var showTitleEditPopup = false
+    @State private var editingTitle = ""
+
+    // 날짜 변경 취소를 위한 백업데이터
     @State private var backupDate: Date = Date()
-    
-    // 백업데이터 변경없이 month 이동을 위한 사용자가 현재 보고있는 월 데이터 - 캘린더 month 변경시 변경
+
+    // 백업데이터 변경없이 month 이동을 위한 사용자가 현재 보고있는 월 데이터
     @State private var tempMonth = Date()
-    
-    // 추가: 뒤로가기를 위한 환경변수
-    @Environment(\.dismiss) private var dismiss
-    
-    // 수정: logBaseId를 받는 init
+
+    // logBaseId를 받는 init
     init(logBaseId: String) {
         _viewModel = State(initialValue: LogBookMainViewModel(logBaseId: logBaseId))
     }
@@ -59,8 +64,10 @@ struct LogBookMainView: View {
                         } else {
                             dismiss()
                         }
+                      // 라우터 pop으로 일원화
+                      container.router.pop()
                     },
-//                    isTempSaved: (selectedTab == .diary ? diaryVM.canSave : viewModel.isTempSaved),
+//                    isTempSaved: (selectedTab == .diary ? diaryVM.canSave : viewModel.hasFrontendChanges),
                     isTempSaved: (selectedTab == .diary
                                   ? (diaryVM.saveButtonEnabled && !showCanvas)
                                   : viewModel.isTempSaved),
@@ -74,13 +81,20 @@ struct LogBookMainView: View {
                     }
                 )
                 .zIndex(1)
+
                 TabSelector(selectedTab: $selectedTab)
                     .padding(.horizontal)
 
                 Group {
                     switch selectedTab {
                     case .logbook:
-                        LogBookPageView(viewModel: viewModel)
+                    LogBookPageView(
+                        viewModel: viewModel,
+                        onTitleTap: {
+                            editingTitle = viewModel.displayTitle
+                            showTitleEditPopup = true
+                        }
+                    )
                     case .diary:
 //                        DiaryMainView(diaryLogId: 0)
                         DiaryMainView(viewModel: diaryVM, diaryLogId: 62, showCanvas: $showCanvas)
@@ -88,7 +102,7 @@ struct LogBookMainView: View {
                     }
                 }
             }
-            
+
             // 날짜 클릭시 팝업
             if isCalendarPresented {
                 Color.white.opacity(0.8)
@@ -102,7 +116,7 @@ struct LogBookMainView: View {
                     CalenderNavBar(selectedDate: $backupDate, isCalendarPresented: $isCalendarPresented)
                         .zIndex(1)
                         .padding(.bottom, 1)
-                    
+
                     CalenderView(
                         currentMonth: $tempMonth,
                         selectedDate: $backupDate,
@@ -111,7 +125,6 @@ struct LogBookMainView: View {
                     )
                     .padding(.bottom, 20)
                     .padding(.horizontal)
-                    
 
                     HStack(spacing: 16) {
                         Button("취소") {
@@ -123,7 +136,6 @@ struct LogBookMainView: View {
                         .background(Color.grayscale_g200)
                         .foregroundStyle(Color.grayscale_g500)
                         .cornerRadius(8)
-                        
 
                         Button("저장") {
                             viewModel.selectedDate = backupDate
@@ -136,43 +148,31 @@ struct LogBookMainView: View {
                         .foregroundStyle(.white)
                         .cornerRadius(8)
                     }
-                    
+
                     Spacer()
                 }
             }
-            
+
             // SavePop 팝업
             if viewModel.showSavePopup {
-                GeometryReader { geometry in
+                GeometryReader { _ in
                     Color.white.opacity(0.5)
                         .ignoresSafeArea()
-                        .onTapGesture {
-                            // 배경 터치로 닫기 방지
-                        }
-                    
+
                     VStack {
                         Spacer()
-                        
                         SavePop(
-                            onCompleteSave: {
-                                viewModel.handleCompleteSave()
-                            },
-                            onTempSave: {
-                                viewModel.handleTempSaveFromSavePopup()
-                            },
-                            onClose: {
-                                viewModel.showSavePopup = false
-                            }
+                            onCompleteSave: { viewModel.handleCompleteSave() },
+                            onTempSave: { viewModel.handleTempSaveFromSavePopup() },
+                            onClose: { viewModel.showSavePopup = false }
                         )
                         .padding(.horizontal, 24)
-                        
                         Spacer()
                     }
                     .transition(.opacity)
                     .zIndex(25)
                 }
             }
-            
             // 일기 날라가는거 경고 팝업
             if showDiaryLeavePopup {
                 DeletePopupView(
@@ -198,33 +198,58 @@ struct LogBookMainView: View {
                 )
                 .zIndex(999)
             }
-            
             // 저장 완료 메시지 (ComPop 사용)
             if viewModel.showSavedMessage {
-                GeometryReader { geometry in
+                GeometryReader { _ in
                     Color.white.opacity(0.5)
                         .ignoresSafeArea()
-                        .onTapGesture {
-                            // 배경 터치로 닫기 방지
-                        }
-                    
+
                     VStack {
                         Spacer()
-                        
-                        ComPop(
-                            onClose: {
-                                viewModel.showSavedMessage = false
-                            }
-                        )
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 24)
-                        
+                        ComPop(onClose: { viewModel.showSavedMessage = false })
+                            .padding(.horizontal, 24)
+                            .padding(.vertical, 24)
                         Spacer()
                     }
                     .transition(.opacity)
                     .zIndex(35)
                 }
             }
+
+            // ✅ 제목 수정 팝업 - updateFrontendTitle 메서드 사용
+            if showTitleEditPopup {
+                TitleEditPopup(
+                    isPresented: $showTitleEditPopup,
+                    title: $editingTitle,
+                    onSave: {
+                        viewModel.updateFrontendTitle(newTitle: editingTitle)
+                        showTitleEditPopup = false
+                    },
+                    onCancel: {
+                        showTitleEditPopup = false
+                    }
+                )
+                .zIndex(45)
+            }
+
+            // 로딩 인디케이터
+            if viewModel.isLoading {
+                Color.black.opacity(0.3)
+                    .ignoresSafeArea()
+
+                ProgressView("처리 중...")
+                    .progressViewStyle(CircularProgressViewStyle())
+                    .foregroundColor(.white)
+                    .padding()
+                    .background(Color.black.opacity(0.7))
+                    .cornerRadius(10)
+                    .zIndex(40)
+            }
+        }
+        .alert("오류", isPresented: .constant(viewModel.errorMessage != nil)) {
+            Button("확인") { viewModel.clearError() }
+        } message: {
+            Text(viewModel.errorMessage ?? "")
         }
         .onChange(of: selectedTab) { oldTab, newTab in
             if allowDiaryExitOnce {
@@ -243,6 +268,4 @@ struct LogBookMainView: View {
     }
 }
 
-#Preview {
-    LogBookMainView(logBaseId: "log_base_1")
-}
+#Preview { LogBookMainView(logBaseId: "1") }

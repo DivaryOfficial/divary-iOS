@@ -19,7 +19,6 @@ struct OceanCatalogView: View {
     @State private var sheetVersion = 0
     
     var body: some View {
-        NavigationStack {
             ZStack(alignment: .bottom) {
                 VStack {
                     CategoryTabBar(selectedCategory: Binding(
@@ -70,7 +69,6 @@ struct OceanCatalogView: View {
             .navigationDestination(isPresented: $navigateToDetail) {
                 if let creature = detailCreature {
                     OceanCreatureDetailView(creature: creature)
-                }
             }
         }
         .task {

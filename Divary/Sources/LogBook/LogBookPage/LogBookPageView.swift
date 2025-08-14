@@ -12,10 +12,18 @@ struct LogBookPageView: View {
     @Bindable var mainViewModel: LogBookMainViewModel
     @State private var pageViewModel: LogBookPageViewModel
     
-    // init에서 pageViewModel 초기화
-    init(viewModel: LogBookMainViewModel) {
+    // ✅ 추가: 제목 클릭 콜백
+    var onTitleTap: (() -> Void)? = nil
+    
+    // NewLogPop 관련 상태
+    @State private var showNewLogPop = false
+    @State private var showMaxLogError = false
+    
+    // ✅ init 수정 - onTitleTap 파라미터 추가
+    init(viewModel: LogBookMainViewModel, onTitleTap: (() -> Void)? = nil) {
         self._mainViewModel = Bindable(viewModel)
         self._pageViewModel = State(initialValue: LogBookPageViewModel(mainViewModel: viewModel))
+        self.onTitleTap = onTitleTap
     }
     
     var body: some View {
@@ -36,12 +44,24 @@ struct LogBookPageView: View {
                             }.ignoresSafeArea()
                             
                             LazyVStack(alignment: .leading, spacing: 18) {
-                                Text(mainViewModel.logBaseTitle)
-                                    .font(Font.omyu.regular(size: 20))
-                                    .padding(12)
-                                    .frame(maxWidth: .infinity)
-                                    .multilineTextAlignment(.center)
+//                                Text(mainViewModel.displayTitle)
+//                                    .font(Font.omyu.regular(size: 20))
+//                                    .padding(12)
+//                                    .frame(maxWidth: .infinity)
+//                                    .multilineTextAlignment(.center)
                                 
+                                // ✅ 새로운 코드 추가
+                                Button(action: {
+                                    onTitleTap?()
+                                }) {
+                                    Text(mainViewModel.displayTitle)
+                                        .font(Font.omyu.regular(size: 20))
+                                        .foregroundColor(.black)
+                                        .padding(12)
+                                        .frame(maxWidth: .infinity)
+                                        .multilineTextAlignment(.center)
+                                }
+
                                 DiveOverviewSection(overview: data.overview, isSaved: $pageViewModel.isSaved).onTapGesture {
                                     pageViewModel.activeInputSection = .overview
                                 }
@@ -62,7 +82,8 @@ struct LogBookPageView: View {
                                 
                                 HStack {
                                     Spacer()
-                                    Text("총 다이빙 횟수 \(mainViewModel.logCount) 회")
+                                    // ✅ 서버에서 받은 총 다이빙 횟수 사용
+                                    Text("총 다이빙 횟수 \(mainViewModel.totalDiveCount) 회")
                                         .font(Font.omyu.regular(size: 24))
                                     Spacer()
                                 }
@@ -76,6 +97,17 @@ struct LogBookPageView: View {
                         }
                     }
                     .ignoresSafeArea()
+                    // 슬라이드 제스처 추가
+                    .gesture(
+                        DragGesture(minimumDistance: 50)
+                            .onEnded { value in
+                                // 왼쪽으로 슬라이드 (마지막 페이지에서)
+                                if value.translation.width < -50 &&
+                                    index == mainViewModel.diveLogData.count - 1 {
+                                    handleAddNewLog()
+                                }
+                            }
+                    )
                 }
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
@@ -170,6 +202,28 @@ struct LogBookPageView: View {
                 }
             }
             
+            // NewLogPop 팝업
+            if showNewLogPop {
+                NewLogPop(
+                    isPresented: $showNewLogPop,
+                    title: .constant(""),
+                    onCancel: {
+                        showNewLogPop = false
+                    },
+                    onAddNewLog: {
+                        // 새 로그 추가 로직
+                        mainViewModel.addNewLogBook { success in
+                            showNewLogPop = false
+                            if success {
+                                // 새로 추가된 로그로 이동
+                                pageViewModel.selectedPage = mainViewModel.diveLogData.count - 1
+                            }
+                        }
+                    }
+                )
+                .zIndex(25)
+            }
+            
             // 임시저장 완료 메시지
             if pageViewModel.showTempSavedMessage {
                 VStack {
@@ -193,6 +247,46 @@ struct LogBookPageView: View {
                 }
                 .zIndex(30)
             }
+            
+            // 최대 로그 개수 초과 에러 팝업
+            if showMaxLogError {
+                ZStack {
+                    Color.black.opacity(0.3)
+                        .ignoresSafeArea()
+                    
+                    VStack(spacing: 24) {
+                        Text("최대 3개까지만\n추가할 수 있습니다")
+                            .font(Font.omyu.regular(size: 20))
+                            .foregroundColor(.black)
+                            .multilineTextAlignment(.center)
+                        
+                        Button("확인") {
+                            showMaxLogError = false
+                        }
+                        .font(Font.omyu.regular(size: 16))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(Color.primary_sea_blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                    }
+                    .padding(24)
+                    .background(Color.white)
+                    .cornerRadius(16)
+                    .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
+                    .padding(.horizontal, 40)
+                }
+                .zIndex(35)
+            }
+        }
+    }
+    
+    // 새 로그 추가 처리
+    private func handleAddNewLog() {
+        if mainViewModel.diveLogData.count >= 3 {
+            showMaxLogError = true
+        } else {
+            showNewLogPop = true
         }
     }
 }

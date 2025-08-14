@@ -26,6 +26,8 @@ final class DIContainer: ObservableObject {
     let logDiaryService: LogDiaryService
     let oceanCatalogService: OceanCatalogService
   
+    //메인 탭바 변수
+    @Published var selectedTab: String = "기록"
 
     init(router: AppRouter) {
         self.router = router
@@ -33,7 +35,7 @@ final class DIContainer: ObservableObject {
         // 각 서비스 초기화
         self.loginService = LoginService()
         self.notificationService = NotificationService()
-        self.logBookService = LogBookService()
+        self.logBookService = LogBookService.shared
         self.avatarService = AvatarService()
         self.imageService = ImageService()
         self.logDiaryService = LogDiaryService()

@@ -3,13 +3,12 @@ import SwiftUI
 @main
 struct DivaryApp: App {
     @StateObject private var router = AppRouter()
-    private var container: DIContainer
+    @StateObject private var container: DIContainer
     
     init() {
-        // 동일한 router 인스턴스 사용
         let appRouter = AppRouter()
         self._router = StateObject(wrappedValue: appRouter)
-        self.container = DIContainer(router: appRouter)
+        self._container = StateObject(wrappedValue: DIContainer(router: appRouter))
     }
     
     var body: some Scene {
@@ -22,9 +21,22 @@ struct DivaryApp: App {
                             LoginWrapperView()
                         case .main:
                             MainView()
+                        case .logBookMain(let logBaseId):
+                            LogBookMainView(logBaseId: logBaseId)
+                        case .CharacterViewWrapper:
+                            CharacterViewWrapper()
+                        case .Store(let viewModel):
+                            StoreMainView(viewModel: viewModel)
+                                .navigationBarBackButtonHidden(true)
+                        case .notifications:
+                            NotificationView()
+                        case .MainTabBar:
+                                MainTabbarView()
+                                    .navigationBarBackButtonHidden(true)
                         }
                     }
             }
+            .environmentObject(container)
             .environment(\.diContainer, container)
         }
     }

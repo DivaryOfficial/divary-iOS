@@ -5,7 +5,6 @@
 //  Created by chohaeun on 7/25/25.
 //
 
-
 import Foundation
 import SwiftUI
 
@@ -15,19 +14,37 @@ enum SaveStatus: String, CaseIterable {
     case temp = "TEMP"
 }
 
-struct LogBookBase: Identifiable{
-    let id: String
+// 수정: API 구조에 맞게 조정
+struct LogBookBase: Identifiable {
+    let id: String                  // logBaseInfoId를 String으로 변환
+    let logBaseInfoId: Int          // 실제 API ID
     let date: Date
-    let title: String
+    let title: String               // API의 name
     let iconType: IconType
-    var logs: [DiveLogData]     // 최대 3개
-    var saveStatus: SaveStatus = .complete // 추가: 저장 상태
-    // API에서 받을 때는 로그북 데이터는 별도 API로 가져올지도
-    // var logBooks: [DiveLogData] // 이건 별도 API 호출로 가져올 예정
+    let accumulation: Int           // 총 다이빙 횟수
+    var logBooks: [LogBook]         // 개별 로그북들 (최대 3개)
+    
+    // UI 호환성을 위한 computed property
+    var logs: [DiveLogData] {
+        return logBooks.map { $0.diveData }
+    }
+    
+    // 임시저장 상태 확인
+    var hasTempSave: Bool {
+        return logBooks.contains { $0.saveStatus == .temp }
+    }
+}
+
+// 새로운: 개별 로그북 모델
+struct LogBook: Identifiable {
+    let id: String                  // logBookId를 String으로 변환
+    let logBookId: Int              // 실제 API ID
+    var saveStatus: SaveStatus
+    var diveData: DiveLogData
 }
 
 // 실제 API Response 모델
-struct LogBookBaseResponse{
+struct LogBookBaseResponse {
     let logBases: [LogBookBase]
 }
 
@@ -36,23 +53,24 @@ struct LogBookResponse {
 }
 
 enum IconType: String, CaseIterable, Identifiable {
+    
     case plus // 추가 버튼
-    case clownfish
-    case butterflyfish
-    case octopus
-    case anchovy
-    case seaSlug
-    case turtle
-    case blowfish
-    case dolphin
-    case longhornCowfish
-    case combJelly
-    case shrimp
-    case crab
-    case lionfish
-    case squid
-    case clam
-    case starfish
+    case clownfish = "CLOWNFISH"            // clownfish → 흰동가리
+    case butterflyfish = "BUTTERFLYFISH"    // butterflyfish → 나비고기
+    case octopus = "OCTOPUS"                // octopus → 문어
+    case cleanerWrasse = "CLEANER_WRASSE"   // anchovy(이미지) → 청줄놀래기
+    case blackRockfish = "BLACK_ROCKFISH"   // blowfish(이미지) → 쏨배기
+    case seaHare = "SEA_HARE"               // clam(이미지) → 군소
+    case pufferfish = "PUFFERFISH"          // blowfish(이미지) → 복어
+    case stripedBeakfish = "STRIPED_BEAKFISH" // longhornCowfish(이미지) → 돌돔
+    case nudibranch = "NUDIBRANCH"          // seaSlug → 갯민숭달팽이
+    case moonJellyfish = "MOON_JELLYFISH"   // combJelly → 보름달물해파리
+    case yellowtailScad = "YELLOWTAIL_SCAD" // dolphin(이미지) → 줄전갱이
+    case mantisShrimp = "MANTIS_SHRIMP"     // shrimp → 끄덕새우
+    case seaTurtle = "SEA_TURTLE"           // turtle → 바다거북
+    case starfish = "STARFISH"              // starfish → 불가사리
+    case redLionfish = "RED_LIONFISH"       // lionfish → 쏠배감펭
+    case seaUrchin = "SEA_URCHIN"           // squid(이미지) → 성게
 
     var id: String { self.rawValue }
 
@@ -60,30 +78,38 @@ enum IconType: String, CaseIterable, Identifiable {
         switch self {
         case .plus:
             return Image("plus")
-        default:
-            return Image(rawValue)
+        case .clownfish:
+            return Image("clownfish")
+        case .butterflyfish:
+            return Image("butterflyfish")
+        case .octopus:
+            return Image("octopus")
+        case .cleanerWrasse:
+            return Image("anchovy") // 청줄놀래기
+        case .blackRockfish:
+            return Image("blowfish") // 쏨배기
+        case .seaHare:
+            return Image("clam") // 군소
+        case .pufferfish:
+            return Image("blowfish") // 복어
+        case .stripedBeakfish:
+            return Image("longhornCowfish") // 돌돔
+        case .nudibranch:
+            return Image("seaSlug") // 갯민숭달팽이
+        case .moonJellyfish:
+            return Image("combJelly") // 보름달물해파리
+        case .yellowtailScad:
+            return Image("dolphin") // 줄전갱이
+        case .mantisShrimp:
+            return Image("shrimp") // 끄덕새우
+        case .seaTurtle:
+            return Image("turtle") // 바다거북
+        case .starfish:
+            return Image("starfish") // 불가사리
+        case .redLionfish:
+            return Image("lionfish") // 쏠배감펭
+        case .seaUrchin:
+            return Image("squid") // 성게
         }
     }
-
-//    var displayName: String {
-//        switch self {
-//        case .plus: return "+"
-//        case .clownfish: return "흰동가리"
-//        case .butterflyfish: return "나비고기"
-//        case .octopus: return "문어"
-//        case .anchovy: return "청줄놀래기"
-//        case .seaSlug: return "쏨뱅이"
-//        case .turtle: return "군소"
-//        case .blowfish: return "복어"
-//        case .dolphin: return "돌돔"
-//        case .longhornCowfish: return "갯민숭달팽이"
-//        case .combJelly: return "보름달물해파리"
-//        case .shrimp: return "줄전갱이"
-//        case .crab: return "꼬덕새우"
-//        case .lionfish: return "바다거북"
-//        case .squid: return "불가사리"
-//        case .clam: return "쏠배감펭"
-//        case .starfish: return "성게"
-//        }
-//    }
 }

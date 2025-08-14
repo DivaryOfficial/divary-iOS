@@ -6,41 +6,31 @@
 //
 
 import SwiftUI
+import Foundation
 
 struct YearlyLogBubble: View {
-
-    // 기존 코드에 추가: 각 로그 아이템에 logBaseId 추가
-     let logItems: [(icon: IconType, date: Date, logBaseId: String)] = [
-         (.blowfish, DateComponents(calendar: .current, year: 2025, month: 7, day: 27).date!, "log_base_1"),
-         (.blowfish, DateComponents(calendar: .current, year: 2025, month: 7, day: 25).date!, "log_base_2"),
-         (.octopus, DateComponents(calendar: .current, year: 2025, month: 7, day: 17).date!, "log_base_3"),
-         // ... 기존 데이터에 logBaseId 추가
-     ]
-    
-    // 추가: 필터링된 연도
     let selectedYear: Int
-    
-    let columns = Array(repeating: GridItem(.flexible(), spacing: 0), count: 4)
-    
-    @Bindable var dataManager = MockDataManager.shared
+    let logBases: [LogBookBase]  // 외부에서 전달받은 데이터
     @Binding var showDeletePopup: Bool
-    
-    // 추가: 버블 탭 콜백
     var onBubbleTap: ((String) -> Void)?
-    var onPlusButtonTap: (() -> Void)? // 추가: + 버튼 탭 콜백
+    var onPlusButtonTap: (() -> Void)?
     var onDeleteTap: ((String) -> Void)?
     
-    var body: some View {
+    // 그리드 컬럼 설정
+    let columns = Array(repeating: GridItem(.flexible(), spacing: 0), count: 4)
 
-        // MockDataManager에서 데이터 가져오기 + 연도 필터링 추가
-        let filteredLogs = dataManager.logBookBases.filter { logBase in
+    
+    var body: some View {
+        // 전달받은 logBases에서 해당 연도 필터링
+        let filteredLogs = logBases.filter { logBase in
             Calendar.current.component(.year, from: logBase.date) == selectedYear
         }
         let sortedLogs = filteredLogs.sorted { $0.date > $1.date }
         
         // 맨 앞에 .plus 추가
-        let displayItems: [(icon: IconType, date: Date, logBaseId: String?)] =
-            [(.plus, Date(), nil)] + sortedLogs.map { ($0.iconType, $0.date, $0.id) }
+        let displayItems: [(icon: IconType, date: Date, logBaseId: String?, hasTempSave: Bool)] =
+            [(.plus, Date(), nil, false)] +
+            sortedLogs.map { ($0.iconType, $0.date, $0.id, $0.hasTempSave) }
        
         ScrollView {
             LazyVGrid(columns: columns, spacing: 0) {
@@ -57,26 +47,56 @@ struct YearlyLogBubble: View {
                             }
                         },
                         onLongTap: {
-                            onDeleteTap?(item.logBaseId ?? "")
-                        }
+                            if let logBaseId = item.logBaseId {
+                                onDeleteTap?(logBaseId)
+                            }
+                        },
+                        hasTempSave: item.hasTempSave
                     )
                     .padding(.bottom, index % 2 == 0 ? 60 : 0)
                     .padding(.top, index % 2 == 1 ? 60 : 0)
                     
                     // 조건: 로그 없음 (+ 버튼에만 툴팁 표시)
-                       if LogBookBaseMockData.isEmpty && index == 0 {
-                           Image(.plusTooltip)
-                               .offset(x: 60, y: -45)
-                       }
+                    if sortedLogs.isEmpty && index == 0 {
+                        Image(.plusTooltip)
+                            .offset(x: 60, y: -45)
+                    }
                 }
             }
             .padding()
         }
-//        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
-#Preview {
-    @Previewable @State var showDeletePopup: Bool = false
-    YearlyLogBubble(selectedYear: 2025, showDeletePopup: $showDeletePopup)
-}
+//
+//#Preview {
+//    @Previewable @State var showDeletePopup = false
+//    
+//    // 프리뷰용 샘플 데이터
+//    let sampleLogBases = [
+//        LogBookBase(
+//            id: "1",
+//            logBaseInfoId: 1,
+//            date: Calendar.current.date(from: DateComponents(year: 2025, month: 8, day: 1))!,
+//            title: "제주도 다이빙",
+//            iconType: .clownfish,
+//            accumulation: 3,
+//            logBooks: []
+//        ),
+//        LogBookBase(
+//            id: "2",
+//            logBaseInfoId: 2,
+//            date: Calendar.current.date(from: DateComponents(year: 2025, month: 7, day: 15))!,
+//            title: "울릉도 다이빙",
+//            iconType: .turtle,
+//            accumulation: 2,
+//            logBooks: []
+//        )
+//    ]
+//    
+//    YearlyLogBubble(
+//        selectedYear: 2025,
+//        logBases: sampleLogBases,
+//        showDeletePopup: $showDeletePopup
+//    )
+//}

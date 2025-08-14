@@ -38,14 +38,15 @@ struct LoginView: View {
                 VStack {
                     Spacer()
                     Button(action:{
-                        KeyChainManager.shared.save("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QGRpdmFyeS5jb20iLCJyb2xlIjoiUk9MRV9VU0VSIiwiaWF0IjoxNzU1MDE4MjM3LCJleHAiOjE3NTY0NTgyMzd9.K9EqAW3ia8VlRsYtEfBuQ8yUE64Udok92Rshim4TI0Y", forKey: KeyChainKey.accessToken)
-                        container.router.push(.main)
+                        KeyChainManager.shared.save("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzc2RvZGVuQGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX1VTRVIiLCJpYXQiOjE3NTQ5NzM3MzUsImV4cCI6MTc1NjQxMzczNX0.1O8bvpULHOOEVJbRkNUViOx3ugkiAhCmOGqAyZ-OnIs", forKey: KeyChainKey.accessToken)
+                        container.router.push(.MainTabBar)
                     }){
                         Text("테스트 계정")
                     }
                     HStack {
                         Spacer()
                         GoogleSignInButtonView(action: viewModel.signInWithGoogle)
+                            .padding(18)
                         Spacer()
                     }
                     

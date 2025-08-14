@@ -28,6 +28,10 @@ enum SectionStatus {
 
 @Observable
 class DiveLogData {
+    // API 연동을 위한 ID 추가
+    var logBookId: Int?
+    var saveStatus: SaveStatus = .complete
+    
     var overview: DiveOverview?
     var participants: DiveParticipants?
     var equipment: DiveEquipment?
@@ -35,12 +39,16 @@ class DiveLogData {
     var profile: DiveProfile?
 
     init(
+        logBookId: Int? = nil,
+        saveStatus: SaveStatus = .complete,
         overview: DiveOverview? = nil,
         participants: DiveParticipants? = nil,
         equipment: DiveEquipment? = nil,
         environment: DiveEnvironment? = nil,
         profile: DiveProfile? = nil
     ) {
+        self.logBookId = logBookId
+        self.saveStatus = saveStatus
         self.overview = overview
         self.participants = participants
         self.equipment = equipment
@@ -100,14 +108,14 @@ class DiveParticipants {
 @Observable
 class DiveEquipment {
     var suitType: String?   // 슈트 종류 (예: 드라이, 웻슈트 등)
-    var Equipment: [String]?
+    var Equipment: String?
     var weight: Int?     // 웨이트 무게 (kg 단위)
     var pweight: String? // 체감 무게
     
     
     init(
         suitType: String? = nil,
-        Equipment: [String]? = nil,
+        Equipment:String? = nil,
         weight: Int? = nil,
         pweight: String? = nil
         
@@ -154,8 +162,9 @@ class DiveEnvironment {
 @Observable
 class DiveProfile {
     var diveTime: Int?        // 다이빙 시간 (분)
-    var maxDepth: Int?     // 최대 수심 (m)
-    var avgDepth: Int?     // 평균 수심 (m)
+    var maxDepth: Int?       // 최대 수심 (m)
+    var avgDepth: Int?      // 평균 수심 (m)
+    var decoDepth: Int?
     var decoStop: Int?     // 감압 정지 시간 (분)
     var startPressure: Int?   // 시작 탱크 압력 (bar)
     var endPressure: Int?     // 종료 탱크 압력 (bar)
@@ -165,6 +174,7 @@ class DiveProfile {
         diveTime: Int? = nil,
         maxDepth: Int? = nil,
         avgDepth: Int? = nil,
+        decoDepth: Int? = nil,
         decoStop: Int? = nil,
         startPressure: Int? = nil,
         endPressure: Int? = nil
@@ -172,11 +182,9 @@ class DiveProfile {
         self.diveTime = diveTime
         self.maxDepth = maxDepth
         self.avgDepth = avgDepth
+        self.decoDepth = decoDepth
         self.decoStop = decoStop
         self.startPressure = startPressure
         self.endPressure = endPressure
     }
 }
-
-
-

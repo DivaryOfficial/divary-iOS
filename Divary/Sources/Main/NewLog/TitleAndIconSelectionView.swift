@@ -15,12 +15,24 @@ struct TitleAndIconSelectionView: View {
     
     let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: 4)
     
-    // 아이콘 목록 (plus 제외)
+    // 아이콘 목록 (plus 제외, ICON_TYPE 기준)
     let availableIcons: [IconType] = [
-        .clownfish, .butterflyfish, .octopus, .anchovy,
-        .seaSlug, .turtle, .blowfish, .dolphin,
-        .longhornCowfish, .combJelly, .shrimp, .crab,
-        .lionfish, .squid, .clam, .starfish
+        .clownfish,        // 흰동가리
+        .butterflyfish,    // 나비고기
+        .octopus,          // 문어
+        .cleanerWrasse,    // 청줄놀래기 (이미지: anchovy)
+        .blackRockfish,    // 쏨배기 (이미지: blowfish)
+        .seaHare,          // 군소 (이미지: clam)
+        .pufferfish,       // 복어 (이미지: blowfish)
+        .stripedBeakfish,  // 돌돔 (이미지: longhornCowfish)
+        .nudibranch,       // 갯민숭달팽이 (이미지: seaSlug)
+        .moonJellyfish,    // 보름달물해파리 (이미지: combJelly)
+        .yellowtailScad,   // 줄전갱이 (이미지: dolphin)
+        .mantisShrimp,     // 끄덕새우 (이미지: shrimp)
+        .seaTurtle,        // 바다거북 (이미지: turtle)
+        .starfish,         // 불가사리 (이미지: starfish)
+        .redLionfish,      // 쏠배감펭 (이미지: lionfish)
+        .seaUrchin         // 성게 (이미지: squid)
     ]
     
     var body: some View {
@@ -38,6 +50,7 @@ struct TitleAndIconSelectionView: View {
                     .padding()
                     .background(Color.grayscale_g100)
                     .cornerRadius(8)
+                    .disabled(viewModel.isLoading) // 로딩 중 비활성화
             }
             .padding(.horizontal)
             
@@ -50,7 +63,9 @@ struct TitleAndIconSelectionView: View {
                 LazyVGrid(columns: columns, spacing: 18) {
                     ForEach(availableIcons, id: \.self) { iconType in
                         Button(action: {
-                            viewModel.selectedIcon = iconType
+                            if !viewModel.isLoading { // 로딩 중이 아닐 때만 선택 가능
+                                viewModel.selectedIcon = iconType
+                            }
                         }) {
                             VStack(spacing: 8) {
                                 ZStack {
@@ -67,6 +82,7 @@ struct TitleAndIconSelectionView: View {
                         }
                         .scaleEffect(viewModel.selectedIcon == iconType ? 1.1 : 1.0)
                         .animation(.easeInOut(duration: 0.2), value: viewModel.selectedIcon)
+                        .disabled(viewModel.isLoading) // 로딩 중 비활성화
                     }
                 }
                 .padding(.horizontal)
@@ -83,22 +99,37 @@ struct TitleAndIconSelectionView: View {
                 .background(Color.grayscale_g100)
                 .foregroundColor(Color.grayscale_g500)
                 .cornerRadius(8)
+                .disabled(viewModel.isLoading) // 로딩 중 비활성화
                 
                 Button("작성하러 가기") {
-                    viewModel.createNewLog()
-                    onComplete?()
+                    // API 연동: 비동기 로그 생성
+                    viewModel.createNewLog { logBaseId in
+                        DispatchQueue.main.async {
+                            if logBaseId != nil {
+                                onComplete?()
+                            }
+                            // 에러 처리는 viewModel의 errorMessage로 처리됨
+                        }
+                    }
                 }
                 .font(Font.omyu.regular(size: 16))
                 .frame(maxWidth: .infinity)
                 .padding()
-                .background(viewModel.selectedTitle.isEmpty || viewModel.selectedIcon == nil ? Color.grayscale_g100 : Color.primary_sea_blue)
-                .foregroundColor(viewModel.selectedTitle.isEmpty || viewModel.selectedIcon == nil ? Color.grayscale_g500 : Color.white)
+                .background(canProceed ? Color.primary_sea_blue : Color.grayscale_g100)
+                .foregroundColor(canProceed ? Color.white : Color.grayscale_g500)
                 .cornerRadius(8)
-                .disabled(viewModel.selectedTitle.isEmpty || viewModel.selectedIcon == nil)
+                .disabled(!canProceed) // 조건 불만족 시 비활성화
             }
             .padding(.horizontal)
             .padding(.bottom, 20)
         }
+    }
+    
+    // 진행 가능 여부 계산
+    private var canProceed: Bool {
+        return !viewModel.selectedTitle.isEmpty &&
+               viewModel.selectedIcon != nil &&
+               !viewModel.isLoading
     }
 }
 
