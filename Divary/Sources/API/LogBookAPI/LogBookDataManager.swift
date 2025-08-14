@@ -73,8 +73,8 @@ class LogBookDataManager {
                 case .failure(let error):
                     // 서버 에러인 경우 임시 로그베이스 생성하여 반환
                     if let apiError = error as? LogBookAPIError, apiError.statusCode == 500 {
-                        print("⚠️ 서버 에러로 인해 임시 로그베이스 생성: \(logBaseInfoId)")
-                        self?.createTemporaryLogBase(logBaseInfoId: logBaseInfoId, completion: completion)
+                        print("⚠️ 서버 에러로 인해 임시 로그베이스 생성은 이제 안 할 거임: \(logBaseInfoId)")
+                        //self?.createTemporaryLogBase(logBaseInfoId: logBaseInfoId, completion: completion)
                     } else {
                         completion(.failure(error))
                         print("❌ 로그베이스 상세 조회 실패: \(error)")
@@ -85,38 +85,38 @@ class LogBookDataManager {
     }
     
     // 임시 로그베이스 생성 (서버 에러 시 대체용)
-    private func createTemporaryLogBase(logBaseInfoId: Int, completion: @escaping (Result<LogBookBase, Error>) -> Void) {
-        // 캐시에서 기본 정보를 찾아서 임시 로그베이스 생성
-        if let cachedLogBase = logBookBases.first(where: { $0.logBaseInfoId == logBaseInfoId }) {
-            // 빈 로그북 1개로 임시 로그베이스 생성
-            let emptyLogBook = LogBook(
-                id: "temp_\(logBaseInfoId)_0",
-                logBookId: -1, // 임시 ID
-                saveStatus: .temp,
-                diveData: DiveLogData()
-            )
-            
-            let tempLogBase = LogBookBase(
-                id: cachedLogBase.id,
-                logBaseInfoId: cachedLogBase.logBaseInfoId,
-                date: cachedLogBase.date,
-                title: cachedLogBase.title,
-                iconType: cachedLogBase.iconType,
-                accumulation: cachedLogBase.accumulation,
-                logBooks: [emptyLogBook] // 1개만 생성
-            )
-            
-            // 캐시 업데이트
-            if let index = logBookBases.firstIndex(where: { $0.logBaseInfoId == logBaseInfoId }) {
-                logBookBases[index] = tempLogBase
-            }
-            
-            completion(.success(tempLogBase))
-        } else {
-            let error = NSError(domain: "TemporaryLogBase", code: -1, userInfo: [NSLocalizedDescriptionKey: "임시 로그베이스 생성 실패: 캐시에서 기본 정보를 찾을 수 없습니다."])
-            completion(.failure(error))
-        }
-    }
+//    private func createTemporaryLogBase(logBaseInfoId: Int, completion: @escaping (Result<LogBookBase, Error>) -> Void) {
+//        // 캐시에서 기본 정보를 찾아서 임시 로그베이스 생성
+//        if let cachedLogBase = logBookBases.first(where: { $0.logBaseInfoId == logBaseInfoId }) {
+//            // 빈 로그북 1개로 임시 로그베이스 생성
+//            let emptyLogBook = LogBook(
+//                id: "temp_\(logBaseInfoId)_0",
+//                logBookId: -1, // 임시 ID
+//                saveStatus: .temp,
+//                diveData: DiveLogData()
+//            )
+//            
+//            let tempLogBase = LogBookBase(
+//                id: cachedLogBase.id,
+//                logBaseInfoId: cachedLogBase.logBaseInfoId,
+//                date: cachedLogBase.date,
+//                title: cachedLogBase.title,
+//                iconType: cachedLogBase.iconType,
+//                accumulation: cachedLogBase.accumulation,
+//                logBooks: [emptyLogBook] // 1개만 생성
+//            )
+//            
+//            // 캐시 업데이트
+//            if let index = logBookBases.firstIndex(where: { $0.logBaseInfoId == logBaseInfoId }) {
+//                logBookBases[index] = tempLogBase
+//            }
+//            
+//            completion(.success(tempLogBase))
+//        } else {
+//            let error = NSError(domain: "TemporaryLogBase", code: -1, userInfo: [NSLocalizedDescriptionKey: "임시 로그베이스 생성 실패: 캐시에서 기본 정보를 찾을 수 없습니다."])
+//            completion(.failure(error))
+//        }
+//    }
     
     // MARK: - ✅ 새 로그베이스 생성 (빈 로그북 1개만 생성) - 중복 방지 강화
     func createLogBase(iconType: IconType, name: String, date: Date, completion: @escaping (Result<String, Error>) -> Void) {
@@ -178,7 +178,8 @@ class LogBookDataManager {
                                 title: name,
                                 iconType: iconType,
                                 accumulation: createResponse.accumulation ?? 0,
-                                logBooks: []
+                                logBooks: [],
+                                saveStatus: .temp  // ✅ 추가
                             )
                             self?.logBookBases.append(newLogBase)
                             completion(.success(String(logBaseInfoId)))
@@ -224,7 +225,8 @@ class LogBookDataManager {
                         title: name,
                         iconType: iconType,
                         accumulation: accumulation,
-                        logBooks: [emptyLogBook] // 1개만 포함
+                        logBooks: [emptyLogBook], // 1개만 포함
+                        saveStatus: .temp  // ✅ 추가
                     )
                     
                     self?.logBookBases.append(newLogBase)
@@ -361,6 +363,4 @@ class LogBookDataManager {
         }
     }
     
-    // MARK: - ❌ 사용하지 않는 메서드 (기존 createLogBaseOnly는 더 이상 사용하지 않음)
-    // createLogBase가 이미 빈 로그북 1개만 생성하므로 별도 메서드 불필요
 }

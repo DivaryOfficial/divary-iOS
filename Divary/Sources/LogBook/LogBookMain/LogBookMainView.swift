@@ -34,6 +34,7 @@ struct LogBookMainView: View {
     @State private var allowDiaryExitOnce = false
     
     @Environment(\.dismiss) private var dismiss
+    @State private var currentPageIndex = 0
 
     // ✅ 제목 수정 관련 상태
     @State private var showTitleEditPopup = false
@@ -56,8 +57,8 @@ struct LogBookMainView: View {
                 LogBookNavBar(
                     selectedDate: $viewModel.selectedDate,
                     isCalendarPresented: $isCalendarPresented,
-                    onBackTap: {
-//                        dismiss()
+                    onBackTap: {          
+//                         dismiss()
                         if selectedTab == .diary, diaryVM.hasUnsavedChanges {
                             pendingDiaryExit = .back
                             showDiaryLeavePopup = true
@@ -72,11 +73,10 @@ struct LogBookMainView: View {
                                   ? (diaryVM.saveButtonEnabled && !showCanvas)
                                   : viewModel.isTempSaved),
                     onSaveTap: {
-//                        viewModel.handleSaveButtonTap()
                         if selectedTab == .diary {
                             diaryVM.manualSave() // 일기 저장
                         } else {
-                            viewModel.handleSaveButtonTap() // 로그북 저장
+                            viewModel.handleSaveButtonTap(currentPageIndex: currentPageIndex) // 로그북 저장
                         }
                     }
                 )
@@ -162,8 +162,8 @@ struct LogBookMainView: View {
                     VStack {
                         Spacer()
                         SavePop(
-                            onCompleteSave: { viewModel.handleCompleteSave() },
-                            onTempSave: { viewModel.handleTempSaveFromSavePopup() },
+                            onCompleteSave: { viewModel.handleCompleteSave(currentPageIndex: currentPageIndex) },
+                            onTempSave: { viewModel.handleTempSaveFromSavePopup(currentPageIndex: currentPageIndex) },
                             onClose: { viewModel.showSavePopup = false }
                         )
                         .padding(.horizontal, 24)

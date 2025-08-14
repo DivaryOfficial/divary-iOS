@@ -40,7 +40,9 @@ struct DiveParticipantsSection: View {
                 Text("동행자")
                     .font(Font.omyu.regular(size: 16))
                     .foregroundStyle(status != .empty ? Color.bw_black : Color.grayscale_g400)
-                if status == .partial {
+                
+                // ✅ 완전저장된 상태에서는 "작성중" 표시하지 않음
+                if status == .partial && !isSaved {
                     Text("작성중")
                         .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 10))
                         .foregroundStyle(Color.role_color_nagative)
@@ -49,9 +51,7 @@ struct DiveParticipantsSection: View {
             }
             
             VStack(spacing: 0) {
-
-                    equipmentRow(title: "리더", value: participants?.leader)
-
+                equipmentRow(title: "리더", value: participants?.leader)
                 
                 DashedDivider()
                 
@@ -59,7 +59,7 @@ struct DiveParticipantsSection: View {
                 
                 DashedDivider()
                 
-                equipmentRow(title: "동행자",  value: (participants?.companion ?? [" "]).joined(separator: ", "))
+                equipmentRow(title: "동행자", value: (participants?.companion ?? [" "]).joined(separator: ", "))
             }
             .background(
                 RoundedRectangle(cornerRadius: 10)
@@ -75,14 +75,16 @@ struct DiveParticipantsSection: View {
 
         return HStack(alignment: .top) {
             Text(title)
-                .foregroundStyle(isEmpty ? Color.grayscale_g400 : Color.grayscale_g700)
+                // ✅ 완전저장된 상태에서는 빈 값이라도 검정색으로 표시
+                .foregroundStyle(isSaved ? Color.grayscale_g700 : (isEmpty ? Color.grayscale_g400 : Color.grayscale_g700))
                 .font(Font.omyu.regular(size: 14))
 
             Spacer()
 
             HStack(alignment: .bottom, spacing: 2) {
                 Text(isEmpty ? " " : trimmedValue)
-                    .foregroundStyle(isEmpty ? Color.grayscale_g400 : Color.bw_black)
+                    // ✅ 완전저장된 상태에서는 빈 값이라도 검정색, 값이 있으면 원래 색상
+                    .foregroundStyle(isSaved ? Color.bw_black : (isEmpty ? Color.grayscale_g400 : Color.bw_black))
                     .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
                     .lineSpacing(4)
             }
@@ -92,9 +94,6 @@ struct DiveParticipantsSection: View {
         }
         .padding(8)
     }
-
-    
-    
 }
 
 #Preview {
