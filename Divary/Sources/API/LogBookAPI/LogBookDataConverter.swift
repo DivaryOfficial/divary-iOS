@@ -88,14 +88,37 @@ extension LogBaseDetailDTO {
             )
         }
 
-        // Participants (응답: companion 키)
+        // ✅ Participants - 백엔드 타입 기반으로 UI 모델 구성
         if hasParticipantsData() {
-            let companionList = self.companions?.compactMap { $0.companion } ?? []
-            diveData.participants = DiveParticipants(
-                leader: companionList.first,
-                buddy: companionList.count > 1 ? companionList[1] : nil,
-                companion: companionList.count > 2 ? Array(companionList.dropFirst(2)) : nil
-            )
+            let participants = DiveParticipants()
+            
+            if let companionList = self.companions {
+                for companion in companionList {
+                    guard let name = companion.companion?.trimmingCharacters(in: .whitespacesAndNewlines),
+                          !name.isEmpty else { continue }
+                    
+                    switch companion.type {
+                    case "LEADER":
+                        participants.leader = name
+                    case "BUDDY":
+                        participants.buddy = name
+                    case "COMPANION":
+                        if participants.companion == nil {
+                            participants.companion = []
+                        }
+                        participants.companion?.append(name)
+                    default:
+                        print("⚠️ 알 수 없는 동행자 타입: \(companion.type)")
+                        // 알 수 없는 타입도 동행자로 처리
+                        if participants.companion == nil {
+                            participants.companion = []
+                        }
+                        participants.companion?.append(name)
+                    }
+                }
+            }
+            
+            diveData.participants = participants
         }
 
         // Equipment - 백엔드 enum → UI 표시용 텍스트 변환
@@ -176,7 +199,7 @@ extension DiveLogData {
             // ✅ UI 표시용 텍스트 → 백엔드 enum 변환
             diveMethod: self.overview?.method?.toDivingMethodEnum(),
             divePurpose: self.overview?.purpose?.toDivingPurposeEnum(),
-            companions: self.participants?.toCompanionRequestDTOs(), // ← name 키로 직렬화
+            companions: self.participants?.toCompanionRequestDTOs(), // ✅ 수정된 변환 사용
             // ✅ UI 표시용 텍스트 → 백엔드 enum 변환
             suitType: self.equipment?.suitType?.toSuitTypeEnum(),
             equipment: self.equipment?.Equipment,
@@ -208,17 +231,26 @@ extension DiveParticipants {
     func toCompanionRequestDTOs() -> [CompanionRequestDTO] {
         var result: [CompanionRequestDTO] = []
 
-        if let leader = self.leader, !leader.isEmpty {
+        // ✅ 리더 추가 - 공백 제거 및 빈 문자열 체크
+        if let leader = self.leader?.trimmingCharacters(in: .whitespacesAndNewlines), !leader.isEmpty {
             result.append(CompanionRequestDTO(name: leader, type: "LEADER"))
         }
-        if let buddy = self.buddy, !buddy.isEmpty {
+        
+        // ✅ 버디 추가 - 공백 제거 및 빈 문자열 체크
+        if let buddy = self.buddy?.trimmingCharacters(in: .whitespacesAndNewlines), !buddy.isEmpty {
             result.append(CompanionRequestDTO(name: buddy, type: "BUDDY"))
         }
+        
+        // ✅ 동행자들 추가 - 공백 제거 및 빈 문자열 체크
         if let companions = self.companion {
-            for name in companions where !name.isEmpty {
-                result.append(CompanionRequestDTO(name: name, type: "COMPANION"))
+            for name in companions {
+                let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+                if !trimmedName.isEmpty {
+                    result.append(CompanionRequestDTO(name: trimmedName, type: "COMPANION"))
+                }
             }
         }
+        
         return result
     }
 }
