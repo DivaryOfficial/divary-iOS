@@ -38,8 +38,9 @@ extension LogListResponseDTO {
             date: date,
             title: self.name,
             iconType: iconType,
-            accumulation: 0, // 리스트에서는 accumulation 정보가 없음
-            logBooks: []
+            accumulation: 0,
+            logBooks: [],
+            saveStatus: saveStatus  // ✅ 추가
         )
     }
 }
@@ -51,6 +52,7 @@ extension Array where Element == LogBaseDetailDTO {
 
         let date = DateFormatter.apiDateFormatter.date(from: firstItem.date) ?? Date()
         let iconType = IconType(rawValue: firstItem.icon) ?? .clownfish
+        //let saveStatus = SaveStatus(rawValue: self.saveStatus) ?? .complete
 
         let logBooks = self.map { dto in
             LogBook(
@@ -68,7 +70,8 @@ extension Array where Element == LogBaseDetailDTO {
             title: firstItem.name,
             iconType: iconType,
             accumulation: firstItem.accumulation,
-            logBooks: logBooks
+            logBooks: logBooks,
+            saveStatus: nil  // ✅ 상세 조회에서는 nil (logBooks로 판단)
         )
     }
 }

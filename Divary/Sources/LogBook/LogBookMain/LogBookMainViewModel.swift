@@ -250,12 +250,6 @@ class LogBookMainViewModel {
                     self.serverData[index] = self.copyDiveLogData(self.diveLogData[index])
                 }
                 
-                // ✅ 이 한 줄만 추가!
-                LogBookDataManager.shared.updateLogBookSaveStatusInCache(
-                    logBaseInfoId: self.logBaseInfoId,
-                    logBookId: logBookId,
-                    saveStatus: saveStatus
-                )
                 
                 // 서버 저장 상태 업데이트
                 if saveStatus == .temp {
@@ -268,6 +262,10 @@ class LogBookMainViewModel {
                 // ✅ 프론트엔드 임시저장은 서버 저장과 별개로 유지 (제거하지 않음)
                 
                 completion(true)
+                
+                // ✅ 추가: 메인 화면 데이터 새로고침
+                let currentYear = Calendar.current.component(.year, from: self.selectedDate)
+                LogBookDataManager.shared.refreshCache(for: currentYear)
                 print("✅ 로그북 서버 저장 성공: logBookId=\(logBookId), saveStatus=\(saveStatus.rawValue)")
                 
             case .failure(let error):
