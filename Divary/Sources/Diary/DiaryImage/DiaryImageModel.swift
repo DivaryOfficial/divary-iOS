@@ -15,8 +15,8 @@ final class FramedImageContent: ObservableObject, Identifiable {
     @Published var frameColor: FrameColor
     @Published var date: String
     
-    @Published var originalData: Data?        // 포토에서 가져온 원본(업로드용)
-    @Published var tempFilename: String?      // 업로드 결과 URL(서버가 요구)
+    @Published var originalData: Data? // 포토에서 가져온 원본(업로드용)
+    @Published var tempFilename: String? // 업로드 결과 URL(서버가 요구)
     
     init(image: Image? = Image(systemName: "photo"), caption: String, frameColor: FrameColor, date: String, tempFilename: String? = nil, originalData: Data? = nil) {
         self.image = image

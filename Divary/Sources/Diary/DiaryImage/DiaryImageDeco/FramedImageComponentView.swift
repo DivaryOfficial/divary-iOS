@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Kingfisher
 
 struct FramedImageComponentView: View {
     @ObservedObject var framedImage: FramedImageContent
@@ -78,17 +79,13 @@ struct FramedImageComponentView: View {
         }
         // 2) 그 외엔 서버/임시 URL
         else if let urlStr = framedImage.tempFilename, let url = URL(string: urlStr), !urlStr.isEmpty {
-            AsyncImage(url: url) { phase in
-                switch phase {
-                case .success(let image):
-                    image.resizable().scaledToFill()
-                case .empty:
-                    ProgressView()
-                default:
-                    Image(systemName: "photo").resizable().scaledToFill()
-                }
-            }
-        } else {
+            KFImage(url)
+                .placeholder { ProgressView() }
+                .cancelOnDisappear(true)
+                .resizable()
+                .scaledToFill()
+        }
+        else {
             (framedImage.image ?? Image(systemName: "photo")).resizable().scaledToFill()
         }
     }
