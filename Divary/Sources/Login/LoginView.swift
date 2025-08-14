@@ -38,12 +38,21 @@ struct LoginView: View {
                 VStack {
                     Spacer()
                     Button(action:{
-                        KeyChainManager.shared.save("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0dDEyMzRAZ21haWwuY29tIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTc1NTE2NzUwNSwiZXhwIjoxNzU2NjA3NTA1fQ.4HHIZ8j7W7sii6a-YDAkXXVcp0yzhtZutwjW17300lQ", forKey: KeyChainKey.accessToken)
+
+                        KeyChainManager.shared.save("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QGRpdmFyeS5jb20iLCJyb2xlIjoiUk9MRV9VU0VSIiwiaWF0IjoxNzU1MTcwNzAyLCJleHAiOjE3NTY2MTA3MDJ9.FNWcefGTQu9_P9pHC9oLcJeGxezg3xb7qXva_NRIlEU", forKey: KeyChainKey.accessToken)
+
                         container.router.push(.MainTabBar)
-                        
-                    }){
+                    }) {
                         Text("테스트 계정")
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(Color.gray.opacity(0.8))
+                            .cornerRadius(8)
                     }
+                    .padding(.horizontal, 20)
+                    
                     HStack {
                         Spacer()
                         GoogleSignInButtonView(action: viewModel.signInWithGoogle)

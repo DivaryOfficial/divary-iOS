@@ -14,15 +14,22 @@ enum DiaryFooterBarType {
 }
 
 struct DiaryMainView: View {
-    let diaryId: Int
-    @State private var viewModel = DiaryMainViewModel()
+    @Environment(\.diContainer) private var di
+    @State private var didInject = false
+    
+//    @State private var viewModel = DiaryMainViewModel()
+    @Bindable var viewModel: DiaryMainViewModel
+    
+    let diaryLogId: Int
+    
     @FocusState private var isRichTextEditorFocused: Bool
     @State private var footerBarType: DiaryFooterBarType = .main
     
     @State private var navigateToImageSelectView = false
-    @State private var FramedImageSelectList: [FramedImageDTO] = []
+    @State private var FramedImageSelectList: [FramedImageContent] = []
     
-    @State var showCanvas: Bool = false
+//    @State var showCanvas: Bool = false
+    @Binding var showCanvas: Bool
     @State private var currentOffsetY: CGFloat = 0
     
     @ViewBuilder
@@ -59,26 +66,67 @@ struct DiaryMainView: View {
     }
     
     var body: some View {
-        NavigationStack {
+//        NavigationStack {
             VStack(spacing: 0) {
                 diaryMain
                 activeFooterBar
             }
+//        }
+        .onAppear {
+            if !didInject {
+                viewModel.inject(
+                    diaryService: di.logDiaryService,   // DI에 이미 들어있음 :contentReference[oaicite:0]{index=0}
+                    imageService: di.imageService,
+                    token: KeyChainManager.shared.read(forKey: "accessToken") ?? ""
+                )
+                viewModel.loadFromServer(logId: diaryLogId)
+                viewModel.recomputeCanSave()
+                didInject = true
+            }
         }
-        .fullScreenCover(isPresented: $navigateToImageSelectView) {
+        .fullScreenCover(
+            isPresented: Binding(
+                get: { navigateToImageSelectView },
+                set: { navigateToImageSelectView = $0
+                    if !$0 { viewModel.editingImageBlock = nil } } // 닫히면 편집 상태 해제
+            )
+        ) {
             NavigationStack {
-                ImageSelectView(viewModel: viewModel, framedImages: FramedImageSelectList)
-                    .background(Color.white)
+                ImageSelectView(
+                    viewModel: viewModel,
+                    framedImages: FramedImageSelectList,
+                    onComplete: { results in
+                        // 편집 모드: 단일 결과만 사용
+                        if let editing = viewModel.editingImageBlock {
+                            if let edited = results.first {
+                                viewModel.updateImageBlock(id: editing.id, to: edited)
+                            } else {
+                                viewModel.deleteBlock(editing) // 편집 중 빈 결과면 삭제
+                            }
+                        }
+                        else {
+                            // 생성 모드: 여러 장 추가 가능
+                            viewModel.addImages(results)
+                        }
+                        // 닫기
+                        navigateToImageSelectView = false
+                        viewModel.editingImageBlock = nil
+                    }
+                )
+                .background(Color.white)
             }
         }
         .overlay(
             showCanvas ? DiaryCanvasView(
-                viewModel: DiaryCanvasViewModel(showCanvas: $showCanvas, diaryId: diaryId),
+                viewModel: DiaryCanvasViewModel(showCanvas: $showCanvas, diaryId: diaryLogId),
                 offsetY: currentOffsetY,
+//                offsetY: viewModel.drawingOffsetY,
+                initialDrawing: viewModel.savedDrawing,
                 onSaved: { drawing, offset in
                     // 메인 뷰 즉시 업데이트
-                    viewModel.savedDrawing = drawing
-                    viewModel.drawingOffsetY = offset
+//                    viewModel.savedDrawing = drawing
+//                    viewModel.drawingOffsetY = offset
+                    viewModel.commitDrawingFromCanvas(drawing, offsetY: offset, autosave: false)
                 }
             )
             .ignoresSafeArea(.container, edges: .bottom)
@@ -124,10 +172,16 @@ struct DiaryMainView: View {
                                     }
                             }
                            
-                        case .image(let dto):
-                            FramedImageComponent(framedImage: dto)
+                        case .image(let framed):
+                            FramedImageComponentView(framedImage: framed)
+                                .onTapGesture { // 이미지 탭 시 편집 진입
+                                    viewModel.editingImageBlock = block
+                                    FramedImageSelectList = [framed]
+                                    navigateToImageSelectView = true
+                                }
                         }
                     }
+//                    .id(UUID())
                     
                     Spacer(minLength: 100)
                 }
@@ -151,7 +205,8 @@ struct DiaryMainView: View {
             // MARK: - 사진 띄우기
             .onChange(of: viewModel.selectedItems) { _, newItems in
                 guard !newItems.isEmpty else { return }
-                Task {
+//                Task {
+                Task { @MainActor in
                     let dtos = await viewModel.makeFramedDTOs(from: newItems)
                     
                     await MainActor.run {
@@ -164,7 +219,10 @@ struct DiaryMainView: View {
                 }
             }
             .task {
-                viewModel.loadSavedDrawing(diaryId: diaryId)
+//                viewModel.loadSavedDrawing(diaryId: diaryLogId)
+                if viewModel.savedDrawing == nil {
+                    viewModel.loadSavedDrawing(diaryId: diaryLogId)
+                }
             }
         }
         .disabled(showCanvas)
@@ -182,9 +240,11 @@ struct DiaryMainView: View {
 }
 
 private struct PreviewWrapper: View {
+    @State private var vm = DiaryMainViewModel()
     @State private var showCanvas = false
 
     var body: some View {
-        DiaryMainView(diaryId: 0)
+        DiaryMainView(viewModel: vm, diaryLogId: 51, showCanvas: $showCanvas)
+//        DiaryMainView(diaryLogId: 51)
     }
 }

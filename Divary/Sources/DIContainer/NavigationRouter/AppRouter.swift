@@ -11,15 +11,23 @@ enum Route: Hashable {
     case login
     case MainTabBar
     case main
-    case logBookMain(logBaseId: String)  
+    case logBookMain(logBaseId: String)
     case CharacterViewWrapper
     case Store(viewModel: CharacterViewModel)
     case notifications
-    
+    case locationSearch
 }
 
 class AppRouter: ObservableObject {
     @Published var path = NavigationPath()
+    @Published var locationSearchText = ""
+    
+    var locationSearchBinding: Binding<String> {
+        Binding(
+            get: { self.locationSearchText },
+            set: { self.locationSearchText = $0 }
+        )
+    }
     
     func push(_ route: Route) {
         path.append(route)

@@ -58,17 +58,28 @@ struct MainFooterBar: View {
             
             if viewModel.editingTextBlock == nil {
                 Button(action: {
-                    viewModel.addTextBlock()
-                    isRichTextEditorFocused.wrappedValue = true
+                    DispatchQueue.main.async {
+                        // 1) 블록 추가(상태 변경)
+                        viewModel.addTextBlock()
+                        // 2) 포커스 전환은 다음 런루프로 미룸
+                        DispatchQueue.main.async {
+                            isRichTextEditorFocused.wrappedValue = true
+    //                        footerBarType = .textStyle
+                        }
+                    }
                 }) {
                     Image(.keyboard1)
                 }
             } else {
                 Button(action: {
+                    // 1) 편집 저장(상태 변경)
                     viewModel.saveCurrentEditingBlock()
                     viewModel.commitEditingTextBlock()
-                    isRichTextEditorFocused.wrappedValue = false
-                    footerBarType = .main
+                    // 2) 포커스/푸터바 전환은 다음 런루프로 미룸
+                    DispatchQueue.main.async {
+                        isRichTextEditorFocused.wrappedValue = false
+                        footerBarType = .main
+                    }
                 }) {
                     Image(.keyboard)
                 }

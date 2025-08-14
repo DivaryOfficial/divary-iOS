@@ -10,11 +10,22 @@ let project = Project(
     ],
     settings: .settings(
         base: [
-               "GOOGLE_CLIENT_ID": "$(GOOGLE_CLIENT_ID)",
-               "GOOGLE_URL_SCHEME": "$(GOOGLE_URL_SCHEME)"
+            "GOOGLE_CLIENT_ID": "$(GOOGLE_CLIENT_ID)",
+            "GOOGLE_URL_SCHEME": "$(GOOGLE_URL_SCHEME)",
+            // dSYM 생성을 위한 설정 추가
+            "DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym",
+            "GENERATE_DEBUG_SYMBOLS": "YES",
+            "STRIP_DEBUG_SYMBOLS_DURING_COPY": "NO",
+            "STRIP_LINKED_PRODUCT": "NO"
         ],
         configurations: [
-            .debug(name: "SecretOnly", xcconfig: .relativeToRoot("../divary-iOS/Configuration/Secret.xcconfig"))
+            .debug(name: "SecretOnly", xcconfig: .relativeToRoot("../divary-iOS/Configuration/Secret.xcconfig")),
+            // Release 설정 추가 (Archive용)
+            .release(name: "Release", settings: [
+                "DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym",
+                "GENERATE_DEBUG_SYMBOLS": "YES",
+                "STRIP_DEBUG_SYMBOLS_DURING_COPY": "NO"
+            ])
         ]
     ),
     targets: [
@@ -39,7 +50,8 @@ let project = Project(
                             ]
                         ]
                     ],
-                    "UIUserInterfaceStyle": "Light"
+                    "UIUserInterfaceStyle": "Light",
+                    "NSLocationWhenInUseUsageDescription": "주변 장소를 검색하기 위해 위치 정보가 필요합니다."
                 ]
             ),
             sources: ["Divary/Sources/**"],
@@ -48,10 +60,17 @@ let project = Project(
                 .package(product: "Moya"),
                 .package(product: "CombineMoya"),
                 .package(product: "GoogleSignIn"),
-                .package(product: "GoogleSignInSwift"), // 선택적
-                .package(product: "RichTextKit"),        // 실제 product명이 맞는지 꼭 확인
+                .package(product: "GoogleSignInSwift"),
+                .package(product: "RichTextKit"),
                 .package(product: "Kingfisher")
-            ]
+            ],
+            // Target별 설정도 추가
+            settings: .settings(
+                base: [
+                    "DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym",
+                    "GENERATE_DEBUG_SYMBOLS": "YES"
+                ]
+            )
         ),
         .target(
             name: "DivaryTests",

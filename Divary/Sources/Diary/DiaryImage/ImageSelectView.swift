@@ -11,12 +11,14 @@ struct ImageSelectView: View {
     @Environment(\.dismiss) private var dismiss
     
     @Bindable var viewModel: DiaryMainViewModel
-    @State var framedImages: [FramedImageDTO]
+    @State var framedImages: [FramedImageContent]
     
     @State private var showDeletePopup = false
     @State private var currentIndex = 0
     
     @State private var showImageDecoView = false
+    
+    var onComplete: (([FramedImageContent]) -> Void)? = nil
     
     var body: some View {
         VStack(spacing: 0) {
@@ -47,6 +49,9 @@ struct ImageSelectView: View {
                             
                             if framedImages.isEmpty {
                                 showDeletePopup = false
+                                if let onComplete = onComplete {
+                                    onComplete([]) // 메인뷰에 삭제 신호 보내기
+                                }
                                 dismiss()
                                 return
                             }
@@ -58,6 +63,11 @@ struct ImageSelectView: View {
                         }
                     }
                 )
+            }
+        }
+        .onAppear {
+            for (i, f) in framedImages.enumerated() {
+                print("[\(i)] hasLocal=\(f.originalData != nil) temp=\(f.tempFilename ?? "nil") imageNil=\(f.image == nil)")
             }
         }
 
@@ -83,7 +93,7 @@ struct ImageSelectView: View {
             TabView(selection: $currentIndex) {
                 ForEach(framedImages.indices, id: \.self) { index in
                     ZStack(alignment: .topTrailing) {
-                        FramedImageComponent(framedImage: framedImages[index])
+                        FramedImageComponentView(framedImage: framedImages[index])
                             .padding(.horizontal, 23)
                             .tag(index)
                         
@@ -116,7 +126,12 @@ struct ImageSelectView: View {
             }
             
             Button(action: {
-                viewModel.addImages(framedImages)
+//                viewModel.addImages(framedImages)
+                if let onComplete = onComplete {
+                    onComplete(framedImages)   // ✅ 콜백 실행
+                } else {
+                    viewModel.addImages(framedImages) // 기존 로직
+                }
                 dismiss()
             }) {
                 FooterItem(image: Image(.upload), title: "업로드")
@@ -153,8 +168,8 @@ struct FooterItem: View {
 #Preview {
     @Bindable var viewModel = DiaryMainViewModel()
     let testImages = [
-        FramedImageDTO(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .pastelBlue, date: "2025.08.07 7:32"),
-        FramedImageDTO(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .origin, date: "2025.08.07 7:32")
+        FramedImageContent(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .pastelBlue, date: "2025.08.07 7:32"),
+        FramedImageContent(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .origin, date: "2025.08.07 7:32")
     ]
     
     ImageSelectView(viewModel: viewModel, framedImages: testImages)

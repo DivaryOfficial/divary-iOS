@@ -1,5 +1,5 @@
 //
-//  LogBookCalender\.swift
+//  LogBookCalender.swift
 //  Divary
 //
 //  Created by 바견규 on 7/17/25.
@@ -20,6 +20,33 @@ struct CalenderView: View {
     @Binding var selectedDate: Date
     @State var startMonth: Date
     @State var endMonth: Date
+    
+    // 년월 선택 피커 관련 상태
+    @State private var showDatePicker = false
+    @State private var selectedYear: Int
+    @State private var selectedMonthIndex: Int
+    
+    // 사용 가능한 년도와 월 범위
+    private var availableYears: [Int] {
+        let startYear = Calendar.current.component(.year, from: startMonth)
+        let endYear = Calendar.current.component(.year, from: endMonth)
+        return Array(startYear...endYear)
+    }
+    
+    private let months = ["1월", "2월", "3월", "4월", "5월", "6월",
+                         "7월", "8월", "9월", "10월", "11월", "12월"]
+
+    init(currentMonth: Binding<Date>, selectedDate: Binding<Date>, startMonth: Date, endMonth: Date) {
+        self._currentMonth = currentMonth
+        self._selectedDate = selectedDate
+        self._startMonth = State(initialValue: startMonth)
+        self._endMonth = State(initialValue: endMonth)
+        
+        // 현재 월의 년도와 월로 초기화
+        let calendar = Calendar.current
+        self._selectedYear = State(initialValue: calendar.component(.year, from: currentMonth.wrappedValue))
+        self._selectedMonthIndex = State(initialValue: calendar.component(.month, from: currentMonth.wrappedValue) - 1)
+    }
 
     var body: some View {
         VStack {
@@ -34,6 +61,14 @@ struct CalenderView: View {
             RoundedRectangle(cornerRadius: 12)
                 .stroke(Color.grayscale_g300)
                 .fill(Color.white)
+        )
+        .overlay(
+            // 드롭다운 피커 오버레이
+            Group {
+                if showDatePicker {
+                    datePickerOverlay
+                }
+            }
         )
     }
 
@@ -51,10 +86,17 @@ struct CalenderView: View {
                 Text(currentMonth, formatter: Self.dateFormatter)
                     .font(Font.omyu.regular(size: 20))
 
-                Image("chevron.down")
-                    .frame(width: 20)
-                    .foregroundStyle(Color.bw_black)
-                    .padding(.horizontal, 6)
+                Button(action: {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        showDatePicker.toggle()
+                    }
+                }) {
+                    Image("chevron.down")
+                        .frame(width: 20)
+                        .foregroundStyle(Color.bw_black)
+                        .padding(.horizontal, 6)
+                        .rotationEffect(.degrees(showDatePicker ? 180 : 0))
+                }
             }
 
             Spacer()
@@ -62,6 +104,120 @@ struct CalenderView: View {
             Button(action: { changeMonth(by: 1) }) {
                 Image("chevron.right")
                     .foregroundStyle(Color.bw_black)
+            }
+        }
+    }
+    
+    private var datePickerOverlay: some View {
+        VStack(spacing: 0) {
+            // 상단 여백 (헤더 아래에 위치하도록)
+            Spacer().frame(height: 60)
+            
+            // 피커 컨테이너
+            VStack(spacing: 16) {
+                HStack(spacing: 20) {
+                    // 년도 피커
+                    VStack(spacing: 8) {
+                        Text("년도")
+                            .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
+                            .foregroundColor(.gray)
+                        
+                        Picker("년도", selection: $selectedYear) {
+                            ForEach(availableYears, id: \.self) { year in
+                                Text("\(String(year))년")
+                                    .font(Font.omyu.regular(size: 16))
+                                    .tag(year)
+                            }
+                        }
+                        .pickerStyle(WheelPickerStyle())
+                        .frame(width: 100, height: 120)
+                        .clipped()
+                    }
+                    
+                    // 월 피커
+                    VStack(spacing: 8) {
+                        Text("월")
+                            .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
+                            .foregroundColor(.gray)
+                        
+                        Picker("월", selection: $selectedMonthIndex) {
+                            ForEach(0..<12, id: \.self) { index in
+                                Text(months[index])
+                                    .font(Font.omyu.regular(size: 16))
+                                    .tag(index)
+                            }
+                        }
+                        .pickerStyle(WheelPickerStyle())
+                        .frame(width: 80, height: 120)
+                        .clipped()
+                    }
+                }
+                
+                // 확인/취소 버튼
+                HStack(spacing: 12) {
+                    Button("취소") {
+                        // 원래 값으로 복원
+                        let calendar = Calendar.current
+                        selectedYear = calendar.component(.year, from: currentMonth)
+                        selectedMonthIndex = calendar.component(.month, from: currentMonth) - 1
+                        
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            showDatePicker = false
+                        }
+                    }
+                    .foregroundColor(.gray)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.gray.opacity(0.1))
+                    )
+                    
+                    Button("확인") {
+                        applyDateSelection()
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            showDatePicker = false
+                        }
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.blue)
+                    )
+                }
+                .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
+            }
+            .padding(20)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.white)
+                    .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
+            )
+            .padding(.horizontal, 32)
+            
+            Spacer()
+        }
+        .background(
+            Color.black.opacity(0.3)
+                .onTapGesture {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        showDatePicker = false
+                    }
+                }
+        )
+        .transition(.opacity)
+    }
+    
+    private func applyDateSelection() {
+        let calendar = Calendar.current
+        let components = DateComponents(year: selectedYear, month: selectedMonthIndex + 1, day: 1)
+        
+        if let newDate = calendar.date(from: components),
+           newDate >= startMonth && newDate <= endMonth {
+            withAnimation {
+                currentMonth = newDate
             }
         }
     }
@@ -145,6 +301,9 @@ struct CalenderView: View {
               newMonth >= startMonth, newMonth <= endMonth else { return }
         withAnimation {
             currentMonth = newMonth
+            // 선택된 년월도 업데이트
+            selectedYear = Calendar.current.component(.year, from: newMonth)
+            selectedMonthIndex = Calendar.current.component(.month, from: newMonth) - 1
         }
     }
 
@@ -198,9 +357,6 @@ private struct CellView: View {
     }
 }
 
-
-
-
 // MARK: - 프리뷰
 #Preview {
     CalenderView(
@@ -209,5 +365,4 @@ private struct CellView: View {
         startMonth: Calendar.current.date(byAdding: .month, value: -3, to: Date())!,  // 시작 범위
         endMonth: Calendar.current.date(byAdding: .month, value: 3, to: Date())!    // 끝 범위
     )
-
 }

@@ -11,6 +11,7 @@ import PencilKit
 struct DiaryCanvasView: View { // 일기메인뷰에서 연필 버튼 누르면 뜨는 그리는 공간 (CanvasView를 사용)
     @ObservedObject var viewModel: DiaryCanvasViewModel
     let offsetY: CGFloat
+    let initialDrawing: PKDrawing?
     var onSaved: ((PKDrawing, CGFloat) -> Void)?
 
     var body: some View {
@@ -20,7 +21,12 @@ struct DiaryCanvasView: View { // 일기메인뷰에서 연필 버튼 누르면 
                 .padding(.bottom, canvasView.frame.height)
         }
         .task {
-            viewModel.loadDrawingIfExists()
+//            viewModel.loadDrawingIfExists()
+            if let d = initialDrawing {
+                viewModel.canvas.drawing = d // 서버에서 받은 기존 그림 주입
+            } else {
+                viewModel.loadDrawingIfExists() // 폴백: 로컬
+            }
         }
     }
     
@@ -57,8 +63,9 @@ struct DiaryCanvasView: View { // 일기메인뷰에서 연필 버튼 누르면 
             
             // 저장 버튼
             Button(action: {
-                viewModel.saveDrawingWithOffset(offsetY: offsetY)
-                onSaved?(viewModel.canvas.drawing, offsetY)
+//                viewModel.saveDrawingWithOffset(offsetY: offsetY)
+//                onSaved?(viewModel.canvas.drawing, offsetY)
+                onSaved?(viewModel.canvas.drawing, viewModel.canvas.contentOffset.y)
                 viewModel.dismissCanvas()
             }) {
                 Image("humbleicons_check")
@@ -73,9 +80,9 @@ struct DiaryCanvasView: View { // 일기메인뷰에서 연필 버튼 누르면 
 }
 
 #Preview {
-    DiaryCanvasView(
-        viewModel: DiaryCanvasViewModel(showCanvas: .constant(true), diaryId: 0),
-        offsetY: 0
-    )
+//    DiaryCanvasView(
+//        viewModel: DiaryCanvasViewModel(showCanvas: .constant(true), diaryId: 0),
+//        offsetY: 0
+//    )
 }
 
