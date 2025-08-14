@@ -39,7 +39,7 @@ class LogBookMainViewModel {
     var displayTitle: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "M/d"
-        return "\(formatter.string(from: selectedDate)) \(logBaseTitle)"
+        return "\(logBaseTitle)"
     }
     
     // 기존 init (기본값용)
