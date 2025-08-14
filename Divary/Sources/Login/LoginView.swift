@@ -37,8 +37,8 @@ struct LoginView: View {
             GeometryReader { geometry in
                 VStack {
                     Spacer()
-                    Button(action: {
-                        KeyChainManager.shared.save("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJoeWVvbmd5dTIwMDJAZ21haWwuY29tIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTc1NTE0OTY0OSwiZXhwIjoxNzU2NTg5NjQ5fQ.4Vf5BlC0mK59RQxZ0bnLqEcpn50sN1R7e3s0LawjL28", forKey: KeyChainKey.accessToken)
+                    Button(action:{
+                        KeyChainManager.shared.save("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QGRpdmFyeS5jb20iLCJyb2xlIjoiUk9MRV9VU0VSIiwiaWF0IjoxNzU1MTcwNzAyLCJleHAiOjE3NTY2MTA3MDJ9.FNWcefGTQu9_P9pHC9oLcJeGxezg3xb7qXva_NRIlEU", forKey: KeyChainKey.accessToken)
                         container.router.push(.MainTabBar)
                     }) {
                         Text("테스트 계정")
