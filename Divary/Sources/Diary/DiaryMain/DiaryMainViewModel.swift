@@ -17,6 +17,8 @@ import Combine
 class DiaryMainViewModel: Hashable {
     let id = UUID()
     
+    var isLoading: Bool = false
+    
     var blocks: [DiaryBlock] = []
     var selectedItems: [PhotosPickerItem] = []
     var editingTextBlock: DiaryBlock? = nil
@@ -99,9 +101,11 @@ class DiaryMainViewModel: Hashable {
     func loadFromServer(logId: Int) {
         self.currentLogId = logId
         guard let diaryService, let token else { return }
+        isLoading = true
         diaryService.getDiary(logId: logId, token: token)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] comp in
+                self?.isLoading = false
                 if case let .failure(err) = comp {
                     print("❌ getDiary error:", err)
                     Task { @MainActor in
@@ -112,6 +116,7 @@ class DiaryMainViewModel: Hashable {
                 Task { @MainActor in
                     self?.applyServerDiary(dto)
                     self?.hasDiary = true // 수정 PUT 으로
+                    self?.isLoading = false
                 }
             }
             .store(in: &bag)

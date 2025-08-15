@@ -90,38 +90,6 @@ struct DiaryMainView: View {
                 didInject = true
             }
         }
-//        .fullScreenCover(
-//            isPresented: Binding(
-//                get: { navigateToImageSelectView },
-//                set: { navigateToImageSelectView = $0
-//                    if !$0 { viewModel.editingImageBlock = nil } } // 닫히면 편집 상태 해제
-//            )
-//        ) {
-//            NavigationStack {
-//                ImageSelectView(
-//                    viewModel: viewModel,
-//                    framedImages: FramedImageSelectList,
-//                    onComplete: { results in
-//                        // 편집 모드: 단일 결과만 사용
-//                        if let editing = viewModel.editingImageBlock {
-//                            if let edited = results.first {
-//                                viewModel.updateImageBlock(id: editing.id, to: edited)
-//                            } else {
-//                                viewModel.deleteBlock(editing) // 편집 중 빈 결과면 삭제
-//                            }
-//                        }
-//                        else {
-//                            // 생성 모드: 여러 장 추가 가능
-//                            viewModel.addImages(results)
-//                        }
-//                        // 닫기
-//                        navigateToImageSelectView = false
-//                        viewModel.editingImageBlock = nil
-//                    }
-//                )
-//                .background(Color.white)
-//            }
-//        }
         .overlay(
             showCanvas ? DiaryCanvasView(
                 viewModel: DiaryCanvasViewModel(showCanvas: $showCanvas, diaryId: diaryLogId),
@@ -138,21 +106,26 @@ struct DiaryMainView: View {
             .ignoresSafeArea(.container, edges: .bottom)
             : nil
         )
+        .overlay {
+            if viewModel.isLoading {
+                ZStack {
+                    Color.black.opacity(0.3).ignoresSafeArea()
+                    ProgressView("처리 중...")
+                        .progressViewStyle(CircularProgressViewStyle())
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(Color.black.opacity(0.7))
+                        .cornerRadius(10)
+                        .transition(.opacity)
+                }
+                .zIndex(999)
+            }
+        }
     }
     
     private var diaryMain: some View {
         ScrollView(.vertical, showsIndicators: false) {
             ZStack {
-//                GeometryReader { geometry in
-//                    Image("gridBackground")
-//                        .resizable(resizingMode: .tile)
-//                        .scaledToFill()
-//                        .frame(
-//                            width: geometry.size.width,
-//                            height: max(geometry.size.height, UIScreen.main.bounds.height)
-//                        )
-//                }.ignoresSafeArea()
-                
                 LazyVStack(spacing: 8) {
                     ForEach(viewModel.blocks) { block in
                         switch block.content {
