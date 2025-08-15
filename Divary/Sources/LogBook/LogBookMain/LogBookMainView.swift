@@ -142,8 +142,15 @@ struct LogBookMainView: View {
                         .cornerRadius(8)
 
                         Button("저장") {
-                            viewModel.selectedDate = backupDate
-                            isCalendarPresented = false
+                            //viewModel.selectedDate = backupDate
+                            //날짜 수정
+                            viewModel.updateLogBaseDateToServer(newDate: backupDate) { success in
+                                if success {
+                                    isCalendarPresented = false
+                                }
+                                
+                                isCalendarPresented = false
+                            }
                         }
                         .font(Font.omyu.regular(size: 16))
                         .frame(maxWidth: 114)
