@@ -157,7 +157,7 @@ struct DiaryMainView: View {
                 )
                 
                 if let drawing = viewModel.savedDrawing {
-                    DrawingScreenView(drawing: drawing)
+                    DrawingScreenView(drawing: drawing, offsetY: viewModel.drawingOffsetY)
                         .opacity(showCanvas ? 0 : 1)
 //                        .accessibilityHidden(showCanvas)
 //                        .allowsHitTesting(false)
