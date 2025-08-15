@@ -237,17 +237,8 @@ struct LogBookMainView: View {
             }
 
             // 로딩 인디케이터
-            if viewModel.isLoading {
-                Color.black.opacity(0.3)
-                    .ignoresSafeArea()
-
-                ProgressView("처리 중...")
-                    .progressViewStyle(CircularProgressViewStyle())
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(Color.black.opacity(0.7))
-                    .cornerRadius(10)
-                    .zIndex(40)
+            if viewModel.isLoading || diaryVM.isLoading {
+                LoadingOverlay(message: "처리 중...")
             }
         }
         .alert("오류", isPresented: .constant(viewModel.errorMessage != nil)) {
