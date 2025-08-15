@@ -1,34 +1,43 @@
 import SwiftUI
+import PhotosUI
 
 struct PhotoSelectionView: View {
+    @Binding var selectedImage: UIImage?
+    @State private var selectedItem: PhotosPickerItem?
+    
     var body: some View {
-        
         HStack(spacing: 40) {
-            Button(action: {
-                print("앨범 버튼 클릭")
-                // 포토피커 로직
-            }) {
+            PhotosPicker(selection: $selectedItem, matching: .images) {
                 VStack(spacing: 8) {
                     Image("ChatPhoto")
-                            .font(.system(size: 24))
-                            .foregroundColor(.primary)
+                        .font(.system(size: 24))
+                        .foregroundColor(.primary)
                 
                     Text("앨범")
                         .font(.system(size: 10))
                         .foregroundColor(Color.bw_black)
                 }
             }
+            .onChange(of: selectedItem) { _, newItem in
+                Task {
+                    if let newItem,
+                       let data = try? await newItem.loadTransferable(type: Data.self),
+                       let uiImage = UIImage(data: data) {
+                        await MainActor.run {
+                            selectedImage = uiImage
+                        }
+                    }
+                }
+            }
             
             Button(action: {
                 print("카메라 버튼 클릭")
-                // 카메라 로직
+                // 카메라 로직은 나중에 구현
             }) {
                 VStack(spacing: 8) {
-                    
-                   Image("ChatCamera")
-                            .font(.system(size: 24))
-                            .foregroundColor(.primary)
-                
+                    Image("ChatCamera")
+                        .font(.system(size: 24))
+                        .foregroundColor(.primary)
                     
                     Text("카메라")
                         .font(.system(size: 10))
@@ -36,10 +45,9 @@ struct PhotoSelectionView: View {
                 }
             }
         }
-        
     }
 }
 
 #Preview {
-    PhotoSelectionView()
+    PhotoSelectionView(selectedImage: .constant(nil))
 }

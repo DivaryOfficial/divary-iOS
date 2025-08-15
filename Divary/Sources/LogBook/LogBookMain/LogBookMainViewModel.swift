@@ -164,6 +164,32 @@ class LogBookMainViewModel {
             }
         }
     }
+
+    // MARK: - 날짜 수정 관련 메서드
+
+    // 로그베이스 날짜 업데이트 (서버에)
+    func updateLogBaseDateToServer(newDate: Date, completion: @escaping (Bool) -> Void) {
+        let dateString = DateFormatter.apiDateFormatter.string(from: newDate)
+        
+        isLoading = true
+        errorMessage = nil
+        
+        service.updateLogBaseDate(logBaseInfoId: logBaseInfoId, date: dateString) { result in
+            self.isLoading = false
+            
+            switch result {
+            case .success:
+                self.selectedDate = newDate
+                completion(true)
+                print("✅ 날짜 서버 저장 성공: \(dateString)")
+                
+            case .failure(let error):
+                self.errorMessage = "날짜 수정 중 오류가 발생했습니다: \(error.localizedDescription)"
+                completion(false)
+                print("❌ 날짜 서버 저장 실패: \(error)")
+            }
+        }
+    }
     
     // MARK: - ✅ 프론트엔드 임시저장 관련 메서드
     

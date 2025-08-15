@@ -18,6 +18,7 @@ enum LogBookAPI {
     case deleteLogBase(logBaseInfoId: Int)
     case checkLogExists(date: String)
     case updateLogBaseTitle(logBaseInfoId: Int, name: String)
+    case updateLogBaseDate(logBaseInfoId: Int, date: String)
 }
 
 extension LogBookAPI: TargetType {
@@ -35,7 +36,7 @@ extension LogBookAPI: TargetType {
             return "/api/v1/logs"
         case .getAllLogs:
             return "/api/v1/logs/all"
-        case .getLogBaseDetail(let logBaseInfoId), .deleteLogBase(let logBaseInfoId), .updateLogBaseTitle(let logBaseInfoId, _):
+        case .getLogBaseDetail(let logBaseInfoId), .deleteLogBase(let logBaseInfoId):
             return "/api/v1/logs/\(logBaseInfoId)"
         case .createLogBase:
             return "/api/v1/logs"
@@ -43,6 +44,10 @@ extension LogBookAPI: TargetType {
             return "/api/v1/logs/\(logBaseInfoId)"
         case .updateLogBook(let logBookId, _):
             return "/api/v1/logs/\(logBookId)"
+        case .updateLogBaseTitle(let logBaseInfoId, _):
+            return "/api/v1/logs/\(logBaseInfoId)/name"
+        case .updateLogBaseDate(let logBaseInfoId, _):
+            return "/api/v1/logs/\(logBaseInfoId)/date"
         case .checkLogExists:
             return "/api/v1/logs/exists"
         }
@@ -56,7 +61,7 @@ extension LogBookAPI: TargetType {
             return .post
         case .updateLogBook:
             return .put
-        case .updateLogBaseTitle:
+        case .updateLogBaseTitle, .updateLogBaseDate:
             return .patch
         case .deleteLogBase:
             return .delete
@@ -85,6 +90,10 @@ extension LogBookAPI: TargetType {
             
         case .updateLogBaseTitle(_, let name):
             let params: [String: Any] = ["name": name]
+            return .requestParameters(parameters: params, encoding: JSONEncoding.default)
+            
+        case .updateLogBaseDate(_, let date):
+            let params: [String: Any] = ["date": date]
             return .requestParameters(parameters: params, encoding: JSONEncoding.default)
             
         case .checkLogExists(let date):
