@@ -52,7 +52,7 @@ struct BottomPreviewSheet: View {
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color.blue)
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
                     .cornerRadius(12)
             }
             .padding(.top, 8)

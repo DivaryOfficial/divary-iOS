@@ -71,7 +71,7 @@ struct ImageSelectView: View {
                 )
             }
         }
-//        .onAppear {
+//        .task {
         .task {
             for (i, f) in framedImages.enumerated() {
                 print("[\(i)] hasLocal=\(f.originalData != nil) temp=\(f.tempFilename ?? "nil") imageNil=\(f.image == nil)")

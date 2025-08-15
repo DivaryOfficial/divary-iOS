@@ -100,7 +100,7 @@ struct TitleAndIconSelectionView: View {
                 .frame(maxWidth: .infinity)
                 .padding()
                 .background(Color.grayscale_g100)
-                .foregroundColor(Color.grayscale_g500)
+                .foregroundStyle(Color.grayscale_g500)
                 .cornerRadius(8)
                 .disabled(viewModel.isLoading) // 로딩 중 비활성화
                 
@@ -119,7 +119,7 @@ struct TitleAndIconSelectionView: View {
                 .frame(maxWidth: .infinity)
                 .padding()
                 .background(canProceed ? Color.primary_sea_blue : Color.grayscale_g100)
-                .foregroundColor(canProceed ? Color.white : Color.grayscale_g500)
+                .foregroundStyle(canProceed ? Color.white : Color.grayscale_g500)
                 .cornerRadius(8)
                 .disabled(!canProceed) // 조건 불만족 시 비활성화
             }

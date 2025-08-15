@@ -71,11 +71,11 @@ struct LocationTextInputField: View {
                 }) {
                     if unit == "돋보기" {
                         Image("humbleicons_search")
-                            .foregroundColor(Color.bw_black)
+                            .foregroundStyle(Color.bw_black)
                             .font(.system(size: 16))
                     } else {
                         Text(unit)
-                            .foregroundColor(Color.bw_black)
+                            .foregroundStyle(Color.bw_black)
                             .font(.system(size: 16))
                     }
                 }

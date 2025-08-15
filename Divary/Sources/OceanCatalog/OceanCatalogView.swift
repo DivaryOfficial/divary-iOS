@@ -84,7 +84,7 @@ struct OceanCatalogView: View {
 //                }
 //            }
         .task {
-            viewModel.onAppear()
+            viewModel.task()
         }
         .overlay {
             if viewModel.isLoadingList {

@@ -11,11 +11,11 @@ struct PhotoSelectionView: View {
                 VStack(spacing: 8) {
                     Image("ChatPhoto")
                         .font(.system(size: 24))
-                        .foregroundColor(.primary)
+                        .foregroundStyle(.primary)
                 
                     Text("앨범")
                         .font(.system(size: 10))
-                        .foregroundColor(Color.bw_black)
+                        .foregroundStyle(Color.bw_black)
                 }
             }
             .onChange(of: selectedItem) { _, newItem in
@@ -37,11 +37,11 @@ struct PhotoSelectionView: View {
                 VStack(spacing: 8) {
                     Image("ChatCamera")
                         .font(.system(size: 24))
-                        .foregroundColor(.primary)
+                        .foregroundStyle(.primary)
                     
                     Text("카메라")
                         .font(.system(size: 10))
-                        .foregroundColor(Color.bw_black)
+                        .foregroundStyle(Color.bw_black)
                 }
             }
         }

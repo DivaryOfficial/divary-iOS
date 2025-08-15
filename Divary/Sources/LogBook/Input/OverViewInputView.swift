@@ -79,14 +79,14 @@ struct OverViewInputView: View {
                         }
                     }
                 }
-                .padding(.horizontal, 11)
-                .padding(.vertical, 22)
-                .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(Color(.white))
-                )
+//                .padding(.horizontal, 11)
+//                .padding(.vertical, 22)
+//                .background(
+//                    RoundedRectangle(cornerRadius: 10)
+//                        .fill(Color(.white))
+//                )
                 .frame(maxWidth: .infinity, alignment: .center)
-                .padding(.horizontal)
+                //.padding(.horizontal)
             }
         }
     }

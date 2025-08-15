@@ -54,7 +54,7 @@ struct LogBookPageView: View {
                                 }) {
                                     Text(mainViewModel.displayTitle)
                                         .font(Font.omyu.regular(size: 20))
-                                        .foregroundColor(.black)
+                                        .foregroundStyle(.black)
                                         .padding(12)
                                         .frame(maxWidth: .infinity)
                                         .multilineTextAlignment(.center)
@@ -183,7 +183,7 @@ struct LogBookPageView: View {
                             height: geometry.size.height * 0.7
                         )
                         .cornerRadius(20)
-                        .shadow(radius: 10)
+                        //.shadow(radius: 10)
                     }
                     .padding()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -257,7 +257,7 @@ struct LogBookPageView: View {
                         
                         Text("임시저장 완료!")
                             .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 16))
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                             .padding()
                         
                         Spacer()
@@ -279,7 +279,7 @@ struct LogBookPageView: View {
                     VStack(spacing: 24) {
                         Text("최대 3개까지만\n추가할 수 있습니다")
                             .font(Font.omyu.regular(size: 20))
-                            .foregroundColor(.black)
+                            .foregroundStyle(.black)
                             .multilineTextAlignment(.center)
                         
                         Button("확인") {
@@ -289,7 +289,7 @@ struct LogBookPageView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
                         .background(Color.primary_sea_blue)
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
                         .cornerRadius(8)
                     }
                     .padding(24)

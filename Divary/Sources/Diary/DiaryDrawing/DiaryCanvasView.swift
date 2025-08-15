@@ -58,27 +58,27 @@ struct DiaryCanvasView: View { // 일기메인뷰에서 연필 버튼 누르면 
                 // undo 버튼
                 Button(action: { viewModel.undo() }) {
                     Image("humbleicons_arrow-go-back")
-                        .foregroundColor(viewModel.canUndo ? .black : Color(.G_500))
+                        .foregroundStyle(viewModel.canUndo ? .black : Color(.G_500))
                 }
                 .padding(.trailing, 18)
                 
                 // redo 버튼
                 Button(action: { viewModel.redo() }) {
                     Image("humbleicons_arrow-go-forward")
-                        .foregroundColor(viewModel.canRedo ? .black : Color(.G_500))
+                        .foregroundStyle(viewModel.canRedo ? .black : Color(.G_500))
                 }
             }
 //            // undo 버튼
 //            Button(action: { viewModel.undo() }) {
 //                Image("humbleicons_arrow-go-back")
-//                    .foregroundColor(viewModel.canUndo ? .black : Color(.G_500))
+//                    .foregroundStyle(viewModel.canUndo ? .black : Color(.G_500))
 //            }
 //            .padding(.trailing, 18)
 //            
 //            // redo 버튼
 //            Button(action: { viewModel.redo() }) {
 //                Image("humbleicons_arrow-go-forward")
-//                    .foregroundColor(viewModel.canRedo ? .black : Color(.G_500))
+//                    .foregroundStyle(viewModel.canRedo ? .black : Color(.G_500))
 //            }
             
             Spacer()
@@ -91,7 +91,7 @@ struct DiaryCanvasView: View { // 일기메인뷰에서 연필 버튼 누르면 
                 viewModel.dismissCanvas()
             }) {
                 Image("humbleicons_check")
-                    .foregroundColor(Color(.black))
+                    .foregroundStyle(Color(.black))
             }
             .padding(.trailing, 12)
         }

@@ -9,14 +9,14 @@ import SwiftUI
 
 struct ParticipantsInputView: View {
     @Binding var participants: DiveParticipants
-    @State private var companionInput: String? = nil
+    @State private var companionInput: String = ""
     
     var body: some View {
         ZStack {
             VStack{
                 ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
-                        
+                        Spacer()
                         // 리더
                         TextInputField(
                             title: "리더",
@@ -34,23 +34,59 @@ struct ParticipantsInputView: View {
                         )
                         
                         // 동행자
-                        ListInputField(
+                        CompanionInputField(
                             title: "동행자",
-                            placeholder: "김동행",
-                            list: $participants.companion,
-                            value: $companionInput
+                            placeholder: "김동행, 박동행, 이동행",
+                            value: $companionInput,
+                            onCommit: {
+                                participants.companion = parseCompanions(companionInput)
+                            }
                         )
+                        Spacer()
                     }
                 }
-                .padding(.horizontal, 11)
-                .padding(.vertical, 22)
-                .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(Color(.white))
-                )
                 .frame(maxWidth: .infinity, alignment: .center)
-                .padding(.horizontal)
             }
+        }
+        .onAppear {
+            // 저장된 companion 값을 텍스트필드에 로드
+            if let companions = participants.companion {
+                companionInput = companions.joined(separator: ", ")
+            }
+        }
+    }
+    
+    private func parseCompanions(_ input: String) -> [String]? {
+        let companions = input
+            .components(separatedBy: CharacterSet(charactersIn: ", "))
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+        
+        return companions.isEmpty ? nil : companions
+    }
+}
+
+struct CompanionInputField: View {
+    let title: String
+    let placeholder: String
+    @Binding var value: String
+    let onCommit: () -> Void
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(title)
+                .font(Font.omyu.regular(size: 20))
+            
+            TextField(placeholder, text: $value)
+                .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
+                .foregroundStyle(Color.bw_black)
+                .padding(.vertical, 12)
+                .padding(.horizontal, 20)
+                .background(Color.grayscale_g100)
+                .cornerRadius(8)
+                .onSubmit {
+                    onCommit()
+                }
         }
     }
 }
@@ -63,68 +99,4 @@ struct ParticipantsInputView: View {
     )
 
     ParticipantsInputView(participants: $previewParticipants)
-}
-
-struct ListInputField: View {
-    let title: String
-    let placeholder: String
-    @Binding var list: [String]?
-    @Binding var value: String?
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(title)
-                .font(Font.omyu.regular(size: 20))
-
-            HStack {
-                // 배경 박스
-                HStack(spacing: 8) {
-                    // 1. Placeholder
-                    if (list?.isEmpty ?? true) && (value?.isEmpty ?? true) {
-                        Text(placeholder)
-                            .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
-                            .foregroundStyle(.gray)
-                    }
-
-                    // 2. 사용자 입력된 companion
-                    ForEach(list ?? [], id: \.self) { name in
-                        Text(name)
-                            .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
-                            .foregroundStyle(Color.bw_black)
-                    }
-
-                    // 3. 입력창
-                    TextField("", text: Binding(
-                        get: { value ?? "" },
-                        set: {
-                            value = $0
-                            handleInput($0)
-                        }
-                    ))
-                    .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
-                    .foregroundStyle(Color.bw_black)
-                    .frame(minWidth: 40)
-                }
-                .padding(.vertical, 12)
-                .padding(.horizontal, 20)
-                .background(Color.grayscale_g100)
-                .cornerRadius(8)
-            }
-        }
-    }
-
-    private func handleInput(_ text: String) {
-        let delimiters: [Character] = [",", " "]
-        guard let lastChar = text.last, delimiters.contains(lastChar) else { return }
-
-        let trimmed = text.dropLast().trimmingCharacters(in: .whitespacesAndNewlines)
-        if !trimmed.isEmpty {
-            if list == nil { list = [] }
-            if !list!.contains(trimmed) {
-                list?.append(trimmed)
-            }
-        }
-
-        value = ""
-    }
 }

@@ -25,7 +25,7 @@ struct NewLogPop: View {
                 // 제목
                 Text("같은 날짜에 새로운 로그를\n추가하시겠어요?")
                     .font(Font.omyu.regular(size: 20))
-                    .foregroundColor(.black)
+                    .foregroundStyle(.black)
                     .multilineTextAlignment(.center)
                 
                 // 버튼들
@@ -39,7 +39,7 @@ struct NewLogPop: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
                     .background(Color.primary_sea_blue)
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
                     .cornerRadius(8)
                     
                     // 취소 버튼
@@ -50,7 +50,7 @@ struct NewLogPop: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
                     .background(Color.grayscale_g200)
-                    .foregroundColor(.grayscale_g500)
+                    .foregroundStyle(Color.grayscale_g500)
                     .cornerRadius(8)
                 }
             }
