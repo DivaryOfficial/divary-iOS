@@ -15,9 +15,16 @@ struct ChatBotView: View {
     var body: some View {
         VStack(spacing: 0) {
             // Top Navigation
-            ChatBotTopNav(onMenuTap: {
-                showingHistoryList = true
-            })
+            ChatBotTopNav(
+                currentRoomName: currentRoomName,
+                currentChatRoomId: currentChatRoomId,
+                onMenuTap: {
+                    showingHistoryList = true
+                },
+                onTitleEdit: { newTitle in
+                    updateChatRoomTitle(newTitle)
+                }
+            )
             
             // Messages
             ScrollView {
@@ -158,79 +165,22 @@ struct ChatBotView: View {
             }
         }
     }
-}
-
-// MARK: - ChatRoomRowView
-struct ChatRoomRowView: View {
-    let room: ChatRoom
-    let onTap: () -> Void
-    let onDelete: () -> Void
-    @State private var showingDeleteMenu = false
     
-    private var formattedDate: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "YYYY년 MM월 dd일"
-        return formatter.string(from: room.createdAt)
-    }
-    
-    var body: some View {
-        HStack(spacing: 12) {
-            Button(action: onTap) {
-                HStack(spacing: 12) {
+    // 그리고 새로운 메서드 추가:
+    private func updateChatRoomTitle(_ newTitle: String) {
+        guard let chatRoomId = currentChatRoomId else { return }
+        
+        chatService.updateChatRoomTitle(chatRoomId: chatRoomId, title: newTitle) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    currentRoomName = newTitle
+                    print("채팅방 제목이 변경되었습니다: \(newTitle)")
                     
-                    // Chat Icon
-                    VStack(alignment: .leading, spacing: 2) {
-                        
-                        HStack{
-                            Text(room.name)
-                                .font(Font.omyu.regular(size: 16))
-                                .foregroundColor(.primary)
-                                .lineLimit(1)
-                            
-                            Spacer()
-                            
-                            // More button
-                            Button(action: {
-                                showingDeleteMenu = true
-                            }) {
-                                Image(systemName: "ellipsis")
-                                    .font(.system(size: 16))
-                                    .foregroundColor(.gray)
-                                    .frame(width: 24, height: 24)
-                            }
-                            .actionSheet(isPresented: $showingDeleteMenu) {
-                                ActionSheet(
-                                    title: Text("채팅방 관리"),
-                                    message: Text("이 채팅방을 삭제하시겠습니까?"),
-                                    buttons: [
-                                        .destructive(Text("삭제")) {
-                                            onDelete()
-                                        },
-                                        .cancel(Text("취소"))
-                                    ]
-                                )
-                            }
-                        }
-                        
-                        HStack{
-                            Spacer()
-                            
-                            Text(formattedDate)
-                                .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 10))
-                                .foregroundColor(.grayscale_g400)
-                        }
-                       
-                    }
-                    
-                    Spacer()
+                case .failure(let error):
+                    print("제목 변경 실패: \(error)")
                 }
             }
-            .buttonStyle(PlainButtonStyle())
-            
-      
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 12)
-        .contentShape(Rectangle())
     }
 }

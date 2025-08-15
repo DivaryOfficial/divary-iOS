@@ -77,13 +77,17 @@ struct ChatHistoryView: View {
                 ScrollView {
                     LazyVStack(spacing: 0) {
                         ForEach(filteredRooms) { room in
+                            
                             ChatRoomRowView(
                                 room: room,
                                 onTap: {
-                                    onRoomSelected(room)  // ChatRoom 객체 전달
+                                    onRoomSelected(room)
                                 },
                                 onDelete: {
                                     deleteChatRoom(room)
+                                },
+                                onEdit: { newTitle in
+                                    editChatRoomTitle(room, newTitle: newTitle)
                                 }
                             )
                             
@@ -139,6 +143,26 @@ struct ChatHistoryView: View {
                 case .failure(let error):
                     print("채팅방 삭제 실패: \(error)")
                     // 에러 처리 필요시 여기에 추가
+                }
+            }
+        }
+    }
+    
+    // 그리고 새로운 메서드 추가:
+    private func editChatRoomTitle(_ room: ChatRoom, newTitle: String) {
+        guard let apiId = room.apiId else {
+            // Mock 데이터인 경우 - 실제로는 ChatRoom이 let이므로 새 객체 생성 필요
+            return
+        }
+        
+        chatService.updateChatRoomTitle(chatRoomId: apiId, title: newTitle) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    loadChatRooms() // 목록 새로고침
+                    
+                case .failure(let error):
+                    print("채팅방 제목 변경 실패: \(error)")
                 }
             }
         }
