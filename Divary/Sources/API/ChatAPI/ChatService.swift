@@ -1,19 +1,12 @@
-//
-//  ChatService.swift
-//  Divary
-//
-//  Created by 바견규 on 8/15/25.
-//
-
 import Foundation
 import Moya
 
 final class ChatService {
     private let provider = MoyaProvider<ChatAPI>()
     
-    // 메시지 전송
-    func sendMessage(chatRoomId: Int?, message: String, image: String?, completion: @escaping (Result<SendMessageResponseDTO, Error>) -> Void) {
-        provider.request(.sendMessage(chatRoomId: chatRoomId, message: message, image: image)) { result in
+    // 메시지 전송 - imageData로 바이너리 데이터 직접 전송
+    func sendMessage(chatRoomId: Int?, message: String, imageData: Data?, completion: @escaping (Result<SendMessageResponseDTO, Error>) -> Void) {
+        provider.request(.sendMessage(chatRoomId: chatRoomId, message: message, imageData: imageData)) { result in
             self.handleSendMessageResponse(result, completion: completion)
         }
     }

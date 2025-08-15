@@ -1,5 +1,6 @@
 import SwiftUI
 import Foundation
+import Combine
 
 struct ChatBotView: View {
     @State private var messageText = ""
@@ -13,7 +14,6 @@ struct ChatBotView: View {
     @State private var cancellables = Set<AnyCancellable>()
     
     private let chatService = ChatService()
-    private let imageService = ImageService()
     
     var body: some View {
         VStack(spacing: 0) {
@@ -118,49 +118,19 @@ struct ChatBotView: View {
         showPhotoOptions = false
         isLoading = true
         
-        // 이미지가 있으면 먼저 업로드
-        if let image = imageToSend, let imageData = image.jpegData(compressionQuality: 0.8) {
-            uploadImageAndSendMessage(imageData: imageData, message: messageToSend)
-        } else {
-            // 텍스트만 전송
-            sendTextMessage(messageToSend, imageUrl: nil)
-        }
+        // 이미지 바이너리 데이터 준비 후 바로 메시지 전송
+        let imageData = imageToSend?.jpegData(compressionQuality: 0.8)
+        sendTextMessage(messageToSend, imageData: imageData)
     }
     
-    private func uploadImageAndSendMessage(imageData: Data, message: String) {
-        guard let token = KeyChainManager.shared.readAccessToken() else {
-            handleSendError("인증 토큰이 없습니다.")
-            return
-        }
-        
-        imageService.uploadTemp(files: [imageData], token: token)
-            .receive(on: DispatchQueue.main)
-            .sink { completion in
-                if case .failure(let error) = completion {
-                    self.handleSendError("이미지 업로드 실패: \(error.localizedDescription)")
-                }
-            } receiveValue: { uploadedImages in
-                if let firstImage = uploadedImages.first {
-                    self.sendTextMessage(message, imageUrl: firstImage.fileUrl)
-                } else {
-                    self.handleSendError("이미지 업로드에 실패했습니다.")
-                }
-            }
-            .store(in: &cancellables)
-    }
-    
-    private func sendTextMessage(_ message: String, imageUrl: String?) {
+    private func sendTextMessage(_ message: String, imageData: Data?) {
         print("🔍 전송할 메시지: '\(message)'")
-        print("🔍 이미지 URL: '\(imageUrl ?? "nil")'")
-        
-        // 🔍 중요: 빈 문자열이면 nil로 변환
-        let cleanImageUrl = imageUrl?.isEmpty == true ? nil : imageUrl
-        print("🔍 정리된 이미지 URL: '\(cleanImageUrl ?? "nil")'")
+        print("🔍 이미지 데이터: \(imageData?.count ?? 0) bytes")
         
         chatService.sendMessage(
             chatRoomId: currentChatRoomId,
             message: message.isEmpty ? "이미지를 보냈습니다." : message,
-            image: cleanImageUrl
+            imageData: imageData
         ) { result in
             DispatchQueue.main.async {
                 isLoading = false
@@ -245,6 +215,3 @@ struct ChatBotView: View {
         }
     }
 }
-
-// Combine import 추가
-import Combine

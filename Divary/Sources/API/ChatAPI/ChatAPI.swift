@@ -2,7 +2,7 @@ import Foundation
 import Moya
 
 enum ChatAPI {
-    case sendMessage(chatRoomId: Int?, message: String, image: String?)
+    case sendMessage(chatRoomId: Int?, message: String, imageData: Data?)
     case getChatRooms
     case getChatRoomDetail(chatRoomId: Int)
     case deleteChatRoom(chatRoomId: Int)
@@ -44,13 +44,13 @@ extension ChatAPI: TargetType {
 
     var task: Task {
         switch self {
-        case .sendMessage(let chatRoomId, let message, let imageUrl):
+        case .sendMessage(let chatRoomId, let message, let imageData):
             var formData: [MultipartFormData] = []
             
             print("🔍 ChatAPI - 전송 파라미터:")
             print("  - chatRoomId: \(chatRoomId?.description ?? "nil")")
             print("  - message: \(message)")
-            print("  - imageUrl: \(imageUrl ?? "nil")")
+            print("  - imageData: \(imageData?.count ?? 0) bytes")
             
             // message는 필수
             formData.append(MultipartFormData(provider: .data(message.data(using: .utf8)!), name: "message"))
@@ -60,12 +60,14 @@ extension ChatAPI: TargetType {
                 formData.append(MultipartFormData(provider: .data("\(chatRoomId)".data(using: .utf8)!), name: "chatRoomId"))
             }
             
-            // 🔍 이미지 URL이 있을 때만 추가 (빈 값이면 아예 안 보냄)
-            if let imageUrl = imageUrl, !imageUrl.isEmpty {
-                print("  - 이미지 URL 추가: \(imageUrl)")
+            // 🔍 이미지 바이너리 데이터가 있을 때만 추가
+            if let imageData = imageData, !imageData.isEmpty {
+                print("  - 이미지 바이너리 추가: \(imageData.count) bytes")
                 formData.append(MultipartFormData(
-                    provider: .data(imageUrl.data(using: .utf8)!),
-                    name: "image"
+                    provider: .data(imageData),
+                    name: "image",
+                    fileName: "image.jpg",
+                    mimeType: "image/jpeg"
                 ))
             } else {
                 print("  - 이미지 없음: image 필드 제외")
