@@ -35,14 +35,16 @@ extension LogBookAPI: TargetType {
             return "/api/v1/logs"
         case .getAllLogs:
             return "/api/v1/logs/all"
-        case .getLogBaseDetail(let logBaseInfoId), .deleteLogBase(let logBaseInfoId), .updateLogBaseTitle(let logBaseInfoId, _):
-            return "/api/v1/logs/\(logBaseInfoId)"
+        case .getLogBaseDetail(let logBaseInfoId), .deleteLogBase(let logBaseInfoId):
+            return "/api/v1/logs/\(logBaseInfoId)"  // updateLogBaseTitle 제거
         case .createLogBase:
             return "/api/v1/logs"
         case .createEmptyLogBooks(let logBaseInfoId):
             return "/api/v1/logs/\(logBaseInfoId)"
         case .updateLogBook(let logBookId, _):
             return "/api/v1/logs/\(logBookId)"
+        case .updateLogBaseTitle(let logBaseInfoId, _):
+            return "/api/v1/logs/\(logBaseInfoId)/name"  // 이제 실행됨!
         case .checkLogExists:
             return "/api/v1/logs/exists"
         }
