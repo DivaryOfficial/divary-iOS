@@ -62,11 +62,14 @@ struct LogBookMainView: View {
                         if selectedTab == .diary, diaryVM.hasUnsavedChanges {
                             pendingDiaryExit = .back
                             showDiaryLeavePopup = true
-                        } else {
-                            dismiss()
                         }
-                      // 라우터 pop으로 일원화
-                      container.router.pop()
+                        else if selectedTab == .logbook {
+                            container.router.pop()
+                        }
+                        else {
+//                            dismiss()
+                            container.router.pop()
+                        }
                     },
 //                    isTempSaved: (selectedTab == .diary ? diaryVM.canSave : viewModel.hasFrontendChanges),
                     isTempSaved: (selectedTab == .diary
@@ -187,7 +190,8 @@ struct LogBookMainView: View {
                         DispatchQueue.main.async {
                             switch action {
                             case .back:
-                                dismiss()
+//                                dismiss()
+                                container.router.pop()
                             case .switchToLogbook:
                                 selectedTab = .logbook
                             case .none:
@@ -264,7 +268,7 @@ struct LogBookMainView: View {
                 showDiaryLeavePopup = true
             }
         }
-
+        .toolbar(.hidden, for: .navigationBar)
     }
 }
 

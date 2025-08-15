@@ -14,7 +14,9 @@ import PencilKit
 import Combine
 
 @Observable /*@MainActor*/
-class DiaryMainViewModel {
+class DiaryMainViewModel: Hashable {
+    let id = UUID()
+    
     var blocks: [DiaryBlock] = []
     var selectedItems: [PhotosPickerItem] = []
     var editingTextBlock: DiaryBlock? = nil
@@ -82,6 +84,13 @@ class DiaryMainViewModel {
     private func markDirty() {
         hasUnsavedChanges = true
         recomputeCanSave()
+    }
+    // MARK: - Equatable & Hashable
+    static func == (lhs: DiaryMainViewModel, rhs: DiaryMainViewModel) -> Bool {
+        lhs.id == rhs.id
+    }
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 
     // MARK: - API 연결

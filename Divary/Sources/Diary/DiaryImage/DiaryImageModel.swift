@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-final class FramedImageContent: ObservableObject, Identifiable {
+final class FramedImageContent: ObservableObject, Identifiable, Hashable {
     let id = UUID()
     @Published var image: Image? = Image(systemName: "photo")
     @Published var caption: String
@@ -26,9 +26,16 @@ final class FramedImageContent: ObservableObject, Identifiable {
         self.originalData = originalData
         self.tempFilename = tempFilename
     }
+    
+    static func == (lhs: FramedImageContent, rhs: FramedImageContent) -> Bool {
+        lhs.id == rhs.id
+    }
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
 }
 
-enum FrameColor: Int, CaseIterable, Codable {
+enum FrameColor: Int, CaseIterable, Codable, Hashable {
     case origin = 0
     case white = 1
     case ivory = 2

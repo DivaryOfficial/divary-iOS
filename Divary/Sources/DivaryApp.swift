@@ -24,6 +24,30 @@ struct DivaryApp: App {
                             MainView()
                         case .logBookMain(let logBaseId):
                             LogBookMainView(logBaseId: logBaseId)
+                        case .imageSelect(let viewModel, let framedImages):
+                            ImageSelectView(
+                                viewModel: viewModel,
+                                framedImages: framedImages,
+                                onComplete: { results in
+                                    if let editing = viewModel.editingImageBlock {
+                                        if let edited = results.first {
+                                            viewModel.updateImageBlock(id: editing.id, to: edited)
+                                        } else {
+                                            // 편집 중 빈 결과면 삭제
+                                            viewModel.deleteBlock(editing)
+                                        }
+                                        viewModel.editingImageBlock = nil
+                                    } else {
+                                        // 생성 모드: 여러 장 추가
+                                        viewModel.addImages(results)
+                                    }
+                                    container.router.pop()
+                                }
+                            )
+//                        case .imageSelect(let viewModel, let framedImages):
+//                            ImageSelectView(viewModel: viewModel, framedImages: framedImages)
+                        case .imageDeco(let framedImages/*, let currentIndex*/):
+                            ImageDecoView(framedImages: framedImages/*, currentIndex: currentIndex*/)
                         case .CharacterViewWrapper:
                             CharacterViewWrapper()
                         case .Store(let viewModel):

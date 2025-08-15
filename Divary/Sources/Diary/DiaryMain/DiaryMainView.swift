@@ -32,6 +32,11 @@ struct DiaryMainView: View {
     @Binding var showCanvas: Bool
     @State private var currentOffsetY: CGFloat = 0
     
+    private func openImageSelect(with images: [FramedImageContent]) {
+        FramedImageSelectList = images
+        di.router.push(.imageSelect(viewModel: viewModel, framedImages: images))
+    }
+    
     @ViewBuilder
     private var activeFooterBar: some View {
         switch footerBarType {
@@ -85,38 +90,38 @@ struct DiaryMainView: View {
                 didInject = true
             }
         }
-        .fullScreenCover(
-            isPresented: Binding(
-                get: { navigateToImageSelectView },
-                set: { navigateToImageSelectView = $0
-                    if !$0 { viewModel.editingImageBlock = nil } } // 닫히면 편집 상태 해제
-            )
-        ) {
-            NavigationStack {
-                ImageSelectView(
-                    viewModel: viewModel,
-                    framedImages: FramedImageSelectList,
-                    onComplete: { results in
-                        // 편집 모드: 단일 결과만 사용
-                        if let editing = viewModel.editingImageBlock {
-                            if let edited = results.first {
-                                viewModel.updateImageBlock(id: editing.id, to: edited)
-                            } else {
-                                viewModel.deleteBlock(editing) // 편집 중 빈 결과면 삭제
-                            }
-                        }
-                        else {
-                            // 생성 모드: 여러 장 추가 가능
-                            viewModel.addImages(results)
-                        }
-                        // 닫기
-                        navigateToImageSelectView = false
-                        viewModel.editingImageBlock = nil
-                    }
-                )
-                .background(Color.white)
-            }
-        }
+//        .fullScreenCover(
+//            isPresented: Binding(
+//                get: { navigateToImageSelectView },
+//                set: { navigateToImageSelectView = $0
+//                    if !$0 { viewModel.editingImageBlock = nil } } // 닫히면 편집 상태 해제
+//            )
+//        ) {
+//            NavigationStack {
+//                ImageSelectView(
+//                    viewModel: viewModel,
+//                    framedImages: FramedImageSelectList,
+//                    onComplete: { results in
+//                        // 편집 모드: 단일 결과만 사용
+//                        if let editing = viewModel.editingImageBlock {
+//                            if let edited = results.first {
+//                                viewModel.updateImageBlock(id: editing.id, to: edited)
+//                            } else {
+//                                viewModel.deleteBlock(editing) // 편집 중 빈 결과면 삭제
+//                            }
+//                        }
+//                        else {
+//                            // 생성 모드: 여러 장 추가 가능
+//                            viewModel.addImages(results)
+//                        }
+//                        // 닫기
+//                        navigateToImageSelectView = false
+//                        viewModel.editingImageBlock = nil
+//                    }
+//                )
+//                .background(Color.white)
+//            }
+//        }
         .overlay(
             showCanvas ? DiaryCanvasView(
                 viewModel: DiaryCanvasViewModel(showCanvas: $showCanvas, diaryId: diaryLogId),
@@ -177,8 +182,9 @@ struct DiaryMainView: View {
                             FramedImageComponentView(framedImage: framed)
                                 .onTapGesture { // 이미지 탭 시 편집 진입
                                     viewModel.editingImageBlock = block
-                                    FramedImageSelectList = [framed]
-                                    navigateToImageSelectView = true
+                                    openImageSelect(with: [framed])
+//                                    FramedImageSelectList = [framed]
+//                                    navigateToImageSelectView = true
                                 }
                         }
                     }
@@ -213,7 +219,8 @@ struct DiaryMainView: View {
                     await MainActor.run {
                         FramedImageSelectList = dtos
                         if !dtos.isEmpty {
-                            navigateToImageSelectView = true
+//                            navigateToImageSelectView = true
+                            openImageSelect(with: dtos)
                         }
                         viewModel.selectedItems.removeAll()
                     }

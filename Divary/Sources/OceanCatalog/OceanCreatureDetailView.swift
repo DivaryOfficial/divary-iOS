@@ -19,7 +19,7 @@ struct OceanCreatureDetailView: View {
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: 16) {
+                LazyVStack(alignment: .leading, spacing: 5) {
                     ZStack {
                         HStack {
                             Button(action: { di.router.pop() }) {
