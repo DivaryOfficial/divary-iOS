@@ -1,10 +1,3 @@
-//
-//  ChatAPI.swift
-//  Divary
-//
-//  Created by 바견규 on 8/15/25.
-//
-
 import Foundation
 import Moya
 
@@ -51,8 +44,13 @@ extension ChatAPI: TargetType {
 
     var task: Task {
         switch self {
-        case .sendMessage(let chatRoomId, let message, let image):
+        case .sendMessage(let chatRoomId, let message, let imageUrl):
             var formData: [MultipartFormData] = []
+            
+            print("🔍 ChatAPI - 전송 파라미터:")
+            print("  - chatRoomId: \(chatRoomId?.description ?? "nil")")
+            print("  - message: \(message)")
+            print("  - imageUrl: \(imageUrl ?? "nil")")
             
             // message는 필수
             formData.append(MultipartFormData(provider: .data(message.data(using: .utf8)!), name: "message"))
@@ -62,10 +60,18 @@ extension ChatAPI: TargetType {
                 formData.append(MultipartFormData(provider: .data("\(chatRoomId)".data(using: .utf8)!), name: "chatRoomId"))
             }
             
-            // image는 선택적
-            if let image = image, let imageData = image.data(using: .utf8) {
-                formData.append(MultipartFormData(provider: .data(imageData), name: "image", fileName: "image.jpg", mimeType: "image/jpeg"))
+            // 🔍 이미지 URL이 있을 때만 추가 (빈 값이면 아예 안 보냄)
+            if let imageUrl = imageUrl, !imageUrl.isEmpty {
+                print("  - 이미지 URL 추가: \(imageUrl)")
+                formData.append(MultipartFormData(
+                    provider: .data(imageUrl.data(using: .utf8)!),
+                    name: "image"
+                ))
+            } else {
+                print("  - 이미지 없음: image 필드 제외")
             }
+            
+            print("  - FormData 항목 수: \(formData.count)")
             
             return .uploadMultipart(formData)
             
@@ -93,6 +99,7 @@ extension ChatAPI: TargetType {
         
         if let accessToken = KeyChainManager.shared.readAccessToken() {
             headers["Authorization"] = "Bearer \(accessToken)"
+            print("🔍 Authorization 헤더 설정됨")
         } else {
             print("⚠️ accessToken 없음: 인증이 필요한 요청입니다.")
         }
