@@ -58,17 +58,17 @@ struct EquipmentInputView: View {
                             
                             //슈트 종류
                             Text("슈트 종류")
-                                .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
+                                .font(Font.omyu.regular(size: 20))
                             
                             HStack{
-                                IconButton(
-                                    options: SuitType.allDisplayNames,
-                                    selected: equipment.suitType,
-                                    imageProvider: suitTypeImage(for:),
-                                    onSelect: { equipment.suitType = $0 },
-                                    size: 30,
-                                    isImage: true
-                                )
+                                IconSuitButton(
+                                        options: SuitType.allDisplayNames,
+                                        selected: equipment.suitType,
+                                        imageProvider: suitTypeImage(for:),
+                                        onSelect: { equipment.suitType = $0 },
+                                        size: 30,
+                                        isImage: true
+                                    )
                             }
                         }
                         
@@ -106,14 +106,14 @@ struct EquipmentInputView: View {
                         }
                     }
                 }
-                .padding(.horizontal, 11)
-                .padding(.vertical, 22)
-                .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(Color(.white))
-                )
+//                .padding(.horizontal, 11)
+//                .padding(.vertical, 22)
+//                .background(
+//                    RoundedRectangle(cornerRadius: 10)
+//                        .fill(Color(.white))
+//                )
                 .frame(maxWidth: .infinity, alignment: .center)
-                .padding(.horizontal)
+                //.padding(.horizontal)
             }
         }
     }
@@ -127,4 +127,74 @@ struct EquipmentInputView: View {
     )
     
     EquipmentInputView(equipment: $previewOverview)
+}
+
+
+
+struct IconSuitButton: View {
+    let options: [String]
+    let selected: String?
+    let imageProvider: (String?) -> Image
+    let onSelect: (String) -> Void
+    let size: CGFloat
+    var isImage: Bool = false
+    
+    // 화면 크기에 따른 버튼 크기 계산
+    private var buttonSize: CGFloat {
+        let screenWidth = UIScreen.main.bounds.width
+        
+        if screenWidth >= 768 { // 아이패드
+            return 190
+        } else { // 아이폰
+            return 80
+        }
+    }
+    
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            LazyHStack(spacing: 12) {
+                ForEach(options, id: \.self) { option in
+                    
+                    Button(action: {
+                        onSelect(option)
+                    }) {
+                        VStack(spacing: 4) {
+                            
+                            Spacer()
+                            if isImage {
+                                imageProvider(selected == option ? option + "B" : option)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: size, height: size)
+                            } else {
+                                imageProvider(option)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: size, height: size)
+                            }
+                            
+                            Spacer()
+                            
+                            Text(option)
+                                .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
+                            
+                            Spacer()
+                        }
+                        .padding(10)
+                        .frame(width: buttonSize, height: buttonSize) // 디바이스별 고정 크기
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(
+                                    selected == option ? Color.primary_sea_blue : Color.grayscale_g300
+                                )
+                        )
+                        .foregroundStyle(selected == option ? Color.primary_sea_blue : Color.grayscale_g300)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+            }
+            .padding(.horizontal, 16)
+        }
+        .clipped()
+    }
 }

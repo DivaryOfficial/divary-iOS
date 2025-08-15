@@ -203,16 +203,16 @@ struct EnvironmentInputView: View {
                         
                     }
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 22)
-                .padding(.bottom, 22)
-                .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(Color(.white))
-                        .stroke(Color.grayscale_g300)
-                )
+//                .padding(.horizontal, 16)
+//                .padding(.top, 22)
+//                .padding(.bottom, 22)
+//                .background(
+//                    RoundedRectangle(cornerRadius: 10)
+//                        .fill(Color(.white))
+//                        .stroke(Color.grayscale_g300)
+//                )
                 .frame(maxWidth: .infinity, alignment: .center)
-                .padding(.horizontal)
+               // .padding(.horizontal)
             }
         }
     }

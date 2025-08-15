@@ -24,6 +24,7 @@ struct DivaryApp: App {
                             MainView()
                         case .logBookMain(let logBaseId):
                             LogBookMainView(logBaseId: logBaseId)
+                                .navigationBarBackButtonHidden(true)
                         case .imageSelect(let viewModel, let framedImages):
                             ImageSelectView(
                                 viewModel: viewModel,

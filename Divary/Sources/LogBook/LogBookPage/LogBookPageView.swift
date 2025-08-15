@@ -183,7 +183,7 @@ struct LogBookPageView: View {
                             height: geometry.size.height * 0.7
                         )
                         .cornerRadius(20)
-                        .shadow(radius: 10)
+                        //.shadow(radius: 10)
                     }
                     .padding()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)

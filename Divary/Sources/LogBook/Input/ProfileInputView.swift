@@ -29,11 +29,7 @@ struct ProfileInputView: View {
     @Binding var profile: DiveProfile
 
     var body: some View {
-       // GeometryReader { geometry in
             ZStack {
-//                Color.gray.opacity(0.8)
-//                    .edgesIgnoringSafeArea(.all)
-                
                 VStack{
                     ScrollView {
                         VStack(alignment: .leading, spacing: 20) {
@@ -108,17 +104,10 @@ struct ProfileInputView: View {
                             }
                         }
                     }
-                    .padding(.horizontal, 11)
-                    .padding(.vertical, 22)
-                    .background(
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(Color(.white))
-                            //.stroke(Color.grayscale_g300)
-                    )
-                    //.frame(maxHeight: geometry.size.height * 0.64)
+//                    .padding(.horizontal, 11)
+//                    .padding(.vertical, 22)
                     .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.horizontal)
-                    
+                   // .padding(.horizontal)
                 }
             }
         }
