@@ -21,7 +21,8 @@ struct DiverItemStore: View {
                 
                 TankSection(viewModel: viewModel)
             }
-            .padding(.vertical)
+            .padding(.top)
+            .padding(.bottom, 50)
             .padding(.horizontal, 12)
         }
     }

@@ -50,7 +50,7 @@ struct BottomSheetView<Content: View>: View {
             .frame(maxWidth: .infinity)
             .background(Color.white)
             .clipShape(RoundedCorner(radius: 12, corners: [.topLeft, .topRight]))
-            .offset(y: dragOffset)
+            .offset(y: max(0, min(dragOffset, 100))) // 화면 밖으로 나가는 것 방지
             .gesture(
                 DragGesture()
                     .updating($dragOffset) { value, state, _ in

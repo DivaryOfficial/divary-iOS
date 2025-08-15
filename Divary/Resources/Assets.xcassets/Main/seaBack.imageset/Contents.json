@@ -2,7 +2,28 @@
   "images" : [
     {
       "filename" : "seaBack.png",
-      "idiom" : "universal"
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "바다배경 기본 1.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "바다배경 기본 2.png",
+      "idiom" : "universal",
+      "scale" : "3x"
+    },
+    {
+      "filename" : "메인 바다.png",
+      "idiom" : "ipad",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "메인 바다 1.png",
+      "idiom" : "ipad",
+      "scale" : "2x"
     }
   ],
   "info" : {
