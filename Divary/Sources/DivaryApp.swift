@@ -41,9 +41,8 @@ struct DivaryApp: App {
                         case .locationSearch:
                             LocationSearchView(
                                        currentValue: container.router.locationSearchText,
-                                       placeholder: "ë‹¤ì´ë¹™ ìŠ¤íŒŸ ê²€ìƒ‰",
+                                       placeholder: "다이빙 지역을 입력해주세요. ex) 강원도 강릉",
                                        onLocationSelected: { selectedLocation in
-                                           // ì„ íƒëœ ìœ„ì¹˜ë¥¼ AppRouterì— ì €ìž¥
                                            container.router.locationSearchText = selectedLocation
                                        }
                                    )

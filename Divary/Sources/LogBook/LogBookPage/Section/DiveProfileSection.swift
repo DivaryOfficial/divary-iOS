@@ -109,6 +109,8 @@ struct DiveDepthInfoView: View {
             Image((profile?.maxDepth == nil && profile?.avgDepth == nil && profile?.decoStop == nil && !isSaved) ? "grayDiveGraph" : "blueDiveGraph")
                 .frame(width: 165)
                 .padding(.top, 12)
+            
+            Spacer()
 
             VStack(alignment: .trailing, spacing: 4) {
                 DepthRow(label: "최대수심", value: profile?.maxDepth, unit: "m", isSaved: isSaved)
