@@ -41,24 +41,39 @@ struct DiveInputPageView: View {
             AnyView(ProfileInputView(profile: $profile))
         ]
 
-        VStack {
-            TabView(selection: $selectedPage) {
-                ForEach(0..<pages.count, id: \.self) { index in
-                    ScrollView {
-                        VStack(alignment:.center) {
-                            pages[index]
+        GeometryReader { geometry in
+            VStack(spacing: 16) {
+                // 둥근 네모 컨테이너 - 화면 크기에 맞춤
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(Color.white)
+                    .stroke(Color.grayscale_g300, lineWidth: 1)
+                    .frame(height: geometry.size.height * 0.8) // 화면 높이의 80%
+                    .overlay(
+                        TabView(selection: $selectedPage) {
+                            ForEach(0..<pages.count, id: \.self) { index in
+                                ScrollView {
+                                    VStack(alignment: .center, spacing: 20) {
+                                        pages[index]
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.horizontal, 24)
+                                    .padding(.vertical, 24)
+                                }
+                                .tag(index)
+                            }
                         }
-                    }
-                    .tag(index)
-                }
-            }
-            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                    )
 
-            PageIndicatorView(
-                numberOfPages: pages.count,
-                currentPage: selectedPage
-            )
+                // 페이지 인디케이터
+                PageIndicatorView(
+                    numberOfPages: pages.count,
+                    currentPage: selectedPage
+                )
+                .padding(.bottom, 12)
+            }
+            .padding(.horizontal, 24)
         }
     }
 }
-

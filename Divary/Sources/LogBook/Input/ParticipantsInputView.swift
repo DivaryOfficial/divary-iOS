@@ -16,7 +16,7 @@ struct ParticipantsInputView: View {
             VStack{
                 ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
-                        
+                        Spacer()
                         // 리더
                         TextInputField(
                             title: "리더",
@@ -40,16 +40,17 @@ struct ParticipantsInputView: View {
                             list: $participants.companion,
                             value: $companionInput
                         )
+                        Spacer()
                     }
                 }
-                .padding(.horizontal, 11)
-                .padding(.vertical, 22)
-                .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(Color(.white))
-                )
+//                .padding(.horizontal, 11)
+//                .padding(.vertical, 22)
+//                .background(
+//                    RoundedRectangle(cornerRadius: 10)
+//                        .fill(Color(.white))
+//                )
                 .frame(maxWidth: .infinity, alignment: .center)
-                .padding(.horizontal)
+                //.padding(.horizontal)
             }
         }
     }
