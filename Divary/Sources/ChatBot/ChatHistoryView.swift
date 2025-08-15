@@ -11,8 +11,11 @@ import SwiftUI
 struct ChatHistoryView: View {
     @Binding var showingHistoryList: Bool
     @State private var searchText = ""
-    @State private var chatRooms = MockData.chatRooms
-    let onRoomSelected: (String) -> Void
+    @State private var chatRooms: [ChatRoom] = []
+    @State private var isLoading = true
+    let onRoomSelected: (ChatRoom) -> Void  // ChatRoom 객체를 전달하도록 변경
+    
+    private let chatService = ChatService()
     
     private var filteredRooms: [ChatRoom] {
         if searchText.isEmpty {
@@ -24,15 +27,9 @@ struct ChatHistoryView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            
-            // Header
+            // Header (기존과 동일)
             HStack {
-//                Text("채팅방")
-//                    .font(.title2)
-//                    .fontWeight(.bold)
-                
                 Spacer()
-                
                 Button(action: {
                     showingHistoryList = false
                 }) {
@@ -45,9 +42,8 @@ struct ChatHistoryView: View {
             .padding(.vertical, 16)
             .background(Color(.systemBackground))
             
-            // Search Bar
+            // Search Bar (기존과 동일)
             HStack {
-               
                 TextField("채팅 기록을 검색해보세요", text: $searchText)
                     .textFieldStyle(PlainTextFieldStyle())
                     .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
@@ -59,11 +55,10 @@ struct ChatHistoryView: View {
                         Image(systemName: "xmark.circle.fill")
                             .foregroundColor(.gray)
                     }
-                }else{
+                } else {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.bw_black)
                 }
-                
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
@@ -73,23 +68,29 @@ struct ChatHistoryView: View {
             .padding(.bottom, 16)
             
             // Chat Room List
-            ScrollView {
-                LazyVStack(spacing: 0) {
-                    ForEach(filteredRooms) { room in
-                        
-                        ChatRoomRowView(
-                            room: room,
-                            onTap: {
-                                onRoomSelected(room.name)
-                            },
-                            onDelete: {
-                                deleteChatRoom(room)
+            if isLoading {
+                Spacer()
+                ProgressView()
+                    .scaleEffect(1.2)
+                Spacer()
+            } else {
+                ScrollView {
+                    LazyVStack(spacing: 0) {
+                        ForEach(filteredRooms) { room in
+                            ChatRoomRowView(
+                                room: room,
+                                onTap: {
+                                    onRoomSelected(room)  // ChatRoom 객체 전달
+                                },
+                                onDelete: {
+                                    deleteChatRoom(room)
+                                }
+                            )
+                            
+                            if room.id != filteredRooms.last?.id {
+                                Divider()
+                                    .padding(.leading, 20)
                             }
-                        )
-                        
-                        if room.id != filteredRooms.last?.id {
-                            Divider()
-                                .padding(.leading, 20)
                         }
                     }
                 }
@@ -98,92 +99,48 @@ struct ChatHistoryView: View {
             Spacer()
         }
         .background(Color(.systemBackground))
+        .onAppear {
+            loadChatRooms()
+        }
+    }
+    
+    private func loadChatRooms() {
+        chatService.getChatRooms { result in
+            DispatchQueue.main.async {
+                isLoading = false
+                
+                switch result {
+                case .success(let chatRoomDTOs):
+                    self.chatRooms = chatRoomDTOs.map { ChatRoom(from: $0) }
+                    
+                case .failure(let error):
+                    print("채팅방 목록 로드 실패: \(error)")
+                    // 에러 발생시 Mock 데이터 사용
+                    self.chatRooms = MockData.chatRooms
+                }
+            }
+        }
     }
     
     private func deleteChatRoom(_ room: ChatRoom) {
-        chatRooms.removeAll { $0.id == room.id }
-    }
-}
-
-struct ChatRoomRowView: View {
-    let room: ChatRoom
-    let onTap: () -> Void
-    let onDelete: () -> Void
-    @State private var showingDeleteMenu = false
-    
-    private var formattedDate: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "YYYY년 MM월 dd일"
-        return formatter.string(from: room.createdAt)
-    }
-    
-    var body: some View {
-        HStack(spacing: 12) {
-            Button(action: onTap) {
-                HStack(spacing: 12) {
+        guard let apiId = room.apiId else {
+            // Mock 데이터인 경우 로컬에서만 삭제
+            chatRooms.removeAll { $0.id == room.id }
+            return
+        }
+        
+        // API 호출로 삭제
+        chatService.deleteChatRoom(chatRoomId: apiId) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    chatRooms.removeAll { $0.id == room.id }
                     
-                    // Chat Icon
-                    VStack(alignment: .leading, spacing: 2) {
-                        
-                        HStack{
-                            Text(room.name)
-                                .font(Font.omyu.regular(size: 16))
-                                .foregroundColor(.primary)
-                                .lineLimit(1)
-                            
-                            Spacer()
-                            
-                            // More button
-                            Button(action: {
-                                showingDeleteMenu = true
-                            }) {
-                                Image(systemName: "ellipsis")
-                                    .font(.system(size: 16))
-                                    .foregroundColor(.gray)
-                                    .frame(width: 24, height: 24)
-                            }
-                            .actionSheet(isPresented: $showingDeleteMenu) {
-                                ActionSheet(
-                                    title: Text("채팅방 관리"),
-                                    message: Text("이 채팅방을 삭제하시겠습니까?"),
-                                    buttons: [
-                                        .destructive(Text("삭제")) {
-                                            onDelete()
-                                        },
-                                        .cancel(Text("취소"))
-                                    ]
-                                )
-                            }
-                        }
-                        
-                        HStack{
-                            Spacer()
-                            
-                            Text(formattedDate)
-                                .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 10))
-                                .foregroundColor(.grayscale_g400)
-                        }
-                       
-                    }
-                    
-                    Spacer()
+                case .failure(let error):
+                    print("채팅방 삭제 실패: \(error)")
+                    // 에러 처리 필요시 여기에 추가
                 }
             }
-            .buttonStyle(PlainButtonStyle())
-            
-      
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 12)
-        .contentShape(Rectangle())
     }
-}
-
-#Preview {
-    ChatHistoryView(
-        showingHistoryList: .constant(true),
-        onRoomSelected: { roomName in
-            print("선택된 채팅방: \(roomName)")
-        }
-    )
 }
