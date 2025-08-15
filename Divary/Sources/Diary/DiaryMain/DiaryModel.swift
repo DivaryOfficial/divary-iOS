@@ -178,7 +178,7 @@ extension DiaryBlock {
 
     // DTO에서 DiaryBlock으로 변환 (서버에서 받은 데이터)
     static func fromDTO(_ dto: DiaryBlockDTO) -> DiaryBlock? {
-        guard let uuid = UUID(uuidString: dto.id) else { return nil }
+        guard UUID(uuidString: dto.id) != nil else { return nil }
 
         let content: Content
         switch dto.content {

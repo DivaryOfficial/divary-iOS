@@ -106,9 +106,11 @@ struct DiveDepthInfoView: View {
 
     var body: some View {
         HStack {
-            Image((profile?.maxDepth == nil && profile?.avgDepth == nil && profile?.decoStop == nil && !isSaved) ? "GrayDiveGraph" : "BlueDiveGraph")
+            Image((profile?.maxDepth == nil && profile?.avgDepth == nil && profile?.decoStop == nil && !isSaved) ? "grayDiveGraph" : "blueDiveGraph")
                 .frame(width: 165)
                 .padding(.top, 12)
+            
+            Spacer()
 
             VStack(alignment: .trailing, spacing: 4) {
                 DepthRow(label: "최대수심", value: profile?.maxDepth, unit: "m", isSaved: isSaved)
@@ -159,13 +161,13 @@ struct TankPressureView: View {
         HStack(spacing: 20) {
             TankView(
                 title: "시작탱크 압력",
-                imageName: (profile?.startPressure != nil || isSaved) ? "BlueTank1" : "GrayTank1",
+                imageName: (profile?.startPressure != nil || isSaved) ? "blueTankHigh" : "grayTankHigh",
                 pressure: profile?.startPressure,
                 isSaved: isSaved
             )
             TankView(
                 title: "종료탱크 압력",
-                imageName: (profile?.endPressure != nil || isSaved) ? "BlueTank2" : "GrayTank2",
+                imageName: (profile?.endPressure != nil || isSaved) ? "blueTankMiddle" : "grayTankMiddle",
                 pressure: profile?.endPressure,
                 isSaved: isSaved
             )

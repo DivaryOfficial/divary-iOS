@@ -27,8 +27,8 @@ struct LocationSearchNavBar: View {
              
             }
             
-            Text("스쿠버 다이빙 지역 검색")
-                .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
+            Text("다이빙 지역")
+                .font(Font.omyu.regular(size: 20))
         }
         .padding(12)
         .background(Color.white)

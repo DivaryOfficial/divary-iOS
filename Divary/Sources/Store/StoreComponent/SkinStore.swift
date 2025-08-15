@@ -22,8 +22,9 @@ struct SkinStore: View {
                 // 말풍선
                 SpeechBubbleSection(viewModel: viewModel)
             }
-            .padding(.vertical)
-            .padding(.horizontal, 12)
+            .padding(.top)
+            .padding(.bottom, 50)
+            .padding(.horizontal, 12) // 제목들만 여백 적용
         }
     }
 }
@@ -76,8 +77,9 @@ struct BodyColorSection: View {
                             }
                     }
                 }
-                .padding(.horizontal, 12)
+                .padding(.horizontal, 12) // 첫째/마지막 아이템이 화면 끝에서 12px 떨어지도록
             }
+            .padding(.horizontal, -12) // ScrollView를 화면 끝까지 확장
         }
     }
 }
@@ -146,8 +148,9 @@ struct CheekColorSection: View {
                             }
                     }
                 }
-                .padding(.horizontal, 12)
+                .padding(.horizontal, 12) // 첫째/마지막 아이템이 화면 끝에서 12px 떨어지도록
             }
+            .padding(.horizontal, -12) // ScrollView를 화면 끝까지 확장
         }
     }
 }
@@ -183,8 +186,9 @@ struct SpeechBubbleSection: View {
                             }
                     }
                 }
-                .padding(.horizontal, 12)
+                .padding(.horizontal, 12) // 첫째/마지막 아이템이 화면 끝에서 12px 떨어지도록
             }
+            .padding(.horizontal, -12) // ScrollView를 화면 끝까지 확장
         }
     }
 }

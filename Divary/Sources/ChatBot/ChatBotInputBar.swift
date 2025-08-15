@@ -1,20 +1,43 @@
-//
-//  ChatBotInputBar.swift
-//  Divary
-//
-//  Created by chohaeun on 8/6/25.
-//
-
-
 import SwiftUI
 
 struct ChatInputBar: View {
     @Binding var messageText: String
     @Binding var showPhotoOptions: Bool
+    @Binding var selectedImage: UIImage?
     let onSendMessage: () -> Void
     
     var body: some View {
         VStack(spacing: 0) {
+            // 선택된 이미지 미리보기
+            if let selectedImage = selectedImage {
+                HStack {
+                    ZStack(alignment: .topTrailing) {
+                        Image(uiImage: selectedImage)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 80, height: 80)
+                            .clipped()
+                            .cornerRadius(8)
+                        
+                        Button(action: {
+                            self.selectedImage = nil
+                        }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(.white)
+                                .background(Color.gray)
+                                .clipShape(Circle())
+                                .font(.system(size: 16))
+                        }
+                        .offset(x: 5, y: -5)
+                    }
+                    
+                    Spacer()
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 8)
+                .background(Color(.systemBackground))
+            }
+            
             HStack(spacing: 12) {
                 Button(action: {
                     showPhotoOptions.toggle()
@@ -38,7 +61,7 @@ struct ChatInputBar: View {
                     Image("Chatsend")
                         .frame(width: 24, height: 24)
                 }
-                .disabled(messageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                .disabled(messageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && selectedImage == nil)
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 12)
@@ -46,7 +69,7 @@ struct ChatInputBar: View {
             
             if showPhotoOptions {
                 HStack {
-                    PhotoSelectionView()
+                    PhotoSelectionView(selectedImage: $selectedImage)
                     Spacer()
                 }
                 .padding(.horizontal, 20)
@@ -61,6 +84,7 @@ struct ChatInputBar: View {
     ChatInputBar(
         messageText: .constant(""),
         showPhotoOptions: .constant(false),
+        selectedImage: .constant(nil),
         onSendMessage: {
             print("메시지 전송")
         }

@@ -44,8 +44,6 @@ struct DivaryApp: App {
                                     container.router.pop()
                                 }
                             )
-//                        case .imageSelect(let viewModel, let framedImages):
-//                            ImageSelectView(viewModel: viewModel, framedImages: framedImages)
                         case .imageDeco(let framedImages/*, let currentIndex*/):
                             ImageDecoView(framedImages: framedImages/*, currentIndex: currentIndex*/)
                         case .CharacterViewWrapper:
@@ -58,12 +56,14 @@ struct DivaryApp: App {
                         case .MainTabBar:
                             MainTabbarView()
                                 .toolbar(.hidden, for: .navigationBar)
+                        case .chatBot:
+                            ChatBotView()
+                                .toolbar(.hidden, for: .navigationBar)
                         case .locationSearch:
                             LocationSearchView(
                                        currentValue: container.router.locationSearchText,
-                                       placeholder: "다이빙 스팟 검색",
+                                       placeholder: "다이빙 지역을 입력해주세요. ex) 강원도 강릉",
                                        onLocationSelected: { selectedLocation in
-                                           // 선택된 위치를 AppRouter에 저장
                                            container.router.locationSearchText = selectedLocation
                                        }
                                    )
@@ -76,6 +76,7 @@ struct DivaryApp: App {
                         }
                     }
             }
+            .navigationViewStyle(.stack)
             .environmentObject(container)
             .environment(\.diContainer, container)
         }

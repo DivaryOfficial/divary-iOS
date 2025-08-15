@@ -155,6 +155,42 @@ final class LogBookService {
             completion(.failure(error))
         }
     }
+
+    // 로그베이스 날짜 수정
+    func updateLogBaseDate(logBaseInfoId: Int, date: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        provider.request(.updateLogBaseDate(logBaseInfoId: logBaseInfoId, date: date)) { result in
+            switch result {
+            case .success(let response):
+                if let jsonString = String(data: response.data, encoding: .utf8) {
+                    print("📦 로그베이스 날짜 수정 응답: \(jsonString)")
+                }
+                
+                if response.statusCode >= 400 {
+                    do {
+                        let errorResponse = try JSONDecoder().decode(APIErrorResponse.self, from: response.data)
+                        let error = LogBookAPIError(
+                            code: errorResponse.code,
+                            message: errorResponse.message,
+                            statusCode: response.statusCode
+                        )
+                        completion(.failure(error))
+                    } catch {
+                        let fallbackError = LogBookAPIError(
+                            code: "UNKNOWN_ERROR",
+                            message: "날짜 수정 중 오류가 발생했습니다. (Status: \(response.statusCode))",
+                            statusCode: response.statusCode
+                        )
+                        completion(.failure(fallbackError))
+                    }
+                } else {
+                    completion(.success(()))
+                }
+                
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
 }
 
 // MARK: - 에러 처리를 위한 추가 모델들

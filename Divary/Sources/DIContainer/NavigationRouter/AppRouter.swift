@@ -20,6 +20,7 @@ enum Route: Hashable {
     case locationSearch
     case oceanCatalog
     case oceanCreatureDetail(creature: SeaCreatureDetail)
+    case chatBot
 }
 
 class AppRouter: ObservableObject {

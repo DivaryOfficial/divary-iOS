@@ -82,11 +82,8 @@ struct LocationTextInputField: View {
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 12)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                    .background(Color(.systemGray6))
-            )
+            .background(Color.grayscale_g100)
+            .cornerRadius(8)
         }
         .onReceive(container.router.$locationSearchText) { searchText in
             if !searchText.isEmpty {

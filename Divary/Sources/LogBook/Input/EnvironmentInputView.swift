@@ -15,10 +15,10 @@ struct EnvironmentInputView: View {
         }
         
         switch weather {
-        case "맑음": return Image("EnvInput-맑음")
-        case "약간 흐림": return Image("EnvInput-약간흐림")
-        case "흐림": return Image("EnvInput-흐림")
-        case "비": return Image("EnvInput-비")
+        case "맑음": return Image("envInputClear")
+        case "약간 흐림": return Image("envinputPartlyCloudy")
+        case "흐림": return Image("envinputCloudy")
+        case "비": return Image("envInputRain")
         default: return Image("")
         }
     }
@@ -30,14 +30,14 @@ struct EnvironmentInputView: View {
         }
         
         switch wind {
-        case "약풍": return Image("EnvInput-바람1")
-        case "약풍-블루": return Image("EnvInput-바람1-블루")
-        case "중풍": return Image("EnvInput-바람2")
-        case "중풍-블루": return Image("EnvInput-바람2-블루")
-        case "강풍": return Image("EnvInput-바람3")
-        case "강풍-블루": return Image("EnvInput-바람3-블루")
-        case "폭풍": return Image("EnvInput-바람4")
-        case "폭풍-블루": return Image("EnvInput-바람4-블루")
+        case "약풍": return Image("envInputWindLowGray")
+        case "약풍-블루": return Image("envInputWindLowBlue")
+        case "중풍": return Image("envInputWindLittleLowGray")
+        case "중풍-블루": return Image("envInputWindLittleLowBlue")
+        case "강풍": return Image("envInputWindMiddleGray")
+        case "강풍-블루": return Image("envInputWindMiddleBlue")
+        case "폭풍": return Image("envInputWindHighGray")
+        case "폭풍-블루": return Image("envInputWindHighBlue")
         default: return Image("")
         }
     }
@@ -49,10 +49,10 @@ struct EnvironmentInputView: View {
         }
         
         switch current {
-        case "없음": return Image("EnvInput-없음")
-        case "미류": return Image("EnvInput-조류1")
-        case "중류": return Image("EnvInput-조류2")
-        case "격류": return Image("EnvInput-조류3")
+        case "없음": return Image("envInputNone")
+        case "미류": return Image("envInputCurrentLow")
+        case "중류": return Image("envInputCurrentMiddle")
+        case "격류": return Image("envInputCurrentHigh")
         default: return Image("")
         }
     }
@@ -64,12 +64,12 @@ struct EnvironmentInputView: View {
         }
         
         switch wave {
-        case "약함": return Image("EnvInput-파도1")
-        case "약함-블루": return Image("EnvInput-파도1-블루")
-        case "중간": return Image("EnvInput-파도2")
-        case "중간-블루": return Image("EnvInput-파도2-블루")
-        case "강함": return Image("EnvInput-파도3")
-        case "강함-블루": return Image("EnvInput-파도3-블루")
+        case "약함": return Image("envInputWaveLowGray")
+        case "약함-블루": return Image("envInputWaveLowBlue")
+        case "중간": return Image("envInputWaveMiddleGray")
+        case "중간-블루": return Image("envInputWaveMiddleBlue")
+        case "강함": return Image("envInputWaveHighGray")
+        case "강함-블루": return Image("envInputWaveHighBlue")
         default: return Image("")
         }
     }
@@ -81,12 +81,12 @@ struct EnvironmentInputView: View {
         }
         
         switch temp {
-        case "추움": return Image("EnvInput-추움")
-        case "추움-블루": return Image("EnvInput-추움-블루")
-        case "보통": return Image("EnvInput-templike-보통")
-        case "보통-블루": return Image("EnvInput-templike-보통-블루")
-        case "더움": return Image("EnvInput-더움")
-        case "더움-블루": return Image("EnvInput-더움-블루")
+        case "추움": return Image("envInputApparentTemperatureColdGray")
+        case "추움-블루": return Image("envInputApparentTemperatureColdBlue")
+        case "보통": return Image("envInputApparentTemperatureNormalGray")
+        case "보통-블루": return Image("envInputApparentTemperatureNormalBlue")
+        case "더움": return Image("envInputApparentTemperatureHotGray")
+        case "더움-블루": return Image("envInputApparentTemperatureHotBlue")
         default: return Image("")
         }
     }
@@ -98,9 +98,9 @@ struct EnvironmentInputView: View {
         }
         
         switch visibility {
-        case "좋음": return Image("EnvInput-좋음")   // 좋은 시야
-        case "보통": return Image("EnvInput-보통")  // 보통 시야
-        case "나쁨": return Image("EnvInput-나쁨") // 나쁜 시야
+        case "좋음": return Image("envInputGood")   // 좋은 시야
+        case "보통": return Image("envInputNormal")  // 보통 시야
+        case "나쁨": return Image("envInputBad") // 나쁜 시야
         default: return Image("")
         }
     }

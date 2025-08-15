@@ -14,6 +14,7 @@ enum DiveLogTab: String, CaseIterable {
 }
 
 struct LogBookMainView: View {
+    
     @Environment(\.diContainer) private var container
 
     @State var selectedTab: DiveLogTab = .logbook
@@ -74,7 +75,7 @@ struct LogBookMainView: View {
 //                    isTempSaved: (selectedTab == .diary ? diaryVM.canSave : viewModel.hasFrontendChanges),
                     isTempSaved: (selectedTab == .diary
                                   ? (diaryVM.saveButtonEnabled && !showCanvas)
-                                  : viewModel.isTempSaved),
+                                  : viewModel.hasFrontendChanges), 
                     onSaveTap: {
                         if selectedTab == .diary {
                             diaryVM.manualSave() // 일기 저장
@@ -91,13 +92,16 @@ struct LogBookMainView: View {
                 Group {
                     switch selectedTab {
                     case .logbook:
-                    LogBookPageView(
-                        viewModel: viewModel,
-                        onTitleTap: {
-                            editingTitle = viewModel.displayTitle
-                            showTitleEditPopup = true
-                        }
-                    )
+                        LogBookPageView(
+                                viewModel: viewModel,
+                                onTitleTap: {
+                                    editingTitle = viewModel.displayTitle
+                                    showTitleEditPopup = true
+                                },
+                                onPageChanged: { newPageIndex in  // 추가
+                                    currentPageIndex = newPageIndex
+                                }
+                            )
                     case .diary:
 //                        DiaryMainView(diaryLogId: 0)
                         DiaryMainView(viewModel: diaryVM, diaryLogId: viewModel.logBaseInfoId, showCanvas: $showCanvas)
@@ -141,8 +145,15 @@ struct LogBookMainView: View {
                         .cornerRadius(8)
 
                         Button("저장") {
-                            viewModel.selectedDate = backupDate
-                            isCalendarPresented = false
+                            //viewModel.selectedDate = backupDate
+                            //날짜 수정
+                            viewModel.updateLogBaseDateToServer(newDate: backupDate) { success in
+                                if success {
+                                    isCalendarPresented = false
+                                }
+                                
+                                isCalendarPresented = false
+                            }
                         }
                         .font(Font.omyu.regular(size: 16))
                         .frame(maxWidth: 114)

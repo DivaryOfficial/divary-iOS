@@ -40,7 +40,19 @@ struct MainTabbarView: View {
             // 탭 버튼들
             HStack {
                 tabButton(title: "기록", selectedImage: "tabBarLogSelected", nonSelectedImage: "tabBarLogUnSelected")
-                tabButton(title: "챗봇", selectedImage: "tabBarChatBotSelected", nonSelectedImage: "tabBarChatBotUnSelected")
+                Button {
+                    container.router.push(.chatBot)
+                } label: {
+                    VStack(spacing: 4) {
+                        Image(container.selectedTab == "챗봇" ? "tabBarChatBotSelected" : "tabBarChatBotUnSelected")
+                            .frame(width: 24, height: 24)
+                        
+                        Text("챗봇")
+                            .font(.caption)
+                            .foregroundStyle(container.selectedTab == "챗봇" ? Color.primary_sea_blue : Color.grayscale_g600)
+                            .frame(maxWidth: .infinity)
+                    }
+                }
                 tabButton(title: "해양도감", selectedImage: "tabBarOceanCatalogSelected", nonSelectedImage: "tabBarOceanCatalogUnSelected")
                 tabButton(title: "My", selectedImage: "tabBarMySelected", nonSelectedImage: "tabBarMyUnSelected")
             }
@@ -72,10 +84,20 @@ struct MainTabbarView: View {
 struct MyPageView: View {
     var body: some View {
         VStack {
-            Text("마이페이지")
-                .font(.title)
+            Spacer()
+            Text("마이페이지 오픈 예정!")
+                .font(Font.omyu.regular(size: 24))
+                .foregroundStyle(Color.grayscale_g700)
             Text("구현 예정")
-                .foregroundStyle(.gray)
+                .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
+                .foregroundStyle(Color.grayscale_g400)
+                      
+            Image("readyCharacter")
+                .resizable()
+                .frame(width: 200, height: 218)
+                .scaledToFit()
+            
+            Spacer()
         }
     }
 }
