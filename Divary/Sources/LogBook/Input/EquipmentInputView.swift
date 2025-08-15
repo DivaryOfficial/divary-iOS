@@ -58,10 +58,10 @@ struct EquipmentInputView: View {
                             
                             //슈트 종류
                             Text("슈트 종류")
-                                .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
+                                .font(Font.omyu.regular(size: 20))
                             
                             HStack{
-                                IconButton(
+                                IconSuitButton(
                                     options: SuitType.allDisplayNames,
                                     selected: equipment.suitType,
                                     imageProvider: suitTypeImage(for:),
@@ -127,4 +127,61 @@ struct EquipmentInputView: View {
     )
     
     EquipmentInputView(equipment: $previewOverview)
+}
+
+
+
+struct IconSuitButton: View {
+    let options: [String]
+    let selected: String?
+    let imageProvider: (String?) -> Image
+    let onSelect: (String) -> Void
+    let size: CGFloat
+    var isImage: Bool = false
+    
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: true) {
+            HStack(spacing: 10) {
+                ForEach(options, id: \.self) { option in
+                    
+                    Button(action: {
+                        onSelect(option)
+                    }) {
+                        VStack(spacing: 4) {
+                            
+                            Spacer()
+                            if isImage {
+                                imageProvider(selected == option ? option + "B" : option)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: size, height: size)
+                            } else {
+                                imageProvider(option)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: size, height: size)
+                            }
+                            
+                            Spacer()
+                            
+                            Text(option)
+                                .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
+                            
+                            Spacer()
+                        }
+                        .padding(10)
+                        .frame(width: 80, height: 84) // 정사각형 고정 크기
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(
+                                    selected == option ? Color.primary_sea_blue : Color.grayscale_g300
+                                )
+                        )
+                        .foregroundStyle(selected == option ? Color.primary_sea_blue : Color.grayscale_g300)
+                    }
+                }
+            }
+            .padding(.horizontal, 16)
+        }
+    }
 }
