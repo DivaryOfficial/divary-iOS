@@ -21,7 +21,7 @@ struct TempPop: View {
                 Button(action: onClose) {
                     Image(systemName: "xmark")
                         .font(.system(size: 20, weight: .medium))
-                        .foregroundColor(.bw_black)
+                        .foregroundStyle(Color.bw_black)
                         .frame(width: 32, height: 32)
 
                 }
@@ -42,7 +42,7 @@ struct TempPop: View {
             Button(action: onTempSave) {
                 Text("임시 저장하고 나가기")
                     .font(Font.omyu.regular(size: 20))
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .frame(height: 52)
                     .background(
@@ -55,7 +55,7 @@ struct TempPop: View {
             Button(action: onDiscardChanges) {
                 Text("그냥 나가기")
                     .font(Font.omyu.regular(size: 20))
-                    .foregroundColor(.black)
+                    .foregroundStyle(.black)
                     .frame(maxWidth: .infinity)
                     .frame(height: 52)
                     .background(

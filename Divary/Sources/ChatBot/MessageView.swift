@@ -35,7 +35,7 @@ struct MessageBubbleView: View {
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
                         .background(Color.secondary_pb100)
-                        .foregroundColor(Color.bw_black)
+                        .foregroundStyle(Color.bw_black)
                         .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
                         .roundingCorner(16, corners: [.topLeft, .topRight, .bottomLeft])
                 }
@@ -47,7 +47,7 @@ struct MessageBubbleView: View {
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
                         .background(Color.grayscale_g100)
-                        .foregroundColor(Color.bw_black)
+                        .foregroundStyle(Color.bw_black)
                         .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
                         .roundingCorner(16, corners: [.topLeft, .topRight, .bottomRight])
                 }

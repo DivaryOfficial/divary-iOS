@@ -55,7 +55,7 @@ class OceanCatalogViewModel {
     }
     
     // 최초 진입 시 호출
-    func onAppear() {
+    func task() {
         if creatureCards.isEmpty {
             fetchByCategory()
         }

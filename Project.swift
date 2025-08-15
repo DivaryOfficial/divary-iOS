@@ -12,20 +12,25 @@ let project = Project(
         base: [
             "GOOGLE_CLIENT_ID": "$(GOOGLE_CLIENT_ID)",
             "GOOGLE_URL_SCHEME": "$(GOOGLE_URL_SCHEME)",
-            // dSYM 생성을 위한 설정 추가
+            // dSYM 생성 관련
             "DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym",
             "GENERATE_DEBUG_SYMBOLS": "YES",
             "STRIP_DEBUG_SYMBOLS_DURING_COPY": "NO",
             "STRIP_LINKED_PRODUCT": "NO"
         ],
         configurations: [
-            .debug(name: "SecretOnly", xcconfig: .relativeToRoot("../divary-iOS/Configuration/Secret.xcconfig")),
-            // Release 설정 추가 (Archive용)
-            .release(name: "Release", settings: [
-                "DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym",
-                "GENERATE_DEBUG_SYMBOLS": "YES",
-                "STRIP_DEBUG_SYMBOLS_DURING_COPY": "NO"
-            ])
+            .debug(
+                name: "SecretOnly",
+                xcconfig: .relativeToRoot("../divary-iOS/Configuration/Secret.xcconfig")
+            ),
+            .release(
+                name: "Release",
+                settings: [
+                    "DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym",
+                    "GENERATE_DEBUG_SYMBOLS": "YES",
+                    "STRIP_DEBUG_SYMBOLS_DURING_COPY": "NO"
+                ]
+            )
         ]
     ),
     targets: [
@@ -39,8 +44,25 @@ let project = Project(
                     "CFBundleIconName": "AppIcon",
                     "UILaunchScreen": [
                         "UIColorName": "",
-                        "UIImageName": "",
+                        "UIImageName": ""
                     ],
+
+                    // Universal (iPhone=1, iPad=2)
+                    "UIDeviceFamily": [1, 2],
+
+                    // 세로 모드만 지원 (iPhone)
+                    "UISupportedInterfaceOrientations": [
+                        "UIInterfaceOrientationPortrait"
+                    ],
+                    // 세로 모드만 지원 (iPad)
+                    "UISupportedInterfaceOrientations~ipad": [
+                        "UIInterfaceOrientationPortrait"
+                    ],
+
+                    // iPad 멀티태스킹 불가(전체화면 강제) — 세로 고정 시 권장
+                    "UIRequiresFullScreen": true,
+
+                    // 환경 변수 / URL 스킴
                     "API_URL": "$(API_URL)",
                     "GOOGLE_CLIENT_ID": "$(GOOGLE_CLIENT_ID)",
                     "CFBundleURLTypes": [
@@ -50,7 +72,11 @@ let project = Project(
                             ]
                         ]
                     ],
+
+                    // 라이트 모드 고정(의도대로 유지)
                     "UIUserInterfaceStyle": "Light",
+
+                    // 권한 문구
                     "NSLocationWhenInUseUsageDescription": "주변 장소를 검색하기 위해 위치 정보가 필요합니다."
                 ]
             ),
@@ -64,11 +90,14 @@ let project = Project(
                 .package(product: "RichTextKit"),
                 .package(product: "Kingfisher")
             ],
-            // Target별 설정도 추가
             settings: .settings(
                 base: [
                     "DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym",
-                    "GENERATE_DEBUG_SYMBOLS": "YES"
+                    "GENERATE_DEBUG_SYMBOLS": "YES",
+                    // Universal (빌드 설정에서도 명시)
+                    "TARGETED_DEVICE_FAMILY": "1,2",
+                    // 필요 시 배포 타깃 고정
+                    "IPHONEOS_DEPLOYMENT_TARGET": "17.0"
                 ]
             )
         ),
@@ -80,7 +109,9 @@ let project = Project(
             infoPlist: .default,
             sources: ["Divary/Tests/**"],
             resources: [],
-            dependencies: [.target(name: "Divary")]
-        ),
+            dependencies: [
+                .target(name: "Divary")
+            ]
+        )
     ]
 )

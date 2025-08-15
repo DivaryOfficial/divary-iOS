@@ -51,7 +51,7 @@ struct ChatBotView: View {
                                 .scaleEffect(0.8)
                             Text("응답 중...")
                                 .font(.caption)
-                                .foregroundColor(.gray)
+                                .foregroundStyle(.gray)
                             Spacer()
                         }
                         .padding(.horizontal, 16)

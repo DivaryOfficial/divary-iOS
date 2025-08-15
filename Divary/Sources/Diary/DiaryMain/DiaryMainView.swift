@@ -77,7 +77,7 @@ struct DiaryMainView: View {
                 diaryMain
                 activeFooterBar
             }
-//        .onAppear {
+//        .task {
             .task {
             if !didInject {
                 viewModel.inject(
