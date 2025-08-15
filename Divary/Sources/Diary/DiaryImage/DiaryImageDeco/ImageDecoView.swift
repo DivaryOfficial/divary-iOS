@@ -30,7 +30,8 @@ struct ImageDecoView: View {
             Spacer()
             FrameSelectBar(selectedFrame: $selectedFrame)
         }
-        .navigationBarBackButtonHidden(true)
+//        .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
         .task {
             if originalImagesCopied.isEmpty {
                 originalImagesCopied = framedImages.deepCopied()   // 원본 저장

@@ -83,7 +83,7 @@ struct NotificationView: View {
             }
             .background(Color.white)
         }
-        .navigationBarHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
     }
     
     private var navigationBar: some View {

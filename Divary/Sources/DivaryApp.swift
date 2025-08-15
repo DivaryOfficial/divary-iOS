@@ -52,12 +52,12 @@ struct DivaryApp: App {
                             CharacterViewWrapper()
                         case .Store(let viewModel):
                             StoreMainView(viewModel: viewModel)
-                                .navigationBarBackButtonHidden(true)
+                                .toolbar(.hidden, for: .navigationBar)
                         case .notifications:
                             NotificationView()
                         case .MainTabBar:
                             MainTabbarView()
-                                .navigationBarBackButtonHidden(true)
+                                .toolbar(.hidden, for: .navigationBar)
                         case .locationSearch:
                             LocationSearchView(
                                        currentValue: container.router.locationSearchText,
@@ -68,7 +68,7 @@ struct DivaryApp: App {
                                        }
                                    )
                                    .environment(\.diContainer, container)
-                            .navigationBarBackButtonHidden(true)
+                                   .toolbar(.hidden, for: .navigationBar)
                         case .oceanCatalog:
                             OceanCatalogView()
                         case .oceanCreatureDetail(let creature):

@@ -55,7 +55,7 @@ struct OceanCreatureDetailView: View {
                 }
             }
             .coordinateSpace(name: "scroll")
-            .navigationBarBackButtonHidden(true)
+            .toolbar(.hidden, for: .navigationBar)
 //            .navigationTitle("해양도감")
 //            .navigationBarTitleDisplayMode(.inline)
         }

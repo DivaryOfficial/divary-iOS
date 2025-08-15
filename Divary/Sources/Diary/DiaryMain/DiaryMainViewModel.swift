@@ -54,22 +54,13 @@ class DiaryMainViewModel: Hashable {
             if case .image(let f) = block.content {
                 let hasTemp = (f.tempFilename?.isEmpty == false)
                 let isExistingImage = (f.originalData == nil)   // 서버에서 불러온 기존 이미지
-                return hasTemp || isExistingImage
+                let isNewLocal = (f.originalData != nil)
+                return hasTemp || isExistingImage || isNewLocal
             }
             return true
         }
         return imagesReady && diaryService != nil && (token?.isEmpty == false)
     }
-
-//    var canSave: Bool {
-//        let imagesReady = blocks.allSatisfy { block in
-//            if case .image(let f) = block.content {
-//                return (f.tempFilename?.isEmpty == false)
-//            }
-//            return true
-//        }
-//        return imagesReady && diaryService != nil && (token?.isEmpty == false)
-//    }
     
     // 저장버튼 뷰에 내려주기 위한 파생 값
     var canSavePublic: Bool = false
@@ -85,6 +76,7 @@ class DiaryMainViewModel: Hashable {
         hasUnsavedChanges = true
         recomputeCanSave()
     }
+    
     // MARK: - Equatable & Hashable
     static func == (lhs: DiaryMainViewModel, rhs: DiaryMainViewModel) -> Bool {
         lhs.id == rhs.id
@@ -333,12 +325,6 @@ class DiaryMainViewModel: Hashable {
         forceUIUpdate.toggle()
         markDirty()
     }
-//    func updateImageBlock(id: UUID, to newContent: FramedImageContent) {
-//        guard let idx = blocks.firstIndex(where: { $0.id == id }) else { return }
-//        blocks[idx].content = .image(newContent)
-//        // 필요 시 리렌더 트리거
-//        forceUIUpdate.toggle()
-//    }
     
     func extractPhotoDate(from item: PhotosPickerItem) async -> Date? {
         do {

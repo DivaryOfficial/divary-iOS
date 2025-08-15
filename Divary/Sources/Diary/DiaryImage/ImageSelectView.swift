@@ -141,7 +141,7 @@ struct ImageSelectView: View {
 //                viewModel.addImages(framedImages)
                 
 //                if let onComplete = onComplete {
-//                    onComplete(framedImages)   // ✅ 콜백 실행
+//                    onComplete(framedImages)   // 콜백 실행
 //                }
                 if let editing = viewModel.editingImageBlock {
                     if let edited = framedImages.first {
@@ -155,6 +155,8 @@ struct ImageSelectView: View {
                     viewModel.addImages(framedImages) // 기존 로직
                 }
 //                dismiss()
+                viewModel.hasUnsavedChanges = true
+                viewModel.recomputeCanSave()
                 container.router.pop()
             }) {
                 FooterItem(image: Image(.upload), title: "업로드")

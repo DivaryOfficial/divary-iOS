@@ -99,7 +99,8 @@ struct LocationSearchView: View {
             }
             .listStyle(.plain)
         }
-        .navigationBarTitleDisplayMode(.inline)
+//        .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .navigationBar)
 //        .onAppear {
         .task {
             locationManager.requestPermission()
