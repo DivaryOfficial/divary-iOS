@@ -40,7 +40,19 @@ struct MainTabbarView: View {
             // 탭 버튼들
             HStack {
                 tabButton(title: "기록", selectedImage: "tabBarLogSelected", nonSelectedImage: "tabBarLogUnSelected")
-                tabButton(title: "챗봇", selectedImage: "tabBarChatBotSelected", nonSelectedImage: "tabBarChatBotUnSelected")
+                Button {
+                    container.router.push(.chatBot)
+                } label: {
+                    VStack(spacing: 4) {
+                        Image(container.selectedTab == "챗봇" ? "tabBarChatBotSelected" : "tabBarChatBotUnSelected")
+                            .frame(width: 24, height: 24)
+                        
+                        Text("챗봇")
+                            .font(.caption)
+                            .foregroundStyle(container.selectedTab == "챗봇" ? Color.primary_sea_blue : Color.grayscale_g600)
+                            .frame(maxWidth: .infinity)
+                    }
+                }
                 tabButton(title: "해양도감", selectedImage: "tabBarOceanCatalogSelected", nonSelectedImage: "tabBarOceanCatalogUnSelected")
                 tabButton(title: "My", selectedImage: "tabBarMySelected", nonSelectedImage: "tabBarMyUnSelected")
             }

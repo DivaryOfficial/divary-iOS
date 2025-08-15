@@ -15,9 +15,14 @@ struct ChatBotTopNav: View {
     @State private var showingTitleEdit = false
     @State private var editingTitle = ""
     
+    @EnvironmentObject var container: DIContainer
+       
+    
     var body: some View {
         HStack {
-            Button(action: {}) {
+            Button(action: {
+                container.router.pop()
+            }) {
                 Image("chevron.left")
                     .foregroundStyle(Color.bw_black)
             }

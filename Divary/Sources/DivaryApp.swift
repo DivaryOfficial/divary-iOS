@@ -34,12 +34,15 @@ struct DivaryApp: App {
                         case .MainTabBar:
                             MainTabbarView()
                                 .navigationBarBackButtonHidden(true)
+                        case .chatBot:
+                            ChatBotView()
+                                .navigationBarBackButtonHidden(true)
                         case .locationSearch:
                             LocationSearchView(
                                        currentValue: container.router.locationSearchText,
-                                       placeholder: "다이빙 스팟 검색",
+                                       placeholder: "ë‹¤ì´ë¹™ ìŠ¤íŒŸ ê²€ìƒ‰",
                                        onLocationSelected: { selectedLocation in
-                                           // 선택된 위치를 AppRouter에 저장
+                                           // ì„ íƒëœ ìœ„ì¹˜ë¥¼ AppRouterì— ì €ìž¥
                                            container.router.locationSearchText = selectedLocation
                                        }
                                    )

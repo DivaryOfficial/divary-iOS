@@ -16,6 +16,7 @@ enum Route: Hashable {
     case Store(viewModel: CharacterViewModel)
     case notifications
     case locationSearch
+    case chatBot
 }
 
 class AppRouter: ObservableObject {
