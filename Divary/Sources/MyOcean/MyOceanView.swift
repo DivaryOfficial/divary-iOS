@@ -14,7 +14,8 @@ struct CharacterViewWrapper: View {
         Group {
             if let viewModel = viewModel {
                 CharacterView(viewModel: viewModel)
-                    .toolbar(.hidden, for: .navigationBar)
+//                    .toolbar(.hidden, for: .navigationBar)
+                    .navigationBarBackButtonHidden(true)
             } else {
                 LoadingOverlay(message: "로딩 중...", showBackground: true)
                     .task {

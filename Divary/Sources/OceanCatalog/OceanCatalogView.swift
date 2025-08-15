@@ -71,7 +71,7 @@ struct OceanCatalogView: View {
                     )
                     .id(sheetVersion)
                     .presentationDetents([.fraction(0.5)])
-                    //.presentationSizing(.automatic)
+//                    .presentationSizing(.automatic) // ios 버전 호환안됨
                     .presentationDragIndicator(.visible)
                 }
                 else {

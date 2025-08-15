@@ -85,29 +85,29 @@ enum IconType: String, CaseIterable, Identifiable {
         case .cleanerWrasse:
             return Image("anchovy") // 청줄놀래기
         case .blackRockfish:
-            return Image("blowfish") // 쏨배기
+            return Image("seaSlug") // 쏨배기
         case .seaHare:
-            return Image("clam") // 군소
+            return Image("turtle") // 군소
         case .pufferfish:
             return Image("blowfish") // 복어
         case .stripedBeakfish:
-            return Image("longhornCowfish") // 돌돔
+            return Image("dolphin") // 돌돔
         case .nudibranch:
-            return Image("seaSlug") // 갯민숭달팽이
+            return Image("longhornCowfish") // 갯민숭달팽이
         case .moonJellyfish:
             return Image("combJelly") // 보름달물해파리
         case .yellowtailScad:
-            return Image("dolphin") // 줄전갱이
+            return Image("shrimp") // 줄전갱이
         case .mantisShrimp:
-            return Image("shrimp") // 끄덕새우
+            return Image("crab") // 끄덕새우
         case .seaTurtle:
-            return Image("turtle") // 바다거북
+            return Image("lionfish") // 바다거북
         case .starfish:
-            return Image("starfish") // 불가사리
+            return Image("squid") // 불가사리
         case .redLionfish:
-            return Image("lionfish") // 쏠배감펭
+            return Image("clam") // 쏠배감펭
         case .seaUrchin:
-            return Image("squid") // 성게
+            return Image("starfish") // 성게
         }
     }
 }

@@ -271,7 +271,8 @@ struct LogBookMainView: View {
                 showDiaryLeavePopup = true
             }
         }
-        .toolbar(.hidden, for: .navigationBar)
+//        .toolbar(.hidden, for: .navigationBar)
+        .navigationBarBackButtonHidden(true)
     }
 }
 
