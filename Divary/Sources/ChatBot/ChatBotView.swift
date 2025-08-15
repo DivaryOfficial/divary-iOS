@@ -6,7 +6,7 @@ struct ChatBotView: View {
     @State private var showPhotoOptions = false
     @State private var showingHistoryList = false
     @State private var messages: [ChatMessage] = []
-    @State private var currentRoomName = "새 채팅"
+    @State private var currentRoomName = "챗봇"
     @State private var currentChatRoomId: Int? = nil
     @State private var isLoading = false
     

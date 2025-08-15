@@ -25,16 +25,21 @@ struct ChatBotTopNav: View {
             
             Spacer()
             
-            Button(action: {
-                if currentChatRoomId != nil, let onTitleEdit = onTitleEdit {
-                    editingTitle = currentRoomName
-                    showingTitleEdit = true
-                }
-            }) {
-                Text(currentRoomName.isEmpty ? "챗봇" : currentRoomName)
-                    .font(Font.omyu.regular(size: 20))
-            }
-            .disabled(currentChatRoomId == nil || onTitleEdit == nil)
+            Text(currentRoomName.isEmpty ? "챗봇" : currentRoomName)
+                .font(Font.omyu.regular(size: 20))
+                .foregroundStyle(Color.bw_black)
+            
+//            Button(action: {
+//                if currentChatRoomId != nil, let onTitleEdit = onTitleEdit {
+//                    editingTitle = currentRoomName
+//                    showingTitleEdit = true
+//                }
+//            }) {
+//                Text(currentRoomName.isEmpty ? "챗봇" : currentRoomName)
+//                    .font(Font.omyu.regular(size: 20))
+//                    .foregroundStyle(Color.bw_black)
+//            }
+//            .disabled(currentChatRoomId == nil || onTitleEdit == nil)
             
             Spacer()
             
