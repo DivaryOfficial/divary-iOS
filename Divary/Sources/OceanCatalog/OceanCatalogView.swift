@@ -86,6 +86,21 @@ struct OceanCatalogView: View {
         .task {
             viewModel.onAppear()
         }
+        .overlay {
+            if viewModel.isLoadingList {
+                ZStack {
+                    Color.black.opacity(0.3).ignoresSafeArea()
+                    ProgressView("불러오는 중...")
+                        .progressViewStyle(CircularProgressViewStyle())
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(Color.black.opacity(0.7))
+                        .cornerRadius(10)
+                        .transition(.opacity)
+                }
+                .zIndex(999)
+            }
+        }
     }
 }
 
