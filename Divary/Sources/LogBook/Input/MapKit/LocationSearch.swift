@@ -44,7 +44,7 @@ struct LocationSearchView: View {
                                 ProgressView()
                                     .scaleEffect(0.8)
                                 Text("주변 다이빙 스팟을 찾고 있습니다...")
-                                    .foregroundColor(.secondary)
+                                    .foregroundStyle(.secondary)
                                     .font(Font.omyu.regular(size: 14))
                                 Spacer()
                             }
@@ -52,7 +52,7 @@ struct LocationSearchView: View {
                             .padding(.vertical, 16)
                         } else if searchResults.isEmpty {
                             Text("주변 다이빙 스팟을 찾을 수 없습니다")
-                                .foregroundColor(.secondary)
+                                .foregroundStyle(.secondary)
                                 .padding(.horizontal, 12)
                                 .font(Font.omyu.regular(size: 16))
                         } else {
@@ -76,7 +76,7 @@ struct LocationSearchView: View {
                         // 검색 결과
                         if searchResults.isEmpty {
                             Text("검색 결과가 없습니다")
-                                .foregroundColor(.secondary)
+                                .foregroundStyle(.secondary)
                                 .font(Font.omyu.regular(size: 16))
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 16)
@@ -105,7 +105,7 @@ struct LocationSearchView: View {
         }
 //        .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .navigationBar)
-//        .onAppear {
+//        .task {
         .task {
             locationManager.requestPermission()
             if searchText.isEmpty {
@@ -478,7 +478,7 @@ struct SearchBar: View {
     var body: some View {
         HStack(spacing: 8) {
             Image(systemName: "magnifyingglass")
-                .foregroundColor(.gray)
+                .foregroundStyle(.gray)
                 .font(.system(size: 16))
             
             TextField(placeholder, text: $text)
@@ -494,7 +494,7 @@ struct SearchBar: View {
                     onTextChanged("")
                 }) {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.gray)
+                        .foregroundStyle(.gray)
                         .font(.system(size: 16))
                 }
             }

@@ -33,7 +33,7 @@ struct ChatRoomRowView: View {
                         HStack{
                             Text(room.name)
                                 .font(Font.omyu.regular(size: 16))
-                                .foregroundColor(.primary)
+                                .foregroundStyle(.primary)
                                 .lineLimit(1)
                             
                             Spacer()
@@ -55,7 +55,7 @@ struct ChatRoomRowView: View {
                             } label: {
                                 Image(systemName: "ellipsis")
                                     .font(.system(size: 16))
-                                    .foregroundColor(.gray)
+                                    .foregroundStyle(.gray)
                                     .frame(width: 24, height: 24)
                             }
                         }
@@ -65,7 +65,7 @@ struct ChatRoomRowView: View {
                             
                             Text(formattedDate)
                                 .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 10))
-                                .foregroundColor(.grayscale_g400)
+                                .foregroundStyle(Color.grayscale_g400)
                         }
                        
                     }

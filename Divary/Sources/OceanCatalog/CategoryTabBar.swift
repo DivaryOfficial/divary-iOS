@@ -30,7 +30,7 @@ struct CategoryTabBar: View {
         } label: {
             Text(category.rawValue)
                 .font(.omyu.regular(size: 16))
-                .foregroundColor(selectedCategory == category ? Color(.primarySeaBlue) : .black)
+                .foregroundStyle(selectedCategory == category ? Color(.primarySeaBlue) : .black)
                 .padding(.vertical, 8)
                 .padding(.horizontal, 18)
                 .background(

@@ -50,7 +50,7 @@ struct ChatBotTopNav: View {
             
             Button(action: onMenuTap) {
                 Image(systemName: "line.3.horizontal")
-                    .foregroundColor(.primary)
+                    .foregroundStyle(.primary)
             }
         }
         .padding(12)

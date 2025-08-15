@@ -23,7 +23,7 @@ struct ChatInputBar: View {
                             self.selectedImage = nil
                         }) {
                             Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(.white)
+                                .foregroundStyle(.white)
                                 .background(Color.gray)
                                 .clipShape(Circle())
                                 .font(.system(size: 16))
@@ -44,7 +44,7 @@ struct ChatInputBar: View {
                 }) {
                     Image(systemName: showPhotoOptions ? "xmark" : "plus")
                         .font(.system(size: 24, weight: .light))
-                        .foregroundColor(.primary)
+                        .foregroundStyle(.primary)
                 }
                 
                 TextField("무엇이든 물어보세요", text: $messageText, axis: .vertical)

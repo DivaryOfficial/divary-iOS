@@ -41,7 +41,7 @@ struct LoadingOverlay: View {
 //            )
                 ProgressView(message)
                     .progressViewStyle(CircularProgressViewStyle())
-                    .foregroundColor(.black)
+                    .foregroundStyle(.black)
                     .padding()
             }
         }

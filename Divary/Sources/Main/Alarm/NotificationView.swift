@@ -93,14 +93,14 @@ struct NotificationView: View {
             }) {
                 Image(systemName: "chevron.left")
                     .font(.system(size: 18, weight: .medium))
-                    .foregroundColor(.black)
+                    .foregroundStyle(.black)
             }
             
             Spacer()
             
             Text("알림")
                 .font(Font.omyu.regular(size: 20))
-                .foregroundColor(.black)
+                .foregroundStyle(.black)
             
             Spacer()
             
@@ -108,7 +108,7 @@ struct NotificationView: View {
             Button(action: {}) {
                 Image(systemName: "chevron.left")
                     .font(.system(size: 18, weight: .medium))
-                    .foregroundColor(.clear)
+                    .foregroundStyle(.clear)
             }
         }
         .padding(.horizontal, 16)
@@ -140,19 +140,19 @@ struct NotificationRow: View {
                     
                     Text(notification.category)
                         .font(Font.omyu.regular(size: 14))
-                        .foregroundColor(Color.grayscale_g400)
+                        .foregroundStyle(Color.grayscale_g400)
                         .padding(.bottom, 4)
                     
                     Text(notification.title)
                         .font(Font.omyu.regular(size: 20))
-                        .foregroundColor(notification.isRead ? Color.grayscale_g400 : Color.bw_black)
+                        .foregroundStyle(notification.isRead ? Color.grayscale_g400 : Color.bw_black)
                     
                     
                     // 상세 내용 (확장될 때만 표시)
                     if notification.isExpanded {
                                 Text(notification.description)
                                     .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 10))
-                                    .foregroundColor(Color.grayscale_g400)
+                                    .foregroundStyle(Color.grayscale_g400)
                                 
                         }
                     }
@@ -176,14 +176,14 @@ struct NotificationRow: View {
                     }) {
                         Image(systemName: notification.isExpanded ? "chevron.up" : "chevron.down")
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.gray)
+                            .foregroundStyle(.gray)
                     }
                     
                     Spacer()
                     
                     Text(notification.timeAgo)
                         .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 10))
-                        .foregroundColor(Color.grayscale_g300)
+                        .foregroundStyle(Color.grayscale_g300)
                 }
              
             }

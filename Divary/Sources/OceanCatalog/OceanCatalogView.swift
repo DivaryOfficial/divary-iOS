@@ -71,7 +71,7 @@ struct OceanCatalogView: View {
                     )
                     .id(sheetVersion)
                     .presentationDetents([.fraction(0.5)])
-                    .presentationSizing(.automatic)
+                    //.presentationSizing(.automatic)
                     .presentationDragIndicator(.visible)
                 }
                 else {
@@ -84,7 +84,7 @@ struct OceanCatalogView: View {
 //                }
 //            }
         .task {
-            viewModel.onAppear()
+            viewModel.task()
         }
         .overlay {
             if viewModel.isLoadingList {

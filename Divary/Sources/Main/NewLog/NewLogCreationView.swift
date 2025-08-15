@@ -34,7 +34,7 @@ struct NewLogCreationView: View {
                     }) {
                         Image(systemName: "xmark")
                             .font(.system(size: 20))
-                            .foregroundColor(.black)
+                            .foregroundStyle(.black)
                             .padding(12)
                     }
                 }
@@ -118,7 +118,7 @@ struct NewLogCalendarView: View {
             .frame(maxWidth: .infinity)
             .padding()
             .background(Color.primary_sea_blue)
-            .foregroundColor(.white)
+            .foregroundStyle(.white)
             .cornerRadius(8)
             .padding(.horizontal)
             .padding(.bottom, 20)
@@ -156,7 +156,7 @@ struct ExistingLogConfirmView: View {
                 .frame(maxWidth: .infinity)
                 .padding()
                 .background(Color.primary_sea_blue)
-                .foregroundColor(.white)
+                .foregroundStyle(.white)
                 .cornerRadius(8)
                 
                 Button("날짜 다시 선택") {
@@ -166,7 +166,7 @@ struct ExistingLogConfirmView: View {
                 .frame(maxWidth: .infinity)
                 .padding()
                 .background(Color.grayscale_g100)
-                .foregroundColor(Color.grayscale_g500)
+                .foregroundStyle(Color.grayscale_g500)
                 .cornerRadius(8)
             }
             .padding(.horizontal)
