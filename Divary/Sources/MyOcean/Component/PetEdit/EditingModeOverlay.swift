@@ -23,7 +23,7 @@ struct EditingModeOverlay: View {
             HStack {
                 Spacer()
                 
-                VStack(spacing: 16) {
+                VStack(spacing: 8) {
                     // 완료 버튼
                     Button(action: {
                         withAnimation(.easeInOut(duration: 0.3)) {
@@ -36,7 +36,7 @@ struct EditingModeOverlay: View {
                         HStack {
                             Image(systemName: "checkmark.circle.fill")
                             Text("완료")
-                                .font(.system(size: 16, weight: .semibold))
+                                .font(Font.omyu.regular(size: 16))
                         }
                         .foregroundStyle(.white)
                         .padding(.horizontal, 20)
@@ -66,11 +66,11 @@ struct EditingModeOverlay: View {
                         HStack {
                             Image(systemName: "arrow.counterclockwise.circle")
                             Text("리셋")
-                                .font(.system(size: 14, weight: .medium))
+                                .font(Font.omyu.regular(size: 16))
                         }
                         .foregroundStyle(Color.primary_sea_blue)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 10)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 12)
                         .background(
                             RoundedRectangle(cornerRadius: 20)
                                 .fill(Color.white)

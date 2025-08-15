@@ -44,7 +44,7 @@ struct OceanThemeStore: View {
                     )
                 }
             }
-            .padding(.bottom)
+            .padding(.bottom,50)
             .padding(.horizontal, 12)
         }
     }

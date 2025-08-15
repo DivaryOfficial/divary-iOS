@@ -14,6 +14,16 @@
       "filename" : "Group 8893.png",
       "idiom" : "universal",
       "scale" : "3x"
+    },
+    {
+      "filename" : "로그인 바다.png",
+      "idiom" : "ipad",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "로그인 바다 1.png",
+      "idiom" : "ipad",
+      "scale" : "2x"
     }
   ],
   "info" : {

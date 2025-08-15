@@ -2,7 +2,18 @@
   "images" : [
     {
       "filename" : "tabBarOceanCatalogSelected.png",
-      "idiom" : "universal"
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "해양도감.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "해양도감 1.png",
+      "idiom" : "universal",
+      "scale" : "3x"
     }
   ],
   "info" : {

@@ -68,9 +68,7 @@ struct LoginView: View {
                     
                     // 기기별로 다른 여백 적용
                     Spacer()
-                        .frame(height: UIDevice.current.userInterfaceIdiom == .pad ?
-                               geometry.size.height * 0.2 :
-                               geometry.size.height * 0.1)
+                        .frame(height: geometry.size.height * 0.1)
                 }
             }
         }

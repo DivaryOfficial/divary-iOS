@@ -80,7 +80,7 @@ struct CharacterView: View {
                     let y: CGFloat = (-110 + storeViewOffset) * scaleY
 
                     // 상점 아이콘 (다른 컴포넌트와 동일한 방식)
-                    if isStoreView == false && customization.CharacterName != nil && customization.CharacterName?.isEmpty == false {
+                    if isStoreView == false && isPetEditingMode == false && customization.CharacterName != nil && customization.CharacterName?.isEmpty == false {
                         StoreButton(
                             scale: scale,
                             scaleX: scaleX,

@@ -20,6 +20,8 @@ struct PetView: View {
     let viewModel: CharacterViewModel
     let impactFeedback: () -> Void
 
+    // 기준 스케일 정의 (iPhone 16 Pro 기준)
+    private let baseScale: CGFloat = 1.0
     
     var body: some View {
         // 펫이 none이 아닌 경우에만 표시
@@ -27,9 +29,11 @@ struct PetView: View {
             let baseFrameSize: CGFloat = 160
             let frameSize = baseFrameSize * scale  // 스케일 적용
             
-            // 펫의 최종 위치 계산
-            let finalX = (customization.pet.offset.width * scale) + x + petDragOffset.width
-            let finalY = (customization.pet.offset.height * scale) + y + petDragOffset.height
+            // 펫의 최종 위치 계산 - 기준 스케일로 정규화
+            let normalizedOffsetX = customization.pet.offset.width * scale / baseScale
+            let normalizedOffsetY = customization.pet.offset.height * scale / baseScale
+            let finalX = normalizedOffsetX + x + petDragOffset.width
+            let finalY = normalizedOffsetY + y + petDragOffset.height
             let finalRotation = customization.pet.rotation + petTempRotation
             
             ZStack {
@@ -82,10 +86,13 @@ struct PetView: View {
                                 petDragOffset = value.translation
                             }
                             .onEnded { _ in
-                                // 최종 위치 저장
+                                // 기준 스케일로 정규화해서 저장
+                                let normalizedOffsetX = (customization.pet.offset.width * scale / baseScale + petDragOffset.width) * baseScale / scale
+                                let normalizedOffsetY = (customization.pet.offset.height * scale / baseScale + petDragOffset.height) * baseScale / scale
+                                
                                 let newOffset = CGSize(
-                                    width: customization.pet.offset.width + petDragOffset.width / scale,
-                                    height: customization.pet.offset.height + petDragOffset.height / scale
+                                    width: normalizedOffsetX,
+                                    height: normalizedOffsetY
                                 )
                                 let updatedPet = PetCustomization(
                                     type: customization.pet.type,
@@ -104,8 +111,8 @@ struct PetView: View {
                         .resizable()
                         .frame(width: frameSize, height: frameSize)
                         .rotationEffect(customization.pet.rotation)
-                        .offset(x: (customization.pet.offset.width * scale) + x,
-                               y: (customization.pet.offset.height * scale) + y)
+                        .offset(x: normalizedOffsetX + x,
+                               y: normalizedOffsetY + y)
                         .onTapGesture(count: 2) {
                             withAnimation(.easeInOut(duration: 0.3)) {
                                 isPetEditingMode = true

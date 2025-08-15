@@ -2,7 +2,18 @@
   "images" : [
     {
       "filename" : "TankYellow.png",
-      "idiom" : "universal"
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "Property 1=yellow.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "Property 1=yellow 1.png",
+      "idiom" : "universal",
+      "scale" : "3x"
     }
   ],
   "info" : {

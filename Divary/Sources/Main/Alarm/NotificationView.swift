@@ -141,6 +141,7 @@ struct NotificationRow: View {
                     Text(notification.category)
                         .font(Font.omyu.regular(size: 14))
                         .foregroundColor(Color.grayscale_g400)
+                        .padding(.bottom, 4)
                     
                     Text(notification.title)
                         .font(Font.omyu.regular(size: 20))

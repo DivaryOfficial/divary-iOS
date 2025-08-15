@@ -24,6 +24,7 @@ struct DivaryApp: App {
                             MainView()
                         case .logBookMain(let logBaseId):
                             LogBookMainView(logBaseId: logBaseId)
+                                .navigationBarBackButtonHidden(true)
                         case .CharacterViewWrapper:
                             CharacterViewWrapper()
                         case .Store(let viewModel):
@@ -48,6 +49,7 @@ struct DivaryApp: App {
                         }
                     }
             }
+            .navigationViewStyle(.stack)
             .environmentObject(container)
             .environment(\.diContainer, container)
         }

@@ -18,8 +18,8 @@ struct BuddyPetStore: View {
     ]
     
     var body: some View {
-        VStack(spacing: 22) {
-            ScrollView {
+        ScrollView {
+            LazyVStack(spacing: 22) {
                 // 물고기를 제외한 펫들
                 let nonFishPets = PetType.allCases.filter { $0 != .expectedGray && $0 != .expectedBlue }
                 
@@ -40,9 +40,11 @@ struct BuddyPetStore: View {
                         isFishSelected: $isFishSelected
                     )
                 }
-                .padding(.horizontal)
             }
+            .padding(.horizontal)
+            .padding(.top)
+            .padding(.bottom, 50)
         }
-        .padding(.vertical)
     }
+    
 }
