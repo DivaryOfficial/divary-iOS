@@ -9,6 +9,8 @@ import SwiftUI
 import Kingfisher
 
 struct OceanCreatureDetailView: View {
+    @Environment(\.diContainer) private var di
+    
     let creature: SeaCreatureDetail
     @State var selectedSection: SectionType = .appearance
     @State private var sectionAnchors: [SectionAnchor] = []
@@ -17,7 +19,21 @@ struct OceanCreatureDetailView: View {
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: 16) {
+                LazyVStack(alignment: .leading, spacing: 5) {
+                    ZStack {
+                        HStack {
+                            Button(action: { di.router.pop() }) {
+                                Image(.chevronLeft)
+                                    .foregroundStyle(.black)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding()
+                        }
+                        
+                        // 인덱스 중앙
+                        Text("해양도감")
+                            .font(.omyu.regular(size: 20))
+                    }
                     imageSlider
                     titleBlock
                     sectionButtons(proxy: proxy, selectedSection: $selectedSection)
@@ -39,8 +55,9 @@ struct OceanCreatureDetailView: View {
                 }
             }
             .coordinateSpace(name: "scroll")
-            .navigationTitle("해양도감")
-            .navigationBarTitleDisplayMode(.inline)
+            .toolbar(.hidden, for: .navigationBar)
+//            .navigationTitle("해양도감")
+//            .navigationBarTitleDisplayMode(.inline)
         }
     }
     
@@ -68,7 +85,7 @@ struct OceanCreatureDetailView: View {
             .overlay(
                 Text("\(currentIndex + 1)｜\(creature.imageUrls.count)")
                     .font(.NanumSquareNeo.NanumSquareNeoBold(size: 10))
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
                     .background(.black)
@@ -87,7 +104,7 @@ struct OceanCreatureDetailView: View {
                 .font(.omyu.regular(size: 24))
             Text(creature.type)
                 .font(.NanumSquareNeo.NanumSquareNeoBold(size: 14))
-                .foregroundColor(.grayscale_g600)
+                .foregroundStyle(Color.grayscale_g600)
                 .padding(.bottom)
 
             VStack {
@@ -208,9 +225,9 @@ struct DetailInfoBlock: View {
 
     var body: some View {
         HStack {
-            Text(title).font(.NanumSquareNeo.NanumSquareNeoBold(size: 12)).foregroundColor(Color(.grayscaleG600))
+            Text(title).font(.NanumSquareNeo.NanumSquareNeoBold(size: 12)).foregroundStyle(Color(.grayscaleG600))
                 .frame(width: 60, alignment: .leading)
-            Text(value).font(.NanumSquareNeo.NanumSquareNeoBold(size: 12)).foregroundColor(Color(.grayscaleG800))
+            Text(value).font(.NanumSquareNeo.NanumSquareNeoBold(size: 12)).foregroundStyle(Color(.grayscaleG800))
             Spacer()
         }
         .padding(.vertical, 4)
@@ -242,7 +259,7 @@ func DetailLine(_ title: String, _ value: String, colorCodes: [String] = []) -> 
                 ForEach(colorCodes, id: \.self) { hex in
                     Circle()
                         .frame(width: 20, height: 20)
-                        .foregroundColor(Color(hex: hex))
+                        .foregroundStyle(Color(hex: hex))
                         .overlay(
                             Circle().stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
                         )
@@ -250,7 +267,7 @@ func DetailLine(_ title: String, _ value: String, colorCodes: [String] = []) -> 
             }
             .padding(.bottom, 4)
         }
-        Text(value).font(.NanumSquareNeo.NanumSquareNeoBold(size: 14)).foregroundColor(Color(.grayscaleG700))
+        Text(value).font(.NanumSquareNeo.NanumSquareNeoBold(size: 14)).foregroundStyle(Color(.grayscaleG700))
     }
 }
 

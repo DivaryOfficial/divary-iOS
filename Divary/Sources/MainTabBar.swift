@@ -84,10 +84,20 @@ struct MainTabbarView: View {
 struct MyPageView: View {
     var body: some View {
         VStack {
-            Text("마이페이지")
-                .font(.title)
+            Spacer()
+            Text("마이페이지 오픈 예정!")
+                .font(Font.omyu.regular(size: 24))
+                .foregroundStyle(Color.grayscale_g700)
             Text("구현 예정")
-                .foregroundStyle(.gray)
+                .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
+                .foregroundStyle(Color.grayscale_g400)
+                      
+            Image("readyCharacter")
+                .resizable()
+                .frame(width: 200, height: 218)
+                .scaledToFit()
+            
+            Spacer()
         }
     }
 }

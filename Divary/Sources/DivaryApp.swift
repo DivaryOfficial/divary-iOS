@@ -25,33 +25,59 @@ struct DivaryApp: App {
                         case .logBookMain(let logBaseId):
                             LogBookMainView(logBaseId: logBaseId)
                                 .navigationBarBackButtonHidden(true)
+                        case .imageSelect(let viewModel, let framedImages):
+                            ImageSelectView(
+                                viewModel: viewModel,
+                                framedImages: framedImages,
+                                onComplete: { results in
+                                    if let editing = viewModel.editingImageBlock {
+                                        if let edited = results.first {
+                                            viewModel.updateImageBlock(id: editing.id, to: edited)
+                                        } else {
+                                            // 편집 중 빈 결과면 삭제
+                                            viewModel.deleteBlock(editing)
+                                        }
+                                        viewModel.editingImageBlock = nil
+                                    } else {
+                                        // 생성 모드: 여러 장 추가
+                                        viewModel.addImages(results)
+                                    }
+                                    container.router.pop()
+                                }
+                            )
+                        case .imageDeco(let framedImages/*, let currentIndex*/):
+                            ImageDecoView(framedImages: framedImages/*, currentIndex: currentIndex*/)
                         case .CharacterViewWrapper:
                             CharacterViewWrapper()
                         case .Store(let viewModel):
                             StoreMainView(viewModel: viewModel)
-                                .navigationBarBackButtonHidden(true)
+                                .toolbar(.hidden, for: .navigationBar)
                         case .notifications:
                             NotificationView()
                         case .MainTabBar:
                             MainTabbarView()
-                                .navigationBarBackButtonHidden(true)
+                                .toolbar(.hidden, for: .navigationBar)
                         case .chatBot:
                             ChatBotView()
-                                .navigationBarBackButtonHidden(true)
+                                .toolbar(.hidden, for: .navigationBar)
                         case .locationSearch:
                             LocationSearchView(
                                        currentValue: container.router.locationSearchText,
-                                       placeholder: "ë‹¤ì´ë¹™ ìŠ¤íŒŸ ê²€ìƒ‰",
+                                       placeholder: "다이빙 지역을 입력해주세요. ex) 강원도 강릉",
                                        onLocationSelected: { selectedLocation in
-                                           // ì„ íƒëœ ìœ„ì¹˜ë¥¼ AppRouterì— ì €ìž¥
                                            container.router.locationSearchText = selectedLocation
                                        }
                                    )
                                    .environment(\.diContainer, container)
-                            .navigationBarBackButtonHidden(true)
+                                   .toolbar(.hidden, for: .navigationBar)
+                        case .oceanCatalog:
+                            OceanCatalogView()
+                        case .oceanCreatureDetail(let creature):
+                            OceanCreatureDetailView(creature: creature)
                         }
                     }
             }
+            .navigationViewStyle(.stack)
             .environmentObject(container)
             .environment(\.diContainer, container)
         }

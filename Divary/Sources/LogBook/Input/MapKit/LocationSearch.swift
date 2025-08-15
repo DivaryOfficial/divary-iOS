@@ -21,7 +21,7 @@ struct LocationSearchView: View {
     let placeholder: String
     let onLocationSelected: (String) -> Void
     
-    init(currentValue: String = "", placeholder: String = "다이빙 스팟 검색", onLocationSelected: @escaping (String) -> Void) {
+    init(currentValue: String = "", placeholder: String = "다이빙 지역을 입력해주세요. ex) 강원도 강릉", onLocationSelected: @escaping (String) -> Void) {
         self._searchText = State(initialValue: currentValue)
         self.placeholder = placeholder
         self.onLocationSelected = onLocationSelected
@@ -35,24 +35,26 @@ struct LocationSearchView: View {
             SearchBar(text: $searchText, placeholder: placeholder, onTextChanged: handleSearch)
             
             // 결과 리스트
-            List {
-                // 검색어가 없을 때 주변 다이빙 스팟 섹션
-                if searchText.isEmpty {
-                    Section {
+            ScrollView {
+                LazyVStack(spacing: 0) {
+                    // 검색어가 없을 때 주변 다이빙 스팟 섹션
+                    if searchText.isEmpty {
                         if isLoadingNearbySpots {
                             HStack {
                                 ProgressView()
                                     .scaleEffect(0.8)
                                 Text("주변 다이빙 스팟을 찾고 있습니다...")
-                                    .foregroundColor(.secondary)
-                                    .font(.system(size: 14))
+                                    .foregroundStyle(.secondary)
+                                    .font(Font.omyu.regular(size: 14))
                                 Spacer()
                             }
-                            .padding(.vertical, 8)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 16)
                         } else if searchResults.isEmpty {
                             Text("주변 다이빙 스팟을 찾을 수 없습니다")
-                                .foregroundColor(.secondary)
-                                .padding()
+                                .foregroundStyle(.secondary)
+                                .padding(.horizontal, 12)
+                                .font(Font.omyu.regular(size: 16))
                         } else {
                             ForEach(searchResults, id: \.self) { item in
                                 LocationRowView(
@@ -62,45 +64,49 @@ struct LocationSearchView: View {
                                         selectLocation(item)
                                     }
                                 )
-                                .listRowSeparator(.hidden)
+                                
+                                // 마지막 아이템이 아닐 때만 Divider 표시
+                                if item != searchResults.last {
+                                    Divider()
+                                        .padding(.horizontal, 12)
+                                }
                             }
                         }
-                    } header: {
-                        HStack {
-                            Image(systemName: "location.circle")
-                                .foregroundColor(.blue)
-                            Text("주변 스쿠버 다이빙 스팟")
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(.primary)
-                            Spacer()
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.top, 8)
-                    }
-                } else {
-                    // 검색 결과
-                    if searchResults.isEmpty {
-                        Text("검색 결과가 없습니다")
-                            .foregroundColor(.secondary)
-                            .padding()
                     } else {
-                        ForEach(searchResults, id: \.self) { item in
-                            LocationRowView(
-                                item: item,
-                                currentLocation: locationManager.location,
-                                onTap: {
-                                    selectLocation(item)
+                        // 검색 결과
+                        if searchResults.isEmpty {
+                            Text("검색 결과가 없습니다")
+                                .foregroundStyle(.secondary)
+                                .font(Font.omyu.regular(size: 16))
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 16)
+                        } else {
+                            ForEach(searchResults, id: \.self) { item in
+                                VStack(spacing: 0) {
+                                    LocationRowView(
+                                        item: item,
+                                        currentLocation: locationManager.location,
+                                        onTap: {
+                                            selectLocation(item)
+                                        }
+                                    )
+                                    
+                                    // 마지막 아이템이 아닐 때만 Divider 표시
+                                    if item != searchResults.last {
+                                        Divider()
+                                            .padding(.horizontal, 12)
+                                    }
                                 }
-                            )
-                            .listRowSeparator(.hidden)
+                            }
                         }
                     }
                 }
             }
-            .listStyle(.plain)
         }
-        .navigationBarTitleDisplayMode(.inline)
-        .onAppear {
+//        .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .navigationBar)
+//        .task {
+        .task {
             locationManager.requestPermission()
             if searchText.isEmpty {
                 Task {
@@ -472,11 +478,12 @@ struct SearchBar: View {
     var body: some View {
         HStack(spacing: 8) {
             Image(systemName: "magnifyingglass")
-                .foregroundColor(.gray)
+                .foregroundStyle(.gray)
                 .font(.system(size: 16))
             
             TextField(placeholder, text: $text)
-                .font(.system(size: 16))
+                .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
+                .foregroundStyle(Color.bw_black)
                 .onChange(of: text) { oldValue, newValue in
                     onTextChanged(newValue)
                 }
@@ -487,17 +494,17 @@ struct SearchBar: View {
                     onTextChanged("")
                 }) {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.gray)
+                        .foregroundStyle(.gray)
                         .font(.system(size: 16))
                 }
             }
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
-        .background(Color(.systemGray6))
+        .padding(.horizontal, 20)
+        .padding(.vertical, 12)
+        .background(Color.grayscale_g100)
         .cornerRadius(8)
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
+        .padding(.horizontal, 12)
+        .padding(.bottom, 8)
     }
 }
 
@@ -507,51 +514,23 @@ struct LocationRowView: View {
     let onTap: () -> Void
     
     var body: some View {
-        HStack(spacing: 12) {
-            // 다이빙 관련 아이콘
-            Image(systemName: isDivingRelated ? "figure.pool.swim" : "location.fill")
-                .foregroundColor(isDivingRelated ? .blue : .gray)
-                .font(.system(size: 16))
-                .frame(width: 24)
-            
-            VStack(alignment: .leading, spacing: 2) {
+        HStack(spacing: 0) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(item.name ?? "위치")
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(.primary)
+                    .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
+                    .foregroundStyle(Color.bw_black)
                 
                 if let address = formattedAddress {
                     Text(address)
-                        .font(.system(size: 14))
-                        .foregroundColor(.secondary)
-                        .lineLimit(2)
-                }
-                
-                // 다이빙 관련 태그 표시
-                if isDivingRelated {
-                    HStack {
-                        Text("🤿 다이빙 스팟")
-                            .font(.system(size: 12))
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 2)
-                            .background(Color.blue.opacity(0.1))
-                            .foregroundColor(.blue)
-                            .cornerRadius(4)
-                        Spacer()
-                    }
+                        .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 10))
+                        .foregroundStyle(Color.grayscale_g400)
                 }
             }
             
             Spacer()
-            
-            // 거리 표시
-            if let distance = distanceText {
-                Text(distance)
-                    .font(.system(size: 12))
-                    .foregroundColor(.secondary)
-            }
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 16)
         .contentShape(Rectangle())
         .onTapGesture {
             onTap()

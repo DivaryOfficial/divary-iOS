@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct ImageSelectView: View {
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.diContainer) private var container
+//    @Environment(\.dismiss) private var dismiss
     
     @Bindable var viewModel: DiaryMainViewModel
     @State var framedImages: [FramedImageContent]
@@ -25,14 +26,14 @@ struct ImageSelectView: View {
             imageSlideGroup
             footerBar
         }
-        .navigationDestination(isPresented: $showImageDecoView) {
-            ImageDecoView(framedImages: framedImages,
-                currentIndex: $currentIndex,
-                onApply: { edited in
-                    self.framedImages = edited
-                }
-            )
-        }
+//        .navigationDestination(isPresented: $showImageDecoView) {
+//            ImageDecoView(framedImages: framedImages,
+////                currentIndex: $currentIndex,
+//                onApply: { edited in
+//                    self.framedImages = edited
+//                }
+//            )
+//        }
         .overlay {
             if showDeletePopup {
                 DeletePopupView(
@@ -49,11 +50,15 @@ struct ImageSelectView: View {
                             
                             if framedImages.isEmpty {
                                 showDeletePopup = false
-                                if let onComplete = onComplete {
-                                    onComplete([]) // 메인뷰에 삭제 신호 보내기
+//                                if let onComplete = onComplete {
+//                                    onComplete([]) // 메인뷰에 삭제 신호 보내기
+//                                }
+                                if let editing = viewModel.editingImageBlock {
+                                    viewModel.deleteBlock(editing)       // 편집 중이던 블록 삭제
+                                    viewModel.editingImageBlock = nil
                                 }
-                                dismiss()
-                                
+//                                dismiss()
+                                container.router.pop()
                                 return
                             }
                             
@@ -66,19 +71,23 @@ struct ImageSelectView: View {
                 )
             }
         }
-        .onAppear {
+//        .task {
+        .task {
             for (i, f) in framedImages.enumerated() {
                 print("[\(i)] hasLocal=\(f.originalData != nil) temp=\(f.tempFilename ?? "nil") imageNil=\(f.image == nil)")
             }
         }
-
+        .toolbar(.hidden, for: .navigationBar)
     }
     
     private var imageSlideGroup: some View {
         VStack {
             ZStack {
                 HStack {
-                    Button(action: { dismiss() }) {
+                    Button(action: {
+//                        dismiss()
+                        container.router.pop()
+                    }) {
                         Image(.chevronLeft)
                             .foregroundStyle(.black)
                     }
@@ -122,19 +131,33 @@ struct ImageSelectView: View {
             Spacer()
             
             Button(action: {
-                showImageDecoView = true
+//                showImageDecoView = true
+                container.router.push(.imageDeco(framedImages: framedImages))
             }) {
                 FooterItem(image: Image(.deco), title: "꾸미기")
             }
             
             Button(action: {
 //                viewModel.addImages(framedImages)
-                if let onComplete = onComplete {
-                    onComplete(framedImages)   // ✅ 콜백 실행
-                } else {
+                
+//                if let onComplete = onComplete {
+//                    onComplete(framedImages)   // 콜백 실행
+//                }
+                if let editing = viewModel.editingImageBlock {
+                    if let edited = framedImages.first {
+                        viewModel.updateImageBlock(id: editing.id, to: edited) // 기존 블록 교체
+                    } else {
+                        viewModel.deleteBlock(editing) // 편집 중 결과 없으면 삭제
+                    }
+                    viewModel.editingImageBlock = nil
+                }
+                else {
                     viewModel.addImages(framedImages) // 기존 로직
                 }
-                dismiss()
+//                dismiss()
+                viewModel.hasUnsavedChanges = true
+                viewModel.recomputeCanSave()
+                container.router.pop()
             }) {
                 FooterItem(image: Image(.upload), title: "업로드")
             }

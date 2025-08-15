@@ -85,7 +85,8 @@ struct CalenderView: View {
                 }
             }
         )
-        .onAppear {
+//        .task {
+        .task {
             loadExistingLogs()
         }
     }
@@ -138,7 +139,7 @@ struct CalenderView: View {
                     VStack(spacing: 8) {
                         Text("년도")
                             .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
-                            .foregroundColor(.gray)
+                            .foregroundStyle(.gray)
                         
                         Picker("년도", selection: $selectedYear) {
                             ForEach(availableYears, id: \.self) { year in
@@ -156,7 +157,7 @@ struct CalenderView: View {
                     VStack(spacing: 8) {
                         Text("월")
                             .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
-                            .foregroundColor(.gray)
+                            .foregroundStyle(.gray)
                         
                         Picker("월", selection: $selectedMonthIndex) {
                             ForEach(0..<12, id: \.self) { index in
@@ -183,7 +184,7 @@ struct CalenderView: View {
                             showDatePicker = false
                         }
                     }
-                    .foregroundColor(.gray)
+                    .foregroundStyle(.gray)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
                     .background(
@@ -197,7 +198,7 @@ struct CalenderView: View {
                             showDatePicker = false
                         }
                     }
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
                     .background(

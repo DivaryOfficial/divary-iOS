@@ -8,14 +8,16 @@
 import SwiftUI
 
 struct ImageDecoView: View {
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.diContainer) private var container
+//    @Environment(\.dismiss) private var dismiss
     
     @State var framedImages: [FramedImageContent]
     @State private var originalImagesCopied: [FramedImageContent] = [] // 변경 내용 원상복귀용 임시 배열(스냅샷)
     @State var selectedFrame: FrameColor = .origin
     
     @State private var showDeletePopup = false
-    @Binding var currentIndex: Int
+//    @Binding var currentIndex: Int
+    @State var currentIndex: Int = 0
     
     var onApply: ([FramedImageContent]) -> Void = { _ in }
     var onCancel: () -> Void = {}
@@ -28,11 +30,12 @@ struct ImageDecoView: View {
             Spacer()
             FrameSelectBar(selectedFrame: $selectedFrame)
         }
-        .navigationBarBackButtonHidden(true)
+//        .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
         .task {
             if originalImagesCopied.isEmpty {
                 originalImagesCopied = framedImages.deepCopied()   // 원본 저장
-                framedImages  = framedImages.deepCopied()    // 편집은 복사본에서만
+//                framedImages  = framedImages.deepCopied()    // 편집은 복사본에서만
             }
         }
         .overlay {
@@ -41,8 +44,18 @@ struct ImageDecoView: View {
                     isPresented: $showDeletePopup,
                     deleteText: "지금 돌아가면 변경 내용이 모두 삭제됩니다.",
                     onDelete: { // 원상복귀
-                        onCancel()
-                        dismiss()
+//                        onCancel()
+//                        dismiss()
+                        for (i, backup) in originalImagesCopied.enumerated() where framedImages.indices.contains(i) {
+                            let target = framedImages[i]
+                            target.caption = backup.caption
+                            target.frameColor = backup.frameColor
+                            target.date = backup.date
+                            target.image = backup.image
+                            target.originalData = backup.originalData
+                            target.tempFilename = backup.tempFilename
+                        }
+                        container.router.pop()
                     }
                 )
             }
@@ -66,8 +79,10 @@ struct ImageDecoView: View {
             
             Spacer()
             Button(action: {
-                onApply(framedImages.deepCopied())
-                dismiss()
+//                onApply(framedImages.deepCopied())
+                onApply(framedImages)
+//                dismiss()
+                container.router.pop()
             }) {
                 Image(.check)
             }
@@ -96,5 +111,6 @@ struct ImageDecoView: View {
         FramedImageContent(image: Image("testImage"), caption: "바다거북이와의 첫만남!", frameColor: .pastelBlue, date: "2025.08.07 7:32")
     ]
     
-    ImageDecoView(framedImages: testImages, currentIndex: $index)
+//    ImageDecoView(framedImages: testImages, currentIndex: $index)
+    ImageDecoView(framedImages: testImages)
 }

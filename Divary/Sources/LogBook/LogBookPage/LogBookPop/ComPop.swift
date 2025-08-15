@@ -19,7 +19,7 @@ struct ComPop: View {
                 Button(action: onClose) {
                     Image(systemName: "xmark")
                         .font(.system(size: 20, weight: .medium))
-                        .foregroundColor(.bw_black)
+                        .foregroundStyle(Color.bw_black)
                         .frame(width: 32, height: 32)
                 }
             }
@@ -30,7 +30,7 @@ struct ComPop: View {
                 
                 Text("기록이 모두 저장되었어요.\n멋진 로그가 완성되었네요!")
                     .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 16))
-                    .foregroundColor(.bw_black)
+                    .foregroundStyle(Color.bw_black)
                     .multilineTextAlignment(.center)
                 
             }

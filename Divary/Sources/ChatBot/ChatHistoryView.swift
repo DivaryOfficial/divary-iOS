@@ -35,7 +35,7 @@ struct ChatHistoryView: View {
                 }) {
                     Image(systemName: "xmark")
                         .font(.system(size: 18))
-                        .foregroundColor(.primary)
+                        .foregroundStyle(.primary)
                 }
             }
             .padding(.horizontal, 20)
@@ -53,11 +53,11 @@ struct ChatHistoryView: View {
                         searchText = ""
                     }) {
                         Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(.gray)
+                            .foregroundStyle(.gray)
                     }
                 } else {
                     Image(systemName: "magnifyingglass")
-                        .foregroundColor(.bw_black)
+                        .foregroundStyle(Color.bw_black)
                 }
             }
             .padding(.horizontal, 16)
@@ -103,7 +103,7 @@ struct ChatHistoryView: View {
             Spacer()
         }
         .background(Color(.systemBackground))
-        .onAppear {
+        .task {
             loadChatRooms()
         }
     }

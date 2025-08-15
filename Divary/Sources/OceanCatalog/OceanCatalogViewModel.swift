@@ -11,6 +11,7 @@ import Combine
 @Observable
 class OceanCatalogViewModel {
     
+    
     var service = OceanCatalogService()
     private var cancellable: Set<AnyCancellable> = Set<AnyCancellable>()
     
@@ -21,6 +22,7 @@ class OceanCatalogViewModel {
     var creatureCards: [CreatureCardEntity] = []
     var creatureCardDetail: CreatureCardEntity?
     
+    var isLoadingList = false
     var isLoadingDetail = false
     var lastDetail: SeaCreatureDetail?
     
@@ -37,16 +39,23 @@ class OceanCatalogViewModel {
     }
     
     func getCardList(type: String) {
+        isLoadingList = true
         service.getCardList(type: type)
-            .sinkHandledCompletion(receiveValue: { [weak self] creatureCardEntities in
-                print(creatureCardEntities)
-                self?.creatureCards = creatureCardEntities
-            })
+//            .sinkHandledCompletion(receiveValue: { [weak self] creatureCardEntities in
+//                print(creatureCardEntities)
+//                self?.creatureCards = creatureCardEntities
+//            })
+            .sink(receiveCompletion: { [weak self] comp in
+               self?.isLoadingList = false
+               if case let .failure(err) = comp { print("list error:", err) }
+           }, receiveValue: { [weak self] creatureCardEntities in
+               self?.creatureCards = creatureCardEntities
+           })
             .store(in: &cancellable)
     }
     
     // 최초 진입 시 호출
-    func onAppear() {
+    func task() {
         if creatureCards.isEmpty {
             fetchByCategory()
         }
@@ -55,10 +64,17 @@ class OceanCatalogViewModel {
     // 카테고리별 호출
     func fetchByCategory() {
         let typeParam: String? = selectedCategory == .all ? nil : apiType(from: selectedCategory)
+        isLoadingList = true
         service.getCardList(type: typeParam)
-            .sinkHandledCompletion(receiveValue: { [weak self] list in
-                self?.creatureCards = list
-            })
+//            .sinkHandledCompletion(receiveValue: { [weak self] list in
+//                self?.creatureCards = list
+//            })
+            .sink(receiveCompletion: { [weak self] comp in
+               self?.isLoadingList = false
+               if case let .failure(err) = comp { print("list error:", err) }
+           }, receiveValue: { [weak self] list in
+               self?.creatureCards = list
+           })
             .store(in: &cancellable)
     }
 

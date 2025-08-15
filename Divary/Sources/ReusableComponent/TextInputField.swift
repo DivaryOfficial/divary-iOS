@@ -71,22 +71,19 @@ struct LocationTextInputField: View {
                 }) {
                     if unit == "돋보기" {
                         Image("humbleicons_search")
-                            .foregroundColor(Color.bw_black)
+                            .foregroundStyle(Color.bw_black)
                             .font(.system(size: 16))
                     } else {
                         Text(unit)
-                            .foregroundColor(Color.bw_black)
+                            .foregroundStyle(Color.bw_black)
                             .font(.system(size: 16))
                     }
                 }
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 12)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                    .background(Color(.systemGray6))
-            )
+            .background(Color.grayscale_g100)
+            .cornerRadius(8)
         }
         .onReceive(container.router.$locationSearchText) { searchText in
             if !searchText.isEmpty {

@@ -14,6 +14,16 @@
       "filename" : "BackgroundCoralForest3x.png",
       "idiom" : "universal",
       "scale" : "3x"
+    },
+    {
+      "filename" : "image 177.png",
+      "idiom" : "ipad",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "image 178.png",
+      "idiom" : "ipad",
+      "scale" : "2x"
     }
   ],
   "info" : {

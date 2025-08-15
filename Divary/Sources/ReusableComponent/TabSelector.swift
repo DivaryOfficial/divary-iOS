@@ -16,8 +16,8 @@ struct TabSelector<T: Hashable & CaseIterable & RawRepresentable>: View where T.
         HStack(spacing: 8) {
             ForEach(tabs, id: \.self) { tab in
                 let isSelected = selectedTab == tab
-                let foregroundStyle = isSelected ? Color.white : Color.gray
-                let backgroundColor = isSelected ? Color.blue : Color.gray.opacity(0.2)
+                let foregroundStyle = isSelected ? Color.white : Color.grayscale_g400
+                let backgroundColor = isSelected ? Color.primary_sea_blue : Color.grayscale_g100
 
                 Button(action: {
                     selectedTab = tab

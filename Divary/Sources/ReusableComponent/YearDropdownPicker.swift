@@ -26,10 +26,10 @@ struct YearDropdownPicker: View {
                 HStack {
                     Text("\(String(selectedYear))년")
                         .font(Font.omyu.regular(size: 20))
-                        .foregroundColor(.black)
+                        .foregroundStyle(.black)
                     Spacer()
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                        .foregroundColor(.black)
+                        .foregroundStyle(.black)
                         .font(.system(size: 14, weight: .bold))
                 }
                 .padding(.horizontal, 16)
@@ -47,7 +47,7 @@ struct YearDropdownPicker: View {
                             }) {
                                 Text("\(String(item))년")
                                     .font(Font.omyu.regular(size: 20))
-                                    .foregroundColor(.black)
+                                    .foregroundStyle(.black)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .padding(.horizontal, 16)
                                     .padding(.vertical, 10)

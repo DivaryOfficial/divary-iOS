@@ -23,7 +23,6 @@ import SwiftUI
                 Text(title)
                     .font(Font.omyu.regular(size: 20))
                     .foregroundStyle(Color.bw_black)
-                    .padding(.horizontal)
 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 12) {

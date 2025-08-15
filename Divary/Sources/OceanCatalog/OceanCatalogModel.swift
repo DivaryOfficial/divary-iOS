@@ -26,7 +26,7 @@ enum SeaCreatureCategory: String, CaseIterable, Identifiable {
 }
 
 // MARK: - Main Data Model
-struct SeaCreatureDetail: Codable, Identifiable, Equatable, Entity {
+struct SeaCreatureDetail: Codable, Identifiable, Equatable, Entity, Hashable {
     let id: Int
     let name: String
     let type: String
@@ -55,7 +55,7 @@ extension SeaCreatureDetail {
 }
 
 // MARK: - Appearance
-struct Appearance: Equatable, Entity {
+struct Appearance: Equatable, Entity, Hashable {
     let body: String
     let colorCodes: [String]
     let color: String
@@ -64,7 +64,7 @@ struct Appearance: Equatable, Entity {
 }
 
 // MARK: - Personality
-struct Personality: Equatable, Entity {
+struct Personality: Equatable, Entity, Hashable {
     let activity: String
     let socialSkill: String
     let behavior: String
@@ -72,7 +72,7 @@ struct Personality: Equatable, Entity {
 }
 
 // MARK: - Significant Traits
-struct Significant: Equatable, Entity {
+struct Significant: Equatable, Entity, Hashable {
     let toxicity: String
     let strategy: String
     let observeTip: String

@@ -43,7 +43,7 @@ struct LoginView: View {
                     }) {
                         Text("테스트 계정")
                             .font(.system(size: 15, weight: .semibold))
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 12)
                             .background(Color.gray.opacity(0.8))
@@ -61,16 +61,14 @@ struct LoginView: View {
                     // 로그인 에러 표시
                     if let errorMessage = viewModel.loginError {
                         Text(errorMessage)
-                            .foregroundColor(.red)
+                            .foregroundStyle(.red)
                             .font(.caption)
                             .padding()
                     }
                     
                     // 기기별로 다른 여백 적용
                     Spacer()
-                        .frame(height: UIDevice.current.userInterfaceIdiom == .pad ?
-                               geometry.size.height * 0.2 :
-                               geometry.size.height * 0.1)
+                        .frame(height: geometry.size.height * 0.1)
                 }
             }
         }

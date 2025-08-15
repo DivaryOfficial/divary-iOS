@@ -11,6 +11,7 @@ import PencilKit
 
 struct DrawingScreenView: UIViewRepresentable { // 그렸던 그림 띄워주는 뷰 (그리기 불가, 보여주기용)
     let drawing: PKDrawing
+    let offsetY: CGFloat
 
     func makeUIView(context: Context) -> PKCanvasView {
         let canvas = PKCanvasView()
@@ -18,6 +19,7 @@ struct DrawingScreenView: UIViewRepresentable { // 그렸던 그림 띄워주는
         canvas.isUserInteractionEnabled = false // 읽기 전용
         canvas.backgroundColor = .clear
         canvas.isOpaque = false
+        canvas.contentOffset.y = offsetY
         return canvas
     }
 

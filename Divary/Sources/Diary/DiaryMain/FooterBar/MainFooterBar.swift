@@ -46,17 +46,20 @@ struct MainFooterBar: View {
             }
             .disabled(viewModel.editingTextBlock == nil)
             
-            Button(action: {}) {
+            Button(action: { footerBarType = .sticker }) {
                 Image(.sticker)
             }
             
             Button(action: { showCanvas = true }) {
                 Image(.pencil)
             }
+//            .disabled(isRichTextEditorFocused.wrappedValue)
+            .disabled(viewModel.editingTextBlock != nil)
             
             Spacer()
             
             if viewModel.editingTextBlock == nil {
+                // 키보드 올리기 버튼
                 Button(action: {
                     DispatchQueue.main.async {
                         // 1) 블록 추가(상태 변경)
@@ -71,6 +74,7 @@ struct MainFooterBar: View {
                     Image(.keyboard1)
                 }
             } else {
+                // 키보드 내리기 버튼
                 Button(action: {
                     // 1) 편집 저장(상태 변경)
                     viewModel.saveCurrentEditingBlock()

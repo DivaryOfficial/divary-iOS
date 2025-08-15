@@ -34,7 +34,7 @@ struct NewLogCreationView: View {
                     }) {
                         Image(systemName: "xmark")
                             .font(.system(size: 20))
-                            .foregroundColor(.black)
+                            .foregroundStyle(.black)
                             .padding(12)
                     }
                 }
@@ -75,15 +75,8 @@ struct NewLogCreationView: View {
             
             // 로딩 인디케이터
             if viewModel.isLoading {
-                Color.black.opacity(0.3)
-                    .ignoresSafeArea()
-                
-                ProgressView("처리 중...")
-                    .progressViewStyle(CircularProgressViewStyle())
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(Color.black.opacity(0.7))
-                    .cornerRadius(10)
+//                LoadingOverlayTemp(text: "로딩 중...")
+                LoadingOverlay(message: "로딩 중...")
             }
         }
         .alert("오류", isPresented: .constant(viewModel.errorMessage != nil)) {
@@ -125,7 +118,7 @@ struct NewLogCalendarView: View {
             .frame(maxWidth: .infinity)
             .padding()
             .background(Color.primary_sea_blue)
-            .foregroundColor(.white)
+            .foregroundStyle(.white)
             .cornerRadius(8)
             .padding(.horizontal)
             .padding(.bottom, 20)
@@ -163,7 +156,7 @@ struct ExistingLogConfirmView: View {
                 .frame(maxWidth: .infinity)
                 .padding()
                 .background(Color.primary_sea_blue)
-                .foregroundColor(.white)
+                .foregroundStyle(.white)
                 .cornerRadius(8)
                 
                 Button("날짜 다시 선택") {
@@ -173,7 +166,7 @@ struct ExistingLogConfirmView: View {
                 .frame(maxWidth: .infinity)
                 .padding()
                 .background(Color.grayscale_g100)
-                .foregroundColor(Color.grayscale_g500)
+                .foregroundStyle(Color.grayscale_g500)
                 .cornerRadius(8)
             }
             .padding(.horizontal)

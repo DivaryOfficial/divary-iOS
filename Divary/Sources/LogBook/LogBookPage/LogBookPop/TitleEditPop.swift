@@ -27,13 +27,13 @@ struct TitleEditPopup: View {
                 // 제목
                 Text("로그북 제목 수정")
                     .font(Font.omyu.regular(size: 20))
-                    .foregroundColor(.black)
+                    .foregroundStyle(.black)
                 
                 // 텍스트 입력 필드
                 VStack(alignment: .leading, spacing: 8) {
                     Text("제목")
                         .font(Font.omyu.regular(size: 16))
-                        .foregroundColor(.grayscale_g600)
+                        .foregroundStyle(Color.grayscale_g600)
                     
                     TextField("로그북 제목을 입력하세요", text: $title)
                         .font(Font.omyu.regular(size: 16))
@@ -56,7 +56,7 @@ struct TitleEditPopup: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
                     .background(Color.grayscale_g200)
-                    .foregroundColor(.grayscale_g500)
+                    .foregroundStyle(Color.grayscale_g500)
                     .cornerRadius(8)
                     
                     // 저장 버튼
@@ -68,7 +68,7 @@ struct TitleEditPopup: View {
                     .padding(.vertical, 12)
                     .background(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?
                                Color.grayscale_g300 : Color.primary_sea_blue)
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
                     .cornerRadius(8)
                     .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
@@ -79,7 +79,8 @@ struct TitleEditPopup: View {
             .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
             .padding(.horizontal, 40)
         }
-        .onAppear {
+//        .task {
+        .task {
             // 팝업이 나타날 때 자동으로 키보드 포커스
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 isTextFieldFocused = true
