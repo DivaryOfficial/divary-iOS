@@ -62,13 +62,13 @@ struct EquipmentInputView: View {
                             
                             HStack{
                                 IconSuitButton(
-                                    options: SuitType.allDisplayNames,
-                                    selected: equipment.suitType,
-                                    imageProvider: suitTypeImage(for:),
-                                    onSelect: { equipment.suitType = $0 },
-                                    size: 30,
-                                    isImage: true
-                                )
+                                        options: SuitType.allDisplayNames,
+                                        selected: equipment.suitType,
+                                        imageProvider: suitTypeImage(for:),
+                                        onSelect: { equipment.suitType = $0 },
+                                        size: 30,
+                                        isImage: true
+                                    )
                             }
                         }
                         
@@ -139,9 +139,20 @@ struct IconSuitButton: View {
     let size: CGFloat
     var isImage: Bool = false
     
+    // 화면 크기에 따른 버튼 크기 계산
+    private var buttonSize: CGFloat {
+        let screenWidth = UIScreen.main.bounds.width
+        
+        if screenWidth >= 768 { // 아이패드
+            return 190
+        } else { // 아이폰
+            return 80
+        }
+    }
+    
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: true) {
-            HStack(spacing: 10) {
+        ScrollView(.horizontal, showsIndicators: false) {
+            LazyHStack(spacing: 12) {
                 ForEach(options, id: \.self) { option in
                     
                     Button(action: {
@@ -170,7 +181,7 @@ struct IconSuitButton: View {
                             Spacer()
                         }
                         .padding(10)
-                        .frame(width: 80, height: 84) // 정사각형 고정 크기
+                        .frame(width: buttonSize, height: buttonSize) // 디바이스별 고정 크기
                         .background(
                             RoundedRectangle(cornerRadius: 10)
                                 .stroke(
@@ -179,9 +190,11 @@ struct IconSuitButton: View {
                         )
                         .foregroundStyle(selected == option ? Color.primary_sea_blue : Color.grayscale_g300)
                     }
+                    .buttonStyle(PlainButtonStyle())
                 }
             }
             .padding(.horizontal, 16)
         }
+        .clipped()
     }
 }
