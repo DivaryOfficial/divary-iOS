@@ -79,7 +79,8 @@ struct TitleEditPopup: View {
             .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
             .padding(.horizontal, 40)
         }
-        .onAppear {
+//        .onAppear {
+        .task {
             // 팝업이 나타날 때 자동으로 키보드 포커스
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 isTextFieldFocused = true

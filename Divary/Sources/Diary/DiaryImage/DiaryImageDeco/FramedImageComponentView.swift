@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Kingfisher
 
 struct FramedImageComponentView: View {
     @ObservedObject var framedImage: FramedImageContent
@@ -34,14 +35,6 @@ struct FramedImageComponentView: View {
                             .cornerRadius(8)
                             .padding(.top, 18)
                             .padding(.bottom, 16)
-//                        framedImage.image
-//                            .resizable()
-//                            .scaledToFill()
-//                            .frame(width: 230, height: 230)
-//                            .clipped()
-//                            .cornerRadius(8)
-//                            .padding(.top, 15)
-//                            .padding(.bottom, 16)
                         
                         VStack(alignment: .leading, spacing: 7) {
                             if isEditing {
@@ -78,17 +71,13 @@ struct FramedImageComponentView: View {
         }
         // 2) 그 외엔 서버/임시 URL
         else if let urlStr = framedImage.tempFilename, let url = URL(string: urlStr), !urlStr.isEmpty {
-            AsyncImage(url: url) { phase in
-                switch phase {
-                case .success(let image):
-                    image.resizable().scaledToFill()
-                case .empty:
-                    ProgressView()
-                default:
-                    Image(systemName: "photo").resizable().scaledToFill()
-                }
-            }
-        } else {
+            KFImage(url)
+                .placeholder { ProgressView() }
+                .cancelOnDisappear(true)
+                .resizable()
+                .scaledToFill()
+        }
+        else {
             (framedImage.image ?? Image(systemName: "photo")).resizable().scaledToFill()
         }
     }

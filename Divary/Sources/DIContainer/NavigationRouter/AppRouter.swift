@@ -12,10 +12,14 @@ enum Route: Hashable {
     case MainTabBar
     case main
     case logBookMain(logBaseId: String)
+    case imageSelect(viewModel: DiaryMainViewModel, framedImages: [FramedImageContent])
+    case imageDeco(framedImages: [FramedImageContent]/*, currentIndex: Int*/)
     case CharacterViewWrapper
     case Store(viewModel: CharacterViewModel)
     case notifications
     case locationSearch
+    case oceanCatalog
+    case oceanCreatureDetail(creature: SeaCreatureDetail)
     case chatBot
 }
 

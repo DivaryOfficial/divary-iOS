@@ -63,11 +63,14 @@ struct LogBookMainView: View {
                         if selectedTab == .diary, diaryVM.hasUnsavedChanges {
                             pendingDiaryExit = .back
                             showDiaryLeavePopup = true
-                        } else {
-                            dismiss()
                         }
-                      // 라우터 pop으로 일원화
-                      container.router.pop()
+                        else if selectedTab == .logbook {
+                            container.router.pop()
+                        }
+                        else {
+//                            dismiss()
+                            container.router.pop()
+                        }
                     },
 //                    isTempSaved: (selectedTab == .diary ? diaryVM.canSave : viewModel.hasFrontendChanges),
                     isTempSaved: (selectedTab == .diary
@@ -198,7 +201,8 @@ struct LogBookMainView: View {
                         DispatchQueue.main.async {
                             switch action {
                             case .back:
-                                dismiss()
+//                                dismiss()
+                                container.router.pop()
                             case .switchToLogbook:
                                 selectedTab = .logbook
                             case .none:
@@ -244,17 +248,9 @@ struct LogBookMainView: View {
             }
 
             // 로딩 인디케이터
-            if viewModel.isLoading {
-                Color.black.opacity(0.3)
-                    .ignoresSafeArea()
-
-                ProgressView("처리 중...")
-                    .progressViewStyle(CircularProgressViewStyle())
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(Color.black.opacity(0.7))
-                    .cornerRadius(10)
-                    .zIndex(40)
+            if viewModel.isLoading || diaryVM.isLoading {
+                LoadingOverlay(message: "로딩 중...")
+//                LoadingOverlayTemp(text: "로딩 중...")
             }
         }
         .alert("오류", isPresented: .constant(viewModel.errorMessage != nil)) {
@@ -275,7 +271,7 @@ struct LogBookMainView: View {
                 showDiaryLeavePopup = true
             }
         }
-
+        .toolbar(.hidden, for: .navigationBar)
     }
 }
 

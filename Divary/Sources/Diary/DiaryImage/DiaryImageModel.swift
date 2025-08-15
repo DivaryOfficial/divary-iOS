@@ -8,15 +8,15 @@
 import Foundation
 import SwiftUI
 
-final class FramedImageContent: ObservableObject, Identifiable {
+final class FramedImageContent: ObservableObject, Identifiable, Hashable {
     let id = UUID()
     @Published var image: Image? = Image(systemName: "photo")
     @Published var caption: String
     @Published var frameColor: FrameColor
     @Published var date: String
     
-    @Published var originalData: Data?        // 포토에서 가져온 원본(업로드용)
-    @Published var tempFilename: String?      // 업로드 결과 URL(서버가 요구)
+    @Published var originalData: Data? // 포토에서 가져온 원본(업로드용)
+    @Published var tempFilename: String? // 업로드 결과 URL(서버가 요구)
     
     init(image: Image? = Image(systemName: "photo"), caption: String, frameColor: FrameColor, date: String, tempFilename: String? = nil, originalData: Data? = nil) {
         self.image = image
@@ -26,9 +26,16 @@ final class FramedImageContent: ObservableObject, Identifiable {
         self.originalData = originalData
         self.tempFilename = tempFilename
     }
+    
+    static func == (lhs: FramedImageContent, rhs: FramedImageContent) -> Bool {
+        lhs.id == rhs.id
+    }
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
 }
 
-enum FrameColor: Int, CaseIterable, Codable {
+enum FrameColor: Int, CaseIterable, Codable, Hashable {
     case origin = 0
     case white = 1
     case ivory = 2

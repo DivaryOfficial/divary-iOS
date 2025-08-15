@@ -9,6 +9,8 @@ import SwiftUI
 import Kingfisher
 
 struct OceanCreatureDetailView: View {
+    @Environment(\.diContainer) private var di
+    
     let creature: SeaCreatureDetail
     @State var selectedSection: SectionType = .appearance
     @State private var sectionAnchors: [SectionAnchor] = []
@@ -17,7 +19,21 @@ struct OceanCreatureDetailView: View {
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: 16) {
+                LazyVStack(alignment: .leading, spacing: 5) {
+                    ZStack {
+                        HStack {
+                            Button(action: { di.router.pop() }) {
+                                Image(.chevronLeft)
+                                    .foregroundStyle(.black)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding()
+                        }
+                        
+                        // 인덱스 중앙
+                        Text("해양도감")
+                            .font(.omyu.regular(size: 20))
+                    }
                     imageSlider
                     titleBlock
                     sectionButtons(proxy: proxy, selectedSection: $selectedSection)
@@ -39,8 +55,9 @@ struct OceanCreatureDetailView: View {
                 }
             }
             .coordinateSpace(name: "scroll")
-            .navigationTitle("해양도감")
-            .navigationBarTitleDisplayMode(.inline)
+            .toolbar(.hidden, for: .navigationBar)
+//            .navigationTitle("해양도감")
+//            .navigationBarTitleDisplayMode(.inline)
         }
     }
     

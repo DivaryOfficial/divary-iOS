@@ -103,8 +103,10 @@ struct LocationSearchView: View {
                 }
             }
         }
-        .navigationBarTitleDisplayMode(.inline)
-        .onAppear {
+//        .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .navigationBar)
+//        .onAppear {
+        .task {
             locationManager.requestPermission()
             if searchText.isEmpty {
                 Task {

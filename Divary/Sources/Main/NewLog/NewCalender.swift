@@ -75,7 +75,8 @@ struct NewCalenderView: View {
                 }
             }
         )
-        .onAppear {
+//        .onAppear {
+        .task {
             loadExistingLogs()
         }
     }

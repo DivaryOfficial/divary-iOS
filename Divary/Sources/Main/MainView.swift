@@ -108,15 +108,8 @@ struct MainView: View {
 
             // 로딩 인디케이터
             if isLoading {
-                Color.black.opacity(0.3)
-                    .ignoresSafeArea()
-
-                ProgressView("로그 불러오는 중...")
-                    .progressViewStyle(CircularProgressViewStyle())
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(Color.black.opacity(0.7))
-                    .cornerRadius(10)
+//                LoadingOverlayTemp(text: "로그 불러오는 중...")
+                LoadingOverlay(message: "로그 불러오는 중...")
             }
         }
         .background(
