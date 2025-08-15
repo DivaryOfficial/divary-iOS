@@ -75,7 +75,8 @@ struct NewLogCreationView: View {
             
             // 로딩 인디케이터
             if viewModel.isLoading {
-                LoadingOverlay(message: "처리 중...")
+//                LoadingOverlayTemp(text: "로딩 중...")
+                LoadingOverlay(message: "로딩 중...")
             }
         }
         .alert("오류", isPresented: .constant(viewModel.errorMessage != nil)) {

@@ -46,13 +46,15 @@ struct MainFooterBar: View {
             }
             .disabled(viewModel.editingTextBlock == nil)
             
-            Button(action: {}) {
+            Button(action: { footerBarType = .sticker }) {
                 Image(.sticker)
             }
             
             Button(action: { showCanvas = true }) {
                 Image(.pencil)
             }
+//            .disabled(isRichTextEditorFocused.wrappedValue)
+            .disabled(viewModel.editingTextBlock != nil)
             
             Spacer()
             

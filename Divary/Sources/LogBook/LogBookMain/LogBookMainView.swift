@@ -238,7 +238,8 @@ struct LogBookMainView: View {
 
             // 로딩 인디케이터
             if viewModel.isLoading || diaryVM.isLoading {
-                LoadingOverlay(message: "처리 중...")
+                LoadingOverlay(message: "로딩 중...")
+//                LoadingOverlayTemp(text: "로딩 중...")
             }
         }
         .alert("오류", isPresented: .constant(viewModel.errorMessage != nil)) {

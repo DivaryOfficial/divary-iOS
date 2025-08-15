@@ -10,7 +10,7 @@ import PhotosUI
 import RichTextKit
 
 enum DiaryFooterBarType {
-    case main, textStyle, fontSize, alignment, fontFamily
+    case main, textStyle, fontSize, alignment, fontFamily, sticker
 }
 
 struct DiaryMainView: View {
@@ -67,16 +67,16 @@ struct DiaryMainView: View {
                 viewModel: viewModel,
                 footerBarType: $footerBarType
             )
+        case .sticker:
+            StickerFooterBar(footerBarType: $footerBarType)
         }
     }
     
     var body: some View {
-//        NavigationStack {
             VStack(spacing: 0) {
                 diaryMain
                 activeFooterBar
             }
-//        }
 //        .onAppear {
             .task {
             if !didInject {

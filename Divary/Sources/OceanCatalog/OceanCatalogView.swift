@@ -88,7 +88,8 @@ struct OceanCatalogView: View {
         }
         .overlay {
             if viewModel.isLoadingList {
-                LoadingOverlay(message: "불러오는 중...")
+//                LoadingOverlayTemp(text: "로딩 중...")
+                LoadingOverlay(message: "로딩 중...")
             }
         }
     }
