@@ -69,14 +69,17 @@ struct TitleAndIconSelectionView: View {
                         }) {
                             VStack(spacing: 8) {
                                 ZStack {
-                                    Circle()
-                                        .fill(viewModel.selectedIcon == iconType ? Color.primary_pastel_blue : Color.white)
-                                        .frame(width: 60, height: 60)
+                                    if viewModel.selectedIcon == iconType {
+                                        Image(.bubble)
+                                    }
+//                                    Circle()
+//                                        .fill(viewModel.selectedIcon == iconType ? Color.primary_pastel_blue : Color.white)
+//                                        .frame(width: 60, height: 60)
                                     
                                     iconType.image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: 60, height: 60)
+//                                        .resizable()
+//                                        .aspectRatio(contentMode: .fit)
+//                                        .frame(width: 60, height: 60)
                                 }
                             }
                         }

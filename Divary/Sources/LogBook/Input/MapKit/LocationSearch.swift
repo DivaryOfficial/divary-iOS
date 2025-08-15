@@ -104,7 +104,8 @@ struct LocationSearchView: View {
             }
         }
 //        .navigationBarTitleDisplayMode(.inline)
-        .toolbar(.hidden, for: .navigationBar)
+//        .toolbar(.hidden, for: .navigationBar)
+        .navigationBarBackButtonHidden(true)
 //        .onAppear {
         .task {
             locationManager.requestPermission()

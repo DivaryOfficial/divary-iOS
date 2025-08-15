@@ -39,24 +39,21 @@ struct MainTabbarView: View {
             
             // 탭 버튼들
             HStack {
-                tabButton(title: "기록", selectedImage: "tabBarLogSelected", nonSelectedImage: "tabBarLogUnSelected")
+                Spacer()
+                tabButton(title: "기록", selectedImage: "Property 1=Clicked-1", nonSelectedImage: "Property 1=Default-1")
+                Spacer()
                 Button {
                     container.router.push(.chatBot)
                 } label: {
-                    VStack(spacing: 4) {
-                        Image(container.selectedTab == "챗봇" ? "tabBarChatBotSelected" : "tabBarChatBotUnSelected")
-                            .frame(width: 24, height: 24)
-                        
-                        Text("챗봇")
-                            .font(.caption)
-                            .foregroundStyle(container.selectedTab == "챗봇" ? Color.primary_sea_blue : Color.grayscale_g600)
-                            .frame(maxWidth: .infinity)
-                    }
+                    Image(container.selectedTab == "챗봇" ? "Property 1=Clicked-2" : "Property 1=Default-2")
                 }
-                tabButton(title: "해양도감", selectedImage: "tabBarOceanCatalogSelected", nonSelectedImage: "tabBarOceanCatalogUnSelected")
-                tabButton(title: "My", selectedImage: "tabBarMySelected", nonSelectedImage: "tabBarMyUnSelected")
+                Spacer()
+                tabButton(title: "해양도감", selectedImage: "Property 1=Clicked-3", nonSelectedImage: "Property 1=Default-3")
+                Spacer()
+                tabButton(title: "My", selectedImage: "Property 1=Clicked", nonSelectedImage: "Property 1=Default")
+                Spacer()
             }
-            .padding()
+            .padding(.top, 8)
             .background(Color.white)
         }
     }
@@ -67,14 +64,8 @@ struct MainTabbarView: View {
             container.selectedTab = title
             print("탭 선택됨: \(title)")
         } label: {
-            VStack(spacing: 4) {
+            VStack(spacing: 0) {
                 Image(container.selectedTab == title ? selectedImage : nonSelectedImage)
-                    .frame(width: 24, height: 24)
-                
-                Text(title)
-                    .font(.caption)
-                    .foregroundStyle(container.selectedTab == title ? Color.primary_sea_blue : Color.grayscale_g600)
-                    .frame(maxWidth: .infinity)
             }
         }
     }
