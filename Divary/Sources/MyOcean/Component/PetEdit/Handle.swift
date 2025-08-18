@@ -28,8 +28,11 @@ struct RotationHandle: View {
     let offset: CGSize
     let scale: CGFloat
     @Binding var petTempRotation: Angle
+    let currentRotation: Angle  // 저장된 회전값
     let viewModel: CharacterViewModel
     let impactFeedback: () -> Void
+    
+    @State private var previousRotation: Angle?
     
     var body: some View {
         let handleSize = 18 * scale  // 스케일 적용
@@ -48,14 +51,22 @@ struct RotationHandle: View {
             .gesture(
                 DragGesture()
                     .onChanged { value in
+                        // 중심점을 기준으로 한 회전 계산 (Stack Overflow 예제 방식)
                         let center = CGPoint.zero
-                        let start = CGPoint(x: offset.width, y: offset.height)
-                        let current = CGPoint(x: start.x + value.translation.width, y: start.y + value.translation.height)
                         
-                        let startAngle = atan2(start.y - center.y, start.x - center.x)
-                        let currentAngle = atan2(current.y - center.y, current.x - center.x)
-                        
-                        petTempRotation = .radians(Double(currentAngle - startAngle))
+                        if let previousRotation = self.previousRotation {
+                            let deltaY = value.location.y - center.y
+                            let deltaX = value.location.x - center.x
+                            let fingerAngle = Angle(radians: Double(atan2(deltaY, deltaX)))
+                            let angle = fingerAngle - previousRotation
+                            petTempRotation += angle
+                            self.previousRotation = fingerAngle
+                        } else {
+                            let deltaY = value.location.y - center.y
+                            let deltaX = value.location.x - center.x
+                            let fingerAngle = Angle(radians: Double(atan2(deltaY, deltaX)))
+                            previousRotation = fingerAngle
+                        }
                     }
                     .onEnded { _ in
                         // 최종 회전 저장
@@ -69,6 +80,7 @@ struct RotationHandle: View {
                             viewModel.updatePet(updatedPet)
                         }
                         petTempRotation = .zero
+                        previousRotation = nil  // 리셋
                         impactFeedback()
                     }
             )

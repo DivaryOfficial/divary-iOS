@@ -60,7 +60,14 @@ struct RoundedTailSpeechBubbleView: View {
 // 입력용 꼬리 달린 말풍선
 struct RoundedTailSpeechBubbleInputView: View {
     @Binding var text: String
-    
+    let characterLimit: Int
+    @State private var showToast = false
+
+    init(text: Binding<String>, characterLimit: Int = 15) {
+        self._text = text
+        self.characterLimit = characterLimit
+    }
+
     var body: some View {
         HStack {
             TextField(text.isEmpty ? "입력해주세요" : "", text: $text)
@@ -75,6 +82,12 @@ struct RoundedTailSpeechBubbleInputView: View {
                 )
                 .fixedSize()
                 .shadow(color: .black.opacity(0.05), radius: 2, y: 1)
+                .onChange(of: text) { oldValue, newValue in
+                    if newValue.count > characterLimit {
+                        text = String(newValue.prefix(characterLimit))
+                        withAnimation { showToast = true }
+                    }
+                }
         }
     }
 }
