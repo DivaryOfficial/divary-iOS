@@ -303,11 +303,7 @@ struct LogBookPageView: View {
         }
     }
     
-    // ✅ 더 이상 필요하지 않음 - 직접 saveStatus 확인으로 대체
-    // private func isCompleteSaved(_ index: Int) -> Bool {
-    //     guard index < mainViewModel.diveLogData.count else { return false }
-    //     return mainViewModel.diveLogData[index].saveStatus == .complete
-    // }
+
     
     // 새 로그 추가 처리
     private func handleAddNewLog() {

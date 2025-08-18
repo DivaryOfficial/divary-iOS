@@ -34,7 +34,7 @@ struct ComPop: View {
                     .multilineTextAlignment(.center)
                 
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 22)
             .padding(.vertical, 22)
             .frame(maxWidth: .infinity, alignment: .center)
             .background(.white)
