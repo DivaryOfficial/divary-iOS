@@ -21,68 +21,57 @@ struct OceanCatalogView: View {
     @State private var sheetVersion = 0
     
     var body: some View {
-            ZStack(alignment: .bottom) {
-                VStack {
-                    Text("해양도감")
-                        .font(Font.omyu.regular(size: 20))
-                        .padding()
-                    CategoryTabBar(selectedCategory: Binding(
-                        get: { viewModel.selectedCategory },
-                        set: { viewModel.selectedCategory = $0 }
-                    ))
-                    .padding(.bottom, 5)
-                    
-                    CardGridView(
-                        items: viewModel.gridItems,
-                        selectedCard: $selectedCard,
-                        onSelect: { card in
-                            if let entity = viewModel.creatureCards.first(where: { $0.id == card.id }) {
-                                selectedCreature = SeaCreatureDetail.fromEntity(entity)
-                            } else {
-                                // 없어도 최소 정보로 시트 생성
-                                selectedCreature = SeaCreatureDetail.fromEntity(
-                                    CreatureCardEntity(id: card.id, name: card.name, type: card.type, dogamProfileUrl: card.imageUrl)
-                                )
-                            }
-                            viewModel.getCardDetail(id: card.id)
+        ZStack(alignment: .bottom) {
+            VStack {
+                Text("해양도감")
+                    .font(Font.omyu.regular(size: 20))
+                    .padding()
+                CategoryTabBar(selectedCategory: Binding(
+                    get: { viewModel.selectedCategory },
+                    set: { viewModel.selectedCategory = $0 }
+                ))
+                .padding(.bottom, 5)
+                
+                CardGridView(
+                    items: viewModel.gridItems,
+                    selectedCard: $selectedCard,
+                    onSelect: { card in
+                        if let entity = viewModel.creatureCards.first(where: { $0.id == card.id }) {
+                            selectedCreature = SeaCreatureDetail.fromEntity(entity)
+                        } else {
+                            // 없어도 최소 정보로 시트 생성
+                            selectedCreature = SeaCreatureDetail.fromEntity(
+                                CreatureCardEntity(id: card.id, name: card.name, type: card.type, dogamProfileUrl: card.imageUrl)
+                            )
                         }
-                    )
-                }
+                        viewModel.getCardDetail(id: card.id)
+                    }
+                )
             }
-            .onChange(of: viewModel.lastDetail) {
-                guard let d = viewModel.lastDetail, let current = selectedCreature, d.id == current.id else { return }
-                selectedCreature = d
-                sheetVersion &+= 1
-            }
-            .sheet(item: $selectedCreature, onDismiss: {
-                selectedCard = nil
-            }) { _ in
-                if let creature = selectedCreature {
-                    BottomPreviewSheet(
-                        creature: creature,
-                        onDetailTapped: {
-//                            detailCreature = creature // push 할 데이터를 따로 보존
-                            selectedCreature = nil // 시트 닫기
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { // 시트 닫은 뒤에 push
-    //                            navigateToDetail = true
-                                di.router.push(.oceanCreatureDetail(creature: creature))
-                            }
+        }
+        .onChange(of: viewModel.lastDetail) {
+            guard let d = viewModel.lastDetail, let current = selectedCreature, d.id == current.id else { return }
+            selectedCreature = d
+            sheetVersion &+= 1
+        }
+        .overlay(alignment: .bottom) {
+            if let creature = selectedCreature {
+                BottomPreviewSheet(
+                    creature: creature,
+                    isPresented: .init(
+                        get: { true },
+                        set: { show in if !show { closePreview() } } // 배경탭/드래그로 닫힐 때 선택 해제
+                    ),
+                    onDetailTapped: {
+                        closePreview()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                            di.router.push(.oceanCreatureDetail(creature: creature)) // 이동
                         }
-                    )
-                    .id(sheetVersion)
-                    .presentationDetents([.fraction(0.5)])
-//                    .presentationSizing(.automatic) // ios 버전 호환안됨
-                    .presentationDragIndicator(.visible)
-                }
-                else {
-                    ProgressView()
-                }
+                    }
+                )
+                .id(sheetVersion) // detail 로딩 갱신용
             }
-//            .navigationDestination(isPresented: $navigateToDetail) {
-//                if let creature = detailCreature {
-//                    OceanCreatureDetailView(creature: creature)
-//                }
-//            }
+        }
         .task {
             viewModel.task()
         }
@@ -91,6 +80,13 @@ struct OceanCatalogView: View {
 //                LoadingOverlayTemp(text: "로딩 중...")
                 LoadingOverlay(message: "로딩 중...")
             }
+        }
+    }
+    
+    private func closePreview() {
+        withAnimation(.spring()) {
+            selectedCreature = nil
+            selectedCard = nil
         }
     }
 }
