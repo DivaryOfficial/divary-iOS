@@ -55,10 +55,7 @@ struct OceanCreatureDetailView: View {
                 }
             }
             .coordinateSpace(name: "scroll")
-//            .toolbar(.hidden, for: .navigationBar)
             .navigationBarBackButtonHidden(true)
-//            .navigationTitle("해양도감")
-//            .navigationBarTitleDisplayMode(.inline)
         }
     }
     
@@ -318,11 +315,7 @@ struct RoundedCorners: Shape {
         size: "약 1.5~6cm",
         appearPeriod: "봄, 가을에 주로 관찰",
         place: "따뜻한 연안, 바위 틈",
-        imageUrls: [
-            URL(string: "https://commons.wikimedia.org/wiki/File:Lampetra_fluviatilis.jpg")!,
-            URL(string: "https://commons.wikimedia.org/wiki/File:Lampetra_fluviatilis.jpg")!,
-            URL(string: "https://commons.wikimedia.org/wiki/File:Lampetra_fluviatilis.jpg")!
-        ],
+        imageUrls: [],
         appearance: Appearance(
             body: "부드럽고 납작한 몸체",
             colorCodes: ["#FFFFFF", "#FFD700", "#000000"],
