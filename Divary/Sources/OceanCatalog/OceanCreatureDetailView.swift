@@ -231,7 +231,7 @@ struct DetailInfoBlock: View {
             Text(value).font(.NanumSquareNeo.NanumSquareNeoBold(size: 12)).foregroundStyle(Color(.grayscaleG800))
             Spacer()
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 2)
     }
 }
 
@@ -266,9 +266,10 @@ func DetailLine(_ title: String, _ value: String, colorCodes: [String] = []) -> 
                         )
                 }
             }
-            .padding(.bottom, 4)
+            .padding(.bottom, 6)
         }
         Text(value).font(.NanumSquareNeo.NanumSquareNeoBold(size: 14)).foregroundStyle(Color(.grayscaleG700))
+            .lineSpacing(6)
     }
 }
 
@@ -338,7 +339,7 @@ struct RoundedCorners: Shape {
         significant: Significant(
             toxicity: "무독성",
             strategy: "위장",
-            observeTip: "작고 조용히 숨어 있으니 자세히 봐야 함",
+            observeTip: "작고 조용히 숨어 있으니 자세히 봐야 함 어쩌구저쩌구 어쩌구저쩌구 어쩌구저쩌구 어쩌구저쩌구 어쩌구저쩌구어쩌구저쩌구어쩌구저쩌구어쩌구저쩌구어쩌구저쩌구",
             otherFeature: "바다 속 꽃처럼 생김"
         )
     )

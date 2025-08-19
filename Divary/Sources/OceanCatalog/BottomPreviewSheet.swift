@@ -93,9 +93,7 @@ private struct LabelledText: View {
         size: "약 1.5~6cm",
         appearPeriod: "봄, 가을에 주로 관찰",
         place: "따뜻한 연안, 바위 틈",
-        imageUrls: [
-            URL(string: "")!
-        ],
+        imageUrls: [],
         appearance: Appearance(
             body: "부드럽고 납작한 몸체",
             colorCodes: ["#FFFFFF", "#FFD700", "#000000"],
