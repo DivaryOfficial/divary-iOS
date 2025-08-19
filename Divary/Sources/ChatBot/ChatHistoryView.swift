@@ -35,7 +35,7 @@ struct ChatHistoryView: View {
                 }) {
                     Image(systemName: "xmark")
                         .font(.system(size: 18))
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(.black)
                 }
             }
             .padding(.horizontal, 20)

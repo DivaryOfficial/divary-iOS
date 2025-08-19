@@ -49,8 +49,7 @@ struct ChatBotTopNav: View {
             Spacer()
             
             Button(action: onMenuTap) {
-                Image(systemName: "line.3.horizontal")
-                    .foregroundStyle(.primary)
+                Image("listBoxLine")
             }
         }
         .padding(12)
