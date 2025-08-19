@@ -18,7 +18,10 @@ struct BottomPreviewSheet: View {
     var body: some View {
         GeometryReader { geo in
             let sheetH = max(0, geo.size.height * 0.45)
-
+            
+            // 로딩 감지
+            let isPlaceholderDetail = [creature.size, creature.appearPeriod, creature.place].allSatisfy { $0 == "-" }
+            
             ZStack(alignment: .bottom) {
                 // 배경
                 if isPresented {
@@ -44,26 +47,35 @@ struct BottomPreviewSheet: View {
                         .foregroundStyle(Color(.grayscaleG600))
                         .font(.NanumSquareNeo.NanumSquareNeoRegular(size: 14))
 
-                    HStack(alignment: .center, spacing: 12) {
-                        if let url = creature.imageUrls.first {
-                            KFImage(url)
-                                .placeholder { ProgressView() }
-                                .retry(maxCount: 2, interval: .seconds(1))
-                                .resizable()
-                                .scaledToFit()
-                                .clipShape(RoundedRectangle(cornerRadius: 8))
-//                                .frame(maxWidth: 260)
-                                .id(url)
-                        } else {
-                            Color.gray.opacity(0.2)
-//                                .frame(maxWidth: 260)
-                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                    if isPlaceholderDetail {
+                        // 로딩 UI
+                        VStack {
+                            Spacer()
+                            ProgressView()
+                            Spacer()
                         }
+                        .frame(maxWidth: .infinity, alignment: .center)
+                    } else {
+                        // 기존 본문
+                        HStack(alignment: .center, spacing: 12) {
+                            if let url = creature.imageUrls.first {
+                                KFImage(url)
+                                    .placeholder { ProgressView() }
+                                    .retry(maxCount: 2, interval: .seconds(1))
+                                    .resizable()
+                                    .scaledToFit()
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                                    .id(url)
+                            } else {
+                                Color.gray.opacity(0.2)
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                            }
 
-                        VStack(alignment: .leading, spacing: 2) {
-                            LabelledText(title: "크기", value: creature.size)
-                            LabelledText(title: "출몰시기", value: creature.appearPeriod)
-                            LabelledText(title: "서식", value: creature.place)
+                            VStack(alignment: .leading, spacing: 2) {
+                                LabelledText(title: "크기", value: creature.size)
+                                LabelledText(title: "출몰시기", value: creature.appearPeriod)
+                                LabelledText(title: "서식", value: creature.place)
+                            }
                         }
                     }
 
@@ -72,7 +84,7 @@ struct BottomPreviewSheet: View {
                             .font(.omyu.regular(size: 20))
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.blue)
+                            .background(Color(.seaBlue))
                             .foregroundStyle(.white)
                             .cornerRadius(12)
                     }
