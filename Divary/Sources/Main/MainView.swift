@@ -108,7 +108,6 @@ struct MainView: View {
 
             // 로딩 인디케이터
             if isLoading {
-//                LoadingOverlayTemp(text: "로그 불러오는 중...")
                 LoadingOverlay(message: "로그 불러오는 중...")
             }
         }

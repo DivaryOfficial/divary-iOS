@@ -15,6 +15,7 @@ struct DiaryCanvasView: View { // 일기메인뷰에서 연필 버튼 누르면 
     let initialDrawing: PKDrawing?
     var onSaved: ((PKDrawing, CGFloat) -> Void)?
     
+    @State private var toolPickerInset: CGFloat = 0
     // 기기 판별
     private var isPad: Bool { UIDevice.current.userInterfaceIdiom == .pad }
 
@@ -26,7 +27,8 @@ struct DiaryCanvasView: View { // 일기메인뷰에서 연필 버튼 누르면 
         .overlay(alignment: isPad ? .top : .bottom) {
             drawingBar
                 // iPhone에서는 PencilKit 툴피커가 가리는 높이만큼 여백 유지
-                .padding(isPad ? .top : .bottom, isPad ? 0 : canvasView.frame.height)
+                .padding(isPad ? .top : .bottom, isPad ? 0 : toolPickerInset)
+                .animation(.easeOut(duration: 0.2), value: toolPickerInset)
         }
         .task {
 //            viewModel.loadDrawingIfExists()
@@ -39,21 +41,22 @@ struct DiaryCanvasView: View { // 일기메인뷰에서 연필 버튼 누르면 
     }
     
     private var canvasView: CanvasView {
-        CanvasView(canvas: viewModel.canvas, toolPicker: viewModel.toolPicker, offsetY: offsetY)
+        CanvasView(canvas: viewModel.canvas, toolPicker: viewModel.toolPicker, offsetY: offsetY, obscuredHeight: $toolPickerInset)
     }
     
     private var drawingBar: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 20) {
             // 취소 버튼
             Button(action: { viewModel.dismissCanvas() }) {
                 Text("취소")
                     .font(.NanumSquareNeo.NanumSquareNeoBold(size: 12))
                     .foregroundStyle(Color(.black))
             }
-            .padding(.leading, 12)
+            .padding(.leading, 20)
             
             Spacer()
             
+            // 아이패드일 때는 undo, redo 버튼 필요없음
             if !isPad {
                 // undo 버튼
                 Button(action: { viewModel.undo() }) {
@@ -68,18 +71,6 @@ struct DiaryCanvasView: View { // 일기메인뷰에서 연필 버튼 누르면 
                         .foregroundStyle(viewModel.canRedo ? .black : Color(.G_500))
                 }
             }
-//            // undo 버튼
-//            Button(action: { viewModel.undo() }) {
-//                Image("humbleicons_arrow-go-back")
-//                    .foregroundStyle(viewModel.canUndo ? .black : Color(.G_500))
-//            }
-//            .padding(.trailing, 18)
-//            
-//            // redo 버튼
-//            Button(action: { viewModel.redo() }) {
-//                Image("humbleicons_arrow-go-forward")
-//                    .foregroundStyle(viewModel.canRedo ? .black : Color(.G_500))
-//            }
             
             Spacer()
             
@@ -93,7 +84,7 @@ struct DiaryCanvasView: View { // 일기메인뷰에서 연필 버튼 누르면 
                 Image("humbleicons_check")
                     .foregroundStyle(Color(.black))
             }
-            .padding(.trailing, 12)
+            .padding(.trailing, 20)
         }
         .padding(.vertical, 12)
         .background(Color(.G_100))

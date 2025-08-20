@@ -34,7 +34,7 @@ struct FramedImageComponentView: View {
                             .clipped()
                             .cornerRadius(8)
                             .padding(.top, 18)
-                            .padding(.bottom, 16)
+                            .padding(.bottom, 12)
                         
                         VStack(alignment: .leading, spacing: 7) {
                             if isEditing {
