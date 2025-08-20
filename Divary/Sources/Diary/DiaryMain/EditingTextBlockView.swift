@@ -2,10 +2,9 @@
 //  Divary
 //  Created by 김나영 on 7/6/25.
 
+
 import SwiftUI
 import RichTextKit
-
-
 
 struct EditingTextBlockView: View {
     @Bindable var viewModel: DiaryMainViewModel
@@ -18,6 +17,14 @@ struct EditingTextBlockView: View {
     @State private var lastCursorPosition: Int = 0
     
     @State private var cursorTimer: Timer?
+    
+    // 텍스트 높이 추적 - 단순화
+    @State private var previousTextHeight: CGFloat = 0
+    @State private var heightCheckTimer: Timer?
+    
+    // 포커스 안정화를 위한 상태
+    @State private var isInitialSetupComplete: Bool = false
+    @State private var focusDelayTimer: Timer?
     
     var body: some View {
         RichTextEditor(
@@ -41,39 +48,125 @@ struct EditingTextBlockView: View {
         .padding(.vertical, 8)
         .background(Color.clear)
         .task {
-            setupTextViewAppearance()
-            viewModel.richTextContext.setAttributedString(to: content.text)
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                isInternalUpdate = false
-                $isRichTextEditorFocused.wrappedValue = true
-                viewModel.currentTextAlignment = viewModel.getCurrentTextAlignment()
-                
-                // 새 텍스트 블록용 초기 설정
-                setupInitialTypingAttributes()
-            }
+            await setupInitialState()
         }
         .onChange(of: isRichTextEditorFocused) { _, newValue in
-            if newValue {
-                // 편집 진입 시: UI 관련은 다음 틱
-                DispatchQueue.main.async {
-                    setupInitialTypingAttributes()
-                    startCursorMonitoring()
-                }
-            } else {
-                // 편집 종료 시: 모델 저장/정리도 다음 틱
-                DispatchQueue.main.async {
-                    viewModel.saveCurrentEditingBlock()
-                    stopCursorMonitoring()
-                }
-            }
+            handleFocusChange(newValue)
         }
         .onChange(of: viewModel.forceUIUpdate) { _, _ in
-            // UI 강제 업데이트 시 typing attributes 재설정
             DispatchQueue.main.async {
                 self.setupTypingAttributes()
             }
         }
+        .onChange(of: viewModel.richTextContext.attributedString) { _, _ in
+            // 텍스트 변화 시 높이 체크 예약
+            scheduleHeightCheck()
+        }
+    }
+    
+    // MARK: - 초기 설정
+    
+    @MainActor
+    private func setupInitialState() async {
+        setupTextViewAppearance()
+        viewModel.richTextContext.setAttributedString(to: content.text)
+        
+        try? await Task.sleep(nanoseconds: 100_000_000) // 0.1초
+        
+        isInternalUpdate = false
+        viewModel.currentTextAlignment = viewModel.getCurrentTextAlignment()
+        
+        setupInitialTypingAttributes()
+        
+        // 초기 높이 저장
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            self.previousTextHeight = self.getCurrentTextHeight()
+            self.isInitialSetupComplete = true
+        }
+        
+        // 포커스를 지연시켜 안정성 확보
+        delayedFocusSetup()
+    }
+    
+    // MARK: - 포커스 처리 개선
+    
+    private func delayedFocusSetup() {
+        focusDelayTimer?.invalidate()
+        focusDelayTimer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: false) { _ in
+            DispatchQueue.main.async {
+                if self.isInitialSetupComplete {
+                    self.isRichTextEditorFocused = true
+                }
+            }
+        }
+    }
+    
+    private func handleFocusChange(_ isFocused: Bool) {
+        // 초기 설정이 완료되지 않았으면 포커스 변화 무시
+        guard isInitialSetupComplete else { return }
+        
+        if isFocused {
+            DispatchQueue.main.async {
+                self.setupInitialTypingAttributes()
+                self.startCursorMonitoring()
+            }
+        } else {
+            DispatchQueue.main.async {
+                self.viewModel.saveCurrentEditingBlock()
+                self.stopCursorMonitoring()
+                self.stopHeightCheck()
+                self.cleanupTimers()
+            }
+        }
+    }
+    
+    // MARK: - 텍스트 높이 모니터링 - 단순화
+    
+    private func scheduleHeightCheck() {
+        // 초기 설정이 완료되지 않았으면 높이 체크 생략
+        guard isInitialSetupComplete else { return }
+        
+        heightCheckTimer?.invalidate()
+        heightCheckTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: false) { _ in
+            self.checkTextHeightAndScroll()
+        }
+    }
+    
+    private func checkTextHeightAndScroll() {
+        let currentHeight = getCurrentTextHeight()
+        
+        // 높이가 한 줄 이상 증가했을 때만 스크롤 요청
+        if currentHeight > previousTextHeight + 40 {
+            requestScrollToCurrentBlock()
+            previousTextHeight = currentHeight
+        }
+    }
+    
+    private func getCurrentTextHeight() -> CGFloat {
+        guard let textView = findTextView() else { return 0 }
+        return textView.contentSize.height
+    }
+    
+    private func requestScrollToCurrentBlock() {
+        guard let editingBlock = viewModel.editingTextBlock else { return }
+        
+        // 키보드 상태 확인을 위한 간단한 체크
+        let isKeyboardShowing = UIApplication.shared.windows.first?.rootViewController?.view.frame.height != UIScreen.main.bounds.height
+        
+        // 키보드가 표시 중이면 스크롤 요청을 지연
+        let scrollDelay = isKeyboardShowing ? 0.2 : 0.0
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + scrollDelay) {
+            NotificationCenter.default.post(
+                name: NSNotification.Name("ScrollToBlock"),
+                object: editingBlock.id
+            )
+        }
+    }
+    
+    private func stopHeightCheck() {
+        heightCheckTimer?.invalidate()
+        heightCheckTimer = nil
     }
     
     // MARK: - Text Handling
@@ -84,15 +177,9 @@ struct EditingTextBlockView: View {
         let oldLength = currentText.length
         let lengthDifference = newLength - oldLength
         
-        // 삭제 작업 감지 (-> 이거 왜 사용 안하고있다고 경고뜸)
-//        let isDeleteOperation = lengthDifference < 0
-        
         if lengthDifference >= 0 {
-            // 텍스트 추가 또는 한글 조합
             handleTextInput(newValue, currentText: currentText)
         } else {
-            // 텍스트 삭제
-            // 동기 변이 금지 → 다음 틱으로 미룸
             DispatchQueue.main.async {
                 self.viewModel.richTextContext.setAttributedString(to: newValue)
                 self.viewModel.handleTextChange(isDeleteOperation: true)
@@ -112,7 +199,6 @@ struct EditingTextBlockView: View {
         
         let selectedRange = textView.selectedRange
         
-        // 선택된 텍스트가 있으면 기본 처리
         if selectedRange.length > 0 {
             DispatchQueue.main.async {
                 self.viewModel.richTextContext.setAttributedString(to: newValue)
@@ -120,15 +206,12 @@ struct EditingTextBlockView: View {
             return
         }
         
-        // 새로운 입력에 현재 스타일 적용
         let mutableNewValue = newValue.mutableCopy() as! NSMutableAttributedString
         
         if newValue.length > currentText.length {
-            // 새 텍스트 추가
             let newTextRange = NSRange(location: currentText.length, length: newValue.length - currentText.length)
             applyCurrentStyleToRange(mutableNewValue, range: newTextRange)
         } else if newValue.length == currentText.length {
-            // 한글 조합 중 (길이 동일)
             let cursorPosition = selectedRange.location
             if cursorPosition > 0 {
                 let targetRange = NSRange(location: cursorPosition - 1, length: 1)
@@ -138,7 +221,6 @@ struct EditingTextBlockView: View {
             }
         }
         
-        // 업데이트 적용
         isInternalUpdate = true
         
         DispatchQueue.main.async {
@@ -153,29 +235,24 @@ struct EditingTextBlockView: View {
         
         var attributes: [NSAttributedString.Key: Any] = [:]
         
-        // 폰트
         if let font = UIFont(name: viewModel.currentFontName, size: viewModel.currentFontSize) {
             attributes[.font] = font
         } else {
             attributes[.font] = UIFont.systemFont(ofSize: viewModel.currentFontSize)
         }
         
-        // 정렬
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = viewModel.currentTextAlignment
         attributes[.paragraphStyle] = paragraphStyle
         
-        // 밑줄
         if viewModel.currentIsUnderlined {
             attributes[.underlineStyle] = NSUnderlineStyle.single.rawValue
         }
         
-        // 취소선
         if viewModel.currentIsStrikethrough {
             attributes[.strikethroughStyle] = NSUnderlineStyle.single.rawValue
         }
         
-        // 색상
         attributes[.foregroundColor] = UIColor.label
         
         mutableString.setAttributes(attributes, range: range)
@@ -184,7 +261,9 @@ struct EditingTextBlockView: View {
     // MARK: - Typing Attributes
     
     private func setupInitialTypingAttributes() {
-        DispatchQueue.main.async {
+        guard isInitialSetupComplete else { return }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
             self.setupTypingAttributes()
         }
     }
@@ -197,36 +276,29 @@ struct EditingTextBlockView: View {
         
         var typingAttributes: [NSAttributedString.Key: Any] = [:]
         
-        // 폰트
         if let font = UIFont(name: viewModel.currentFontName, size: viewModel.currentFontSize) {
             typingAttributes[.font] = font
         } else {
             typingAttributes[.font] = UIFont.systemFont(ofSize: viewModel.currentFontSize)
         }
         
-        // 정렬
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = viewModel.currentTextAlignment
         typingAttributes[.paragraphStyle] = paragraphStyle
         
-        // 밑줄
         if viewModel.currentIsUnderlined {
             typingAttributes[.underlineStyle] = NSUnderlineStyle.single.rawValue
         }
         
-        // 취소선
         if viewModel.currentIsStrikethrough {
             typingAttributes[.strikethroughStyle] = NSUnderlineStyle.single.rawValue
         }
         
-        // 색상
         typingAttributes[.foregroundColor] = UIColor.label
         
-        // 적용
         textView.typingAttributes = typingAttributes
         
-        // 한글 IME 대응 재시도
-        for delay in [0.01, 0.02, 0.05] {
+        for delay in [0.01, 0.03, 0.06] {
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                 if textView.selectedRange.length == 0 {
                     textView.typingAttributes = typingAttributes
@@ -240,10 +312,9 @@ struct EditingTextBlockView: View {
     // MARK: - Cursor Monitoring
     
     private func startCursorMonitoring() {
-        // 커서 위치 변경 모니터링
         cursorTimer?.invalidate()
         cursorTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
-            guard isRichTextEditorFocused else {
+            guard isRichTextEditorFocused && isInitialSetupComplete else {
                 timer.invalidate()
                 return
             }
@@ -262,9 +333,19 @@ struct EditingTextBlockView: View {
     }
     
     private func stopCursorMonitoring() {
-        // 타이머는 자동으로 해제됨 (isRichTextEditorFocused 체크로)
         cursorTimer?.invalidate()
         cursorTimer = nil
+    }
+    
+    // MARK: - 정리
+    
+    private func cleanupTimers() {
+        focusDelayTimer?.invalidate()
+        focusDelayTimer = nil
+        cursorTimer?.invalidate()
+        cursorTimer = nil
+        heightCheckTimer?.invalidate()
+        heightCheckTimer = nil
     }
     
     // MARK: - Setup
