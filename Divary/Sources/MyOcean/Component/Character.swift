@@ -14,49 +14,64 @@ struct CharacterEquipmentView: View {
     let x: CGFloat
     let y: CGFloat
     
+    // 부유 애니메이션 상태
+    @State private var floatingOffset: CGFloat = 0
+    
     var body: some View {
         ZStack {
             // 산소통
             if customization.tank != .none {
                 Image(customization.tank.rawValue)
                     .scaleEffect(scale)
-                    .offset(x: (70 * scale) + x, y: (-10 * scale) + y)
+                    .offset(x: (70 * scale) + x, y: (-10 * scale) + y + floatingOffset)
             }
             
             // 몸통 (기본으로 항상 표시)
             if customization.body != .none {
                 Image(customization.body.rawValue)
                     .scaleEffect(scale)
-                    .offset(x: x, y: y)
+                    .offset(x: x, y: y + floatingOffset)
             }
             
             // 호흡기
             if customization.regulator != .none {
                 Image(customization.regulator.rawValue)
                     .scaleEffect(scale)
-                    .offset(x: (-65 * scale) + x, y: (-30 * scale) + y)
+                    .offset(x: (-65 * scale) + x, y: (-30 * scale) + y + floatingOffset)
             }
             
             // 볼터치
             if customization.cheek != .none {
                 Image(customization.cheek.rawValue)
                     .scaleEffect(scale)
-                    .offset(x: (-45 * scale) + x, y: (-40 * scale) + y)
+                    .offset(x: (-45 * scale) + x, y: (-40 * scale) + y + floatingOffset)
             }
             
             // 마스크
             if customization.mask != .none {
                 Image(customization.mask.rawValue)
                     .scaleEffect(scale)
-                    .offset(x: (-28 * scale) + x, y: (-60 * scale) + y)
+                    .offset(x: (-28 * scale) + x, y: (-60 * scale) + y + floatingOffset)
             }
             
             // 핀
             if customization.pin != .none {
                 Image(customization.pin.rawValue)
                     .scaleEffect(scale)
-                    .offset(x: (68 * scale) + x, y: (85 * scale) + y)
+                    .offset(x: (68 * scale) + x, y: (85 * scale) + y + floatingOffset)
             }
+        }
+        .task {
+            startFloatingAnimation()
+        }
+    }
+    
+    private func startFloatingAnimation() {
+        withAnimation(
+            Animation.easeInOut(duration: 3.0)
+                .repeatForever(autoreverses: true)
+        ) {
+            floatingOffset = -20
         }
     }
 }

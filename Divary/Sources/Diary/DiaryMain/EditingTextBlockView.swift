@@ -2,7 +2,6 @@
 //  Divary
 //  Created by 김나영 on 7/6/25.
 
-
 import SwiftUI
 import RichTextKit
 
@@ -10,9 +9,10 @@ struct EditingTextBlockView: View {
     @Bindable var viewModel: DiaryMainViewModel
     @FocusState.Binding var isRichTextEditorFocused: Bool
     let content: RichTextContent
+    let shouldAutoFocus: Bool
     
     // 한글 입력 상태 추적
-    @State private var isInternalUpdate: Bool = false // true?
+    @State private var isInternalUpdate: Bool = false
     @State private var lastTextLength: Int = 0
     @State private var lastCursorPosition: Int = 0
     
@@ -53,8 +53,9 @@ struct EditingTextBlockView: View {
             viewModel.richTextContext.setAttributedString(to: content.text)
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-//                isInternalUpdate = false
-                $isRichTextEditorFocused.wrappedValue = true
+                if shouldAutoFocus {
+                    $isRichTextEditorFocused.wrappedValue = true
+                }
                 viewModel.currentTextAlignment = viewModel.getCurrentTextAlignment()
                 
                 // 새 텍스트 블록용 초기 설정
@@ -73,6 +74,20 @@ struct EditingTextBlockView: View {
         .onChange(of: viewModel.richTextContext.attributedString) { _, _ in
             // 텍스트 변화 시 높이 체크 예약
             scheduleHeightCheck()
+        }
+        .onChange(of: shouldAutoFocus) { _, newValue in
+            // shouldAutoFocus가 변경되면 포커스 상태 조정
+            if !newValue && isRichTextEditorFocused {
+                // 자동 포커스가 비활성화되고 현재 포커스되어 있으면 포커스 해제
+                DispatchQueue.main.async {
+                    self.isRichTextEditorFocused = false
+                }
+            } else if newValue && !isRichTextEditorFocused && isInitialSetupComplete {
+                // 자동 포커스가 활성화되고 현재 포커스되어 있지 않으면 포커스 설정
+                DispatchQueue.main.async {
+                    self.isRichTextEditorFocused = true
+                }
+            }
         }
     }
     
@@ -97,16 +112,20 @@ struct EditingTextBlockView: View {
         }
         
         // 포커스를 지연시켜 안정성 확보
-        delayedFocusSetup()
+        if shouldAutoFocus {
+            delayedFocusSetup()
+        }
     }
     
     // MARK: - 포커스 처리 개선
     
     private func delayedFocusSetup() {
+        guard shouldAutoFocus else { return }
+        
         focusDelayTimer?.invalidate()
         focusDelayTimer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: false) { _ in
             DispatchQueue.main.async {
-                if self.isInitialSetupComplete {
+                if self.isInitialSetupComplete && self.shouldAutoFocus {
                     self.isRichTextEditorFocused = true
                 }
             }

@@ -23,6 +23,9 @@ struct PetView: View {
     // 기준 스케일 정의 (iPhone 16 Pro 기준)
     private let baseScale: CGFloat = 1.0
     
+    // 부유 애니메이션 상태
+    @State private var floatingOffset: CGFloat = 0
+    
     var body: some View {
         // 펫이 none이 아닌 경우에만 표시
         if customization.pet.type != .none {
@@ -38,7 +41,7 @@ struct PetView: View {
             
             ZStack {
                 if isPetEditingMode {
-                    // 편집 모드
+                    // 편집 모드 - 부유 효과 없음 (드래그와 충돌 방지)
                     ZStack {
                         // 회전되는 부분 (프레임 + 펫 + 모서리 핸들)
                         Group {
@@ -114,13 +117,13 @@ struct PetView: View {
                     )
                     
                 } else {
-                    // 일반 모드
+                    // 일반 모드 - 부유 효과 적용
                     Image(customization.pet.type.rawValue)
                         .resizable()
                         .frame(width: frameSize, height: frameSize)
                         .rotationEffect(customization.pet.rotation)
                         .offset(x: normalizedOffsetX + x,
-                               y: normalizedOffsetY + y)
+                               y: normalizedOffsetY + y + floatingOffset)
                         .onTapGesture(count: 2) {
                             withAnimation(.easeInOut(duration: 0.3)) {
                                 isPetEditingMode = true
@@ -128,6 +131,21 @@ struct PetView: View {
                             impactFeedback()
                         }
                 }
+            }
+            .task {
+                startFloatingAnimation()
+            }
+        }
+    }
+    
+    private func startFloatingAnimation() {
+        // 0.5초 지연 후 시작 (캐릭터와 다른 타이밍)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            withAnimation(
+                Animation.easeInOut(duration: 2.5)
+                    .repeatForever(autoreverses: true)
+            ) {
+                floatingOffset = -15
             }
         }
     }

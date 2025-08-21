@@ -2,8 +2,9 @@
 //  MyOceanView.swift
 //  Divary
 //
-//  Created by 바견규 on 7/25/25.
+//  Created by 박견규 on 7/25/25.
 //
+
 import SwiftUI
 
 struct CharacterViewWrapper: View {
@@ -37,6 +38,14 @@ struct CharacterView: View {
     @Binding private var isPetEditingMode: Bool
     @State private var petDragOffset: CGSize = .zero
     @State private var petTempRotation: Angle = .zero
+    @State private var showBuddySpeech = false // 버디 말풍선 상태
+    
+    // 부유 애니메이션을 위한 상태 변수들
+    @State private var characterFloatingOffset: CGFloat = 0
+    @State private var equipmentFloatingOffset: CGFloat = 0
+    @State private var petFloatingOffset: CGFloat = 0
+    @State private var speechBubbleFloatingOffset: CGFloat = 0
+    
     var isStoreView: Bool
     
     var storeViewOffset: CGFloat {
@@ -65,7 +74,7 @@ struct CharacterView: View {
                             .resizable()
                             .frame(width: geometry.size.width, height: geometry.size.height)
                     } else {
-                        // 기본 배경
+                        // 기본 바다 배경
                         LinearGradient(
                             colors: [Color.blue.opacity(0.6), Color.blue.opacity(0.3)],
                             startPoint: .top,
@@ -93,21 +102,29 @@ struct CharacterView: View {
                         )
                     }
 
+                    // 캐릭터 장비들 (클릭 가능) - 부유 효과 적용
+                    Button(action: {
+                        // 온보딩 완료된 경우에만
+                        if customization.CharacterName != nil && !(customization.CharacterName?.isEmpty ?? true) {
+                            impactFeedback()
+                            showBuddySpeech = true
+                        }
+                    }) {
+                        CharacterEquipmentView(
+                            customization: customization,
+                            scale: scale,
+                            x: x,
+                            y: y + equipmentFloatingOffset
+                        )
+                    }
+                    .buttonStyle(NoEffectButtonStyle())
                     
-                    // 캐릭터 장비들
-                    CharacterEquipmentView(
-                        customization: customization,
-                        scale: scale,
-                        x: x,
-                        y: y
-                    )
-                    
-                    // 펫 뷰
+                    // 펫 뷰 - 부유 효과 적용
                     PetView(
                         customization: customization,
                         scale: scale,
                         x: x,
-                        y: y,
+                        y: y + petFloatingOffset, // 부유 효과를 y에 직접 적용
                         geometry: geometry,
                         isPetEditingMode: $isPetEditingMode,
                         petDragOffset: $petDragOffset,
@@ -116,12 +133,12 @@ struct CharacterView: View {
                         impactFeedback: impactFeedback
                     )
                     
-                    // 말풍선
+                    // 말풍선 - 부유 효과 적용
                     SpeechBubbleView(
                         customization: customization,
                         scale: scale,
                         x: x,
-                        y: y,
+                        y: y + speechBubbleFloatingOffset, // 부유 효과를 y에 직접 적용
                         isStoreView: isStoreView,
                         viewModel: viewModel
                     )
@@ -133,6 +150,15 @@ struct CharacterView: View {
                         keyboardHeight: keyboardHeight,
                         viewModel: viewModel
                     )
+                    
+                    // 버디 말풍선
+                    if showBuddySpeech {
+                        BuddySpeechBubbleOverlay(
+                            isVisible: $showBuddySpeech,
+                            geometry: geometry,
+                            keyboardHeight: keyboardHeight
+                        )
+                    }
                     
                     // 편집 모드 UI
                     if isPetEditingMode {
@@ -168,6 +194,10 @@ struct CharacterView: View {
             }
         }
         .ignoresSafeArea()
+        .task {
+            // 부유 애니메이션 시작
+            startFloatingAnimations()
+        }
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { notification in
             if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
                 keyboardHeight = keyboardFrame.height
@@ -187,6 +217,38 @@ struct CharacterView: View {
         )
     }
     
+    // MARK: - 부유 애니메이션 함수들
+    
+    // 부유 애니메이션 시작
+    private func startFloatingAnimations() {
+        // 캐릭터 장비 부유 애니메이션 (상하 움직임, 3초 주기)
+        withAnimation(
+            Animation.easeInOut(duration: 3.0)
+                .repeatForever(autoreverses: true)
+        ) {
+            equipmentFloatingOffset = -20
+        }
+        
+        // 펫 부유 애니메이션 (2.5초 주기, 살짝 다른 타이밍)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            withAnimation(
+                Animation.easeInOut(duration: 2.5)
+                    .repeatForever(autoreverses: true)
+            ) {
+                petFloatingOffset = -15
+            }
+        }
+        
+        // 말풍선 부유 애니메이션 (2.8초 주기, 또 다른 타이밍)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            withAnimation(
+                Animation.easeInOut(duration: 2.8)
+                    .repeatForever(autoreverses: true)
+            ) {
+                speechBubbleFloatingOffset = -12
+            }
+        }
+    }
     
     // MARK: - 헬퍼 함수들
     
