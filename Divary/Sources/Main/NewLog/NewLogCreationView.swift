@@ -71,7 +71,7 @@ struct NewLogCreationView: View {
                 .padding(.horizontal) // 좌우 패딩만 적용
                 
                 Spacer() // 하단 여백
-            }
+            }.padding(.horizontal)
             
             // 로딩 인디케이터
             if viewModel.isLoading {
