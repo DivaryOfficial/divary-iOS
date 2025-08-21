@@ -51,14 +51,7 @@ struct DiveInputPageView: View {
                     .overlay(
                         TabView(selection: $selectedPage) {
                             ForEach(0..<pages.count, id: \.self) { index in
-                                ScrollView {
-                                    VStack(alignment: .center, spacing: 20) {
-                                        pages[index]
-                                    }
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.horizontal, 20)
-                                    .padding(.vertical, 20)
-                                }
+                                pages[index]
                                 .tag(index)
                             }
                         }
