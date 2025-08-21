@@ -16,14 +16,14 @@ struct ToastView: View {
         if isShowing {
             Text(message)
                 .font(.system(size: 14, weight: .medium))
-                .foregroundColor(.white)
+                .foregroundStyle(Color.white)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
                 .background(Color.red.opacity(0.9))
                 .cornerRadius(20)
                 .transition(.opacity)
                 .zIndex(1000)
-                .onAppear {
+                .task {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                         withAnimation {
                             isShowing = false
