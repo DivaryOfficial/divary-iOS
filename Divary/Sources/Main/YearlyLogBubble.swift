@@ -19,6 +19,7 @@ struct YearlyLogBubble: View {
     // 그리드 컬럼 설정
     let columns = Array(repeating: GridItem(.flexible(), spacing: 0), count: 4)
 
+    @AppStorage("hasSeenPlusTooltip") private var hasSeenPlusTooltip: Bool = false
     
     var body: some View {
         // 전달받은 logBases에서 해당 연도 필터링
@@ -31,6 +32,8 @@ struct YearlyLogBubble: View {
         let displayItems: [(icon: IconType, date: Date, logBaseId: String?, hasTempSave: Bool)] =
             [(.plus, Date(), nil, false)] +
             sortedLogs.map { ($0.iconType, $0.date, $0.id, $0.hasTempSave) }
+        
+        let shouldShowTooltip = sortedLogs.isEmpty && !hasSeenPlusTooltip
        
         ScrollView {
             LazyVGrid(columns: columns, spacing: 0) {
@@ -57,9 +60,14 @@ struct YearlyLogBubble: View {
                     .padding(.top, index % 2 == 1 ? 60 : 0)
                     
                     // 조건: 로그 없음 (+ 버튼에만 툴팁 표시)
-                    if sortedLogs.isEmpty && index == 0 {
+//                    if sortedLogs.isEmpty && index == 0 {
+//                        Image(.plusTooltip)
+//                            .offset(x: 60, y: -45)
+//                    }
+                    if shouldShowTooltip && index == 0 {
                         Image(.plusTooltip)
                             .offset(x: 60, y: -45)
+                            .task { hasSeenPlusTooltip = true }
                     }
                 }
             }

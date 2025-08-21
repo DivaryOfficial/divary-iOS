@@ -54,14 +54,14 @@ final class DiaryCanvasViewModel: ObservableObject {
         }
     }
     
-    func saveDrawingWithOffset(offsetY: CGFloat) {
-        let drawing = canvas.drawing
-        do {
-            try DrawingStore.save(diaryId: diaryId, drawing: drawing, offsetY: offsetY)
-        } catch {
-            print("saveDrawingWithOffset error: \(error)")
-        }
-    }
+//    func saveDrawingWithOffset(offsetY: CGFloat) {
+//        let drawing = canvas.drawing
+//        do {
+//            try DrawingStore.save(diaryId: diaryId, drawing: drawing, offsetY: offsetY)
+//        } catch {
+//            print("saveDrawingWithOffset error: \(error)")
+//        }
+//    }
     
     func loadDrawingIfExists() {
         guard DrawingStore.exists(diaryId: diaryId) else { return }

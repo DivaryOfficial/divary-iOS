@@ -12,7 +12,7 @@ struct EditingTextBlockView: View {
     let content: RichTextContent
     
     // 한글 입력 상태 추적
-    @State private var isInternalUpdate: Bool = true
+    @State private var isInternalUpdate: Bool = false // true?
     @State private var lastTextLength: Int = 0
     @State private var lastCursorPosition: Int = 0
     
@@ -44,10 +44,23 @@ struct EditingTextBlockView: View {
         .focused($isRichTextEditorFocused)
         .frame(minHeight: 80)
         .fixedSize(horizontal: false, vertical: true)
+        .scrollDisabled(true)
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
         .background(Color.clear)
         .task {
+            setupTextViewAppearance()
+            viewModel.richTextContext.setAttributedString(to: content.text)
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+//                isInternalUpdate = false
+                $isRichTextEditorFocused.wrappedValue = true
+                viewModel.currentTextAlignment = viewModel.getCurrentTextAlignment()
+                
+                // 새 텍스트 블록용 초기 설정
+                setupInitialTypingAttributes()
+            }
+        }
             await setupInitialState()
         }
         .onChange(of: isRichTextEditorFocused) { _, newValue in
