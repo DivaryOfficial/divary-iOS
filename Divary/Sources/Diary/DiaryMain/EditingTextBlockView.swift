@@ -60,7 +60,6 @@ struct EditingTextBlockView: View {
                 // 새 텍스트 블록용 초기 설정
                 setupInitialTypingAttributes()
             }
-        }
             await setupInitialState()
         }
         .onChange(of: isRichTextEditorFocused) { _, newValue in
