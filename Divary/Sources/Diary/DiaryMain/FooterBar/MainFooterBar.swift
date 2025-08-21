@@ -1,9 +1,7 @@
-//
 //  MainFooterBar.swift
 //  Divary
 //
-//  Created by 바견규 on 7/29/25.
-//
+//  키보드 상호작용 완전 버전
 
 import SwiftUI
 import PhotosUI
@@ -21,11 +19,13 @@ struct MainFooterBar: View {
             PhotosPicker(selection: $viewModel.selectedItems, matching: .images) {
                 Image(.photo)
             }
+            .disabled(viewModel.editingTextBlock != nil)
             
             Button(action: {
-                // 텍스트 블록이 편집 중이 아닐 때만 스타일 바로 이동
                 if viewModel.editingTextBlock != nil {
-                    footerBarType = .textStyle
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        footerBarType = .textStyle
+                    }
                 }
             }) {
                 Image(.font)
@@ -35,9 +35,10 @@ struct MainFooterBar: View {
             .disabled(viewModel.editingTextBlock == nil)
             
             Button(action: {
-                // 텍스트 블록이 편집 중이 아닐 때만 정렬 바로 이동
                 if viewModel.editingTextBlock != nil {
-                    footerBarType = .alignment
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        footerBarType = .alignment
+                    }
                 }
             }) {
                 Image(.alignText)
@@ -46,52 +47,74 @@ struct MainFooterBar: View {
             }
             .disabled(viewModel.editingTextBlock == nil)
             
-            Button(action: { footerBarType = .sticker }) {
+            Button(action: {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    footerBarType = .sticker
+                }
+            }) {
                 Image(.sticker)
             }
+            .disabled(viewModel.editingTextBlock != nil)
             
-            Button(action: { showCanvas = true }) {
+            Button(action: {
+                if viewModel.editingTextBlock != nil {
+                    commitTextEditingAndShowCanvas()
+                } else {
+                    showCanvas = true
+                }
+            }) {
                 Image(.pencil)
             }
-//            .disabled(isRichTextEditorFocused.wrappedValue)
-            .disabled(viewModel.editingTextBlock != nil)
             
             Spacer()
             
             if viewModel.editingTextBlock == nil {
-                // 키보드 올리기 버튼
                 Button(action: {
-                    DispatchQueue.main.async {
-                        // 1) 블록 추가(상태 변경)
-                        viewModel.addTextBlock()
-                        // 2) 포커스 전환은 다음 런루프로 미룸
-                        DispatchQueue.main.async {
-                            isRichTextEditorFocused.wrappedValue = true
-    //                        footerBarType = .textStyle
-                        }
-                    }
+                    viewModel.addTextBlock()
                 }) {
                     Image(.keyboard1)
                 }
+                .transition(.scale.combined(with: .opacity))
             } else {
-                // 키보드 내리기 버튼
                 Button(action: {
-                    // 1) 편집 저장(상태 변경)
-                    viewModel.saveCurrentEditingBlock()
-                    viewModel.commitEditingTextBlock()
-                    // 2) 포커스/푸터바 전환은 다음 런루프로 미룸
-                    DispatchQueue.main.async {
-                        isRichTextEditorFocused.wrappedValue = false
-                        footerBarType = .main
-                    }
+                    commitTextEditing()
                 }) {
                     Image(.keyboard)
                 }
+                .transition(.scale.combined(with: .opacity))
             }
         }
         .foregroundStyle(Color(.bWBlack))
         .padding(.horizontal, 20)
         .padding(.vertical, 12)
-        .background(Color(.G_100))
+        .background(
+            Color(.G_100)
+                .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: -1)
+        )
+        .animation(.easeInOut(duration: 0.3), value: viewModel.editingTextBlock != nil)
+    }
+    
+    // MARK: - 텍스트 편집 완료 처리
+    
+    private func commitTextEditing() {
+        viewModel.saveCurrentEditingBlock()
+        viewModel.commitEditingTextBlock()
+        
+        withAnimation(.easeOut(duration: 0.25)) {
+            isRichTextEditorFocused.wrappedValue = false
+            footerBarType = .main
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            viewModel.recomputeCanSave()
+        }
+    }
+    
+    private func commitTextEditingAndShowCanvas() {
+        commitTextEditing()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+            showCanvas = true
+        }
     }
 }

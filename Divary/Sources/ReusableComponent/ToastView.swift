@@ -16,7 +16,7 @@ struct ToastView: View {
         if isShowing {
             Text(message)
                 .font(.system(size: 14, weight: .medium))
-                .foregroundColor(.white)
+                .foregroundStyle(Color.white)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
                 .background(Color.red.opacity(0.9))

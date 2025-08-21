@@ -100,8 +100,8 @@ struct LogBookPageView: View {
                                 
                                 HStack {
                                     Spacer()
-                                    // ✅ 서버에서 받은 이 다이빙 횟수 사용
-                                    Text("이 다이빙 횟수 \(mainViewModel.totalDiveCount) 회")
+                                    // ✅ 서버에서 받은 총 다이빙 횟수 사용
+                                    Text("총 다이빙 횟수 \(mainViewModel.totalDiveCount) 회")
                                         .font(Font.omyu.regular(size: 24))
                                     Spacer()
                                 }
@@ -115,20 +115,24 @@ struct LogBookPageView: View {
                         }
                     }
                     .ignoresSafeArea()
-                    // 슬라이드 제스처 추가
-                    .gesture(
-                        DragGesture(minimumDistance: 50)
-                            .onEnded { value in
-                                // 왼쪽으로 슬라이드 (마지막 페이지에서)
-                                if value.translation.width < -50 &&
-                                    index == mainViewModel.diveLogData.count - 1 {
-                                    handleAddNewLog()
-                                }
-                            }
-                    )
                 }
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+            // ✅ 제스처를 TabView 전체에 적용
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 50)
+                    .onEnded { value in
+                        print("Debug - DragGesture 감지됨!")
+                        print("Debug - selectedPage: \(pageViewModel.selectedPage)")
+                        print("Debug - diveLogData.count: \(mainViewModel.diveLogData.count)")
+                        print("Debug - translation.width: \(value.translation.width)")
+                        
+                        if value.translation.width < -50 &&
+                            pageViewModel.selectedPage == mainViewModel.diveLogData.count - 1 {
+                            handleAddNewLog()
+                        }
+                    }
+            )
             // ✅ 페이지 변경 감지하여 상위로 전달
             .onChange(of: pageViewModel.selectedPage) { _, newPage in
                 onPageChanged?(newPage)
@@ -303,11 +307,7 @@ struct LogBookPageView: View {
         }
     }
     
-    // ✅ 더 이상 필요하지 않음 - 직접 saveStatus 확인으로 대체
-    // private func isCompleteSaved(_ index: Int) -> Bool {
-    //     guard index < mainViewModel.diveLogData.count else { return false }
-    //     return mainViewModel.diveLogData[index].saveStatus == .complete
-    // }
+
     
     // 새 로그 추가 처리
     private func handleAddNewLog() {

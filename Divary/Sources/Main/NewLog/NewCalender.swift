@@ -75,10 +75,6 @@ struct NewCalenderView: View {
                 }
             }
         )
-//        .task {
-        .task {
-            loadExistingLogs()
-        }
     }
 
     private var headerView: some View {
@@ -316,25 +312,6 @@ struct NewCalenderView: View {
             // 선택된 년월도 업데이트
             selectedYear = Calendar.current.component(.year, from: newMonth)
             selectedMonthIndex = Calendar.current.component(.month, from: newMonth) - 1
-        }
-    }
-    
-    // 기존 로그 데이터 로드
-    private func loadExistingLogs() {
-        guard !isLoadingLogs else { return }
-        
-        isLoadingLogs = true
-        LogBookService.shared.getAllLogs { result in
-            DispatchQueue.main.async {
-                self.isLoadingLogs = false
-                switch result {
-                case .success(let logs):
-                    self.existingLogDates = Set(logs.map { $0.date })
-                    print("📅 로드된 로그 날짜들: \(self.existingLogDates)")
-                case .failure(let error):
-                    print("❌ 로그 로드 실패: \(error.localizedDescription)")
-                }
-            }
         }
     }
     

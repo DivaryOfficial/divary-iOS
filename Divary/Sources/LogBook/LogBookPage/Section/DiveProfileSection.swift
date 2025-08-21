@@ -244,31 +244,3 @@ struct GasConsumptionView: View {
     }
 }
 
-//
-//#Preview {
-//        // 저장된 상태 (완전한 데이터)
-//    DiveProfileSection(
-//            profile: .constant(DiveProfile(
-//                diveTime: 42,
-//                maxDepth: 30,
-//                avgDepth: 18,
-//                decoStop: 3,
-//                startPressure: 200,
-//                endPressure: 50
-//            )),
-//            isSaved: .constant(false)
-//        )
-//
-//        // 작성 안 된 상태 (빈 데이터)
-//    DiveProfileSection(
-//            profile: .constant(DiveProfile(
-//                diveTime: nil,
-//                maxDepth: nil,
-//                avgDepth: nil,
-//                decoStop: nil,
-//                startPressure: nil,
-//                endPressure: nil
-//            )),
-//            isSaved: .constant(false)
-//        )
-//}

@@ -26,16 +26,21 @@ struct ComPop: View {
             .padding(.bottom, 12)
             
             // 실제 팝업 컨텐츠
-            VStack(alignment: .center, spacing: 16) {
+            VStack(alignment: .center, spacing: 7) {
                 
-                Text("기록이 모두 저장되었어요.\n멋진 로그가 완성되었네요!")
-                    .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 16))
+                Text("기록이 모두 저장되었어요.")
+                    .font(Font.omyu.regular(size: 24))
+                    .foregroundStyle(Color.bw_black)
+                    .multilineTextAlignment(.center)
+                
+                Text("멋진 로그가 완성되었네요!")
+                    .font(Font.omyu.regular(size: 24))
                     .foregroundStyle(Color.bw_black)
                     .multilineTextAlignment(.center)
                 
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 22)
+            .padding(.horizontal, 22)
+            .padding(.vertical, 32)
             .frame(maxWidth: .infinity, alignment: .center)
             .background(.white)
             .cornerRadius(16)
