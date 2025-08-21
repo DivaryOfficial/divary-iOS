@@ -109,8 +109,17 @@ struct DiaryMainView: View {
     }
     
     private var diaryMain: some View {
-        ScrollView(.vertical, showsIndicators: false) {
+        ScrollView(.vertical) {
             ZStack {
+                GeometryReader { geometry in
+                    Image("gridBackground")
+                        .resizable(resizingMode: .tile)
+                        .scaledToFill()
+                        .frame(
+                            width: geometry.size.width,
+                            height: max(geometry.size.height, UIScreen.main.bounds.height)
+                        )
+                }.ignoresSafeArea()
                 LazyVStack(spacing: 8) {
                     ForEach(viewModel.blocks) { block in
                         switch block.content {
@@ -146,21 +155,16 @@ struct DiaryMainView: View {
                                 }
                         }
                     }
-//                    .id(UUID())
                     
                     Spacer(minLength: 100)
                 }
-                .frame(maxWidth: .infinity, minHeight: UIScreen.main.bounds.height)
-                .background(
-                    Image("gridBackground")
-                        .resizable(resizingMode: .tile)
-                )
                 
                 if let drawing = viewModel.savedDrawing {
                     DrawingScreenView(drawing: drawing, offsetY: viewModel.drawingOffsetY)
                         .opacity(showCanvas ? 0 : 1)
 //                        .accessibilityHidden(showCanvas)
 //                        .allowsHitTesting(false)
+                    
                     GeometryReader { geo in
                         Color.clear
                             .preference(key: ScrollOffsetPreferenceKey.self, value: geo.frame(in: .named("scroll")).origin.y)
@@ -210,7 +214,7 @@ private struct PreviewWrapper: View {
     @State private var showCanvas = false
 
     var body: some View {
-        DiaryMainView(viewModel: vm, diaryLogId: 51, showCanvas: $showCanvas)
+        DiaryMainView(viewModel: vm, diaryLogId: 67, showCanvas: $showCanvas)
 //        DiaryMainView(diaryLogId: 51)
     }
 }

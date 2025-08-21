@@ -19,11 +19,12 @@ struct DrawingScreenView: UIViewRepresentable { // 그렸던 그림 띄워주는
         canvas.isUserInteractionEnabled = false // 읽기 전용
         canvas.backgroundColor = .clear
         canvas.isOpaque = false
-        canvas.contentOffset.y = offsetY
+//        canvas.contentOffset.y = offsetY
         return canvas
     }
 
     func updateUIView(_ uiView: PKCanvasView, context: Context) {
         uiView.drawing = drawing
+//        uiView.contentOffset.y = offsetY
     }
 }

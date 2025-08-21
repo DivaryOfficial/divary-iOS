@@ -23,7 +23,7 @@ struct ToastView: View {
                 .cornerRadius(20)
                 .transition(.opacity)
                 .zIndex(1000)
-                .onAppear {
+                .task {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                         withAnimation {
                             isShowing = false

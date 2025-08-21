@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import PencilKit
 
-struct CanvasView: UIViewRepresentable { // UIKit 에서 가져온 펜슬킷 캔버스뷰
+struct CanvasView: UIViewRepresentable {
     let canvas: PKCanvasView
     let toolPicker: PKToolPicker
     let offsetY: CGFloat
@@ -32,11 +32,13 @@ struct CanvasView: UIViewRepresentable { // UIKit 에서 가져온 펜슬킷 캔
         }
 
         private func updateObscuredHeight() {
+            DispatchQueue.main.async {
                 let rect = self.parent.toolPicker.frameObscured(in: self.parent.canvas)
                 let h = max(0, rect.height)
                 if self.parent.obscuredHeight != h {
                     self.parent.obscuredHeight = h
                 }
+            }
         }
     }
 
@@ -54,7 +56,7 @@ struct CanvasView: UIViewRepresentable { // UIKit 에서 가져온 펜슬킷 캔
             if canvas.contentSize.height < minCanvasHeight {
                 canvas.contentSize = CGSize(width: canvas.bounds.width, height: minCanvasHeight)
             }
-            canvas.contentOffset.y = offsetY
+//            canvas.contentOffset.y = offsetY
             // 초기 한 번 바로 측정
             context.coordinator.toolPickerVisibilityDidChange(toolPicker)
         }
