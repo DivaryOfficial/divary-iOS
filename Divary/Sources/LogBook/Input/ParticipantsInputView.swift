@@ -133,7 +133,7 @@ struct CompanionInputField: View {
                     
                     companion = companions.isEmpty ? nil : companions
                 }
-                .onAppear {
+                .task {
                     inputText = companion?.joined(separator: ", ") ?? ""
                 }
                 .onChange(of: companion) { _, newValue in

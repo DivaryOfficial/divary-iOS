@@ -132,6 +132,25 @@ struct DiaryMainView: View {
         .onChange(of: isRichTextEditorFocused) { _, newValue in
             handleFocusChange(newValue)
         }
+        .onChange(of: footerBarType) { oldType, newType in
+            handleFooterBarChange(oldType: oldType, newType: newType)
+        }
+    }
+    
+    // MARK: - 푸터바 변경 처리
+    
+    private func handleFooterBarChange(oldType: DiaryFooterBarType, newType: DiaryFooterBarType) {
+        if newType == .fontFamily {
+            // 폰트 패밀리로 전환 시 키보드 숨기기
+            DispatchQueue.main.async {
+                self.isRichTextEditorFocused = false
+            }
+        } else if oldType == .fontFamily && viewModel.editingTextBlock != nil {
+            // 폰트 패밀리에서 다른 곳으로 갈 때 편집 중이면 키보드 다시 표시
+            DispatchQueue.main.async {
+                self.isRichTextEditorFocused = true
+            }
+        }
     }
     
     // MARK: - 키보드 처리
@@ -255,7 +274,8 @@ struct DiaryMainView: View {
                                     EditingTextBlockView(
                                         viewModel: viewModel,
                                         isRichTextEditorFocused: $isRichTextEditorFocused,
-                                        content: content
+                                        content: content,
+                                        shouldAutoFocus: footerBarType != .fontFamily
                                     )
                                     .id(block.id)
                                     .transition(.identity) // 부드러운 전환
