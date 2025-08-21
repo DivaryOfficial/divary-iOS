@@ -9,7 +9,6 @@ import SwiftUI
 
 struct ParticipantsInputView: View {
     @Binding var participants: DiveParticipants
-    @State private var companionInput: String = ""
     
     var body: some View {
         ZStack {
@@ -37,10 +36,7 @@ struct ParticipantsInputView: View {
                         CompanionInputField(
                             title: "동행자",
                             placeholder: "김동행, 박동행, 이동행",
-                            value: $companionInput,
-                            onCommit: {
-                                participants.companion = parseCompanions(companionInput)
-                            }
+                            companion: $participants.companion
                         )
                         Spacer()
                     }
@@ -48,36 +44,21 @@ struct ParticipantsInputView: View {
                 .frame(maxWidth: .infinity, alignment: .center)
             }
         }
-        .onAppear {
-            // 저장된 companion 값을 텍스트필드에 로드
-            if let companions = participants.companion {
-                companionInput = companions.joined(separator: ", ")
-            }
-        }
-    }
-    
-    private func parseCompanions(_ input: String) -> [String]? {
-        let companions = input
-            .components(separatedBy: CharacterSet(charactersIn: ", "))
-            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-            .filter { !$0.isEmpty }
-        
-        return companions.isEmpty ? nil : companions
     }
 }
 
 struct CompanionInputField: View {
     let title: String
     let placeholder: String
-    @Binding var value: String
-    let onCommit: () -> Void
+    @Binding var companion: [String]?
+    @State private var inputText: String = ""
     
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(title)
                 .font(Font.omyu.regular(size: 20))
             
-            TextField(placeholder, text: $value)
+            TextField(placeholder, text: $inputText)
                 .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
                 .foregroundStyle(Color.bw_black)
                 .padding(.vertical, 12)
@@ -85,7 +66,18 @@ struct CompanionInputField: View {
                 .background(Color.grayscale_g100)
                 .cornerRadius(8)
                 .onSubmit {
-                    onCommit()
+                    let companions = inputText
+                        .components(separatedBy: CharacterSet(charactersIn: ", "))
+                        .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                        .filter { !$0.isEmpty }
+                    
+                    companion = companions.isEmpty ? nil : companions
+                }
+                .onAppear {
+                    inputText = companion?.joined(separator: ", ") ?? ""
+                }
+                .onChange(of: companion) { _, newValue in
+                    inputText = newValue?.joined(separator: ", ") ?? ""
                 }
         }
     }
