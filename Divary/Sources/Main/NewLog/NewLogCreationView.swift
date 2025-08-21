@@ -89,7 +89,6 @@ struct NewLogCreationView: View {
     }
 }
 
-
 #Preview {
     @Previewable @State var viewModel = NewLogCreationViewModel()
     NewLogCreationView(viewModel: viewModel)

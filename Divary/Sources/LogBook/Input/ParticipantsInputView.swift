@@ -84,6 +84,12 @@ struct ParticipantsInputView: View {
                 .frame(maxWidth: .infinity, alignment: .center)
             }
         }
+        .task {
+            // 저장된 companion 값을 텍스트필드에 로드
+            if let companions = participants.companion {
+                companionInput = companions.joined(separator: ", ")
+            }
+        }
     }
 }
 

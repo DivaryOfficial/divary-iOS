@@ -95,7 +95,8 @@ class OceanCatalogViewModel {
     func getCardDetail(id: Int) {
         guard !isLoadingDetail else { return }
         isLoadingDetail = true
-
+        lastDetail = nil
+        
         service.getCardDetail(id: id)
             .sink(receiveCompletion: { [weak self] comp in
                 self?.isLoadingDetail = false

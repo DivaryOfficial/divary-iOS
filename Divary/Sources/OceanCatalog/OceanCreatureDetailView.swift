@@ -55,10 +55,7 @@ struct OceanCreatureDetailView: View {
                 }
             }
             .coordinateSpace(name: "scroll")
-//            .toolbar(.hidden, for: .navigationBar)
             .navigationBarBackButtonHidden(true)
-//            .navigationTitle("해양도감")
-//            .navigationBarTitleDisplayMode(.inline)
         }
     }
     
@@ -231,7 +228,7 @@ struct DetailInfoBlock: View {
             Text(value).font(.NanumSquareNeo.NanumSquareNeoBold(size: 12)).foregroundStyle(Color(.grayscaleG800))
             Spacer()
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 2)
     }
 }
 
@@ -266,9 +263,10 @@ func DetailLine(_ title: String, _ value: String, colorCodes: [String] = []) -> 
                         )
                 }
             }
-            .padding(.bottom, 4)
+            .padding(.bottom, 6)
         }
         Text(value).font(.NanumSquareNeo.NanumSquareNeoBold(size: 14)).foregroundStyle(Color(.grayscaleG700))
+            .lineSpacing(6)
     }
 }
 
@@ -317,11 +315,7 @@ struct RoundedCorners: Shape {
         size: "약 1.5~6cm",
         appearPeriod: "봄, 가을에 주로 관찰",
         place: "따뜻한 연안, 바위 틈",
-        imageUrls: [
-            URL(string: "https://commons.wikimedia.org/wiki/File:Lampetra_fluviatilis.jpg")!,
-            URL(string: "https://commons.wikimedia.org/wiki/File:Lampetra_fluviatilis.jpg")!,
-            URL(string: "https://commons.wikimedia.org/wiki/File:Lampetra_fluviatilis.jpg")!
-        ],
+        imageUrls: [],
         appearance: Appearance(
             body: "부드럽고 납작한 몸체",
             colorCodes: ["#FFFFFF", "#FFD700", "#000000"],
@@ -338,7 +332,7 @@ struct RoundedCorners: Shape {
         significant: Significant(
             toxicity: "무독성",
             strategy: "위장",
-            observeTip: "작고 조용히 숨어 있으니 자세히 봐야 함",
+            observeTip: "작고 조용히 숨어 있으니 자세히 봐야 함 어쩌구저쩌구 어쩌구저쩌구 어쩌구저쩌구 어쩌구저쩌구 어쩌구저쩌구어쩌구저쩌구어쩌구저쩌구어쩌구저쩌구어쩌구저쩌구",
             otherFeature: "바다 속 꽃처럼 생김"
         )
     )

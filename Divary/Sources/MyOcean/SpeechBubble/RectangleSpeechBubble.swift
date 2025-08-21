@@ -25,18 +25,35 @@ struct RectangleSpeechBubble: View {
 // 입력 가능한 말풍선 (입력용)
 struct RectangleSpeechBubbleInput: View {
     @Binding var text: String
+    let characterLimit: Int
+    @State private var showToast = false
+    
+    init(text: Binding<String>, characterLimit: Int = 15) {
+        self._text = text
+        self.characterLimit = characterLimit
+    }
     
     var body: some View {
-        HStack {
-            TextField(text == "" ? "입력해주세요" : "", text: $text)
-                .font(Font.omyu.regular(size: 16))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 18)
-                .foregroundStyle(Color.bw_black)
+        VStack {
+            HStack {
+                TextField(text == "" ? "입력해주세요" : "", text: $text)
+                    .font(Font.omyu.regular(size: 16))
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 18)
+                    .foregroundStyle(Color.bw_black)
+                    .onChange(of: text) { oldValue, newValue in
+                        if newValue.count > characterLimit {
+                            text = String(newValue.prefix(characterLimit))
+                            withAnimation {
+                                showToast = true
+                            }
+                        }
+                    }
+            }
+            .background(Color.white)
+            .clipShape(RoundedCorner(radius: 8, corners: [.topLeft, .topRight, .bottomLeft]))
+            .fixedSize(horizontal: true, vertical: false)
         }
-        .background(Color.white)
-        .clipShape(RoundedCorner(radius: 8, corners: [.topLeft, .topRight, .bottomLeft]))
-        .fixedSize(horizontal: true, vertical: false)
     }
 }
 

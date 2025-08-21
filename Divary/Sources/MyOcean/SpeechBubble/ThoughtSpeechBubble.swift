@@ -39,7 +39,14 @@ struct ThoughtSpeechBubbleView: View {
 // 입력용 말풍선 (생각풍선)
 struct ThoughtSpeechBubbleInputView: View {
     @Binding var text: String
-    
+    let characterLimit: Int
+    @State private var showToast = false
+
+    init(text: Binding<String>, characterLimit: Int = 15) {
+        self._text = text
+        self.characterLimit = characterLimit
+    }
+
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             TextField(text.isEmpty ? "입력해주세요" : "", text: $text)
@@ -51,7 +58,14 @@ struct ThoughtSpeechBubbleInputView: View {
                 .cornerRadius(50)
                 .fixedSize()
                 .shadow(color: .black.opacity(0.05), radius: 2, y: 1)
-            
+                .onChange(of: text) { oldValue, newValue in
+                    if newValue.count > characterLimit {
+                        text = String(newValue.prefix(characterLimit))
+                        withAnimation { showToast = true }
+                    }
+                }
+
+            // 점 두 개 (원래 위치/오프셋 그대로)
             VStack(spacing: 2) {
                 Circle()
                     .fill(Color.white)
@@ -65,6 +79,7 @@ struct ThoughtSpeechBubbleInputView: View {
         }
     }
 }
+
 
 #Preview {
     @Previewable @State var inputText = ""

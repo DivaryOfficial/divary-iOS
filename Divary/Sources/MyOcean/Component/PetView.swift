@@ -39,45 +39,53 @@ struct PetView: View {
             ZStack {
                 if isPetEditingMode {
                     // 편집 모드
-                    Group {
-                        // 선택 프레임
-                        RoundedRectangle(cornerRadius: 8 * scale)
-                            .stroke(Color.primary_sea_blue, lineWidth: 2 * scale)
-                            .frame(width: frameSize + (10 * scale), height: frameSize + (10 * scale))
-                            .background(
-                                RoundedRectangle(cornerRadius: 8 * scale)
-                                    .fill(Color.primary_sea_blue.opacity(0.1))
-                            )
-                        
-                        // 펫 이미지
-                        Image(customization.pet.type.rawValue)
-                            .resizable()
-                            .frame(width: frameSize, height: frameSize)
-                            .rotationEffect(finalRotation)
-                        
-                        // 모서리 핸들들
+                    ZStack {
+                        // 회전되는 부분 (프레임 + 펫 + 모서리 핸들)
                         Group {
-                            CornerHandle(
-                                offset: CGSize(width: -frameSize/2 - (5 * scale), height: -frameSize/2 - (5 * scale)),
-                                scale: scale
-                            )
-                            CornerHandle(
-                                offset: CGSize(width: frameSize/2 + (5 * scale), height: -frameSize/2 - (5 * scale)),
-                                scale: scale
-                            )
-                            CornerHandle(
-                                offset: CGSize(width: -frameSize/2 - (5 * scale), height: frameSize/2 + (5 * scale)),
-                                scale: scale
-                            )
-                            // 회전 핸들
-                            RotationHandle(
-                                offset: CGSize(width: frameSize/2 + (5 * scale), height: frameSize/2 + (5 * scale)),
-                                scale: scale,
-                                petTempRotation: $petTempRotation,
-                                viewModel: viewModel,
-                                impactFeedback: impactFeedback
-                            )
+                            // 선택 프레임
+                            RoundedRectangle(cornerRadius: 8 * scale)
+                                .stroke(Color.primary_sea_blue, lineWidth: 2 * scale)
+                                .frame(width: frameSize + (10 * scale), height: frameSize + (10 * scale))
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8 * scale)
+                                        .fill(Color.primary_sea_blue.opacity(0.1))
+                                )
+                            
+                            // 펫 이미지
+                            Image(customization.pet.type.rawValue)
+                                .resizable()
+                                .frame(width: frameSize, height: frameSize)
+                            
+                            // 모서리 핸들들
+                            Group {
+                                CornerHandle(
+                                    offset: CGSize(width: -frameSize/2 - (5 * scale), height: -frameSize/2 - (5 * scale)),
+                                    scale: scale
+                                )
+                                CornerHandle(
+                                    offset: CGSize(width: frameSize/2 + (5 * scale), height: -frameSize/2 - (5 * scale)),
+                                    scale: scale
+                                )
+                                CornerHandle(
+                                    offset: CGSize(width: -frameSize/2 - (5 * scale), height: frameSize/2 + (5 * scale)),
+                                    scale: scale
+                                )
+                            }
                         }
+                        .rotationEffect(finalRotation)
+                        
+                        // 회전 핸들
+                        RotationHandle(
+                            offset: rotatedHandleOffset(
+                                baseOffset: CGSize(width: frameSize/2 + (5 * scale), height: frameSize/2 + (5 * scale)),
+                                rotation: finalRotation
+                            ),
+                            scale: scale,
+                            petTempRotation: $petTempRotation,
+                            currentRotation: customization.pet.rotation,
+                            viewModel: viewModel,
+                            impactFeedback: impactFeedback
+                        )
                     }
                     .offset(x: finalX, y: finalY)
                     .gesture(
@@ -122,5 +130,17 @@ struct PetView: View {
                 }
             }
         }
+    }
+    
+    // 회전된 좌표계에서 핸들 위치 계산
+    private func rotatedHandleOffset(baseOffset: CGSize, rotation: Angle) -> CGSize {
+        let radians = rotation.radians
+        let cos_r = cos(radians)
+        let sin_r = sin(radians)
+        
+        let rotatedX = baseOffset.width * cos_r - baseOffset.height * sin_r
+        let rotatedY = baseOffset.width * sin_r + baseOffset.height * cos_r
+        
+        return CGSize(width: rotatedX, height: rotatedY)
     }
 }
