@@ -151,8 +151,11 @@ struct EditingTextBlockView: View {
         guard let editingBlock = viewModel.editingTextBlock else { return }
         
         // 키보드 상태 확인을 위한 간단한 체크
-        let isKeyboardShowing = UIApplication.shared.windows.first?.rootViewController?.view.frame.height != UIScreen.main.bounds.height
-        
+        let isKeyboardShowing = UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap { $0.windows }
+            .contains { $0.isKeyWindow && $0.frame.height != UIScreen.main.bounds.height }
+
         // 키보드가 표시 중이면 스크롤 요청을 지연
         let scrollDelay = isKeyboardShowing ? 0.2 : 0.0
         
