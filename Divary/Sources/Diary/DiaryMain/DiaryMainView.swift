@@ -133,6 +133,7 @@ struct DiaryMainView: View {
                             } else {
                                 CustomAttributedTextView(attributedText: content.text)
                                     .fixedSize(horizontal: false, vertical: true)
+                                    .layoutPriority(1)
                                     .frame(maxWidth: .infinity)
                                     .padding(.horizontal, 16)
                                     .padding(.vertical, 4)
@@ -175,7 +176,7 @@ struct DiaryMainView: View {
             .onChange(of: viewModel.selectedItems) { _, newItems in
                 guard !newItems.isEmpty else { return }
 //                Task {
-                Task { @MainActor in
+                Task {/* @MainActor in*/
                     let dtos = await viewModel.makeFramedDTOs(from: newItems)
                     
                     await MainActor.run {

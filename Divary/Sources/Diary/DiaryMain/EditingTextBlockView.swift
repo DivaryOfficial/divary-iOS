@@ -13,7 +13,7 @@ struct EditingTextBlockView: View {
     let content: RichTextContent
     
     // 한글 입력 상태 추적
-    @State private var isInternalUpdate: Bool = true
+    @State private var isInternalUpdate: Bool = false // true?
     @State private var lastTextLength: Int = 0
     @State private var lastCursorPosition: Int = 0
     
@@ -37,6 +37,7 @@ struct EditingTextBlockView: View {
         .focused($isRichTextEditorFocused)
         .frame(minHeight: 80)
         .fixedSize(horizontal: false, vertical: true)
+        .scrollDisabled(true)
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
         .background(Color.clear)
@@ -45,7 +46,7 @@ struct EditingTextBlockView: View {
             viewModel.richTextContext.setAttributedString(to: content.text)
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                isInternalUpdate = false
+//                isInternalUpdate = false
                 $isRichTextEditorFocused.wrappedValue = true
                 viewModel.currentTextAlignment = viewModel.getCurrentTextAlignment()
                 
@@ -56,16 +57,16 @@ struct EditingTextBlockView: View {
         .onChange(of: isRichTextEditorFocused) { _, newValue in
             if newValue {
                 // 편집 진입 시: UI 관련은 다음 틱
-                DispatchQueue.main.async {
+//                DispatchQueue.main.async {
                     setupInitialTypingAttributes()
                     startCursorMonitoring()
-                }
+//                }
             } else {
                 // 편집 종료 시: 모델 저장/정리도 다음 틱
-                DispatchQueue.main.async {
+//                DispatchQueue.main.async {
                     viewModel.saveCurrentEditingBlock()
                     stopCursorMonitoring()
-                }
+//                }
             }
         }
         .onChange(of: viewModel.forceUIUpdate) { _, _ in
