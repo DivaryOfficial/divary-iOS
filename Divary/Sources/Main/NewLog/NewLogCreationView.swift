@@ -71,7 +71,7 @@ struct NewLogCreationView: View {
                 .padding(.horizontal) // 좌우 패딩만 적용
                 
                 Spacer() // 하단 여백
-            }
+            }.padding(.horizontal)
             
             // 로딩 인디케이터
             if viewModel.isLoading {
@@ -88,93 +88,6 @@ struct NewLogCreationView: View {
         }
     }
 }
-
-// 캘린더 선택 뷰
-struct NewLogCalendarView: View {
-    @Bindable var viewModel: NewLogCreationViewModel
-    @State private var tempMonth = Date()
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("날짜선택")
-                .font(Font.omyu.regular(size: 20))
-                .padding(.leading, 16)
-                .padding(.top, 22)
-            
-            // 캘린더 (기존 CalenderView 재사용)
-            NewCalenderView(
-                currentMonth: $tempMonth,
-                selectedDate: $viewModel.selectedDate,
-                startMonth: Calendar.current.date(byAdding: .month, value: -9999, to: Date())!,
-                endMonth: Calendar.current.date(byAdding: .month, value: 9999, to: Date())!
-            )
-            .padding(.horizontal)
-            
-            // 완료 버튼
-            Button("날짜 선택 완료") {
-                viewModel.proceedToNextStep()
-            }
-            .font(Font.omyu.regular(size: 16))
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background(Color.primary_sea_blue)
-            .foregroundStyle(.white)
-            .cornerRadius(8)
-            .padding(.horizontal)
-            .padding(.bottom, 20)
-            .disabled(viewModel.isLoading)
-        }
-    }
-}
-
-// 기존 로그 확인 뷰
-struct ExistingLogConfirmView: View {
-    @Bindable var viewModel: NewLogCreationViewModel
-    var onNavigateToExisting: ((String) -> Void)?
-    
-    var body: some View {
-        VStack(spacing: 20) {
-            VStack(spacing: 16) {
-                Text("선택한 날짜에 로그가 존재합니다.")
-                    .font(Font.omyu.regular(size: 24))
-                    .multilineTextAlignment(.center)
-                
-                Text("기존 로그로 이동하시겠습니까?")
-                    .font(Font.omyu.regular(size: 24))
-                    .multilineTextAlignment(.center)
-            }
-            .padding(.top, 40)
-            
-            // 버튼들
-            VStack(spacing: 12) {
-                Button("기존 로그 이동") {
-                    if let existingLogId = viewModel.getExistingLogBaseId() {
-                        onNavigateToExisting?(existingLogId)
-                    }
-                }
-                .font(Font.omyu.regular(size: 20))
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(Color.primary_sea_blue)
-                .foregroundStyle(.white)
-                .cornerRadius(8)
-                
-                Button("날짜 다시 선택") {
-                    viewModel.currentStep = .calendar
-                }
-                .font(Font.omyu.regular(size: 20))
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(Color.grayscale_g100)
-                .foregroundStyle(Color.grayscale_g500)
-                .cornerRadius(8)
-            }
-            .padding(.horizontal)
-            .padding(.bottom, 20)
-        }
-    }
-}
-
 
 #Preview {
     @Previewable @State var viewModel = NewLogCreationViewModel()

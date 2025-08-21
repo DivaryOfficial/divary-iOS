@@ -53,6 +53,7 @@ struct NewLogPop: View {
                     .foregroundStyle(Color.grayscale_g500)
                     .cornerRadius(8)
                 }
+                .frame(maxWidth: .infinity)
             }
             .padding(24)
             .background(Color.white)
@@ -61,4 +62,11 @@ struct NewLogPop: View {
             .padding(.horizontal, 40)
         }
     }
+}
+
+#Preview {
+    @Previewable @State var isPresented = true
+    @Previewable @State var isPresente = "sda"
+    
+    NewLogPop(isPresented: $isPresented, title: $isPresente, onCancel: {}, onAddNewLog: {})
 }
