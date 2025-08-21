@@ -13,9 +13,18 @@ struct CharacterEquipmentView: View {
     let scale: CGFloat
     let x: CGFloat
     let y: CGFloat
+    let onTap: (() -> Void)?
     
     // 부유 애니메이션 상태
     @State private var floatingOffset: CGFloat = 0
+    
+    init(customization: CharacterCustomization, scale: CGFloat, x: CGFloat, y: CGFloat, onTap: (() -> Void)? = nil) {
+        self.customization = customization
+        self.scale = scale
+        self.x = x
+        self.y = y
+        self.onTap = onTap
+    }
     
     var body: some View {
         ZStack {
@@ -24,6 +33,9 @@ struct CharacterEquipmentView: View {
                 Image(customization.tank.rawValue)
                     .scaleEffect(scale)
                     .offset(x: (70 * scale) + x, y: (-10 * scale) + y + floatingOffset)
+                    .onTapGesture {
+                        onTap?()
+                    }
             }
             
             // 몸통 (기본으로 항상 표시)
@@ -31,6 +43,9 @@ struct CharacterEquipmentView: View {
                 Image(customization.body.rawValue)
                     .scaleEffect(scale)
                     .offset(x: x, y: y + floatingOffset)
+                    .onTapGesture {
+                        onTap?()
+                    }
             }
             
             // 호흡기
@@ -38,6 +53,9 @@ struct CharacterEquipmentView: View {
                 Image(customization.regulator.rawValue)
                     .scaleEffect(scale)
                     .offset(x: (-65 * scale) + x, y: (-30 * scale) + y + floatingOffset)
+                    .onTapGesture {
+                        onTap?()
+                    }
             }
             
             // 볼터치
@@ -45,6 +63,9 @@ struct CharacterEquipmentView: View {
                 Image(customization.cheek.rawValue)
                     .scaleEffect(scale)
                     .offset(x: (-45 * scale) + x, y: (-40 * scale) + y + floatingOffset)
+                    .onTapGesture {
+                        onTap?()
+                    }
             }
             
             // 마스크
@@ -52,6 +73,9 @@ struct CharacterEquipmentView: View {
                 Image(customization.mask.rawValue)
                     .scaleEffect(scale)
                     .offset(x: (-28 * scale) + x, y: (-60 * scale) + y + floatingOffset)
+                    .onTapGesture {
+                        onTap?()
+                    }
             }
             
             // 핀
@@ -59,9 +83,12 @@ struct CharacterEquipmentView: View {
                 Image(customization.pin.rawValue)
                     .scaleEffect(scale)
                     .offset(x: (68 * scale) + x, y: (85 * scale) + y + floatingOffset)
+                    .onTapGesture {
+                        onTap?()
+                    }
             }
         }
-        .task {
+        .onAppear {
             startFloatingAnimation()
         }
     }

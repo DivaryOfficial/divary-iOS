@@ -103,21 +103,19 @@ struct CharacterView: View {
                     }
 
                     // 캐릭터 장비들 (클릭 가능) - 부유 효과 적용
-                    Button(action: {
-                        // 온보딩 완료된 경우에만
-                        if customization.CharacterName != nil && !(customization.CharacterName?.isEmpty ?? true) {
-                            impactFeedback()
-                            showBuddySpeech = true
+                    CharacterEquipmentView(
+                        customization: customization,
+                        scale: scale,
+                        x: x,
+                        y: y + equipmentFloatingOffset,
+                        onTap: {
+                            // 온보딩 완료된 경우에만
+                            if customization.CharacterName != nil && !(customization.CharacterName?.isEmpty ?? true) {
+                                impactFeedback()
+                                showBuddySpeech = true
+                            }
                         }
-                    }) {
-                        CharacterEquipmentView(
-                            customization: customization,
-                            scale: scale,
-                            x: x,
-                            y: y + equipmentFloatingOffset
-                        )
-                    }
-                    .buttonStyle(NoEffectButtonStyle())
+                    )
                     
                     // 펫 뷰 - 부유 효과 적용
                     PetView(
