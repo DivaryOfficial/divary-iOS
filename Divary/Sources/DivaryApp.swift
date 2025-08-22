@@ -51,7 +51,6 @@ struct DivaryApp: App {
                             CharacterViewWrapper()
                         case .Store(let viewModel):
                             StoreMainView(viewModel: viewModel)
-//                                .toolbar(.hidden, for: .navigationBar)
                                 .navigationBarBackButtonHidden(true)
                         case .notifications:
                             NotificationView()

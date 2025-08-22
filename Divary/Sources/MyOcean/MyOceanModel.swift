@@ -233,7 +233,7 @@ enum MaskType: String, CaseIterable, Decodable {
         case .blue: return "BLUE"
         case .green: return "GREEN"
         case .white: return "WHITE"
-        case .yellow: return "GOLD"
+        case .yellow: return "YELLOW"
         }
     }
     
@@ -242,7 +242,6 @@ enum MaskType: String, CaseIterable, Decodable {
         
         switch serverValue {
         case "WHITE": return .white
-        case "GOLD": return .yellow
         case "GREEN": return .green
         case "PINK": return .pink
         case "BLUE": return .blue
