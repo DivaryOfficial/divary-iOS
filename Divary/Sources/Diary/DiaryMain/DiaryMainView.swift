@@ -257,15 +257,15 @@ struct DiaryMainView: View {
         ScrollViewReader { proxy in
             ScrollView(.vertical, showsIndicators: false) {
                 ZStack {
-                    GeometryReader { geometry in
-                      Image("gridBackground")
-                          .resizable(resizingMode: .tile)
-                          .scaledToFill()
-                          .frame(
-                              width: geometry.size.width,
-                              height: max(geometry.size.height, UIScreen.main.bounds.height)
-                          )
-                    }.ignoresSafeArea()
+//                    GeometryReader { geometry in
+//                      Image("gridBackground")
+//                          .resizable(resizingMode: .tile)
+//                          .scaledToFill()
+//                          .frame(
+//                              width: geometry.size.width,
+//                              height: max(geometry.size.height, UIScreen.main.bounds.height)
+//                          )
+//                    }.ignoresSafeArea()
                     LazyVStack(spacing: 8) {
                         ForEach(viewModel.blocks) { block in
                             switch block.content {
@@ -307,6 +307,15 @@ struct DiaryMainView: View {
                         Spacer(minLength: bottomPadding)
                             .id("bottom-spacer") // 안정적인 참조를 위한 ID
                     }
+                    .frame(
+                        maxWidth: .infinity,
+                        minHeight: UIScreen.main.bounds.height,
+                        alignment: .top
+                    )
+                    .background(
+                        Image("gridBackground")
+                            .resizable(resizingMode: .tile)
+                    )
                     .animation(.easeOut(duration: keyboardAnimationDuration), value: bottomPadding)
                     
                     if let drawing = viewModel.savedDrawing {
