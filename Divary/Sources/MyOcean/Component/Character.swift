@@ -17,6 +17,7 @@ struct CharacterEquipmentView: View {
     
     // 부유 애니메이션 상태
     @State private var floatingOffset: CGFloat = 0
+    @State private var hasStartedAnimation = false  // 애니메이션 시작 여부 추적
     
     init(customization: CharacterCustomization, scale: CGFloat, x: CGFloat, y: CGFloat, onTap: (() -> Void)? = nil) {
         self.customization = customization
@@ -88,17 +89,47 @@ struct CharacterEquipmentView: View {
                     }
             }
         }
+        .id("character_equipment_floating") // 고유 ID 추가
         .onAppear {
-            startFloatingAnimation()
+            // pop으로 돌아올 때도 애니메이션이 시작되도록
+            restartFloatingAnimation()
+        }
+        .onChange(of: [customization.tank.rawValue, customization.body.rawValue,
+                      customization.regulator.rawValue, customization.cheek.rawValue,
+                      customization.mask.rawValue, customization.pin.rawValue]) { _, _ in
+            // 장비가 변경될 때 애니메이션 재시작
+            restartFloatingAnimation()
         }
     }
     
     private func startFloatingAnimation() {
-        withAnimation(
-            Animation.easeInOut(duration: 3.0)
-                .repeatForever(autoreverses: true)
-        ) {
-            floatingOffset = -20
+        guard !hasStartedAnimation else { return }
+        hasStartedAnimation = true
+        
+        // 기존 애니메이션 정리
+        floatingOffset = 0
+        
+        // 즉시 시작 (캐릭터는 지연 없음)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            withAnimation(
+                Animation.easeInOut(duration: 3.0)
+                    .repeatForever(autoreverses: true)
+            ) {
+                floatingOffset = -20
+            }
+        }
+    }
+    
+    private func restartFloatingAnimation() {
+        // 기존 애니메이션 즉시 중단 및 상태 리셋
+        withAnimation(.linear(duration: 0)) {
+            floatingOffset = 0
+        }
+        hasStartedAnimation = false
+        
+        // 즉시 새 애니메이션 시작 (pop으로 돌아올 때는 지연 없이)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+            startFloatingAnimation()
         }
     }
 }

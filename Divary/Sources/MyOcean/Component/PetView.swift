@@ -25,6 +25,7 @@ struct PetView: View {
     
     // 부유 애니메이션 상태
     @State private var floatingOffset: CGFloat = 0
+    @State private var hasStartedAnimation = false  // 애니메이션 시작 여부 추적
     
     var body: some View {
         // 펫이 none이 아닌 경우에만 표시
@@ -132,13 +133,25 @@ struct PetView: View {
                         }
                 }
             }
-            .task {
-                startFloatingAnimation()
+            .id("\(customization.pet.type.rawValue)_floating") // 고유 ID 추가
+            .onAppear {
+                // pop으로 돌아올 때도 애니메이션이 시작되도록
+                restartFloatingAnimation()
+            }
+            .onChange(of: customization.pet.type) { _, _ in
+                // 펫이 변경될 때 애니메이션 재시작
+                restartFloatingAnimation()
             }
         }
     }
     
     private func startFloatingAnimation() {
+        guard !hasStartedAnimation else { return }
+        hasStartedAnimation = true
+        
+        // 기존 애니메이션 정리
+        floatingOffset = 0
+        
         // 0.5초 지연 후 시작 (캐릭터와 다른 타이밍)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             withAnimation(
@@ -147,6 +160,19 @@ struct PetView: View {
             ) {
                 floatingOffset = -15
             }
+        }
+    }
+    
+    private func restartFloatingAnimation() {
+        // 기존 애니메이션 즉시 중단 및 상태 리셋
+        withAnimation(.linear(duration: 0)) {
+            floatingOffset = 0
+        }
+        hasStartedAnimation = false
+        
+        // 즉시 새 애니메이션 시작 (pop으로 돌아올 때는 지연 없이)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+            startFloatingAnimation()
         }
     }
     

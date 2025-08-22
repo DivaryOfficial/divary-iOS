@@ -144,8 +144,8 @@ class CharacterViewModel: Equatable, Hashable {
                pet = PetCustomization(
                    type: petType,
                    offset: CGSize(
-                       width: offset.width,
-                       height: offset.height
+                       width: offset.width ?? 0,
+                       height: offset.height ?? 0
                    ),
                    rotation: .degrees(rotationValue)
                )

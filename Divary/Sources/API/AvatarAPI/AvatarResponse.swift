@@ -54,8 +54,8 @@ struct BuddyPetInfoDTO: Codable {
 }
 
 struct Offset: Codable {
-    let width: Double
-    let height: Double
+    let width: Double?
+    let height: Double?
 }
 
 // MARK: - Avatar Request DTOs
