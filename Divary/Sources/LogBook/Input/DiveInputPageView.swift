@@ -53,6 +53,7 @@ struct DiveInputPageView: View {
                             ForEach(0..<pages.count, id: \.self) { index in
                                 pages[index]
                                 .tag(index)
+                                .padding(22)
                             }
                         }
                         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
@@ -64,7 +65,7 @@ struct DiveInputPageView: View {
                     numberOfPages: pages.count,
                     currentPage: selectedPage
                 )
-                .padding(.bottom, 12)
+               // .padding(.bottom, 12)
             }
             .padding(.horizontal, 24)
         }

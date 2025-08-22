@@ -9,13 +9,6 @@ import SwiftUI
 
 struct OverViewInputView: View {
     
-    @Binding var overview: DiveOverview
-    @FocusState private var focusedField: FocusedField?
-    
-    enum FocusedField {
-        case title, point
-    }
-    
     //방법 아이콘
     private func methodImage(for method: String?) -> Image {
         guard let method = method else {
@@ -33,75 +26,72 @@ struct OverViewInputView: View {
         }
     }
     
+    @Binding var overview: DiveOverview
+    
     var body: some View {
         ZStack {
             VStack{
-                ScrollViewReader { proxy in
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 20) {
-                            
-                            // 다이빙 지역
-                            LocationTextInputField(
-                                title: "다이빙 지역",
-                                placeholder: "다이빙 지역을 입력해주세요 ex) 강원도 강릉",
-                                unit: "돋보기",
-                                value: Binding(
-                                    get: { overview.title ?? "" },
-                                    set: { newValue in
-                                        overview.title = (newValue?.isEmpty == true) ? nil : newValue
-                                    }
-                                ),
-                                focused: $focusedField,
-                                focusValue: .title
-                            )
-                            .id("title")
-                            
-                            // 다이빙 포인트
-                            TextInputField(
-                                title: "다이빙 포인트",
-                                placeholder: "ex) 문섬",
-                                unit: "",
-                                value: $overview.point,
-                                focused: $focusedField,
-                                focusValue: .point
-                            )
-                            .id("point")
-                            
-                            //다이빙 방법
-                            Text("다이빙 방법")
-                                .font(Font.omyu.regular(size: 20))
-                            
-                            IconButton(
-                                options: DivingMethodType.allDisplayNames,
-                                selected: overview.method,
-                                imageProvider: methodImage(for:),
-                                onSelect: { overview.method = $0 },
-                                size: 45,
-                                isImage: true
-                            )
-                            
-                            //다이빙 목적
-                            Text("다이빙 목적")
-                                .font(Font.omyu.regular(size: 20))
-                            
-                            HStack(spacing: 5) {
-                                ForEach(DivingPurposeType.allDisplayNames, id: \.self) { option in
-                                    purposeButton(option: option)
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 20) {
+                        
+                        // 다이빙 지역
+                        LocationTextInputField(
+                            title: "다이빙 지역",
+                            placeholder: "다이빙 지역을 입력해주세요 ex) 강원도 강릉",
+                            unit: "돋보기",
+                            value: Binding(
+                                get: { overview.title ?? "" },
+                                set: { newValue in
+                                    overview.title = (newValue?.isEmpty == true) ? nil : newValue
                                 }
+                            )
+                        )
+                        
+                        // 다이빙 포인트
+                        TextInputField(
+                            title: "다이빙 포인트",
+                            placeholder: "ex) 문섬",
+                            unit: "",
+                            value: $overview.point
+                        )
+                        
+                        //다이빙 방법
+                        Text("다이빙 방법")
+                            .font(Font.omyu.regular(size: 20))
+                        
+                        IconButton(
+                            options: DivingMethodType.allDisplayNames,
+                            selected: overview.method,
+                            imageProvider: methodImage(for:),
+                            onSelect: { overview.method = $0 },
+                            size: 45,
+                            isImage: true
+                        )
+                        
+                        //다이빙 목적
+                        Text("다이빙 목적")
+                            .font(Font.omyu.regular(size: 20))
+                        
+                        HStack(spacing: 5) {
+                            ForEach(DivingPurposeType.allDisplayNames, id: \.self) { option in
+                                purposeButton(option: option)
                             }
-                        }
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 20)
-                    }
-                    .onChange(of: focusedField) { _, newValue in
-                        guard let field = newValue else { return }
-                        withAnimation(.easeInOut(duration: 0.3)) {
-                            proxy.scrollTo(field.scrollId, anchor: .center)
                         }
                     }
                 }
+//                .padding(.horizontal, 11)
+//                .padding(.vertical, 22)
+//                .background(
+//                    RoundedRectangle(cornerRadius: 10)
+//                        .fill(Color(.white))
+//                )
                 .frame(maxWidth: .infinity, alignment: .center)
+                //.padding(.horizontal)
             }
+        }.onAppear {
+            // 바인딩 강제 활성화 - 현재 값을 읽고 다시 설정
+            let currentOverView = overview
+            overview = currentOverView
         }
     }
     
@@ -121,16 +111,6 @@ struct OverViewInputView: View {
                     RoundedRectangle(cornerRadius: 8)
                         .fill(isSelected ? Color("primary_sea_blue") : Color("grayscale_g100"))
                 )
-        }
-        .buttonStyle(PlainButtonStyle())
-    }
-}
-
-extension OverViewInputView.FocusedField {
-    var scrollId: String {
-        switch self {
-        case .title: return "title"
-        case .point: return "point"
         }
     }
 }

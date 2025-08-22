@@ -2,20 +2,12 @@
 //  EnvironmentInputView.swift
 //  Divary
 //
-//  Created by 박견규 on 7/17/25.
+//  Created by 바견규 on 7/17/25.
 //
 
 import SwiftUI
 
 struct EnvironmentInputView: View {
-    
-    @Binding var environment: DiveEnvironment
-    @FocusState private var focusedField: FocusedField?
-    
-    enum FocusedField {
-        case airTemp, waterTemp
-    }
-    
     // 날씨 아이콘
     private func weatherImage(for weather: String?) -> Image {
         guard let weather = weather else {
@@ -113,129 +105,119 @@ struct EnvironmentInputView: View {
         }
     }
     
+    @Binding var environment: DiveEnvironment
+    
     var body: some View {
         ZStack {
             VStack{
-                ScrollViewReader { proxy in
-                    ScrollView {
-                        LazyVStack(alignment: .leading, spacing: 20) {
-                            
-                            // 날씨
-                            Text("날씨")
-                                .font(Font.omyu.regular(size: 20))
-                            
-                            IconButtonRow(
-                                options: WeatherType.allDisplayNames,
-                                selected: environment.weather,
-                                imageProvider: weatherImage(for:),
-                                onSelect: { environment.weather = $0 },
-                                size: 30
-                            )
-                            
-                            // 바람
-                            Text("바람")
-                                .font(Font.omyu.regular(size: 20))
-                            
-                            IconButtonRow(
-                                options: WindType.allDisplayNames,
-                                selected: environment.wind,
-                                imageProvider: windImage(for:),
-                                onSelect: { environment.wind = $0 },
-                                size: 30,
-                                isImage: true
-                            )
-                            
-                            // 조류
-                            Text("조류")
-                                .font(Font.omyu.regular(size: 20))
-                            
-                            IconButtonRow(
-                                options: CurrentType.allDisplayNames,
-                                selected: environment.current,
-                                imageProvider: currentImage(for:),
-                                onSelect: { environment.current = $0 },
-                                size: 30
-                            )
-                            
-                            // 파도
-                            Text("파도")
-                                .font(Font.omyu.regular(size: 20))
-                            
-                            IconButtonRow(
-                                options: WaveType.allDisplayNames,
-                                selected: environment.wave,
-                                imageProvider: waveImage(for:),
-                                onSelect: { environment.wave = $0 },
-                                size: 45,
-                                isImage: true
-                            )
-                            
-                            // 기온
-                            TemperatureInputField(
-                                title: "기온",
-                                placeholder: "0",
-                                unit: "°C",
-                                value: $environment.airTemp,
-                                focused: $focusedField,
-                                focusValue: .airTemp
-                            )
-                            .id("airTemp")
-                            
-                            // 체감 온도
-                            IconButtonRow(
-                                options: FeelsLikeType.allDisplayNames,
-                                selected: environment.feelsLike,
-                                imageProvider: feelsLikeTempImage(for:),
-                                onSelect: { environment.feelsLike = $0 },
-                                size: 45,
-                                isImage: true
-                            )
-                            
-                            //수온
-                            TemperatureInputField(
-                                title: "수온",
-                                placeholder: "0",
-                                unit: "°C",
-                                value: $environment.waterTemp,
-                                focused: $focusedField,
-                                focusValue: .waterTemp
-                            )
-                            .id("waterTemp")
-                            
-                            // 시야
-                            Text("시야")
-                                .font(Font.omyu.regular(size: 20))
-                            
-                            IconButtonRow(
-                                options: VisibilityType.allDisplayNames,
-                                selected: environment.visibility,
-                                imageProvider: visibilityImage(for:),
-                                onSelect: { environment.visibility = $0 },
-                                size: 45
-                            )
-                            
-                        }
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 20)
-                    }
-                    .onChange(of: focusedField) { _, newValue in
-                        guard let field = newValue else { return }
-                        withAnimation(.easeInOut(duration: 0.3)) {
-                            proxy.scrollTo(field.scrollId, anchor: .center)
-                        }
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: 20) {
+                        
+                        // 날씨
+                        Text("날씨")
+                            .font(Font.omyu.regular(size: 20))
+                        
+                        IconButtonRow(
+                            options: WeatherType.allDisplayNames,
+                            selected: environment.weather,
+                            imageProvider: weatherImage(for:),
+                            onSelect: { environment.weather = $0 },
+                            size: 30
+                        )
+                        
+                        // 바람
+                        Text("바람")
+                            .font(Font.omyu.regular(size: 20))
+                        
+                        IconButtonRow(
+                            options: WindType.allDisplayNames,
+                            selected: environment.wind,
+                            imageProvider: windImage(for:),
+                            onSelect: { environment.wind = $0 },
+                            size: 30,
+                            isImage: true
+                        )
+                        
+                        // 조류
+                        Text("조류")
+                            .font(Font.omyu.regular(size: 20))
+                        
+                        IconButtonRow(
+                            options: CurrentType.allDisplayNames,
+                            selected: environment.current,
+                            imageProvider: currentImage(for:),
+                            onSelect: { environment.current = $0 },
+                            size: 30
+                        )
+                        
+                        // 파도
+                        Text("파도")
+                            .font(Font.omyu.regular(size: 20))
+                        
+                        IconButtonRow(
+                            options: WaveType.allDisplayNames,
+                            selected: environment.wave,
+                            imageProvider: waveImage(for:),
+                            onSelect: { environment.wave = $0 },
+                            size: 45,
+                            isImage: true
+                        )
+                        
+                        // 기온
+                        TemperatureInputField(
+                            title: "기온",
+                            placeholder: "0",
+                            unit: "°C",
+                            value: $environment.airTemp
+                        )
+                        
+                        // 체감 온도
+                        IconButtonRow(
+                            options: FeelsLikeType.allDisplayNames,
+                            selected: environment.feelsLike,
+                            imageProvider: feelsLikeTempImage(for:),
+                            onSelect: { environment.feelsLike = $0 },
+                            size: 45,
+                            isImage: true
+                        )
+                        
+                        //수온
+                        TemperatureInputField(
+                            title: "수온",
+                            placeholder: "0",
+                            unit: "°C",
+                            value: $environment.waterTemp
+                        )
+                        
+                        // 시야
+                        Text("시야")
+                            .font(Font.omyu.regular(size: 20))
+                        
+                        IconButtonRow(
+                            options: VisibilityType.allDisplayNames,
+                            selected: environment.visibility,
+                            imageProvider: visibilityImage(for:),
+                            onSelect: { environment.visibility = $0 },
+                            size: 45
+                        )
+                        
                     }
                 }
+//                .padding(.horizontal, 16)
+//                .padding(.top, 22)
+//                .padding(.bottom, 22)
+//                .background(
+//                    RoundedRectangle(cornerRadius: 10)
+//                        .fill(Color(.white))
+//                        .stroke(Color.grayscale_g300)
+//                )
                 .frame(maxWidth: .infinity, alignment: .center)
+               // .padding(.horizontal)
             }
-        }
-    }
-}
-
-extension EnvironmentInputView.FocusedField {
-    var scrollId: String {
-        switch self {
-        case .airTemp: return "airTemp"
-        case .waterTemp: return "waterTemp"
+        } .onAppear {
+            // 바인딩 강제 활성화 - 현재 값을 읽고 다시 설정
+            let currentEnvironment = environment
+            environment = currentEnvironment
         }
     }
 }
@@ -279,7 +261,7 @@ struct IconButtonRow: View {
                     }
                     .padding(10)
                     .frame(maxWidth: .infinity)
-                    .aspectRatio(1, contentMode: .fit)
+                    .aspectRatio(1, contentMode: .fit) // 정사각형 유지
                     .background(
                         RoundedRectangle(cornerRadius: 5.81)
                             .stroke(
@@ -288,14 +270,6 @@ struct IconButtonRow: View {
                     )
                     .foregroundStyle(selected == option ? Color.primary_sea_blue : Color.grayscale_g400)
                 }
-                .buttonStyle(PlainButtonStyle())
-                .contentShape(Rectangle())
-                .simultaneousGesture(
-                    TapGesture()
-                        .onEnded {
-                            onSelect(option)
-                        }
-                )
                 .padding(.horizontal, 3)
             }
         }
@@ -307,8 +281,6 @@ struct TemperatureInputField: View {
     let placeholder: String
     let unit: String
     @Binding var value: Int?
-    var focused: FocusState<EnvironmentInputView.FocusedField?>.Binding
-    let focusValue: EnvironmentInputView.FocusedField
     
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -335,7 +307,6 @@ struct TemperatureInputField: View {
                 .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 12))
                 .keyboardType(.numberPad)
                 .foregroundStyle(Color.bw_black)
-                .focused(focused, equals: focusValue)
                 
                 Spacer()
                 

@@ -9,14 +9,6 @@ import SwiftUI
 
 struct EquipmentInputView: View {
     
-    @Binding var equipment: DiveEquipment
-    @State private var equipmentInput: String? = nil
-    @FocusState private var focusedField: FocusedField?
-    
-    enum FocusedField {
-        case equipment, weight
-    }
-    
     //슈트 아이콘
     private func suitTypeImage(for suitType: String?) -> Image {
         guard let suitType = suitType else {
@@ -53,91 +45,80 @@ struct EquipmentInputView: View {
         }
     }
     
+    @Binding var equipment: DiveEquipment
+    @State private var equipmentInput: String? = nil
+    
     var body: some View {
         ZStack {
             VStack{
-                ScrollViewReader { proxy in
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 20) {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 20) {
+                        
+                        VStack(alignment: .leading, spacing: 10){
                             
-                            VStack(alignment: .leading, spacing: 10){
-                                
-                                //슈트 종류
-                                Text("슈트 종류")
-                                    .font(Font.omyu.regular(size: 20))
-                                
-                                HStack{
-                                    IconSuitButton(
-                                            options: SuitType.allDisplayNames,
-                                            selected: equipment.suitType,
-                                            imageProvider: suitTypeImage(for:),
-                                            onSelect: { equipment.suitType = $0 },
-                                            size: 30,
-                                            isImage: true
-                                        )
-                                }
-                            }
+                            //슈트 종류
+                            Text("슈트 종류")
+                                .font(Font.omyu.regular(size: 20))
                             
-                            //착용
-                            EquipmentTextInputField(
-                                title: "착용",
-                                placeholder: "ex) 후드, 장갑, 베스트 등",
-                                unit: "",
-                                value: $equipment.Equipment,
-                                focused: $focusedField,
-                                focusValue: .equipment
-                            )
-                            .id("equipment")
-                            
-                            //웨이트
-                            NumberInputField(
-                                title: "웨이트",
-                                placeholder: "0",
-                                unit: "kg",
-                                value: $equipment.weight,
-                                focused: $focusedField,
-                                focusValue: .weight
-                            )
-                            .id("weight")
-                            
-                            VStack(alignment: .leading, spacing: 10){
-                                
-                                //체감 무게
-                                Text("체감 무게")
-                                    .font(Font.omyu.regular(size: 12))
-                                    .foregroundStyle(Color("grayscale_g500"))
-                                
-                                IconButton(
-                                    options: PerceivedWeightType.allDisplayNames,
-                                    selected: equipment.pweight,
-                                    imageProvider: pweightImage(for:),
-                                    onSelect: { equipment.pweight = $0 },
-                                    size: 30,
-                                    isImage: true
-                                )
+                            HStack{
+                                IconSuitButton(
+                                        options: SuitType.allDisplayNames,
+                                        selected: equipment.suitType,
+                                        imageProvider: suitTypeImage(for:),
+                                        onSelect: { equipment.suitType = $0 },
+                                        size: 30,
+                                        isImage: true
+                                    )
                             }
                         }
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 20)
-                    }
-                    .onChange(of: focusedField) { _, newValue in
-                        guard let field = newValue else { return }
-                        withAnimation(.easeInOut(duration: 0.3)) {
-                            proxy.scrollTo(field.scrollId, anchor: .center)
+                        
+                        //착용
+                        TextInputField(
+                            title: "착용",
+                            placeholder: "ex) 후드, 장갑, 베스트 등",
+                            unit: "",
+                            value: $equipment.Equipment
+                        )
+                        
+                        //웨이트
+                        NumberInputField(
+                            title: "웨이트",
+                            placeholder: "0",
+                            unit: "kg",
+                            value: $equipment.weight
+                        )
+                        
+                        VStack(alignment: .leading, spacing: 10){
+                            
+                            //체감 무게
+                            Text("체감 무게")
+                                .font(Font.omyu.regular(size: 12))
+                                .foregroundStyle(Color("grayscale_g500"))
+                            
+                            IconButton(
+                                options: PerceivedWeightType.allDisplayNames,
+                                selected: equipment.pweight,
+                                imageProvider: pweightImage(for:),
+                                onSelect: { equipment.pweight = $0 },
+                                size: 30,
+                                isImage: true
+                            )
                         }
                     }
                 }
+//                .padding(.horizontal, 11)
+//                .padding(.vertical, 22)
+//                .background(
+//                    RoundedRectangle(cornerRadius: 10)
+//                        .fill(Color(.white))
+//                )
                 .frame(maxWidth: .infinity, alignment: .center)
+                //.padding(.horizontal)
             }
-        }
-    }
-}
-
-extension EquipmentInputView.FocusedField {
-    var scrollId: String {
-        switch self {
-        case .equipment: return "equipment"
-        case .weight: return "weight"
+        }.onAppear {
+            // 바인딩 강제 활성화 - 현재 값을 읽고 다시 설정
+            let currentEquipment = equipment
+            equipment = currentEquipment
         }
     }
 }
@@ -152,6 +133,8 @@ extension EquipmentInputView.FocusedField {
     EquipmentInputView(equipment: $previewOverview)
 }
 
+
+
 struct IconSuitButton: View {
     let options: [String]
     let selected: String?
@@ -159,7 +142,6 @@ struct IconSuitButton: View {
     let onSelect: (String) -> Void
     let size: CGFloat
     var isImage: Bool = false
-    
     // 화면 크기에 따른 버튼 크기 계산
     private var buttonSize: CGFloat {
         let screenWidth = UIScreen.main.bounds.width
@@ -212,54 +194,10 @@ struct IconSuitButton: View {
                         .foregroundStyle(selected == option ? Color.primary_sea_blue : Color.grayscale_g300)
                     }
                     .buttonStyle(PlainButtonStyle())
-                    .contentShape(Rectangle())
-                    .simultaneousGesture(
-                        TapGesture()
-                            .onEnded {
-                                onSelect(option)
-                            }
-                    )
                 }
             }
             .padding(.horizontal, 16)
         }
         .clipped()
-    }
-}
-
-// EquipmentInputView용 TextInputField (착용 필드)
-struct EquipmentTextInputField: View {
-    let title: String
-    let placeholder: String
-    let unit: String
-    @Binding var value: String?
-    var focused: FocusState<EquipmentInputView.FocusedField?>.Binding
-    let focusValue: EquipmentInputView.FocusedField
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(title)
-                .font(Font.omyu.regular(size: 20))
-
-            HStack {
-                TextField(placeholder, text: Binding(
-                    get: { value ?? "" },
-                    set: { value = $0.isEmpty ? nil : $0 }
-                ))
-                .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
-                .foregroundStyle(Color.bw_black)
-                .focused(focused, equals: focusValue)
-
-                Spacer()
-
-                Text(unit)
-                    .foregroundStyle(Color.bw_black)
-                    .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 14))
-            }
-            .padding(.vertical, 12)
-            .padding(.horizontal, 20)
-            .background(Color.grayscale_g100)
-            .cornerRadius(8)
-        }
     }
 }
