@@ -79,7 +79,7 @@ struct StoreMainView: View {
                         switch selectedTab {
                         case .myOcean:
                             BottomSheetView(
-                                minHeight: UIScreen.main.bounds.height * 0.06,
+                                minHeight: UIScreen.main.bounds.height * 0.1,
                                 medianHeight: UIScreen.main.bounds.height * 0.5,
                                 maxHeight: UIScreen.main.bounds.height * 0.8
                             ) {
@@ -91,7 +91,7 @@ struct StoreMainView: View {
                             }
                         case .wardrobe:
                             BottomSheetView(
-                                minHeight: UIScreen.main.bounds.height * 0.06,
+                                minHeight: UIScreen.main.bounds.height * 0.1,
                                 medianHeight: UIScreen.main.bounds.height * 0.5,
                                 maxHeight: UIScreen.main.bounds.height * 0.8
                             ) {

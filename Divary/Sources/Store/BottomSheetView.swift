@@ -22,8 +22,8 @@ struct BottomSheetView<Content: View>: View {
         self.medianHeight = medianHeight
         self.maxHeight = maxHeight
         
-        //초기 모달 위치는 medianHeight
-        self.currentHeight = medianHeight
+        // 초기 모달 위치는 medianHeight
+        self._currentHeight = State(initialValue: medianHeight)
     }
 
     var body: some View {
@@ -43,37 +43,39 @@ struct BottomSheetView<Content: View>: View {
                     VStack(spacing: 0) {
                         content
                     }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top) // top 정렬
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 }
             }
             .frame(height: currentHeight)
             .frame(maxWidth: .infinity)
             .background(Color.white)
             .clipShape(RoundedCorner(radius: 12, corners: [.topLeft, .topRight]))
-            .offset(y: max(0, min(dragOffset, 100))) // 화면 밖으로 나가는 것 방지
+            // offset 제거 - 드래그 중에도 모달이 사라지지 않게
             .gesture(
                 DragGesture()
                     .updating($dragOffset) { value, state, _ in
-                        let newHeight = currentHeight - value.translation.height
-                        if newHeight <= maxHeight && newHeight >= minHeight {
-                            state = value.translation.height
-                        }
+                        state = value.translation.height
                     }
                     .onEnded { value in
-                        let drag = value.translation.height
-                        withAnimation(.spring()) {
+                        let dragDistance = value.translation.height
+                        let dragThreshold: CGFloat = 100 // 드래그 임계값
+                        
+                        withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
                             if currentHeight == minHeight {
-                                if drag < 0 {
+                                // min에서는 위로만 이동 가능
+                                if dragDistance < -dragThreshold {
                                     currentHeight = medianHeight
                                 }
                             } else if currentHeight == medianHeight {
-                                if drag < 0 {
+                                // med에서는 위/아래 모두 이동 가능
+                                if dragDistance < -dragThreshold {
                                     currentHeight = maxHeight
-                                } else if drag > 0 {
+                                } else if dragDistance > dragThreshold {
                                     currentHeight = minHeight
                                 }
                             } else if currentHeight == maxHeight {
-                                if drag > 0 {
+                                // max에서는 아래로만 이동 가능
+                                if dragDistance > dragThreshold {
                                     currentHeight = medianHeight
                                 }
                             }
@@ -85,21 +87,4 @@ struct BottomSheetView<Content: View>: View {
     }
 }
 
-#Preview {
-    BottomSheetView(
-        minHeight: UIScreen.main.bounds.height * 0.04,
-        medianHeight: UIScreen.main.bounds.height * 0.5,
-        maxHeight: UIScreen.main.bounds.height * 1.0
-    ) {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("온보딩 메시지나 텍스트 입력 뷰 등")
-                .font(.headline)
-            
-            TextField("이름을 입력하세요", text: .constant(""))
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-            
-            Text("추가 콘텐츠")
-            Text("더 많은 내용")
-        }
-    }
-}
+

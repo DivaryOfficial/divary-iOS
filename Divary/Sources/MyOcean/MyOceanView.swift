@@ -107,7 +107,7 @@ struct CharacterView: View {
                         customization: customization,
                         scale: scale,
                         x: x,
-                        y: y + equipmentFloatingOffset,
+                        y: y,
                         onTap: {
                             // 온보딩 완료된 경우에만
                             if customization.CharacterName != nil && !(customization.CharacterName?.isEmpty ?? true) {
@@ -122,7 +122,7 @@ struct CharacterView: View {
                         customization: customization,
                         scale: scale,
                         x: x,
-                        y: y + petFloatingOffset, // 부유 효과를 y에 직접 적용
+                        y: y, // 부유 효과를 y에 직접 적용
                         geometry: geometry,
                         isPetEditingMode: $isPetEditingMode,
                         petDragOffset: $petDragOffset,
@@ -136,7 +136,7 @@ struct CharacterView: View {
                         customization: customization,
                         scale: scale,
                         x: x,
-                        y: y + speechBubbleFloatingOffset, // 부유 효과를 y에 직접 적용
+                        y: y, // 부유 효과를 y에 직접 적용
                         isStoreView: isStoreView,
                         viewModel: viewModel
                     )
