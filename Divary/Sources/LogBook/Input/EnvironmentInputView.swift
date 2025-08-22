@@ -214,6 +214,10 @@ struct EnvironmentInputView: View {
                 .frame(maxWidth: .infinity, alignment: .center)
                // .padding(.horizontal)
             }
+        } .onAppear {
+            // 바인딩 강제 활성화 - 현재 값을 읽고 다시 설정
+            let currentEnvironment = environment
+            environment = currentEnvironment
         }
     }
 }

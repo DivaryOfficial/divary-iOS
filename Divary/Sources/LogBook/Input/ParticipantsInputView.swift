@@ -43,6 +43,10 @@ struct ParticipantsInputView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
             }
+        }.onAppear {
+            // 바인딩 강제 활성화 - 현재 값을 읽고 다시 설정
+            let currentParticipants = participants
+            participants = currentParticipants
         }
     }
 }

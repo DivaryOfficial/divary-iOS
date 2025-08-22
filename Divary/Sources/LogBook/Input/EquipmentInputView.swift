@@ -115,6 +115,10 @@ struct EquipmentInputView: View {
                 .frame(maxWidth: .infinity, alignment: .center)
                 //.padding(.horizontal)
             }
+        }.onAppear {
+            // 바인딩 강제 활성화 - 현재 값을 읽고 다시 설정
+            let currentEquipment = equipment
+            equipment = currentEquipment
         }
     }
 }
@@ -138,7 +142,6 @@ struct IconSuitButton: View {
     let onSelect: (String) -> Void
     let size: CGFloat
     var isImage: Bool = false
-    
     // 화면 크기에 따른 버튼 크기 계산
     private var buttonSize: CGFloat {
         let screenWidth = UIScreen.main.bounds.width
