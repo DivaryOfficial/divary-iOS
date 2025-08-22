@@ -12,6 +12,8 @@ struct TextInputField: View {
     let placeholder: String
     let unit: String
     @Binding var value: String?
+    var focused: FocusState<OverViewInputView.FocusedField?>.Binding
+    let focusValue: OverViewInputView.FocusedField
     
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -25,6 +27,7 @@ struct TextInputField: View {
                 ))
                 .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
                 .foregroundStyle(Color.bw_black)
+                .focused(focused, equals: focusValue)
 
                 Spacer()
 
@@ -46,6 +49,8 @@ struct LocationTextInputField: View {
     let placeholder: String
     let unit: String
     @Binding var value: String?
+    var focused: FocusState<OverViewInputView.FocusedField?>.Binding
+    let focusValue: OverViewInputView.FocusedField
     @Environment(\.diContainer) var container
     
     var body: some View {
@@ -62,11 +67,11 @@ struct LocationTextInputField: View {
                 ))
                 .font(Font.NanumSquareNeo.NanumSquareNeoRegular(size: 12))
                 .foregroundStyle(Color.bw_black)
+                .focused(focused, equals: focusValue)
                 
                 Spacer()
                 
                 Button(action: {
-                    // 지역 검색 화면으로 이동
                     container.router.push(.locationSearch)
                 }) {
                     if unit == "돋보기" {
@@ -88,7 +93,6 @@ struct LocationTextInputField: View {
         .onReceive(container.router.$locationSearchText) { searchText in
             if !searchText.isEmpty {
                 value = searchText
-                // 검색 텍스트 초기화
                 container.router.locationSearchText = ""
             }
         }
