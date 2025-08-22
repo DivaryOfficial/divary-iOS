@@ -22,8 +22,8 @@ struct NewLogCalendarView: View {
             NewCalenderView(
                 currentMonth: $tempMonth,
                 selectedDate: $viewModel.selectedDate,
-                startMonth: Calendar.current.date(byAdding: .month, value: -12, to: Date())!,
-                endMonth: Calendar.current.date(byAdding: .month, value: 12, to: Date())!
+                startMonth: Calendar.current.date(byAdding: .month, value: -999, to: Date())!,
+                endMonth: Calendar.current.date(byAdding: .month, value: 999, to: Date())!
             )
             .padding(.horizontal)
             

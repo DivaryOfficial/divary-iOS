@@ -74,6 +74,7 @@ class CharacterViewModel: Equatable, Hashable {
                 switch result {
                 case .success(let avatarResponse):
                     self?.convertResponseToCustomization(avatarResponse)
+                    print(avatarResponse)
                     print("아바타 불러오기 성공")
                     
                 case .failure(let error):
@@ -105,6 +106,7 @@ class CharacterViewModel: Equatable, Hashable {
                 case .success(_):
                     // 저장 성공 시, 서버 응답으로 완전히 덮어쓰지 않고 현재 상태 유지
                     print("아바타 저장 성공")
+                    print(avatarRequest)
                 case .failure(let error):
                     self?.errorMessage = "아바타 저장에 실패했습니다: \(error.localizedDescription)"
                     print("전송한 데이터:")
