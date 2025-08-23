@@ -175,7 +175,7 @@ enum SuitType: String, CaseIterable {
 
 enum PerceivedWeightType: String, CaseIterable {
     case light = "LIGHT"
-    case moderate = "MODERATE"
+    case moderate = "NORMAL"
     case heavy = "HEAVY"
     
     var displayName: String {
