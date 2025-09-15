@@ -19,6 +19,13 @@ final class LoginService {
         }
     }
     
+    //애플 로그인
+    func appleLogin(identityToken: String, completion: @escaping (Result<LoginApiResponse, Error>) -> Void) {
+            provider.request(.appleLogin(identityToken: identityToken)) { result in
+                self.handleResponse(result, completion: completion)
+            }
+        }
+    
     // Generic Response Handler
     private func handleResponse<T: Decodable>(_ result: Result<Response, MoyaError>, completion: @escaping (Result<T, Error>) -> Void) {
         switch result {

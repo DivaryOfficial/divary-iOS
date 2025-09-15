@@ -9,6 +9,7 @@ import SwiftUI
 import GoogleSignIn
 import GoogleSignInSwift
 import UIKit
+import AuthenticationServices
 
 struct LoginWrapperView: View {
     @Environment(\.diContainer) private var container
@@ -51,30 +52,50 @@ struct LoginView: View {
                     }
                     .padding(.horizontal, 20)
                     
+                        
                     HStack {
                         Spacer()
-                        GoogleSignInButtonView(action: viewModel.signInWithGoogle)
-                            .padding(18)
+                        SignInWithAppleButton(
+                            .signIn,
+                            onRequest: { request in
+                                request.requestedScopes = [.fullName, .email]
+                            },
+                            onCompletion: { result in
+                                viewModel.signInWithApple(result: result)
+                            }
+                        )
+                        .padding(.horizontal, 18)
+                        .signInWithAppleButtonStyle(.white)
+                        .cornerRadius(8)
+                        
                         Spacer()
+                    }.frame(height: 54)
+
+                        HStack {
+                            Spacer()
+                            GoogleSignInButtonView(action: viewModel.signInWithGoogle)
+                                .padding(18)
+                            Spacer()
+                        }
+                        
+                        // 로그인 에러 표시
+                        if let errorMessage = viewModel.loginError {
+                            Text(errorMessage)
+                                .foregroundStyle(.red)
+                                .font(.caption)
+                                .padding()
+                        }
+                        
+                        // 기기별로 다른 여백 적용
+                        Spacer()
+                            .frame(height: geometry.size.height * 0.1)
                     }
-                    
-                    // 로그인 에러 표시
-                    if let errorMessage = viewModel.loginError {
-                        Text(errorMessage)
-                            .foregroundStyle(.red)
-                            .font(.caption)
-                            .padding()
-                    }
-                    
-                    // 기기별로 다른 여백 적용
-                    Spacer()
-                        .frame(height: geometry.size.height * 0.1)
                 }
             }
         }
     }
-}
-
-#Preview {
-    LoginWrapperView()
-}
+    
+    #Preview {
+        LoginWrapperView()
+    }
+   

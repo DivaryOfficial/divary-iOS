@@ -8,6 +8,7 @@
 import Foundation
 import GoogleSignIn
 import GoogleSignInSwift
+import AuthenticationServices
 import UIKit
 
 final class LoginViewModel: ObservableObject {
@@ -20,6 +21,51 @@ final class LoginViewModel: ObservableObject {
         self.loginService = loginService
         self.router = router
     }
+    
+    //애플로그인
+    func signInWithApple(result: Result<ASAuthorization, Error>) {
+            switch result {
+            case .success(let auth):
+                // 1. 인증 정보에서 credential 가져오기
+                guard let credential = auth.credential as? ASAuthorizationAppleIDCredential else {
+                    DispatchQueue.main.async {
+                        self.loginError = "Apple 자격 증명을 가져오는데 실패했습니다."
+                    }
+                    return
+                }
+                
+                // 2. 서버 검증에 필요한 identityToken 가져오기
+                guard let identityTokenData = credential.identityToken,
+                      let identityToken = String(data: identityTokenData, encoding: .utf8) else {
+                    DispatchQueue.main.async {
+                        self.loginError = "identityToken을 변환하는데 실패했습니다."
+                    }
+                    return
+                }
+                
+                // 3. 서버에 identityToken을 보내 로그인/회원가입 처리
+                self.loginService.appleLogin(identityToken: identityToken) { result in
+                    DispatchQueue.main.async {
+                        switch result {
+                        case .success(let response):
+                            KeyChainManager.shared.save(response.data.token, forKey: KeyChainKey.accessToken)
+                            self.router.push(.MainTabBar)
+                            self.loginError = nil
+                            print("애플 로그인 성공 (서버): \(response.data.token)")
+                        case .failure(let error):
+                            print("서버 애플 로그인 실패: \(error)")
+                            self.loginError = "서버 인증에 실패했습니다. 다시 시도해주세요."
+                        }
+                    }
+                }
+                
+            case .failure(let error):
+                print("애플 로그인 실패: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    self.loginError = "애플 로그인에 실패했습니다."
+                }
+            }
+        }
     
     // 구글 로그인
     func signInWithGoogle() {
