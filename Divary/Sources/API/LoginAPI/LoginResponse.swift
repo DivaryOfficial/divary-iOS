@@ -17,6 +17,7 @@ struct LoginApiResponse: Codable {
 }
 
 struct LoginDataResponse: Codable {
-    let token: String
+    let accessToken: String
+    let refreshToken: String
     // isNewUser, refreshToken 등이 실제로 없다면 제거
 }

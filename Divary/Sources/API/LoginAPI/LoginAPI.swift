@@ -11,8 +11,9 @@ import Moya
 
 
 enum LoginAPI {
-    case googleLogin(accessToken: String)
-    case appleLogin(identityToken: String)
+    case googleLogin(accessToken: String, deviceId: String)
+    case appleLogin(identityToken: String, deviceId: String)
+    case reissueToken(refreshToken: String, deviceId: String)
 }
 
 extension LoginAPI: TargetType {
@@ -29,24 +30,29 @@ extension LoginAPI: TargetType {
         case .googleLogin:
             return "/api/v1/auth/GOOGLE/login"
         case .appleLogin:
-            return "/auth/apple"
+            return "/api/v1/auth/APPLE/login"
+        case .reissueToken:
+            return "/api/v1/auth/reissue"
         }
     }
 
     var method: Moya.Method {
         switch self {
-        case .googleLogin, .appleLogin:
+        case .googleLogin, .appleLogin, .reissueToken:
             return .post
         }
     }
 
     var task: Task {
         switch self {
-        case .googleLogin(let accessToken):
-            let params: [String: Any] = ["accessToken": accessToken]
+        case .googleLogin(let accessToken, let deviceId):
+            let params: [String: Any] = ["accessToken": accessToken, "deviceId": deviceId]
             return .requestParameters(parameters: params, encoding: JSONEncoding.default)
-        case .appleLogin(let identityToken):
-            return .requestParameters(parameters: ["identityToken": identityToken], encoding: JSONEncoding.default)
+        case .appleLogin(let identityToken, let deviceId):
+            return .requestParameters(parameters: ["identityToken": identityToken, "deviceId": deviceId], encoding: JSONEncoding.default)
+        case .reissueToken(let refreshToken, let deviceId):
+            return .requestParameters(parameters: ["refreshToken": refreshToken, "deviceId": deviceId], encoding: JSONEncoding.default)
+            
         }
     }
 

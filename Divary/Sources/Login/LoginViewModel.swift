@@ -16,6 +16,10 @@ final class LoginViewModel: ObservableObject {
     @Published var loginError: String?
     private let loginService: LoginService
     private let router: AppRouter // AppRouter 추가
+    private var deviceID: String {
+        return UIDevice.current.identifierForVendor?.uuidString ?? UUID().uuidString
+    }
+
         
     init(loginService: LoginService, router: AppRouter) {
         self.loginService = loginService
@@ -44,14 +48,15 @@ final class LoginViewModel: ObservableObject {
                 }
                 
                 // 3. 서버에 identityToken을 보내 로그인/회원가입 처리
-                self.loginService.appleLogin(identityToken: identityToken) { result in
+                self.loginService.appleLogin(identityToken: identityToken, deviceId: deviceID) { result in
                     DispatchQueue.main.async {
                         switch result {
                         case .success(let response):
-                            KeyChainManager.shared.save(response.data.token, forKey: KeyChainKey.accessToken)
+                            KeyChainManager.shared.save(response.data.accessToken, forKey: KeyChainKey.accessToken)
+                            KeyChainManager.shared.save(response.data.refreshToken, forKey: KeyChainKey.refreshToken)
                             self.router.push(.MainTabBar)
                             self.loginError = nil
-                            print("애플 로그인 성공 (서버): \(response.data.token)")
+                            print("애플 로그인 성공 (서버): \(response.data.accessToken)")
                         case .failure(let error):
                             print("서버 애플 로그인 실패: \(error)")
                             self.loginError = "서버 인증에 실패했습니다. 다시 시도해주세요."
@@ -105,13 +110,14 @@ final class LoginViewModel: ObservableObject {
                 self.loginError = nil
                 print("로그인 성공: \(self.userEmail ?? "-")")
                 // idToken, accessToken 등 저장 로직 및 서버 API 호출
-                self.loginService.googleLogin(accessToken: user.accessToken.tokenString, completion: { result in
+                self.loginService.googleLogin(accessToken: user.accessToken.tokenString, deviceId: self.deviceID, completion: { result in
                     switch result {
                     case .success(let response):
-                        KeyChainManager.shared.save(response.data.token, forKey: KeyChainKey.accessToken)
+                        KeyChainManager.shared.save(response.data.accessToken, forKey: KeyChainKey.accessToken)
+                        KeyChainManager.shared.save(response.data.refreshToken, forKey: KeyChainKey.refreshToken)
                         //KeyChainManager.shared.save(response.refreshToken, forKey: KeyChainKey.refreshToken) - 리프레시토큰 로직
                         self.router.push(.MainTabBar)
-                        print("로그인 성공 (서버): \(response.data.token)")
+                        print("로그인 성공 (서버): \(response.data.accessToken)")
                     case .failure(let error):
                         print("❌ 서버 로그인 실패: \(error)")
                         DispatchQueue.main.async {
