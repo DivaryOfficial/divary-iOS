@@ -5,6 +5,10 @@ struct DivaryApp: App {
     @StateObject private var router = AppRouter()
     @StateObject private var container: DIContainer
     
+    // 앱의 현재 상태(활성, 비활성 등)를 감지하기 위한 변수를 추가합니다.
+    @Environment(\.scenePhase) private var scenePhase
+    
+    
     init() {
         let appRouter = AppRouter()
         self._router = StateObject(wrappedValue: appRouter)
@@ -13,7 +17,7 @@ struct DivaryApp: App {
     
     var body: some Scene {
         WindowGroup {
-
+            
             NavigationStack(path: $router.path) {
                 LoginWrapperView()
                     .navigationDestination(for: Route.self) { route in
@@ -56,23 +60,23 @@ struct DivaryApp: App {
                             NotificationView()
                         case .MainTabBar:
                             MainTabbarView()
-//                                .toolbar(.hidden, for: .navigationBar)
+                            //                                .toolbar(.hidden, for: .navigationBar)
                                 .navigationBarBackButtonHidden(true)
                         case .chatBot:
                             ChatBotView()
-//                                .toolbar(.hidden, for: .navigationBar)
+                            //                                .toolbar(.hidden, for: .navigationBar)
                                 .navigationBarBackButtonHidden(true)
                         case .locationSearch:
                             LocationSearchView(
-                                       currentValue: container.router.locationSearchText,
-                                       placeholder: "다이빙 지역을 입력해주세요. ex) 강원도 강릉",
-                                       onLocationSelected: { selectedLocation in
-                                           container.router.locationSearchText = selectedLocation
-                                       }
-                                   )
-                                   .environment(\.diContainer, container)
-//                                   .toolbar(.hidden, for: .navigationBar)
-                                   .navigationBarBackButtonHidden(true)
+                                currentValue: container.router.locationSearchText,
+                                placeholder: "다이빙 지역을 입력해주세요. ex) 강원도 강릉",
+                                onLocationSelected: { selectedLocation in
+                                    container.router.locationSearchText = selectedLocation
+                                }
+                            )
+                            .environment(\.diContainer, container)
+                            //                                   .toolbar(.hidden, for: .navigationBar)
+                            .navigationBarBackButtonHidden(true)
                         case .oceanCatalog:
                             OceanCatalogView()
                         case .oceanCreatureDetail(let creature):
@@ -83,6 +87,11 @@ struct DivaryApp: App {
             .navigationViewStyle(.stack)
             .environmentObject(container)
             .environment(\.diContainer, container)
+        }
+        .onChange(of: scenePhase) { oldPhase, newPhase in
+            if newPhase == .active {
+                container.tokenManager.checkAndRefreshTokenIfNeeded()
+            }
         }
     }
 }

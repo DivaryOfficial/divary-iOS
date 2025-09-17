@@ -12,24 +12,22 @@ import UIKit
 
 final class TokenManager {
     
-    // 싱글톤 인스턴스
-    static let shared = TokenManager()
+    private let loginService: LoginService
     
-    // 외부에서 직접 인스턴스를 생성하는 것을 방지
-    private init() { }
-    
-
-    private var loginService: LoginService = LoginService() // 예시
-    
+    // deviceID를 가져오는 로직
     private var deviceID: String {
-            return UIDevice.current.identifierForVendor?.uuidString ?? UUID().uuidString
-        }
+        return UIDevice.current.identifierForVendor?.uuidString ?? UUID().uuidString
+    }
+
+    init(loginService: LoginService) {
+        self.loginService = loginService
+    }
     
     /// 토큰 만료 시간을 확인하고 필요한 경우 갱신을 요청하는 메인 함수
     func checkAndRefreshTokenIfNeeded() {
         // 1. 키체인에서 accessToken 읽기
         guard let token = KeyChainManager.shared.read(forKey: KeyChainKey.accessToken) else {
-            print("AccessToken이 없어 갱신을 건너뜁니다.")
+            print("AccessToken이 없어 토큰 갱신을 건너뜁니다.")
             return
         }
 
@@ -55,7 +53,6 @@ final class TokenManager {
             
         } catch {
             print("JWT 디코딩에 실패했습니다: \(error)")
-            // 디코딩 실패 시 저장된 토큰이 유효하지 않을 수 있으므로 삭제 처리도 고려
         }
     }
     
@@ -66,20 +63,24 @@ final class TokenManager {
             return
         }
         
-        // LoginService를 통해 재발급 API 호출
+        // LoginService를 통해 재발급 API 호출 (deviceID 포함)
         loginService.reissueToken(refreshToken: refreshToken, deviceId: self.deviceID) { result in
             switch result {
             case .success(let response):
                 // 성공 시 새로 받은 토큰들을 키체인에 덮어쓰기
                 let loginData = response.data
                 KeyChainManager.shared.save(loginData.accessToken, forKey: KeyChainKey.accessToken)
-            
+                
+                //rtr 방식으로 인해 refresh 토큰도 항상 재발급
                 KeyChainManager.shared.save(loginData.refreshToken, forKey: KeyChainKey.refreshToken)
-               
+            
                 print("토큰이 성공적으로 갱신되었습니다.")
                 
             case .failure(let error):
                 print("토큰 갱신에 실패했습니다: \(error.localizedDescription)")
+                // 갱신에 실패하면 (예: 리프레시 토큰 만료) 저장된 모든 토큰을 지우고 사용자에게 다시 로그인을 유도
+                KeyChainManager.shared.delete(forKey: KeyChainKey.accessToken)
+                KeyChainManager.shared.delete(forKey: KeyChainKey.refreshToken)
             }
         }
     }
