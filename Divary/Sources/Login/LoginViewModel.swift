@@ -52,11 +52,11 @@ final class LoginViewModel: ObservableObject {
                     DispatchQueue.main.async {
                         switch result {
                         case .success(let response):
-                            KeyChainManager.shared.save(response.data.accessToken, forKey: KeyChainKey.accessToken)
-                            KeyChainManager.shared.save(response.data.refreshToken, forKey: KeyChainKey.refreshToken)
+                            KeyChainManager.shared.save(response.accessToken, forKey: KeyChainKey.accessToken)
+                            KeyChainManager.shared.save(response.refreshToken, forKey: KeyChainKey.refreshToken)
                             self.router.push(.MainTabBar)
                             self.loginError = nil
-                            print("애플 로그인 성공 (서버): \(response.data.accessToken)")
+                            print("애플 로그인 성공 (서버): \(response.accessToken)")
                         case .failure(let error):
                             print("서버 애플 로그인 실패: \(error)")
                             self.loginError = "서버 인증에 실패했습니다. 다시 시도해주세요."
@@ -113,11 +113,11 @@ final class LoginViewModel: ObservableObject {
                 self.loginService.googleLogin(accessToken: user.accessToken.tokenString, deviceId: self.deviceID, completion: { result in
                     switch result {
                     case .success(let response):
-                        KeyChainManager.shared.save(response.data.accessToken, forKey: KeyChainKey.accessToken)
-                        KeyChainManager.shared.save(response.data.refreshToken, forKey: KeyChainKey.refreshToken)
+                        KeyChainManager.shared.save(response.accessToken, forKey: KeyChainKey.accessToken)
+                        KeyChainManager.shared.save(response.refreshToken, forKey: KeyChainKey.refreshToken)
                         //KeyChainManager.shared.save(response.refreshToken, forKey: KeyChainKey.refreshToken) - 리프레시토큰 로직
                         self.router.push(.MainTabBar)
-                        print("로그인 성공 (서버): \(response.data.accessToken)")
+                        print("로그인 성공 (서버): \(response.accessToken)")
                     case .failure(let error):
                         print("❌ 서버 로그인 실패: \(error)")
                         DispatchQueue.main.async {
