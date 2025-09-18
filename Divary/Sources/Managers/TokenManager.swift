@@ -30,6 +30,21 @@ final class TokenManager : BaseService{
     /// 외부에서 인스턴스를 새로 생성하는 것을 방지
     private override init() {}
     
+    func hasValidToken() -> Bool {
+        guard let token = KeyChainManager.shared.read(forKey: KeyChainKey.accessToken) else {
+            return false // 토큰 없음
+        }
+        
+        do {
+            let jwt = try decode(jwt: token)
+            
+            return !jwt.expired
+        } catch {
+            // 디코딩 실패는 유효하지 않은 토큰으로 간주
+            return false
+        }
+    }
+    
     
     /// 선제적 갱신: 앱 활성화 시 호출되어 토큰 만료 시간을 확인하고, 1시간 이내면 갱신
     func checkAndRefreshTokenIfNeeded() {
