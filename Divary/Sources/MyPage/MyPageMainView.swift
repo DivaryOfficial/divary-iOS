@@ -8,11 +8,12 @@
 import SwiftUI
 
 struct MyPageMainView: View {
-    // TODO: 실제 데이터 연결되면 바인딩/뷰모델로 교체
+    @Environment(\.diContainer) private var di
+    
     var userId: String = "user_id0123"
     var licenseSummary: String = "PADI 오픈워터 다이버 / 총 다이빙 횟수: 21회"
 
-    // 액션 콜백들 (네비게이션/라우팅 연결 시 바꿔 끼우면 됨)
+    // 액션 콜백들
     var onTapEditProfile: () -> Void = {print("편집버튼")}
     var onTapBell: () -> Void = {}
     var onTapLicense: () -> Void = {print("라이선스버튼")}
@@ -23,11 +24,10 @@ struct MyPageMainView: View {
     var body: some View {
         VStack(spacing: 0) {
             TopBar(
+                isMainView: true,
                 title: "마이페이지",
                 onBell: onTapBell
             )
-            .padding(.horizontal, 16)
-            .padding(.top, 8)
 
             VStack(alignment: .leading, spacing: 0) {
                     // 프로필 요약
@@ -36,10 +36,11 @@ struct MyPageMainView: View {
 
                         VStack(alignment: .leading) {
                             Text(userId)
-                                .font(.omyu.regular(size: 18))
+                                .font(.omyu.regular(size: 20))
                                 .foregroundStyle(.primary)
+                                .padding(.bottom, 2)
                             Text(licenseSummary)
-                                .font(.omyu.regular(size: 14))
+                                .font(.omyu.regular(size: 16))
                                 .foregroundStyle(Color(.grayscaleG400))
                         }
 
@@ -52,14 +53,16 @@ struct MyPageMainView: View {
                     }
                     .padding(.vertical, 14)
 
-                    Divider() // 아이콘 너비 + 간격만큼 들여쓰기
+                    Divider()
 
                     // 메뉴 리스트
                     VStack(spacing: 0) {
                         MyPageRow(icon: "humbleicons_verified", title: "나의 라이센스", isLast: false, action: onTapLicense)
-                        MyPageRow(icon: "humbleicons_documents", title: "로그 모아보기", isLast: false, action: onTapLogs)
-                        MyPageRow(icon: "humbleicons_save", title: "임시저장 글", isLast: false, action: onTapDrafts)
-                        MyPageRow(icon: "humbleicons_users", title: "나의 친구", isLast: true, action: onTapFriends)
+//                        MyPageRow(icon: "humbleicons_documents", title: "로그 모아보기", isLast: false, action: onTapLogs)
+//                        MyPageRow(icon: "humbleicons_save", title: "임시저장 글", isLast: false, action: onTapDrafts)
+                        MyPageRow(icon: "humbleicons_users", title: "나의 친구", isLast: true) {
+                            di.router.push(.myFriend)
+                        }
                     }
             }
             .padding(.horizontal, 16)
@@ -67,13 +70,16 @@ struct MyPageMainView: View {
             
             Spacer()
         }
-        .navigationBarHidden(true)     // 상위에 NavigationStack이 있으면 기본 바 숨김
+        .navigationBarHidden(true)
     }
 }
 
 // MARK: - Components
 
-private struct TopBar: View {
+struct TopBar: View {
+    @Environment(\.diContainer) private var di
+    
+    let isMainView: Bool
     let title: String
     var onBell: () -> Void
 
@@ -84,6 +90,19 @@ private struct TopBar: View {
                 .foregroundStyle(.primary)
 
             HStack {
+                if !isMainView {
+                    Button {
+                        di.router.pop()
+                    } label: {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundStyle(.black)
+                            .frame(width: 44, height: 44, alignment: .leading) // 터치 영역 확보
+                            .contentShape(Rectangle())
+                    }
+                } else {
+                    Color.clear.frame(width: 44, height: 44)
+                }
                 Spacer()
                 Button(action: onBell) {
                     Image("bell-1")
@@ -94,6 +113,8 @@ private struct TopBar: View {
             }
         }
         .frame(height: 44)
+        .padding(.horizontal, 16)
+        .padding(.top, 8)
     }
 }
 
@@ -110,7 +131,7 @@ private struct MyPageRow: View {
                     Image(icon)
 
                     Text(title)
-                        .font(.omyu.regular(size: 18))
+                        .font(.omyu.regular(size: 20))
                         .foregroundStyle(.black)
 
                     Spacer()
@@ -129,10 +150,6 @@ private struct MyPageRow: View {
     }
 }
 
-// MARK: - Preview
-
 #Preview {
-    NavigationStack {
-        MyPageMainView()
-    }
+    MyPageMainView()
 }

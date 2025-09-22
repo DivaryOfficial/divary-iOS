@@ -31,7 +31,7 @@ struct MainTabbarView: View {
                 case "해양도감":
                     OceanCatalogView()
                 case "My":
-                    MyPageTempView()
+                    MyPageMainView()
                 default:
                     MainWrapperView()
                 }
@@ -67,28 +67,6 @@ struct MainTabbarView: View {
             VStack(spacing: 0) {
                 Image(container.selectedTab == title ? selectedImage : nonSelectedImage)
             }
-        }
-    }
-}
-
-// 임시 마이페이지 뷰 (실제 구현 필요)
-struct MyPageTempView: View {
-    var body: some View {
-        VStack {
-            Spacer()
-            Text("마이페이지 오픈 예정!")
-                .font(Font.omyu.regular(size: 24))
-                .foregroundStyle(Color.grayscale_g700)
-            Text("구현 예정")
-                .font(Font.NanumSquareNeo.NanumSquareNeoBold(size: 14))
-                .foregroundStyle(Color.grayscale_g400)
-                      
-            Image("readyCharacter")
-                .resizable()
-                .frame(width: 200, height: 218)
-                .scaledToFit()
-            
-            Spacer()
         }
     }
 }

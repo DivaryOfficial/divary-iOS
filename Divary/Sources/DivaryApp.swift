@@ -77,6 +77,11 @@ struct DivaryApp: App {
                             OceanCatalogView()
                         case .oceanCreatureDetail(let creature):
                             OceanCreatureDetailView(creature: creature)
+                        case .myPage:
+                            MyPageMainView()
+                        case .myFriend:
+                            MyFriendView()
+                                .navigationBarBackButtonHidden(true)
                         }
                     }
             }
