@@ -17,8 +17,9 @@ struct MyLicenseView: View {
     @State private var showSourceMenu = false
     @State private var showPhotosPicker = false
     @State private var showCameraPicker = false
-    
-    // 결과 (후속 업로드/미리보기 연결용)
+    @State private var showFullScreen = false
+
+    // 결과 (1장만)
     @State private var selectedItem: PhotosPickerItem?
     @State private var selectedImage: UIImage?
     
@@ -27,6 +28,7 @@ struct MyLicenseView: View {
             TopBar(isMainView: false, title: "나의 라이센스", onBell: onTapBell)
             
             LicenseCard(
+                selectedImage: $selectedImage,
                 showSourceMenu: $showSourceMenu,
                 onTapRegister: { showSourceMenu.toggle() },
                 onTapAlbum: { showPhotosPicker = true },
@@ -40,6 +42,43 @@ struct MyLicenseView: View {
             .padding(.horizontal, 16)
             .padding(.top, 12)
             .padding(.bottom, 24)
+            
+            // ▶ 등록된 뒤 + 소스 메뉴가 닫혀 있을 때만 두 버튼 노출
+            if selectedImage != nil && !showSourceMenu {
+                HStack(spacing: 16) {
+                    Button {
+                        withAnimation(.easeOut(duration: 0.2)) {
+                            showSourceMenu = true   // 다시 등록하기 → 메뉴 열기(이미지는 유지)
+                        }
+                    } label: {
+                        Text("다시 등록하기")
+                            .font(.omyu.regular(size: 20))
+                            .foregroundStyle(Color(.grayscaleG500))
+                            .frame(maxWidth: .infinity, minHeight: 48)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color(.grayscaleG200))
+                            )
+                    }
+                    .buttonStyle(.plain)
+
+                    Button {
+                        showFullScreen = true      // 크게 보기
+                    } label: {
+                        Text("크게 보기")
+                            .font(.omyu.regular(size: 20))
+                            .foregroundStyle(.white)
+                            .frame(maxWidth: .infinity, minHeight: 48)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color(.primarySeaBlue))
+                            )
+                    }
+                    .buttonStyle(.plain)
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 24)
+            }
             
             Spacer()
         }
@@ -56,6 +95,8 @@ struct MyLicenseView: View {
                     selectedImage = image
                     // TODO: 여기서 업로드/미리보기 화면으로 라우팅하거나 상태 업데이트
                     // di.router.push(.licensePreview(image: image)) 등
+                    // 선택되면 메뉴 닫고 등록 상태로 전환
+                    withAnimation(.easeOut(duration: 0.2)) { showSourceMenu = false }
                 }
             }
         }
@@ -63,14 +104,26 @@ struct MyLicenseView: View {
         // 카메라
         .sheet(isPresented: $showCameraPicker) {
             CameraPicker(image: $selectedImage)
+                .onDisappear {
+                    // 촬영 후 바로 등록 상태로
+                    if selectedImage != nil {
+                        withAnimation(.easeOut(duration: 0.2)) { showSourceMenu = false }
+                    }
+                }
                 .ignoresSafeArea()
+        }
+
+        // 크게 보기 (풀스크린)
+        .fullScreenCover(isPresented: $showFullScreen) {
+            if let img = selectedImage {
+                LicenseFullScreenView(image: img)
+            }
         }
     }
 }
 
-// MARK: - 카드 컴포넌트
-
 private struct LicenseCard: View {
+    @Binding var selectedImage: UIImage?
     @Binding var showSourceMenu: Bool
     var onTapRegister: () -> Void
     var onTapAlbum: () -> Void
@@ -80,10 +133,16 @@ private struct LicenseCard: View {
         VStack(spacing: 12) {
             Group {
                 if showSourceMenu {
-                    HStack(spacing: 40) {
+                    HStack(spacing: 48) {
                         SourceButton(iconName: "album", action: onTapAlbum)
                         SourceButton(iconName: "camera", action: onTapCamera)
                     }
+                } else if let image = selectedImage {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                        .padding(12)
+//                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 } else {
                     Button(action: onTapRegister) {
                         Image(systemName: "plus")
@@ -94,18 +153,21 @@ private struct LicenseCard: View {
             }
             .frame(height: 160)
             
-            Button(action: onTapRegister) {
-                Text(showSourceMenu ? "취소" : "라이센스 이미지 등록하기")
-                    .font(.omyu.regular(size: 20))
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity, minHeight: 48)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .fill(Color(.primarySeaBlue))
-                    )
+            // ▶ 등록 전이거나, 메뉴가 열려 있을 때만 노출 (취소/등록하기 버튼)
+            if selectedImage == nil || showSourceMenu {
+                Button(action: onTapRegister) {
+                    Text(showSourceMenu ? "취소" : "라이센스 이미지 등록하기")
+                        .font(.omyu.regular(size: 20))
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity, minHeight: 48)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                .fill(Color(.primarySeaBlue))
+                        )
+                }
+                .buttonStyle(.plain)
+                .padding(.top, 4)
             }
-            .buttonStyle(.plain)
-            .padding(.top, 4)
         }
         .padding(12)
     }
@@ -160,6 +222,40 @@ private struct CameraPicker: UIViewControllerRepresentable {
         
         func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
             parent.dismiss()
+        }
+    }
+}
+// MARK: - 풀스크린 뷰어
+private struct LicenseFullScreenView: View {
+    @Environment(\.dismiss) private var dismiss
+    let image: UIImage
+
+    var body: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFit()
+                .padding()
+                .background(Color.black)
+
+            VStack {
+                HStack {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundStyle(.white)
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
+                    }
+                    Spacer()
+                }
+                .padding(.top, 8)
+                .padding(.leading, 8)
+                Spacer()
+            }
         }
     }
 }

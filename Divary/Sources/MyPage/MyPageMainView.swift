@@ -57,7 +57,9 @@ struct MyPageMainView: View {
 
                     // 메뉴 리스트
                     VStack(spacing: 0) {
-                        MyPageRow(icon: "humbleicons_verified", title: "나의 라이센스", isLast: false, action: onTapLicense)
+                        MyPageRow(icon: "humbleicons_verified", title: "나의 라이센스", isLast: false) {
+                            di.router.push(.myLicense)
+                        }
 //                        MyPageRow(icon: "humbleicons_documents", title: "로그 모아보기", isLast: false, action: onTapLogs)
 //                        MyPageRow(icon: "humbleicons_save", title: "임시저장 글", isLast: false, action: onTapDrafts)
                         MyPageRow(icon: "humbleicons_users", title: "나의 친구", isLast: true) {
