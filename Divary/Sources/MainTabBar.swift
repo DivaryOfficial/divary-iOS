@@ -31,7 +31,7 @@ struct MainTabbarView: View {
                 case "해양도감":
                     OceanCatalogView()
                 case "My":
-                    MyPageView()
+                    MyPageTempView()
                 default:
                     MainWrapperView()
                 }
@@ -72,7 +72,7 @@ struct MainTabbarView: View {
 }
 
 // 임시 마이페이지 뷰 (실제 구현 필요)
-struct MyPageView: View {
+struct MyPageTempView: View {
     var body: some View {
         VStack {
             Spacer()
