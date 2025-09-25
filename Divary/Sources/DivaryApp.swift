@@ -16,6 +16,7 @@ struct DivaryApp: App {
 
             NavigationStack(path: $router.path) {
                 LoginWrapperView()
+                    .enableInteractivePopGesture()
                     .navigationDestination(for: Route.self) { route in
                         switch route {
                         case .login:
