@@ -12,7 +12,7 @@ struct MyFriendView: View {
     
     var body: some View {
         VStack(alignment: .center) {
-            TopBar(isMainView: false, title: "나의 친구", onBell: onTapBell)
+            MyPageTopBar(isMainView: false, title: "나의 친구", onBell: onTapBell)
             Spacer()
             Text("친구 기능 오픈 예정!")
                 .font(Font.omyu.regular(size: 24))

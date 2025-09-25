@@ -22,6 +22,7 @@ enum Route: Hashable {
     case oceanCreatureDetail(creature: SeaCreatureDetail)
     case chatBot
     case myPage
+    case myProfile
     case myLicense
     case myFriend
 }

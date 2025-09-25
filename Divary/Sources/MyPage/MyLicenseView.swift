@@ -25,7 +25,7 @@ struct MyLicenseView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            TopBar(isMainView: false, title: "나의 라이센스", onBell: onTapBell)
+            MyPageTopBar(isMainView: false, title: "나의 라이센스", onBell: onTapBell)
             
             LicenseCard(
                 selectedImage: $selectedImage,
@@ -34,11 +34,13 @@ struct MyLicenseView: View {
                 onTapAlbum: { showPhotosPicker = true },
                 onTapCamera: { showCameraPicker = true }
             )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .inset(by: 0.5)
-                    .stroke(Color(red: 0.8, green: 0.8, blue: 0.8), lineWidth: 1)
-            )
+            .overlay {
+                if selectedImage == nil || showSourceMenu {
+                    RoundedRectangle(cornerRadius: 16)
+                        .inset(by: 0.5)
+                        .stroke(Color(red: 0.8, green: 0.8, blue: 0.8), lineWidth: 1)
+                }
+            }
             .padding(.horizontal, 16)
             .padding(.top, 12)
             .padding(.bottom, 24)
@@ -137,21 +139,21 @@ private struct LicenseCard: View {
                         SourceButton(iconName: "album", action: onTapAlbum)
                         SourceButton(iconName: "camera", action: onTapCamera)
                     }
+                    .frame(height: 160)
                 } else if let image = selectedImage {
                     Image(uiImage: image)
                         .resizable()
                         .scaledToFit()
-                        .padding(12)
-//                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                        .frame(width: .infinity)
                 } else {
                     Button(action: onTapRegister) {
                         Image(systemName: "plus")
                             .font(.system(size: 35, weight: .regular))
                             .foregroundStyle(Color(.grayscaleG400))
+                            .frame(height: 160)
                     }
                 }
             }
-            .frame(height: 160)
             
             // ▶ 등록 전이거나, 메뉴가 열려 있을 때만 노출 (취소/등록하기 버튼)
             if selectedImage == nil || showSourceMenu {
@@ -168,6 +170,7 @@ private struct LicenseCard: View {
                 .buttonStyle(.plain)
                 .padding(.top, 4)
             }
+
         }
         .padding(12)
     }
@@ -235,9 +238,15 @@ private struct LicenseFullScreenView: View {
             Color.black.ignoresSafeArea()
             Image(uiImage: image)
                 .resizable()
+                .rotationEffect(.degrees(270))
                 .scaledToFit()
-                .padding()
-                .background(Color.black)
+                .frame(width: .infinity)
+                .ignoresSafeArea()
+//                .resizable()
+//                .background(Color.black)
+//                .rotationEffect(.degrees(270))
+//                .scaledToFit()
+//                .frame(width: .infinity, height: .infinity)
 
             VStack {
                 HStack {

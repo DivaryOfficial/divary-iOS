@@ -79,6 +79,9 @@ struct DivaryApp: App {
                             OceanCreatureDetailView(creature: creature)
                         case .myPage:
                             MyPageMainView()
+                        case .myProfile:
+                            MyProfileView()
+                                .navigationBarBackButtonHidden(true)
                         case .myLicense:
                             MyLicenseView()
                                 .navigationBarBackButtonHidden(true)

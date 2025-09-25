@@ -23,7 +23,7 @@ struct MyPageMainView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            TopBar(
+            MyPageTopBar(
                 isMainView: true,
                 title: "마이페이지",
                 onBell: onTapBell
@@ -46,7 +46,9 @@ struct MyPageMainView: View {
 
                         Spacer(minLength: 8)
 
-                        Button(action: onTapEditProfile) {
+                        Button {
+                            di.router.push(.myProfile)
+                        } label: {
                             Image("Vector")
                                 .foregroundStyle(Color(.systemGray))
                         }
@@ -76,50 +78,7 @@ struct MyPageMainView: View {
     }
 }
 
-// MARK: - Components
-
-struct TopBar: View {
-    @Environment(\.diContainer) private var di
-    
-    let isMainView: Bool
-    let title: String
-    var onBell: () -> Void
-
-    var body: some View {
-        ZStack {
-            Text(title)
-                .font(.omyu.regular(size: 20))
-                .foregroundStyle(.primary)
-
-            HStack {
-                if !isMainView {
-                    Button {
-                        di.router.pop()
-                    } label: {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 18, weight: .semibold))
-                            .foregroundStyle(.black)
-                            .frame(width: 44, height: 44, alignment: .leading) // 터치 영역 확보
-                            .contentShape(Rectangle())
-                    }
-                } else {
-                    Color.clear.frame(width: 44, height: 44)
-                }
-                Spacer()
-                Button(action: onBell) {
-                    Image("bell-1")
-                        .foregroundStyle(Color.black)
-                        .padding(.horizontal, 2)
-                        .contentShape(Rectangle())
-                }
-            }
-        }
-        .frame(height: 44)
-        .padding(.horizontal, 16)
-        .padding(.top, 8)
-    }
-}
-
+// MARK: - Component
 private struct MyPageRow: View {
     let icon: String
     let title: String
