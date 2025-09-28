@@ -18,7 +18,7 @@ final class TokenManager : BaseService{
     /// 앱 전체에서 공유되는 단일 인스턴스
     static let shared = TokenManager()
     
-    /// 토큰 재발급 전용 네트워크 클라이언트 (Interceptor 순환 참조 방지용)
+    /// 토큰 재발급 전용 네트워크 클라이언트
     private let authProvider = MoyaProvider<LoginAPI>()
     
     /// 기기 고유 ID
@@ -76,7 +76,6 @@ final class TokenManager : BaseService{
     }
     
     
-    /// 대응적 갱신: API 요청이 401 오류로 실패했을 때 Interceptor가 호출
     /// - Parameter completion: 토큰 갱신 성공 여부를 전달하는 클로저
     func refreshToken(completion: ((Bool) -> Void)? = nil) {
         guard let refreshToken = KeyChainManager.shared.read(forKey: KeyChainKey.refreshToken) else {
@@ -85,7 +84,7 @@ final class TokenManager : BaseService{
             return
         }
         
-        authProvider.request(.reissueToken(refreshToken: refreshToken, deviceId: deviceID)) { result in
+        authProvider.request(.reissueToken(refreshToken: refreshToken, deviceId: self.deviceID)) { result in
             self.handleResponse(result) { (result: Result<LoginDataResponse, APIError>) in
                 switch result {
                 case .success(let loginData):
@@ -99,6 +98,7 @@ final class TokenManager : BaseService{
                     
                 case .failure(let error):
                     // 실패 시 토큰 삭제
+                    print("토큰 갱신 실패: refresh \(refreshToken)\n deviceId: \(self.deviceID)")
                     print("토큰 갱신 실패 (from handleResponse): \(error.localizedDescription)")
                     KeyChainManager.shared.delete(forKey: KeyChainKey.accessToken)
                     KeyChainManager.shared.delete(forKey: KeyChainKey.refreshToken)

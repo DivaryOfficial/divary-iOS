@@ -117,7 +117,7 @@ final class LoginViewModel: ObservableObject {
                         KeyChainManager.shared.save(response.refreshToken, forKey: KeyChainKey.refreshToken)
                         //KeyChainManager.shared.save(response.refreshToken, forKey: KeyChainKey.refreshToken) - 리프레시토큰 로직
                         self.router.push(.MainTabBar)
-                        print("로그인 성공 (서버): \(response.accessToken)")
+                        print("로그인 성공 (서버): refresh \(response.refreshToken)\n deviceId: \(self.deviceID)")
                     case .failure(let error):
                         print("❌ 서버 로그인 실패: \(error)")
                         DispatchQueue.main.async {

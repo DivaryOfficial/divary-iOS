@@ -51,17 +51,27 @@ extension LoginAPI: TargetType {
         case .appleLogin(let identityToken, let deviceId):
             return .requestParameters(parameters: ["identityToken": identityToken, "deviceId": deviceId], encoding: JSONEncoding.default)
         case .reissueToken(let refreshToken, let deviceId):
-            return .requestParameters(parameters: ["refreshToken": refreshToken, "deviceId": deviceId], encoding: JSONEncoding.default)
+            return .requestPlain
             
         }
     }
 
     var headers: [String : String]? {
-        return [
-            "Content-Type": "application/json",
-            "Accept": "*/*",
-            "Accept-Language": "ko-KR,ko;q=0.9"
-        ]
+        switch self {
+            
+        case .reissueToken(let refreshToken, let deviceId):
+            return [
+                "refreshToken": refreshToken,
+                "Device-Id": deviceId
+            ]
+        default :
+            return [
+                "Content-Type": "application/json",
+                "Accept": "*/*",
+                "Accept-Language": "ko-KR,ko;q=0.9"
+            ]
+        }
+        
     }
 
     var sampleData: Data {
