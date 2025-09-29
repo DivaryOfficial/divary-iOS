@@ -75,7 +75,7 @@ struct EquipmentInputView: View {
                         //착용
                         TextInputField(
                             title: "착용",
-                            placeholder: "ex) 후드, 장갑, 베스트 등",
+                            placeholder: "내용을 입력하세요.",
                             unit: "",
                             value: $equipment.Equipment
                         )

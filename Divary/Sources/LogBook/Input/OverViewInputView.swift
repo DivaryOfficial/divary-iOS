@@ -37,7 +37,7 @@ struct OverViewInputView: View {
                         // 다이빙 지역
                         LocationTextInputField(
                             title: "다이빙 지역",
-                            placeholder: "다이빙 지역을 입력해주세요 ex) 강원도 강릉",
+                            placeholder: "내용을 입력하세요.",
                             unit: "돋보기",
                             value: Binding(
                                 get: { overview.title ?? "" },
@@ -49,7 +49,7 @@ struct OverViewInputView: View {
                         
                         // 다이빙 포인트
                         TextInputField(
-                            title: "다이빙 포인트",
+                            title: "내용을 입력하세요.",
                             placeholder: "ex) 문섬",
                             unit: "",
                             value: $overview.point
