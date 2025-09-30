@@ -7,6 +7,9 @@
 
 import SwiftUI
 import Combine
+import Foundation
+import Moya
+import Alamofire
 
 final class DIContainer: ObservableObject {
     // 뷰 이동 중앙 집중 관리
@@ -14,8 +17,8 @@ final class DIContainer: ObservableObject {
     
     
     // 뷰 수정, 생성, 삭제 시 호출할 데이터
-   // let challengeRefreshSubject = PassthroughSubject<Void, Never>()
-   // let chatRefreshSubject = PassthroughSubject<Void, Never>()
+    // let challengeRefreshSubject = PassthroughSubject<Void, Never>()
+    // let chatRefreshSubject = PassthroughSubject<Void, Never>()
     
     // 모든 서비스 선언
     let loginService: LoginService
@@ -25,14 +28,15 @@ final class DIContainer: ObservableObject {
     let imageService: ImageService
     let logDiaryService: LogDiaryService
     let oceanCatalogService: OceanCatalogService
-  
+    let tokenManager: TokenManager
+    
     //메인 탭바 변수
     @Published var selectedTab: String = "기록"
     
-
+    
     init(router: AppRouter) {
         self.router = router
-
+        
         // 각 서비스 초기화
         self.loginService = LoginService()
         self.notificationService = NotificationService()
@@ -41,9 +45,11 @@ final class DIContainer: ObservableObject {
         self.imageService = ImageService()
         self.logDiaryService = LogDiaryService()
         self.oceanCatalogService = OceanCatalogService()
-       
+        self.tokenManager = TokenManager.shared 
+        
     }
 }
+
 
 private struct DIContainerKey: EnvironmentKey {
     static var defaultValue: DIContainer = DIContainer(router: AppRouter())

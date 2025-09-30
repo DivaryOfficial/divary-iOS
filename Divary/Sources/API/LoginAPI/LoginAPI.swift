@@ -11,7 +11,9 @@ import Moya
 
 
 enum LoginAPI {
-    case googleLogin(accessToken: String)
+    case googleLogin(accessToken: String, deviceId: String)
+    case appleLogin(identityToken: String, deviceId: String)
+    case reissueToken(refreshToken: String, deviceId: String)
 }
 
 extension LoginAPI: TargetType {
@@ -27,30 +29,49 @@ extension LoginAPI: TargetType {
         switch self {
         case .googleLogin:
             return "/api/v1/auth/GOOGLE/login"
+        case .appleLogin:
+            return "/api/v1/auth/APPLE/login"
+        case .reissueToken:
+            return "/api/v1/auth/reissue"
         }
     }
 
     var method: Moya.Method {
         switch self {
-        case .googleLogin:
+        case .googleLogin, .appleLogin, .reissueToken:
             return .post
         }
     }
 
     var task: Task {
         switch self {
-        case .googleLogin(let accessToken):
-            let params: [String: Any] = ["accessToken": accessToken]
+        case .googleLogin(let accessToken, let deviceId):
+            let params: [String: Any] = ["accessToken": accessToken, "deviceId": deviceId]
             return .requestParameters(parameters: params, encoding: JSONEncoding.default)
+        case .appleLogin(let identityToken, let deviceId):
+            return .requestParameters(parameters: ["identityToken": identityToken, "deviceId": deviceId], encoding: JSONEncoding.default)
+        case .reissueToken(let refreshToken, let deviceId):
+            return .requestPlain
+            
         }
     }
 
     var headers: [String : String]? {
-        return [
-            "Content-Type": "application/json",
-            "Accept": "*/*",
-            "Accept-Language": "ko-KR,ko;q=0.9"
-        ]
+        switch self {
+            
+        case .reissueToken(let refreshToken, let deviceId):
+            return [
+                "refreshToken": refreshToken,
+                "Device-Id": deviceId
+            ]
+        default :
+            return [
+                "Content-Type": "application/json",
+                "Accept": "*/*",
+                "Accept-Language": "ko-KR,ko;q=0.9"
+            ]
+        }
+        
     }
 
     var sampleData: Data {

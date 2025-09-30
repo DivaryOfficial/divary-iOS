@@ -89,7 +89,7 @@ let project = Project(
                 .package(product: "GoogleSignIn"),
                 .package(product: "GoogleSignInSwift"),
                 .package(product: "RichTextKit"),
-                .package(product: "Kingfisher")
+                .package(product: "Kingfisher"),
             ],
             settings: .settings(
                 base: [
