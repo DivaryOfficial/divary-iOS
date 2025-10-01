@@ -84,7 +84,7 @@ final class TokenManager : BaseService{
             return
         }
         
-        authProvider.request(.reissueToken(refreshToken: self.deviceID, deviceId: self.deviceID)) { result in
+        authProvider.request(.reissueToken(refreshToken: refreshToken, deviceId: self.deviceID)) { result in
             self.handleResponse(result) { (result: Result<LoginDataResponse, APIError>) in
                 switch result {
                 case .success(let loginData):
