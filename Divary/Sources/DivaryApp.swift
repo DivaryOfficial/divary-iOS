@@ -10,7 +10,7 @@ struct DivaryApp: App {
     
     
     init() {
-        let appRouter = AppRouter()
+        var appRouter = AppRouter()
         self._router = StateObject(wrappedValue: appRouter)
         self._container = StateObject(wrappedValue: DIContainer(router: appRouter))
     }
@@ -87,9 +87,21 @@ struct DivaryApp: App {
             .navigationViewStyle(.stack)
             .environmentObject(container)
             .environment(\.diContainer, container)
+            .alert(isPresented: $container.router.showAlert) {
+                Alert(
+                    title: Text("알림"),
+                    message: Text(container.router.alertMessage),
+                    dismissButton: .default(Text("확인")) {
+                        // AppRouter에 저장된 액션을 실행합니다.
+                        container.router.alertAction?()
+                        container.router.alertAction = nil
+                    }
+                )
+            }
         }
         .onChange(of: scenePhase) { oldPhase, newPhase in
-            if newPhase == .active {
+            // 앱이 활성화되고, 라우터 경로가 비어있지 않을 때 (즉, 로그인 후 다른 화면으로 이동했을 때)
+            if newPhase == .active && !container.router.path.isEmpty {
                 container.tokenManager.checkAndRefreshTokenIfNeeded()
             }
         }

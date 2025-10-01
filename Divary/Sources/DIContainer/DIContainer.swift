@@ -13,7 +13,7 @@ import Alamofire
 
 final class DIContainer: ObservableObject {
     // 뷰 이동 중앙 집중 관리
-    let router: AppRouter
+    var router: AppRouter
     
     
     // 뷰 수정, 생성, 삭제 시 호출할 데이터
@@ -45,7 +45,7 @@ final class DIContainer: ObservableObject {
         self.imageService = ImageService()
         self.logDiaryService = LogDiaryService()
         self.oceanCatalogService = OceanCatalogService()
-        self.tokenManager = TokenManager.shared 
+        self.tokenManager = TokenManager(router: router)
         
     }
 }

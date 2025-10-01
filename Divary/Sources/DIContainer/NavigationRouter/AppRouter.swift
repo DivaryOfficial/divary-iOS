@@ -26,6 +26,10 @@ enum Route: Hashable {
 class AppRouter: ObservableObject {
     @Published var path = NavigationPath()
     @Published var locationSearchText = ""
+    @Published var showAlert: Bool = false
+    @Published var alertMessage: String = ""
+    
+    var alertAction: (() -> Void)? = nil
     
     var locationSearchBinding: Binding<String> {
         Binding(
@@ -45,4 +49,7 @@ class AppRouter: ObservableObject {
     func reset() {
         path = NavigationPath()
     }
+    func popToRoot() {
+            path.removeLast(path.count)
+        }
 }

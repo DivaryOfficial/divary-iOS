@@ -13,10 +13,8 @@ import UIKit
 
 final class TokenManager : BaseService{
     
+    private let router: AppRouter
     
-    
-    /// 앱 전체에서 공유되는 단일 인스턴스
-    static let shared = TokenManager()
     
     /// 토큰 재발급 전용 네트워크 클라이언트
     private let authProvider = MoyaProvider<LoginAPI>()
@@ -27,8 +25,10 @@ final class TokenManager : BaseService{
     }
     
     
-    /// 외부에서 인스턴스를 새로 생성하는 것을 방지
-    private override init() {}
+    init(router: AppRouter) {
+        self.router = router
+        super.init()
+    }
     
     func hasValidToken() -> Bool {
         guard let token = KeyChainManager.shared.read(forKey: KeyChainKey.accessToken) else {
@@ -84,7 +84,7 @@ final class TokenManager : BaseService{
             return
         }
         
-        authProvider.request(.reissueToken(refreshToken: refreshToken, deviceId: self.deviceID)) { result in
+        authProvider.request(.reissueToken(refreshToken: self.deviceID, deviceId: self.deviceID)) { result in
             self.handleResponse(result) { (result: Result<LoginDataResponse, APIError>) in
                 switch result {
                 case .success(let loginData):
@@ -98,10 +98,18 @@ final class TokenManager : BaseService{
                     
                 case .failure(let error):
                     // 실패 시 토큰 삭제
-                    print("토큰 갱신 실패: refresh \(refreshToken)\n deviceId: \(self.deviceID)")
                     print("토큰 갱신 실패 (from handleResponse): \(error.localizedDescription)")
                     KeyChainManager.shared.delete(forKey: KeyChainKey.accessToken)
                     KeyChainManager.shared.delete(forKey: KeyChainKey.refreshToken)
+                    DispatchQueue.main.async {
+                        self.router.alertMessage = "세션이 만료되었습니다. 다시 로그인해주세요."
+                        
+                        self.router.alertAction = {
+                            self.router.popToRoot()
+                        }
+                        self.router.showAlert = true
+                        
+                    }
                     completion?(false)
                 }
             }
