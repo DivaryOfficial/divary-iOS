@@ -24,6 +24,9 @@ final class TokenManager : BaseService{
         return UIDevice.current.identifierForVendor?.uuidString ?? UUID().uuidString
     }
     
+    private var isRefreshing = false
+    private var waiters: [(Bool) -> Void] = []
+    private let refreshQueue = DispatchQueue(label: "token.refresh.queue")
     
     init(router: AppRouter) {
         self.router = router
@@ -111,6 +114,27 @@ final class TokenManager : BaseService{
                         
                     }
                     completion?(false)
+                }
+            }
+        }
+    }
+    
+    /// 여러 401이 동시에 와도 갱신은 1번만 수행하고 끝나면 모두에게 결과 전달
+    func refreshIfNeededSerial(completion: @escaping (Bool) -> Void) {
+        refreshQueue.async {
+            if self.isRefreshing {
+                self.waiters.append(completion)
+                return
+            }
+            self.isRefreshing = true
+            self.waiters.append(completion)
+
+            self.refreshToken { ok in
+                self.refreshQueue.async {
+                    self.isRefreshing = false
+                    let cbs = self.waiters
+                    self.waiters.removeAll()
+                    cbs.forEach { $0(ok) }
                 }
             }
         }

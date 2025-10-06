@@ -49,7 +49,7 @@ extension LoginAPI: TargetType {
             let params: [String: Any] = ["accessToken": accessToken, "deviceId": deviceId]
             return .requestParameters(parameters: params, encoding: JSONEncoding.default)
         case .appleLogin(let identityToken, let deviceId):
-            return .requestParameters(parameters: ["identityToken": identityToken, "deviceId": deviceId], encoding: JSONEncoding.default)
+            return .requestParameters(parameters: ["accessToken": identityToken, "deviceId": deviceId], encoding: JSONEncoding.default)
         case .reissueToken:
             return .requestPlain
             

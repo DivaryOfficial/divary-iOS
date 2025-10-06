@@ -48,8 +48,9 @@ final class LoginViewModel: ObservableObject {
                 }
                 
                 // 3. 서버에 identityToken을 보내 로그인/회원가입 처리
-                self.loginService.appleLogin(identityToken: identityToken, deviceId: deviceID) { result in
+                self.loginService.appleLogin(identityToken: identityToken, deviceId: self.deviceID) { result in
                     DispatchQueue.main.async {
+                        print("identityToken:\n\(identityToken)\n\ndeviceID:\n\(self.deviceID)")
                         switch result {
                         case .success(let response):
                             KeyChainManager.shared.save(response.accessToken, forKey: KeyChainKey.accessToken)
