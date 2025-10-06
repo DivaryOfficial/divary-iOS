@@ -191,13 +191,3 @@ struct WardrobeStoreContent: View {
         }
     }
 }
-
-
-
-
-
-
-
-#Preview("Store Main View") {
-    StoreMainView(viewModel: CharacterViewModel(avatarService: AvatarService(), isMockData: true))
-}

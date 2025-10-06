@@ -6,7 +6,9 @@ let project = Project(
         .package(url: "https://github.com/Moya/Moya.git", .upToNextMinor(from: "15.0.3")),
         .package(url: "https://github.com/google/GoogleSignIn-iOS", .upToNextMinor(from: "7.0.0")),
         .package(url: "https://github.com/danielsaidi/RichTextKit.git", .upToNextMinor(from: "1.2.0")),
-        .package(url: "https://github.com/onevcat/Kingfisher.git", .upToNextMajor(from: "8.0.0"))
+        .package(url: "https://github.com/onevcat/Kingfisher.git", .upToNextMajor(from: "8.0.0")),
+        .package(url: "https://github.com/auth0/JWTDecode.swift", .upToNextMajor(from: "3.0.0")),
+
     ],
     settings: .settings(
         base: [
@@ -83,6 +85,9 @@ let project = Project(
             ),
             sources: ["Divary/Sources/**"],
             resources: ["Divary/Resources/**"],
+            entitlements: .dictionary([
+                    "com.apple.developer.applesignin": .array([ .string("Default") ])
+            ]),
             dependencies: [
                 .package(product: "Moya"),
                 .package(product: "CombineMoya"),
@@ -90,6 +95,7 @@ let project = Project(
                 .package(product: "GoogleSignInSwift"),
                 .package(product: "RichTextKit"),
                 .package(product: "Kingfisher"),
+                .package(product: "JWTDecode")
             ],
             settings: .settings(
                 base: [
