@@ -5,23 +5,25 @@
 //  Created by 바견규 on 8/8/25.
 //
 
+
 import Foundation
 import Moya
 
 final class NotificationService {
     private let provider = MoyaProvider<NotificationAPI>()
 
-    
-    // 알림 조회
     func getNotifications(completion: @escaping (Result<NotificationListResponseDTO, Error>) -> Void) {
-        provider.request(.getNotifications) { result in
+        provider.requestWithAutoRefresh(
+            makeTarget: { .getNotifications }
+        ) { result in
             self.handleResponse(result, completion: completion)
         }
     }
     
-    // 알림 읽음 처리
     func markAsRead(id: Int, completion: @escaping (Result<Void, Error>) -> Void) {
-        provider.request(.markAsRead(id: id)) { result in
+        provider.requestWithAutoRefresh(
+            makeTarget: { .markAsRead(id: id) }
+        ) { result in
             switch result {
             case .success:
                 completion(.success(()))
@@ -31,7 +33,6 @@ final class NotificationService {
         }
     }
     
-    // Generic Response Handler
     private func handleResponse<T: Decodable>(_ result: Result<Response, MoyaError>, completion: @escaping (Result<T, Error>) -> Void) {
         switch result {
         case .success(let response):

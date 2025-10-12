@@ -37,7 +37,11 @@ final class DIContainer: ObservableObject {
     init(router: AppRouter) {
         self.router = router
         
-        // 각 서비스 초기화
+        // 1) TokenManager 먼저 만들고 전역 등록
+        self.tokenManager = TokenManager(router: router)
+        TokenManagerRegistry.shared.manager = tokenManager
+        
+        // 2) 서비스들 생성 (전역 TM을 확장에서 사용)
         self.loginService = LoginService()
         self.notificationService = NotificationService()
         self.logBookService = LogBookService.shared
@@ -45,8 +49,6 @@ final class DIContainer: ObservableObject {
         self.imageService = ImageService()
         self.logDiaryService = LogDiaryService()
         self.oceanCatalogService = OceanCatalogService()
-        self.tokenManager = TokenManager(router: router)
-        
     }
 }
 

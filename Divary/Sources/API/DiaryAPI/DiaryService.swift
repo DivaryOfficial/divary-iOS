@@ -5,6 +5,7 @@
 //  Created by 김나영 on 8/12/25.
 //
 
+
 import Foundation
 import Moya
 import Combine
@@ -29,39 +30,49 @@ final class LogDiaryService: LogDiaryServicing {
         }
     }
 
+    private func currentAccessToken(fallback: String) -> String {
+        KeyChainManager.shared.read(forKey: KeyChainKey.accessToken) ?? fallback
+    }
+
     func getDiary(logId: Int, token: String) -> AnyPublisher<DiaryResponseDTO, Error> {
-        provider.requestPublisher(.getDiary(logId: logId, token: token))
-            .handleEvents(receiveOutput: { res in
-                if let t = String(data: res.data, encoding: .utf8) {
-                    print("📒 GET diary response:", t)
-                }
-            })
-            .eraseToAnyPublisher()
-            .extractData(DiaryResponseDTO.self) // DefaultResponse<T> -> T
-            .manageThread()
+        provider.requestPublisherWithAutoRefresh(
+            makeTarget: { .getDiary(logId: logId, token: self.currentAccessToken(fallback: token)) }
+        )
+        .handleEvents(receiveOutput: { res in
+            if let t = String(data: res.data, encoding: .utf8) {
+                print("📒 GET diary response:", t)
+            }
+        })
+        .eraseToAnyPublisher()
+        .extractData(DiaryResponseDTO.self)
+        .manageThread()
     }
 
     func updateDiary(logId: Int, body: DiaryRequestDTO, token: String) -> AnyPublisher<DiaryResponseDTO, Error> {
-        provider.requestPublisher(.updateDiary(logId: logId, body: body, token: token))
-            .handleEvents(receiveOutput: { res in
-                if let t = String(data: res.data, encoding: .utf8) {
-                    print("✏️ PUT diary response:", t)
-                }
-            })
-            .eraseToAnyPublisher()
-            .extractData(DiaryResponseDTO.self)
-            .manageThread()
+        provider.requestPublisherWithAutoRefresh(
+            makeTarget: { .updateDiary(logId: logId, body: body, token: self.currentAccessToken(fallback: token)) }
+        )
+        .handleEvents(receiveOutput: { res in
+            if let t = String(data: res.data, encoding: .utf8) {
+                print("✏️ PUT diary response:", t)
+            }
+        })
+        .eraseToAnyPublisher()
+        .extractData(DiaryResponseDTO.self)
+        .manageThread()
     }
 
     func createDiary(logId: Int, body: DiaryRequestDTO, token: String) -> AnyPublisher<DiaryResponseDTO, Error> {
-        provider.requestPublisher(.createDiary(logId: logId, body: body, token: token))
-            .handleEvents(receiveOutput: { res in
-                if let t = String(data: res.data, encoding: .utf8) {
-                    print("🆕 POST diary response:", t)
-                }
-            })
-            .eraseToAnyPublisher()
-            .extractData(DiaryResponseDTO.self)
-            .manageThread()
+        provider.requestPublisherWithAutoRefresh(
+            makeTarget: { .createDiary(logId: logId, body: body, token: self.currentAccessToken(fallback: token)) }
+        )
+        .handleEvents(receiveOutput: { res in
+            if let t = String(data: res.data, encoding: .utf8) {
+                print("🆕 POST diary response:", t)
+            }
+        })
+        .eraseToAnyPublisher()
+        .extractData(DiaryResponseDTO.self)
+        .manageThread()
     }
 }

@@ -54,10 +54,18 @@ extension OceanCatalogAPI: TargetType {
     }
     
     var headers: [String : String]? {
-        switch self {
-        case .getCardList, .getCardDetail:
-            return ["Content-Type": "application/json"]
+        var headers: [String: String] = [
+            "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
+            "accept": "application/json",
+        ]
+        
+        if let accessToken = KeyChainManager.shared.readAccessToken() {
+            headers["Authorization"] = "Bearer \(accessToken)"
+        } else {
+            print("⚠️ accessToken 없음: 인증이 필요한 요청입니다.")
         }
+        
+        return headers
     }
     
     
