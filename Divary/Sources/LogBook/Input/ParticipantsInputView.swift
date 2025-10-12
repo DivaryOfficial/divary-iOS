@@ -19,7 +19,7 @@ struct ParticipantsInputView: View {
                         // 리더
                         TextInputField(
                             title: "리더",
-                            placeholder: "김리더",
+                            placeholder: "내용을 입력하세요.",
                             unit: "",
                             value: $participants.leader
                         )
@@ -27,7 +27,7 @@ struct ParticipantsInputView: View {
                         // 버디
                         TextInputField(
                             title: "버디",
-                            placeholder: "김버디",
+                            placeholder: "내용을 입력하세요.",
                             unit: "",
                             value: $participants.buddy
                         )
@@ -35,7 +35,7 @@ struct ParticipantsInputView: View {
                         // 동행자
                         CompanionInputField(
                             title: "동행자",
-                            placeholder: "김동행, 박동행, 이동행",
+                            placeholder: "내용을 입력하세요.",
                             companion: $participants.companion
                         )
                         Spacer()
