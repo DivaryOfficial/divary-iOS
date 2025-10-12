@@ -20,6 +20,7 @@ struct DivaryApp: App {
             
             NavigationStack(path: $router.path) {
                 LoginWrapperView()
+                    .enableInteractivePopGesture()
                     .navigationDestination(for: Route.self) { route in
                         switch route {
                         case .login:
@@ -81,6 +82,17 @@ struct DivaryApp: App {
                             OceanCatalogView()
                         case .oceanCreatureDetail(let creature):
                             OceanCreatureDetailView(creature: creature)
+                        case .myPage:
+                            MyPageMainView()
+                        case .myProfile:
+                            MyProfileView()
+                                .navigationBarBackButtonHidden(true)
+                        case .myLicense:
+                            MyLicenseView()
+                                .navigationBarBackButtonHidden(true)
+                        case .myFriend:
+                            MyFriendView()
+                                .navigationBarBackButtonHidden(true)
                         }
                     }
             }
