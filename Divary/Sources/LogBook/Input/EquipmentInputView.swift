@@ -72,14 +72,6 @@ struct EquipmentInputView: View {
                             }
                         }
                         
-                        //착용
-                        TextInputField(
-                            title: "착용",
-                            placeholder: "내용을 입력하세요.",
-                            unit: "",
-                            value: $equipment.Equipment
-                        )
-                        
                         //웨이트
                         NumberInputField(
                             title: "웨이트",
@@ -104,6 +96,14 @@ struct EquipmentInputView: View {
                                 isImage: true
                             )
                         }
+                        
+                        //착용
+                        TextInputField(
+                            title: "착용",
+                            placeholder: "내용을 입력하세요.",
+                            unit: "",
+                            value: $equipment.Equipment
+                        )
                     }
                 }
 //                .padding(.horizontal, 11)
