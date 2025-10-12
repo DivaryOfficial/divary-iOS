@@ -144,7 +144,7 @@ private struct LicenseCard: View {
                     Image(uiImage: image)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: .infinity)
+                        .frame(maxWidth: .infinity)
                 } else {
                     Button(action: onTapRegister) {
                         Image(systemName: "plus")
@@ -240,7 +240,7 @@ private struct LicenseFullScreenView: View {
                 .resizable()
                 .rotationEffect(.degrees(270))
                 .scaledToFit()
-                .frame(width: .infinity)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .ignoresSafeArea()
 //                .resizable()
 //                .background(Color.black)
