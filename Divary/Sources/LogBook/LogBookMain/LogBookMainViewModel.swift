@@ -130,10 +130,10 @@ class LogBookMainViewModel {
     
     // ✅ 새 로그북 추가 (슬라이드 시 사용 - DataManager의 addNewLogBook 호출)
     func addNewLogBook(completion: @escaping (Bool) -> Void) {
-        guard diveLogData.count < 3 else {
-            completion(false)
-            return
-        }
+//        guard diveLogData.count < 3 else {
+//            completion(false)
+//            return
+//        } 3개 개수 제한 없앰
         
         isLoading = true
         errorMessage = nil
