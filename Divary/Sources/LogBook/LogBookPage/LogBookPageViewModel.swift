@@ -10,7 +10,6 @@ import SwiftUI
 @Observable
 class LogBookPageViewModel {
     var mainViewModel: LogBookMainViewModel
-    var selectedPage: Int = 0
     var isSaved: Bool = false
     var activeInputSection: InputSectionType? = nil
     
@@ -22,10 +21,10 @@ class LogBookPageViewModel {
         self.mainViewModel = mainViewModel
     }
     
-    // ✅ X 버튼 클릭 처리 (변경사항 감지 로직 개선)
+    // ✅ X 버튼 클릭 처리 (인덱스 제거)
     func handleCloseButtonTap() {
         // 1. 변경사항이 없으면 그냥 닫기
-        if !mainViewModel.hasChangesFromLastSave(for: selectedPage) {
+        if !mainViewModel.hasChangesFromLastSave() {
             withAnimation {
                 activeInputSection = nil
             }
@@ -36,10 +35,10 @@ class LogBookPageViewModel {
         showUnsavedAlert = true
     }
     
-    // ✅ 프론트엔드 임시저장하고 나가기 (API 호출 없음)
+    // ✅ 프론트엔드 임시저장하고 나가기 (인덱스 제거)
     func handleTempSave() {
         // 프론트엔드에만 임시저장 (API 호출 X)
-        mainViewModel.saveFrontendTemp(for: selectedPage)
+        mainViewModel.saveFrontendTemp()
         
         // 임시저장 완료 메시지 표시
         withAnimation {
@@ -54,18 +53,18 @@ class LogBookPageViewModel {
             }
         }
         
-        print("✅ 프론트엔드 임시저장 완료: 페이지 \(selectedPage)")
+        print("✅ 프론트엔드 임시저장 완료")
     }
     
-    // ✅ 그냥 나가기 (입력 취소)
+    // ✅ 그냥 나가기 (입력 취소 - 인덱스 제거)
     func handleDiscardChanges() {
         // 현재 입력을 취소하고 이전 상태로 복원
-        mainViewModel.discardCurrentInput(for: selectedPage)
+        mainViewModel.discardCurrentInput()
         
         withAnimation {
             activeInputSection = nil
         }
         
-        print("✅ 입력 취소 완료: 페이지 \(selectedPage)")
+        print("✅ 입력 취소 완료")
     }
 }
