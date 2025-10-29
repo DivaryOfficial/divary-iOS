@@ -76,14 +76,7 @@ class NewLogCreationViewModel {
     func proceedToNextStep() {
         // ✅ 중복 호출 방지
         guard !isLoading else { return }
-        
-        checkLogExists { exists in
-            if exists {
-                self.currentStep = .existingLogConfirm
-            } else {
-                self.currentStep = .titleAndIcon
-            }
-        }
+        self.currentStep = .titleAndIcon
     }
     
     // ✅ 새 로그 생성 완료 (중복 방지 추가)

@@ -35,7 +35,6 @@ struct LogBookMainView: View {
     @State private var allowDiaryExitOnce = false
     
     @Environment(\.dismiss) private var dismiss
-    @State private var currentPageIndex = 0
 
     // ✅ 제목 수정 관련 상태
     @State private var showTitleEditPopup = false
@@ -58,8 +57,7 @@ struct LogBookMainView: View {
                 LogBookNavBar(
                     selectedDate: $viewModel.selectedDate,
                     isCalendarPresented: $isCalendarPresented,
-                    onBackTap: {          
-//                         dismiss()
+                    onBackTap: {
                         if selectedTab == .diary, diaryVM.hasUnsavedChanges {
                             pendingDiaryExit = .back
                             showDiaryLeavePopup = true
@@ -68,19 +66,17 @@ struct LogBookMainView: View {
                             container.router.pop()
                         }
                         else {
-//                            dismiss()
                             container.router.pop()
                         }
                     },
-//                    isTempSaved: (selectedTab == .diary ? diaryVM.canSave : viewModel.hasFrontendChanges),
                     isTempSaved: (selectedTab == .diary
                                   ? (diaryVM.saveButtonEnabled && !showCanvas)
-                                  : viewModel.hasFrontendChanges), 
+                                  : viewModel.hasFrontendChanges),
                     onSaveTap: {
                         if selectedTab == .diary {
                             diaryVM.manualSave() // 일기 저장
                         } else {
-                            viewModel.handleSaveButtonTap(currentPageIndex: currentPageIndex) // 로그북 저장
+                            viewModel.handleSaveButtonTap() // ✅ 인덱스 제거
                         }
                     }
                 )
@@ -93,19 +89,15 @@ struct LogBookMainView: View {
                     switch selectedTab {
                     case .logbook:
                         LogBookPageView(
-                                viewModel: viewModel,
-                                onTitleTap: {
-                                    editingTitle = viewModel.displayTitle
-                                    showTitleEditPopup = true
-                                },
-                                onPageChanged: { newPageIndex in  // 추가
-                                    currentPageIndex = newPageIndex
-                                }
-                            )
+                            viewModel: viewModel,
+                            onTitleTap: {
+                                editingTitle = viewModel.displayTitle
+                                showTitleEditPopup = true
+                            }
+                            // ✅ onPageChanged 제거
+                        )
                     case .diary:
-//                        DiaryMainView(diaryLogId: 0)
                         DiaryMainView(viewModel: diaryVM, diaryLogId: viewModel.logBaseInfoId, showCanvas: $showCanvas)
-//                        DiaryMainView(diaryLogId: 51)
                     }
                 }
             }
@@ -145,7 +137,6 @@ struct LogBookMainView: View {
                         .cornerRadius(8)
 
                         Button("저장") {
-                            //viewModel.selectedDate = backupDate
                             //날짜 수정
                             viewModel.updateLogBaseDateToServer(newDate: backupDate) { success in
                                 if success {
@@ -176,8 +167,8 @@ struct LogBookMainView: View {
                     VStack {
                         Spacer()
                         SavePop(
-                            onCompleteSave: { viewModel.handleCompleteSave(currentPageIndex: currentPageIndex) },
-                            onTempSave: { viewModel.handleTempSaveFromSavePopup(currentPageIndex: currentPageIndex) },
+                            onCompleteSave: { viewModel.handleCompleteSave() }, // ✅ 인덱스 제거
+                            onTempSave: { viewModel.handleTempSaveFromSavePopup() }, // ✅ 인덱스 제거
                             onClose: { viewModel.showSavePopup = false }
                         )
                         .padding(.horizontal, 24)
@@ -187,6 +178,7 @@ struct LogBookMainView: View {
                     .zIndex(25)
                 }
             }
+            
             // 일기 날라가는거 경고 팝업
             if showDiaryLeavePopup {
                 DeletePopupView(
@@ -201,7 +193,6 @@ struct LogBookMainView: View {
                         DispatchQueue.main.async {
                             switch action {
                             case .back:
-//                                dismiss()
                                 container.router.pop()
                             case .switchToLogbook:
                                 selectedTab = .logbook
@@ -213,6 +204,7 @@ struct LogBookMainView: View {
                 )
                 .zIndex(999)
             }
+            
             // 저장 완료 메시지 (ComPop 사용)
             if viewModel.showSavedMessage {
                 GeometryReader { _ in
@@ -231,7 +223,7 @@ struct LogBookMainView: View {
                 }
             }
 
-            // ✅ 제목 수정 팝업 - updateFrontendTitle 메서드 사용
+            // ✅ 제목 수정 팝업
             if showTitleEditPopup {
                 TitleEditPopup(
                     isPresented: $showTitleEditPopup,
@@ -250,7 +242,6 @@ struct LogBookMainView: View {
             // 로딩 인디케이터
             if viewModel.isLoading || diaryVM.isLoading {
                 LoadingOverlay(message: "로딩 중...")
-//                LoadingOverlayTemp(text: "로딩 중...")
             }
         }
         .alert("오류", isPresented: .constant(viewModel.errorMessage != nil)) {
@@ -271,7 +262,6 @@ struct LogBookMainView: View {
                 showDiaryLeavePopup = true
             }
         }
-//        .toolbar(.hidden, for: .navigationBar)
         .navigationBarBackButtonHidden(true)
     }
 }

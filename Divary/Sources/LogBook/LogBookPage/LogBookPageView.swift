@@ -12,131 +12,93 @@ struct LogBookPageView: View {
     @Bindable var mainViewModel: LogBookMainViewModel
     @State private var pageViewModel: LogBookPageViewModel
     
-    // ✅ 추가: 제목 클릭 콜백
+    // ✅ 제목 클릭 콜백
     var onTitleTap: (() -> Void)? = nil
     
-    // ✅ 추가: 현재 페이지 변경 콜백
-    var onPageChanged: ((Int) -> Void)? = nil
-    
-    // NewLogPop 관련 상태
-    @State private var showNewLogPop = false
-    @State private var showMaxLogError = false
-    
-    // ✅ init 수정 - onPageChanged 파라미터 추가
-    init(viewModel: LogBookMainViewModel, onTitleTap: (() -> Void)? = nil, onPageChanged: ((Int) -> Void)? = nil) {
+    // ✅ init 수정 - onPageChanged 제거
+    init(viewModel: LogBookMainViewModel, onTitleTap: (() -> Void)? = nil) {
         self._mainViewModel = Bindable(viewModel)
         self._pageViewModel = State(initialValue: LogBookPageViewModel(mainViewModel: viewModel))
         self.onTitleTap = onTitleTap
-        self.onPageChanged = onPageChanged
     }
     
     var body: some View {
         ZStack{
-            TabView(selection: $pageViewModel.selectedPage) {
-                ForEach(Array(mainViewModel.diveLogData.enumerated()), id: \.offset) { index, _ in
-                    let data = $mainViewModel.diveLogData[index]
+            // ✅ TabView 제거, 단일 ScrollView로 변경
+            ScrollView {
+                ZStack(alignment: .topLeading) {
+                    GeometryReader { geometry in
+                        Image("gridBackground")
+                            .resizable(resizingMode: .tile)
+                            .frame(
+                                width: geometry.size.width,
+                                height: max(geometry.size.height, UIScreen.main.bounds.height)
+                            )
+                    }.ignoresSafeArea()
                     
-                    ScrollView {
-                        ZStack(alignment: .topLeading) {
-                            GeometryReader { geometry in
-                                Image("gridBackground")
-                                    .resizable(resizingMode: .tile)
-                                    .frame(
-                                        width: geometry.size.width,
-                                        height: max(geometry.size.height, UIScreen.main.bounds.height)
-                                    )
-                            }.ignoresSafeArea()
-                            
-                            LazyVStack(alignment: .leading, spacing: 18) {
-                                // ✅ 제목 버튼 (기존 코드 유지)
-                                Button(action: {
-                                    onTitleTap?()
-                                }) {
-                                    Text(mainViewModel.displayTitle)
-                                        .font(Font.omyu.regular(size: 20))
-                                        .foregroundStyle(.black)
-                                        .padding(12)
-                                        .frame(maxWidth: .infinity)
-                                        .multilineTextAlignment(.center)
-                                }
+                    LazyVStack(alignment: .leading, spacing: 18) {
+                        // ✅ 제목 버튼
+                        Button(action: {
+                            onTitleTap?()
+                        }) {
+                            Text(mainViewModel.displayTitle)
+                                .font(Font.omyu.regular(size: 20))
+                                .foregroundStyle(.black)
+                                .padding(12)
+                                .frame(maxWidth: .infinity)
+                                .multilineTextAlignment(.center)
+                        }
 
-                                // ✅ 각 로그북별로 개별 완전저장 상태 전달
-                                DiveOverviewSection(
-                                    overview: data.overview,
-                                    isSaved: .constant(mainViewModel.diveLogData[index].saveStatus == .complete)
-                                ).onTapGesture {
-                                    pageViewModel.activeInputSection = .overview
-                                }
-                                
-                                HStack(alignment: .top) {
-                                    DiveParticipantsSection(
-                                        participants: data.participants,
-                                        isSaved: .constant(mainViewModel.diveLogData[index].saveStatus == .complete)
-                                    ).onTapGesture {
-                                        pageViewModel.activeInputSection = .participants
-                                    }
-                                    
-                                    DiveEquipmentSection(
-                                        equipment: data.equipment,
-                                        isSaved: .constant(mainViewModel.diveLogData[index].saveStatus == .complete)
-                                    ).onTapGesture {
-                                        pageViewModel.activeInputSection = .equipment
-                                    }
-                                }
-                                
-                                DiveEnvironmentSection(
-                                    environment: data.environment,
-                                    isSaved: .constant(mainViewModel.diveLogData[index].saveStatus == .complete)
-                                ).onTapGesture {
-                                    pageViewModel.activeInputSection = .environment
-                                }
-                                
-                                DiveProfileSection(
-                                    profile: data.profile,
-                                    isSaved: .constant(mainViewModel.diveLogData[index].saveStatus == .complete)
-                                ).onTapGesture {
-                                    pageViewModel.activeInputSection = .profile
-                                }
-                                
-                                HStack {
-                                    Spacer()
-                                    // ✅ 서버에서 받은 총 다이빙 횟수 사용
-                                    Text("총 다이빙 횟수 \(mainViewModel.totalDiveCount) 회")
-                                        .font(Font.omyu.regular(size: 24))
-                                    Spacer()
-                                }
-                                
-                                PageIndicatorView(
-                                    numberOfPages: mainViewModel.diveLogData.count,
-                                    currentPage: pageViewModel.selectedPage
-                                )
+                        // ✅ 단일 로그북 데이터 바인딩
+                        DiveOverviewSection(
+                            overview: $mainViewModel.diveLogData.overview,
+                            isSaved: .constant(mainViewModel.diveLogData.saveStatus == .complete)
+                        ).onTapGesture {
+                            pageViewModel.activeInputSection = .overview
+                        }
+                        
+                        HStack(alignment: .top) {
+                            DiveParticipantsSection(
+                                participants: $mainViewModel.diveLogData.participants,
+                                isSaved: .constant(mainViewModel.diveLogData.saveStatus == .complete)
+                            ).onTapGesture {
+                                pageViewModel.activeInputSection = .participants
                             }
-                            .padding()
+                            
+                            DiveEquipmentSection(
+                                equipment: $mainViewModel.diveLogData.equipment,
+                                isSaved: .constant(mainViewModel.diveLogData.saveStatus == .complete)
+                            ).onTapGesture {
+                                pageViewModel.activeInputSection = .equipment
+                            }
+                        }
+                        
+                        DiveEnvironmentSection(
+                            environment: $mainViewModel.diveLogData.environment,
+                            isSaved: .constant(mainViewModel.diveLogData.saveStatus == .complete)
+                        ).onTapGesture {
+                            pageViewModel.activeInputSection = .environment
+                        }
+                        
+                        DiveProfileSection(
+                            profile: $mainViewModel.diveLogData.profile,
+                            isSaved: .constant(mainViewModel.diveLogData.saveStatus == .complete)
+                        ).onTapGesture {
+                            pageViewModel.activeInputSection = .profile
+                        }
+                        
+                        HStack {
+                            Spacer()
+                            // ✅ 서버에서 받은 총 다이빙 횟수 사용
+                            Text("이 다이빙 횟수 \(mainViewModel.totalDiveCount) 회")
+                                .font(Font.omyu.regular(size: 24))
+                            Spacer()
                         }
                     }
-                    .ignoresSafeArea()
+                    .padding()
                 }
             }
-            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-            // ✅ 제스처를 TabView 전체에 적용
-            .simultaneousGesture(
-                DragGesture(minimumDistance: 50)
-                    .onEnded { value in
-                        print("Debug - DragGesture 감지됨!")
-                        print("Debug - selectedPage: \(pageViewModel.selectedPage)")
-                        print("Debug - diveLogData.count: \(mainViewModel.diveLogData.count)")
-                        print("Debug - translation.width: \(value.translation.width)")
-                        
-                        if value.translation.width < -50 &&
-                            pageViewModel.selectedPage == mainViewModel.diveLogData.count - 1 {
-                            handleAddNewLog()
-                        }
-                    }
-            )
-            // ✅ 페이지 변경 감지하여 상위로 전달
-            .onChange(of: pageViewModel.selectedPage) { _, newPage in
-                onPageChanged?(newPage)
-            }
+            .ignoresSafeArea()
             
             // DiveInputPageView 팝업
             if let section = pageViewModel.activeInputSection {
@@ -162,24 +124,24 @@ struct LogBookPageView: View {
                         DiveInputPageView(
                             initialPage: section.rawValue,
                             overview: Binding(
-                                get: { mainViewModel.diveLogData[pageViewModel.selectedPage].overview ?? DiveOverview() },
-                                set: { mainViewModel.diveLogData[pageViewModel.selectedPage].overview = $0 }
+                                get: { mainViewModel.diveLogData.overview ?? DiveOverview() },
+                                set: { mainViewModel.diveLogData.overview = $0 }
                             ),
                             participants: Binding(
-                                get: { mainViewModel.diveLogData[pageViewModel.selectedPage].participants ?? DiveParticipants() },
-                                set: { mainViewModel.diveLogData[pageViewModel.selectedPage].participants = $0 }
+                                get: { mainViewModel.diveLogData.participants ?? DiveParticipants() },
+                                set: { mainViewModel.diveLogData.participants = $0 }
                             ),
                             equipment: Binding(
-                                get: { mainViewModel.diveLogData[pageViewModel.selectedPage].equipment ?? DiveEquipment() },
-                                set: { mainViewModel.diveLogData[pageViewModel.selectedPage].equipment = $0 }
+                                get: { mainViewModel.diveLogData.equipment ?? DiveEquipment() },
+                                set: { mainViewModel.diveLogData.equipment = $0 }
                             ),
                             environment: Binding(
-                                get: { mainViewModel.diveLogData[pageViewModel.selectedPage].environment ?? DiveEnvironment() },
-                                set: { mainViewModel.diveLogData[pageViewModel.selectedPage].environment = $0 }
+                                get: { mainViewModel.diveLogData.environment ?? DiveEnvironment() },
+                                set: { mainViewModel.diveLogData.environment = $0 }
                             ),
                             profile: Binding(
-                                get: { mainViewModel.diveLogData[pageViewModel.selectedPage].profile ?? DiveProfile() },
-                                set: { mainViewModel.diveLogData[pageViewModel.selectedPage].profile = $0 }
+                                get: { mainViewModel.diveLogData.profile ?? DiveProfile() },
+                                set: { mainViewModel.diveLogData.profile = $0 }
                             )
                         )
                         .frame(
@@ -187,7 +149,6 @@ struct LogBookPageView: View {
                             height: geometry.size.height * 0.7
                         )
                         .cornerRadius(20)
-                        //.shadow(radius: 10)
                     }
                     .padding()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -196,9 +157,8 @@ struct LogBookPageView: View {
                 }
             }
             
-            // TempPop 팝업 (alert 대신 사용)
+            // TempPop 팝업
             if pageViewModel.showUnsavedAlert {
-                
                 GeometryReader { geometry in
                     Color.white.opacity(0.8)
                         .ignoresSafeArea()
@@ -228,32 +188,9 @@ struct LogBookPageView: View {
                 }
             }
             
-            // NewLogPop 팝업
-            if showNewLogPop {
-                NewLogPop(
-                    isPresented: $showNewLogPop,
-                    title: .constant(""),
-                    onCancel: {
-                        showNewLogPop = false
-                    },
-                    onAddNewLog: {
-                        // 새 로그 추가 로직
-                        mainViewModel.addNewLogBook { success in
-                            showNewLogPop = false
-                            if success {
-                                // 새로 추가된 로그로 이동
-                                pageViewModel.selectedPage = mainViewModel.diveLogData.count - 1
-                            }
-                        }
-                    }
-                )
-                .zIndex(25)
-            }
-            
             // 임시저장 완료 메시지
             if pageViewModel.showTempSavedMessage {
                 VStack {
-                    
                     Spacer()
                     
                     HStack(alignment: .center, spacing: 12) {
@@ -273,48 +210,6 @@ struct LogBookPageView: View {
                 }
                 .zIndex(30)
             }
-            
-            // 최대 로그 개수 초과 에러 팝업
-            if showMaxLogError {
-                ZStack {
-                    Color.black.opacity(0.3)
-                        .ignoresSafeArea()
-                    
-                    VStack(spacing: 24) {
-                        Text("최대 3개까지만\n추가할 수 있습니다")
-                            .font(Font.omyu.regular(size: 20))
-                            .foregroundStyle(.black)
-                            .multilineTextAlignment(.center)
-                        
-                        Button("확인") {
-                            showMaxLogError = false
-                        }
-                        .font(Font.omyu.regular(size: 16))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
-                        .background(Color.primary_sea_blue)
-                        .foregroundStyle(.white)
-                        .cornerRadius(8)
-                    }
-                    .padding(24)
-                    .background(Color.white)
-                    .cornerRadius(16)
-                    .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
-                    .padding(.horizontal, 40)
-                }
-                .zIndex(35)
-            }
-        }
-    }
-    
-
-    
-    // 새 로그 추가 처리
-    private func handleAddNewLog() {
-        if mainViewModel.diveLogData.count >= 3 {
-            showMaxLogError = true
-        } else {
-            showNewLogPop = true
         }
     }
 }
