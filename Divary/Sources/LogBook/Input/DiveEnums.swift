@@ -11,7 +11,7 @@ import Foundation
 
 enum WeatherType: String, CaseIterable {
     case sunny = "SUNNY"
-    case partlyCloudy = "PARTLY_CLOUDY"
+    case partlyCloudy = "LITTLE_CLOUDY"
     case cloudy = "CLOUDY"
     case rainy = "RAINY"
     
