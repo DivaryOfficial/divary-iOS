@@ -266,7 +266,7 @@ struct NewCalenderView: View {
                         let isFuture = rawDate > Date()
                         let isSelected = Calendar.current.isDate(rawDate, inSameDayAs: selectedDate)
                         let hasLog = existingLogDates.contains(dateString(from: rawDate))
-                        let isDisabled = !isWithinMonth || isFuture || hasLog
+                        let isDisabled = !isWithinMonth || isFuture
 
                         CellView(
                             day: day,
