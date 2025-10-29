@@ -84,39 +84,6 @@ class LogBookDataManager {
         }
     }
     
-    // 임시 로그베이스 생성 (서버 에러 시 대체용)
-//    private func createTemporaryLogBase(logBaseInfoId: Int, completion: @escaping (Result<LogBookBase, Error>) -> Void) {
-//        // 캐시에서 기본 정보를 찾아서 임시 로그베이스 생성
-//        if let cachedLogBase = logBookBases.first(where: { $0.logBaseInfoId == logBaseInfoId }) {
-//            // 빈 로그북 1개로 임시 로그베이스 생성
-//            let emptyLogBook = LogBook(
-//                id: "temp_\(logBaseInfoId)_0",
-//                logBookId: -1, // 임시 ID
-//                saveStatus: .temp,
-//                diveData: DiveLogData()
-//            )
-//            
-//            let tempLogBase = LogBookBase(
-//                id: cachedLogBase.id,
-//                logBaseInfoId: cachedLogBase.logBaseInfoId,
-//                date: cachedLogBase.date,
-//                title: cachedLogBase.title,
-//                iconType: cachedLogBase.iconType,
-//                accumulation: cachedLogBase.accumulation,
-//                logBooks: [emptyLogBook] // 1개만 생성
-//            )
-//            
-//            // 캐시 업데이트
-//            if let index = logBookBases.firstIndex(where: { $0.logBaseInfoId == logBaseInfoId }) {
-//                logBookBases[index] = tempLogBase
-//            }
-//            
-//            completion(.success(tempLogBase))
-//        } else {
-//            let error = NSError(domain: "TemporaryLogBase", code: -1, userInfo: [NSLocalizedDescriptionKey: "임시 로그베이스 생성 실패: 캐시에서 기본 정보를 찾을 수 없습니다."])
-//            completion(.failure(error))
-//        }
-//    }
     
     // MARK: - ✅ 새 로그베이스 생성 (빈 로그북 1개만 생성) - 중복 방지 강화
     func createLogBase(iconType: IconType, name: String, date: Date, completion: @escaping (Result<String, Error>) -> Void) {
@@ -128,13 +95,6 @@ class LogBookDataManager {
             print("⚠️ 같은 날짜(\(dateString))로 이미 로그베이스 생성 중이므로 요청 무시")
             let error = NSError(domain: "DuplicateCreation", code: -1, userInfo: [NSLocalizedDescriptionKey: "이미 같은 날짜로 로그를 생성 중입니다."])
             completion(.failure(error))
-            return
-        }
-        
-        // ✅ 캐시에서 이미 존재하는지 확인
-        if let existingLog = findLogBase(for: date) {
-            print("⚠️ 이미 존재하는 로그베이스를 발견: \(existingLog.id)")
-            completion(.success(existingLog.id))
             return
         }
         
