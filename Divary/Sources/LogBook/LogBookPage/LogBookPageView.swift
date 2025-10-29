@@ -106,10 +106,10 @@ struct LogBookPageView: View {
                                     Spacer()
                                 }
                                 
-                                PageIndicatorView(
-                                    numberOfPages: mainViewModel.diveLogData.count,
-                                    currentPage: pageViewModel.selectedPage
-                                )
+//                                PageIndicatorView(
+//                                    numberOfPages: mainViewModel.diveLogData.count,
+//                                    currentPage: pageViewModel.selectedPage
+//                                )
                             }
                             .padding()
                         }
@@ -126,11 +126,6 @@ struct LogBookPageView: View {
                         print("Debug - selectedPage: \(pageViewModel.selectedPage)")
                         print("Debug - diveLogData.count: \(mainViewModel.diveLogData.count)")
                         print("Debug - translation.width: \(value.translation.width)")
-                        
-                        if value.translation.width < -50 &&
-                            pageViewModel.selectedPage == mainViewModel.diveLogData.count - 1 {
-                            handleAddNewLog()
-                        }
                     }
             )
             // ✅ 페이지 변경 감지하여 상위로 전달
@@ -228,28 +223,6 @@ struct LogBookPageView: View {
                 }
             }
             
-            // NewLogPop 팝업
-            if showNewLogPop {
-                NewLogPop(
-                    isPresented: $showNewLogPop,
-                    title: .constant(""),
-                    onCancel: {
-                        showNewLogPop = false
-                    },
-                    onAddNewLog: {
-                        // 새 로그 추가 로직
-                        mainViewModel.addNewLogBook { success in
-                            showNewLogPop = false
-                            if success {
-                                // 새로 추가된 로그로 이동
-                                pageViewModel.selectedPage = mainViewModel.diveLogData.count - 1
-                            }
-                        }
-                    }
-                )
-                .zIndex(25)
-            }
-            
             // 임시저장 완료 메시지
             if pageViewModel.showTempSavedMessage {
                 VStack {
@@ -274,49 +247,9 @@ struct LogBookPageView: View {
                 .zIndex(30)
             }
             
-            // 최대 로그 개수 초과 에러 팝업
-            if showMaxLogError {
-                ZStack {
-                    Color.black.opacity(0.3)
-                        .ignoresSafeArea()
-                    
-                    VStack(spacing: 24) {
-                        Text("최대 3개까지만\n추가할 수 있습니다")
-                            .font(Font.omyu.regular(size: 20))
-                            .foregroundStyle(.black)
-                            .multilineTextAlignment(.center)
-                        
-                        Button("확인") {
-                            showMaxLogError = false
-                        }
-                        .font(Font.omyu.regular(size: 16))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
-                        .background(Color.primary_sea_blue)
-                        .foregroundStyle(.white)
-                        .cornerRadius(8)
-                    }
-                    .padding(24)
-                    .background(Color.white)
-                    .cornerRadius(16)
-                    .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
-                    .padding(.horizontal, 40)
-                }
-                .zIndex(35)
-            }
         }
     }
-    
 
-    
-    // 새 로그 추가 처리
-    private func handleAddNewLog() {
-        if mainViewModel.diveLogData.count >= 3 {
-            showMaxLogError = true
-        } else {
-            showNewLogPop = true
-        }
-    }
 }
 
 #Preview {

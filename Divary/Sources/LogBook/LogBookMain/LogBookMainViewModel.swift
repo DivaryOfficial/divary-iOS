@@ -128,42 +128,6 @@ class LogBookMainViewModel {
         print("✅ LogBase 업데이트 완료 - 로그북 개수: \(diveLogData.count), 총 다이빙 횟수: \(totalDiveCount)")
     }
     
-    // ✅ 새 로그북 추가 (슬라이드 시 사용 - DataManager의 addNewLogBook 호출)
-    func addNewLogBook(completion: @escaping (Bool) -> Void) {
-//        guard diveLogData.count < 3 else {
-//            completion(false)
-//            return
-//        } 3개 개수 제한 없앰
-        
-        isLoading = true
-        errorMessage = nil
-        
-        // DataManager의 addNewLogBook 메서드 사용
-        dataManager.addNewLogBook(logBaseInfoId: logBaseInfoId) { result in
-            self.isLoading = false
-            
-            switch result {
-            case .success(let logBookId):
-                // 새 로그북 데이터 추가
-                let newLogData = DiveLogData()
-                newLogData.logBookId = logBookId
-                newLogData.saveStatus = .temp
-                
-                self.diveLogData.append(newLogData)
-                self.serverData.append(self.copyDiveLogData(newLogData))
-                self.frontendTempData.append(self.copyDiveLogData(newLogData))
-                self.hasFrontendTempSave.append(false)
-                
-                completion(true)
-                print("✅ 새 로그북 추가 성공: logBookId=\(logBookId)")
-                
-            case .failure(let error):
-                self.errorMessage = error.localizedDescription
-                completion(false)
-                print("❌ 새 로그북 추가 실패: \(error)")
-            }
-        }
-    }
 
     // MARK: - 날짜 수정 관련 메서드
 
