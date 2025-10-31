@@ -64,9 +64,13 @@ struct MyPageMainView: View {
                         }
 //                        MyPageRow(icon: "humbleicons_documents", title: "로그 모아보기", isLast: false, action: onTapLogs)
 //                        MyPageRow(icon: "humbleicons_save", title: "임시저장 글", isLast: false, action: onTapDrafts)
-                        MyPageRow(icon: "humbleicons_users", title: "나의 친구", isLast: true) {
+                        MyPageRow(icon: "humbleicons_users", title: "나의 친구", isLast: false) {
                             di.router.push(.myFriend)
                         }
+                        MyPageRow(icon: "logout", title: "로그아웃", isLast: false) { }
+                        MyPageRow(icon: "withdraw", title: "회원탈퇴", isLast: false) { }
+                        MyPageRow(icon: "center", title: "고객 센터", isLast: false) { }
+                        MyPageRow(icon: "app", title: "앱 관리", isLast: true) { }
                     }
             }
             .padding(.horizontal, 16)
