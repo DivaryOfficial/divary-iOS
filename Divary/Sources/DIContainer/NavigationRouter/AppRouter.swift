@@ -25,6 +25,7 @@ enum Route: Hashable {
     case myProfile
     case myLicense
     case myFriend
+    case withdraw
 }
 
 class AppRouter: ObservableObject {

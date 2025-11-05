@@ -93,6 +93,8 @@ struct DivaryApp: App {
                         case .myFriend:
                             MyFriendView()
                                 .navigationBarBackButtonHidden(true)
+                        case .withdraw:
+                            WithdrawCheckingView()
                         }
                     }
             }
