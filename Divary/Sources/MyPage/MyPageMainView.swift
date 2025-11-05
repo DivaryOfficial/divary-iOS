@@ -12,6 +12,8 @@ struct MyPageMainView: View {
     
     var userId: String = "user_id0123"
     var licenseSummary: String = "PADI 오픈워터 다이버 / 총 다이빙 횟수: 21회"
+    
+    @State private var showLogoutPopup = false
 
     // 액션 콜백들
     var onTapEditProfile: () -> Void = {print("편집버튼")}
@@ -33,6 +35,8 @@ struct MyPageMainView: View {
                     // 프로필 요약
                     HStack(alignment: .center, spacing: 12) {
                         Image(.profile)
+                            .resizable()
+                            .frame(width: 25, height: 25)
 
                         VStack(alignment: .leading) {
                             Text(userId)
@@ -59,24 +63,38 @@ struct MyPageMainView: View {
 
                     // 메뉴 리스트
                     VStack(spacing: 0) {
-                        MyPageRow(icon: "humbleicons_verified", title: "나의 라이센스", isLast: false) {
+                        MyPageRow(icon: "humbleicons_verified", title: "나의 라이센스") {
                             di.router.push(.myLicense)
                         }
-//                        MyPageRow(icon: "humbleicons_documents", title: "로그 모아보기", isLast: false, action: onTapLogs)
-//                        MyPageRow(icon: "humbleicons_save", title: "임시저장 글", isLast: false, action: onTapDrafts)
-                        MyPageRow(icon: "humbleicons_users", title: "나의 친구", isLast: false) {
+//                        MyPageRow(icon: "humbleicons_documents", title: "로그 모아보기", action: onTapLogs)
+//                        MyPageRow(icon: "humbleicons_save", title: "임시저장 글", action: onTapDrafts)
+                        MyPageRow(icon: "humbleicons_users", title: "나의 친구") {
                             di.router.push(.myFriend)
                         }
-                        MyPageRow(icon: "logout", title: "로그아웃", isLast: false) { }
-                        MyPageRow(icon: "withdraw", title: "회원탈퇴", isLast: false) { }
-                        MyPageRow(icon: "center", title: "고객 센터", isLast: false) { }
-                        MyPageRow(icon: "app", title: "앱 관리", isLast: true) { }
+                        Divider().frame(height: 5)
+                        MyPageRow(icon: "logout", title: "로그아웃") { showLogoutPopup = true }
+                        MyPageRow(icon: "withdraw", title: "회원탈퇴") {
+                            di.router.push(.withdraw)
+                        }
+                        Divider().frame(height: 5)
+                        CustomerCenter()
+                        AppCare()
                     }
             }
             .padding(.horizontal, 16)
             .padding(.top, 12)
             
             Spacer()
+        }
+        .overlay {
+            if showLogoutPopup {
+                DeletePopupView(
+                    isPresented: $showLogoutPopup,
+                    deleteText: "로그아웃 하시겠어요?",
+                    confirmText: "로그아웃",
+                    onDelete: { }
+                )
+            }
         }
         .navigationBarHidden(true)
     }
@@ -86,31 +104,76 @@ struct MyPageMainView: View {
 private struct MyPageRow: View {
     let icon: String
     let title: String
-    var isLast: Bool
     var action: () -> Void
-
+    
     var body: some View {
         VStack(spacing: 0) {
             Button(action: action) {
                 HStack(spacing: 12) {
                     Image(icon)
-
+                        .resizable()
+                        .frame(width: 25, height: 25)
+                    
                     Text(title)
                         .font(.omyu.regular(size: 20))
                         .foregroundStyle(.black)
-
+                    
                     Spacer()
-
+                    
                     Image(systemName: "chevron.right")
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundStyle(Color(.tertiaryLabel))
                 }
                 .padding(.vertical, 14)
             }
+            Divider()
+        }
+    }
+}
 
-            if !isLast {
-                Divider()
+private struct CustomerCenter: View {
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 12) {
+                Image(.center)
+                    .resizable()
+                    .frame(width: 25, height: 25)
+                
+                VStack(alignment: .leading) {
+                    Text("고객 센터")
+                        .font(.omyu.regular(size: 20))
+                        .foregroundStyle(.black)
+                    Text(verbatim: "문의사항은 divary.app@gmail.com 으로 남겨주세요.")
+                        .font(.omyu.regular(size: 16))
+                        .foregroundStyle(Color(.grayscaleG400))
+                }
+                
+                Spacer()
             }
+            .padding(.vertical, 14)
+            Divider()
+        }
+    }
+}
+
+private struct AppCare: View {
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 12) {
+                Image(.app)
+                    .resizable()
+                    .frame(width: 25, height: 25)
+                Text("앱 관리")
+                    .font(.omyu.regular(size: 20))
+                    .foregroundStyle(.black)
+                
+                Spacer()
+                Text("1.0.0")
+                    .font(.omyu.regular(size: 16))
+                    .foregroundStyle(Color(.grayscaleG400))
+            }
+            .padding(.vertical, 14)
+            Divider()
         }
     }
 }

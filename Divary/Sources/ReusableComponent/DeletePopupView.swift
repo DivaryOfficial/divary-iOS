@@ -11,6 +11,7 @@ struct DeletePopupView: View {
     @Environment(\.dismiss) private var dismiss
     @Binding var isPresented: Bool
     var deleteText: String
+    var confirmText = "삭제"
     
 //    func onDelete() {
 //        isPresented = false
@@ -45,7 +46,7 @@ struct DeletePopupView: View {
                     Button {
                         onDelete()
                     } label: {
-                        Text("삭제")
+                        Text(confirmText)
                             .frame(maxWidth: .infinity)
                             .padding()
                             .background(Color(.seaBlue))
