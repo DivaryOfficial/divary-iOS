@@ -9,6 +9,8 @@ import SwiftUI
 
 struct WithdrawView: View {
     var onTapBell: () -> Void = {}
+    @Environment(\.diContainer) private var container
+
     
     var body: some View {
         VStack(alignment: .center) {
@@ -30,7 +32,7 @@ struct WithdrawView: View {
             Spacer()
             
             Button(action: {
-                print("확인")
+                container.router.popToRoot()
             }) {
                 Text("확인")
                     .font(.omyu.regular(size: 20))

@@ -7,13 +7,20 @@
 
 import SwiftUI
 
+// MARK: - View
 struct MyPageMainView: View {
     @Environment(\.diContainer) private var di
+    @StateObject private var viewModel: MyPageMainViewModel
     
     var userId: String = "user_id0123"
     var licenseSummary: String = "PADI 오픈워터 다이버 / 총 다이빙 횟수: 21회"
     
-    @State private var showLogoutPopup = false
+    init(diContainer: DIContainer) {
+        _viewModel = StateObject(wrappedValue: MyPageMainViewModel(
+            loginService: diContainer.loginService,
+            router: diContainer.router
+        ))
+    }
 
     // 액션 콜백들
     var onTapEditProfile: () -> Void = {print("편집버튼")}
@@ -72,7 +79,9 @@ struct MyPageMainView: View {
                             di.router.push(.myFriend)
                         }
                         Divider().frame(height: 5)
-                        MyPageRow(icon: "logout", title: "로그아웃") { showLogoutPopup = true }
+                        MyPageRow(icon: "logout", title: "로그아웃") { 
+                            viewModel.showLogoutPopup = true 
+                        }
                         MyPageRow(icon: "withdraw", title: "회원탈퇴") {
                             di.router.push(.withdraw)
                         }
@@ -87,97 +96,30 @@ struct MyPageMainView: View {
             Spacer()
         }
         .overlay {
-            if showLogoutPopup {
+            if viewModel.showLogoutPopup {
                 DeletePopupView(
-                    isPresented: $showLogoutPopup,
+                    isPresented: $viewModel.showLogoutPopup,
                     deleteText: "로그아웃 하시겠어요?",
                     confirmText: "로그아웃",
-                    onDelete: { }
+                    onDelete: {
+                        viewModel.logout()
+                    }
                 )
+            }
+            
+            // 로딩 인디케이터
+            if viewModel.isLoading {
+                ZStack {
+                    Color.black.opacity(0.3)
+                        .ignoresSafeArea()
+                    
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        .scaleEffect(1.5)
+                }
             }
         }
         .navigationBarHidden(true)
     }
 }
 
-// MARK: - Component
-private struct MyPageRow: View {
-    let icon: String
-    let title: String
-    var action: () -> Void
-    
-    var body: some View {
-        VStack(spacing: 0) {
-            Button(action: action) {
-                HStack(spacing: 12) {
-                    Image(icon)
-                        .resizable()
-                        .frame(width: 25, height: 25)
-                    
-                    Text(title)
-                        .font(.omyu.regular(size: 20))
-                        .foregroundStyle(.black)
-                    
-                    Spacer()
-                    
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(Color(.tertiaryLabel))
-                }
-                .padding(.vertical, 14)
-            }
-            Divider()
-        }
-    }
-}
-
-private struct CustomerCenter: View {
-    var body: some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 12) {
-                Image(.center)
-                    .resizable()
-                    .frame(width: 25, height: 25)
-                
-                VStack(alignment: .leading) {
-                    Text("고객 센터")
-                        .font(.omyu.regular(size: 20))
-                        .foregroundStyle(.black)
-                    Text(verbatim: "문의사항은 divary.app@gmail.com 으로 남겨주세요.")
-                        .font(.omyu.regular(size: 16))
-                        .foregroundStyle(Color(.grayscaleG400))
-                }
-                
-                Spacer()
-            }
-            .padding(.vertical, 14)
-            Divider()
-        }
-    }
-}
-
-private struct AppCare: View {
-    var body: some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 12) {
-                Image(.app)
-                    .resizable()
-                    .frame(width: 25, height: 25)
-                Text("앱 관리")
-                    .font(.omyu.regular(size: 20))
-                    .foregroundStyle(.black)
-                
-                Spacer()
-                Text("1.0.0")
-                    .font(.omyu.regular(size: 16))
-                    .foregroundStyle(Color(.grayscaleG400))
-            }
-            .padding(.vertical, 14)
-            Divider()
-        }
-    }
-}
-
-#Preview {
-    MyPageMainView()
-}

@@ -31,7 +31,7 @@ struct MainTabbarView: View {
                 case "해양도감":
                     OceanCatalogView()
                 case "My":
-                    MyPageMainView()
+                    MyPageMainViewWrapper()
                 default:
                     MainWrapperView()
                 }
