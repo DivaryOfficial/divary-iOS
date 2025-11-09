@@ -83,7 +83,8 @@ struct DivaryApp: App {
                         case .oceanCreatureDetail(let creature):
                             OceanCreatureDetailView(creature: creature)
                         case .myPage:
-                            MyPageMainView()
+                            MyPageMainViewWrapper()
+                                .navigationBarBackButtonHidden(true)
                         case .myProfile:
                             MyProfileView()
                                 .navigationBarBackButtonHidden(true)
@@ -94,7 +95,8 @@ struct DivaryApp: App {
                             MyFriendView()
                                 .navigationBarBackButtonHidden(true)
                         case .withdraw:
-                            WithdrawCheckingView()
+                            WithdrawCheckingViewWrapper()
+                                .navigationBarBackButtonHidden(true)
                         }
                     }
             }

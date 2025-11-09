@@ -14,6 +14,8 @@ enum LoginAPI {
     case googleLogin(accessToken: String, deviceId: String)
     case appleLogin(identityToken: String, deviceId: String)
     case reissueToken(refreshToken: String, deviceId: String)
+    case logout(socialType:String, deviceId: String)
+    case deleteAccount
 }
 
 extension LoginAPI: TargetType {
@@ -33,12 +35,17 @@ extension LoginAPI: TargetType {
             return "/api/v1/auth/APPLE/login"
         case .reissueToken:
             return "/api/v1/auth/reissue"
+        case .logout(let socialType, _):
+            return "/api/v1/auth/\(socialType)/logout"
+        case .deleteAccount:
+            return "/api/v1/auth/deactivate"
+            
         }
     }
 
     var method: Moya.Method {
         switch self {
-        case .googleLogin, .appleLogin, .reissueToken:
+        case .googleLogin, .appleLogin, .reissueToken, .logout, .deleteAccount:
             return .post
         }
     }
@@ -52,26 +59,58 @@ extension LoginAPI: TargetType {
             return .requestParameters(parameters: ["accessToken": identityToken, "deviceId": deviceId], encoding: JSONEncoding.default)
         case .reissueToken:
             return .requestPlain
-            
+        case .logout(_, let deviceId):
+            return .requestParameters(parameters: ["deviceId": deviceId], encoding: JSONEncoding.default)
+        case .deleteAccount:
+            return .requestPlain
         }
     }
 
     var headers: [String : String]? {
+        var headerDict: [String: String] = [:]
+        
         switch self {
-            
         case .reissueToken(let refreshToken, let deviceId):
-            return [
+            headerDict = [
                 "refreshToken": refreshToken,
                 "Device-Id": deviceId
             ]
-        default :
-            return [
+            
+        case .deleteAccount:
+            // 회원탈퇴 API는 AccessToken이 필요
+            headerDict = [
+                "Content-Type": "application/json",
+                "Accept": "*/*",
+                "Accept-Language": "ko-KR,ko;q=0.9"
+            ]
+            
+            // 키체인에서 AccessToken 가져와서 Authorization 헤더에 추가
+            if let accessToken = KeyChainManager.shared.read(forKey: KeyChainKey.accessToken) {
+                headerDict["Authorization"] = "Bearer \(accessToken)"
+                print("🔑 [DELETE ACCOUNT] Authorization 헤더 추가됨")
+                print("   Bearer \(accessToken.prefix(20))...")
+            } else {
+                print("⚠️ [DELETE ACCOUNT] AccessToken이 없어서 Authorization 헤더를 추가하지 못함")
+            }
+            
+        default:
+            headerDict = [
                 "Content-Type": "application/json",
                 "Accept": "*/*",
                 "Accept-Language": "ko-KR,ko;q=0.9"
             ]
         }
         
+        print("📤 [LoginAPI] 최종 헤더:")
+        headerDict.forEach { key, value in
+            if key == "Authorization" {
+                print("   \(key): \(value.prefix(30))...")
+            } else {
+                print("   \(key): \(value)")
+            }
+        }
+        
+        return headerDict
     }
 
     var sampleData: Data {

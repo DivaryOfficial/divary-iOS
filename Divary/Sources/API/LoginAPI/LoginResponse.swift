@@ -7,17 +7,23 @@
 
 import Foundation
 
-// Login Response DTOs
-struct LoginApiResponse: Codable {
-    let timestamp: String
-    let status: Int
-    let code: String
-    let message: String
-    let data: LoginDataResponse
-}
-
+// Login Data Response
 struct LoginDataResponse: Codable {
     let accessToken: String
     let refreshToken: String
-    // isNewUser, refreshToken 등이 실제로 없다면 제거
 }
+
+// Empty Response (로그아웃 등 data가 빈 객체인 경우)
+struct EmptyResponse: Codable {
+}
+
+// Delete Account Data Response
+struct DeleteAccountDataResponse: Codable {
+    let scheduledDeletionAt: String
+}
+
+// Type Aliases - DefaultResponse 활용
+typealias LoginResponse = DefaultResponse<LoginDataResponse>
+typealias LogoutResponse = DefaultResponse<EmptyResponse>
+typealias DeleteAccountResponse = DefaultResponse<DeleteAccountDataResponse>
+

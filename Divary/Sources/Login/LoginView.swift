@@ -36,9 +36,17 @@ struct LoginView: View {
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
+            
             if isCheckingToken {
-                ProgressView() // 토큰 확인 중에는 로딩 아이콘 표시
-                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                VStack(spacing: 16) {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        .scaleEffect(1.5)
+                    
+                    Text("로그인 확인 중...")
+                        .font(.system(size: 14))
+                        .foregroundStyle(.white)
+                }
             } else {
                 GeometryReader { geometry in
                     VStack {
@@ -72,6 +80,8 @@ struct LoginView: View {
                             .padding(.horizontal, 18)
                             .signInWithAppleButtonStyle(.white)
                             .cornerRadius(8)
+                            .disabled(viewModel.isLoading)
+                            .opacity(viewModel.isLoading ? 0.6 : 1.0)
                             
                             Spacer()
                         }.frame(height: 54)
@@ -80,15 +90,9 @@ struct LoginView: View {
                             Spacer()
                             GoogleSignInButtonView(action: viewModel.signInWithGoogle)
                                 .padding(18)
+                                .disabled(viewModel.isLoading)
+                                .opacity(viewModel.isLoading ? 0.6 : 1.0)
                             Spacer()
-                        }
-                        
-                        // 로그인 에러 표시
-                        if let errorMessage = viewModel.loginError {
-                            Text(errorMessage)
-                                .foregroundStyle(.red)
-                                .font(.caption)
-                                .padding()
                         }
                         
                         // 기기별로 다른 여백 적용
@@ -96,6 +100,34 @@ struct LoginView: View {
                             .frame(height: geometry.size.height * 0.1)
                     }
                 }
+            }
+            
+            // 로딩 오버레이
+            if viewModel.isLoading {
+                Color.black.opacity(0.4)
+                    .ignoresSafeArea()
+                
+                VStack(spacing: 16) {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        .scaleEffect(1.5)
+                    
+                    Text("로그인 중...")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(.white)
+                }
+                .padding(32)
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color.black.opacity(0.7))
+                )
+            }
+            
+            // 토스트 메시지
+            VStack {
+                Spacer()
+                ToastView(message: viewModel.toastMessage, isShowing: $viewModel.showToast)
+                    .padding(.bottom, 100)
             }
         }
         .onAppear {

@@ -11,6 +11,7 @@ import Security
 enum KeyChainKey {
     static let accessToken = "accessToken"
     static let refreshToken = "refreshToken"
+    static let socialType = "socialType"
 }
 
 final class KeyChainManager {
