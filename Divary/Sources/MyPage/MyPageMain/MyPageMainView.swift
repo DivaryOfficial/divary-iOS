@@ -67,28 +67,31 @@ struct MyPageMainView: View {
                     }
                     .padding(.vertical, 14)
 
-                    Divider()
+                    Rectangle().fill(Color(.grayscaleG100)).frame(height: 1)
 
                     // 메뉴 리스트
                     VStack(spacing: 0) {
-                        MyPageRow(icon: "humbleicons_verified", title: "나의 라이센스") {
-                            di.router.push(.myLicense)
-                        }
+//                        MyPageRow(icon: "humbleicons_verified", title: "나의 라이센스") {
+//                            di.router.push(.myLicense)
+//                        }
 //                        MyPageRow(icon: "humbleicons_documents", title: "로그 모아보기", action: onTapLogs)
 //                        MyPageRow(icon: "humbleicons_save", title: "임시저장 글", action: onTapDrafts)
                         MyPageRow(icon: "humbleicons_users", title: "나의 친구") {
                             di.router.push(.myFriend)
                         }
-                        Divider().frame(height: 5)
-                        MyPageRow(icon: "logout", title: "로그아웃") { 
+                        Rectangle().fill(Color(.grayscaleG100)).frame(height: 2)
+                        MyPageRow(icon: "logout", title: "로그아웃") {
                             viewModel.showLogoutPopup = true 
                         }
+                        Rectangle().fill(Color(.grayscaleG100)).frame(height: 1)
                         MyPageRow(icon: "withdraw", title: "회원탈퇴") {
                             di.router.push(.withdraw)
                         }
-                        Divider().frame(height: 5)
+                        Rectangle().fill(Color(.grayscaleG100)).frame(height: 2)
                         CustomerCenter()
+                        Rectangle().fill(Color(.grayscaleG100)).frame(height: 1)
                         AppCare()
+                        Rectangle().fill(Color(.grayscaleG100)).frame(height: 1)
                     }
             }
             .padding(.horizontal, 16)
