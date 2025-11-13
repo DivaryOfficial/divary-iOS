@@ -10,81 +10,120 @@ import PhotosUI
 
 struct MyLicenseView: View {
     @Environment(\.diContainer) private var di
+    var onTapBell: () -> Void = {}
+    
+    var body: some View {
+        MyLicenseViewContent(
+            viewModel: MyLicenseViewModel(memberService: di.memberService),
+            onTapBell: onTapBell
+        )
+    }
+}
+
+struct MyLicenseViewContent: View {
+    @StateObject var viewModel: MyLicenseViewModel
     
     var onTapBell: () -> Void = {}
     
     // UI 상태
-    @State private var showSourceMenu = false
+//    @State private var showSourceMenu = false
     @State private var showPhotosPicker = false
     @State private var showCameraPicker = false
     @State private var showFullScreen = false
 
     // 결과 (1장만)
     @State private var selectedItem: PhotosPickerItem?
-    @State private var selectedImage: UIImage?
+    @State private var newlyCapturedImage: UIImage?
+    
+    init(viewModel: MyLicenseViewModel, onTapBell: @escaping () -> Void = {}) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
+        self.onTapBell = onTapBell
+    }
     
     var body: some View {
-        VStack(spacing: 0) {
-            MyPageTopBar(isMainView: false, title: "나의 라이센스", onBell: onTapBell)
-            
-            LicenseCard(
-                selectedImage: $selectedImage,
-                showSourceMenu: $showSourceMenu,
-                onTapRegister: { showSourceMenu.toggle() },
-                onTapAlbum: { showPhotosPicker = true },
-                onTapCamera: { showCameraPicker = true }
-            )
-            .overlay {
-                if selectedImage == nil || showSourceMenu {
-                    RoundedRectangle(cornerRadius: 16)
-                        .inset(by: 0.5)
-                        .stroke(Color(red: 0.8, green: 0.8, blue: 0.8), lineWidth: 1)
-                }
-            }
-            .padding(.horizontal, 16)
-            .padding(.top, 12)
-            .padding(.bottom, 24)
-            
-            // ▶ 등록된 뒤 + 소스 메뉴가 닫혀 있을 때만 두 버튼 노출
-            if selectedImage != nil && !showSourceMenu {
-                HStack(spacing: 16) {
-                    Button {
+        ZStack {
+            VStack(spacing: 0) {
+                MyPageTopBar(isMainView: false, title: "나의 라이센스", onBell: onTapBell)
+                
+                LicenseCard(
+                    // ViewModel의 프로퍼티에 바인딩
+                    selectedImage: $viewModel.licenseImage,
+                    showSourceMenu: $viewModel.showSourceMenu,
+                    // "등록하기" / "취소" 버튼
+                    onTapRegister: {
                         withAnimation(.easeOut(duration: 0.2)) {
-                            showSourceMenu = true   // 다시 등록하기 → 메뉴 열기(이미지는 유지)
+                            viewModel.showSourceMenu.toggle()
                         }
-                    } label: {
-                        Text("다시 등록하기")
-                            .font(.omyu.regular(size: 20))
-                            .foregroundStyle(Color(.grayscaleG500))
-                            .frame(maxWidth: .infinity, minHeight: 48)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color(.grayscaleG200))
-                            )
+                    },
+                    // "앨범" 버튼
+                    onTapAlbum: { showPhotosPicker = true },
+                    // "카메라" 버튼
+                    onTapCamera: {
+                        newlyCapturedImage = nil // 카메라 열기 전 초기화
+                        showCameraPicker = true
                     }
-                    .buttonStyle(.plain)
-
-                    Button {
-                        showFullScreen = true      // 크게 보기
-                    } label: {
-                        Text("크게 보기")
-                            .font(.omyu.regular(size: 20))
-                            .foregroundStyle(.white)
-                            .frame(maxWidth: .infinity, minHeight: 48)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color(.primarySeaBlue))
-                            )
+                )
+                .overlay {
+                    if viewModel.licenseImage == nil || viewModel.showSourceMenu {
+                        RoundedRectangle(cornerRadius: 16)
+                            .inset(by: 0.5)
+                            .stroke(Color(red: 0.8, green: 0.8, blue: 0.8), lineWidth: 1)
                     }
-                    .buttonStyle(.plain)
                 }
                 .padding(.horizontal, 16)
+                .padding(.top, 12)
                 .padding(.bottom, 24)
+                
+                // ▶ 등록된 뒤 + 소스 메뉴가 닫혀 있을 때만 두 버튼 노출
+                if viewModel.licenseImage != nil && !viewModel.showSourceMenu {
+                    HStack(spacing: 16) {
+                        Button {
+                            withAnimation(.easeOut(duration: 0.2)) {
+                                viewModel.showSourceMenu = true   // 다시 등록하기 → 메뉴 열기(이미지는 유지)
+                            }
+                        } label: {
+                            Text("다시 등록하기")
+                                .font(.omyu.regular(size: 20))
+                                .foregroundStyle(Color(.grayscaleG500))
+                                .frame(maxWidth: .infinity, minHeight: 48)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(Color(.grayscaleG200))
+                                )
+                        }
+                        .buttonStyle(.plain)
+                        
+                        Button {
+                            showFullScreen = true      // 크게 보기
+                        } label: {
+                            Text("크게 보기")
+                                .font(.omyu.regular(size: 20))
+                                .foregroundStyle(.white)
+                                .frame(maxWidth: .infinity, minHeight: 48)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(Color(.primarySeaBlue))
+                                )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 24)
+                }
+                
+                Spacer()
             }
-            
-            Spacer()
+            if viewModel.isLoading {
+                Color.black.opacity(0.3).ignoresSafeArea()
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                    .scaleEffect(1.5)
+            }
         }
-        
+        .task {
+            viewModel.fetchLicense() // 뷰가 나타날 때 기존 라이센스 로드
+        }
+            
         // 앨범
         .photosPicker(isPresented: $showPhotosPicker,
                       selection: $selectedItem,
@@ -94,22 +133,22 @@ struct MyLicenseView: View {
             Task {
                 if let data = try? await item.loadTransferable(type: Data.self),
                    let image = UIImage(data: data) {
-                    selectedImage = image
-                    // TODO: 여기서 업로드/미리보기 화면으로 라우팅하거나 상태 업데이트
-                    // di.router.push(.licensePreview(image: image)) 등
-                    // 선택되면 메뉴 닫고 등록 상태로 전환
-                    withAnimation(.easeOut(duration: 0.2)) { showSourceMenu = false }
+                    viewModel.uploadLicense(image: image)
                 }
             }
         }
         
         // 카메라
         .sheet(isPresented: $showCameraPicker) {
-            CameraPicker(image: $selectedImage)
+            CameraPicker(image: $newlyCapturedImage)
                 .onDisappear {
-                    // 촬영 후 바로 등록 상태로
-                    if selectedImage != nil {
-                        withAnimation(.easeOut(duration: 0.2)) { showSourceMenu = false }
+                    if let newImage = newlyCapturedImage {
+                        viewModel.uploadLicense(image: newImage)
+                    } else {
+                        // 촬영 취소 시, 메뉴 닫기
+                        withAnimation(.easeOut(duration: 0.2)) {
+                            viewModel.showSourceMenu = false
+                        }
                     }
                 }
                 .ignoresSafeArea()
@@ -117,7 +156,7 @@ struct MyLicenseView: View {
 
         // 크게 보기 (풀스크린)
         .fullScreenCover(isPresented: $showFullScreen) {
-            if let img = selectedImage {
+            if let img = newlyCapturedImage {
                 LicenseFullScreenView(image: img)
             }
         }

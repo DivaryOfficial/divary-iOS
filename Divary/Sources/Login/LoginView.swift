@@ -52,7 +52,7 @@ struct LoginView: View {
                     VStack {
                         Spacer()
                         Button(action:{
-                            KeyChainManager.shared.save("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0Iiwicm9sZSI6IlVTRVIiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzYzMDQ3NTQyLCJleHAiOjE3NjMwNDg0NDJ9.lk44GTkOif_wDlTdTeeJEFqO4h5NNT_NSFstsLc5RU0", forKey: KeyChainKey.accessToken)
+                            KeyChainManager.shared.save("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0Iiwicm9sZSI6IlVTRVIiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzYzMDUyMDE5LCJleHAiOjE3NjMwNTI5MTl9.MYrFpB7TcgzYWLWnPXHPR_qe0RV79QDTYUsVI8ULus8", forKey: KeyChainKey.accessToken)
                             container.router.push(.MainTabBar)
                         }) {
                             Text("테스트 계정")
