@@ -12,13 +12,14 @@ struct MyPageMainView: View {
     @Environment(\.diContainer) private var di
     @StateObject private var viewModel: MyPageMainViewModel
     
-    var userId: String = "user_id0123"
-    var licenseSummary: String = "PADI 오픈워터 다이버 / 총 다이빙 횟수: 21회"
+//    var userId: String = "user_id0123"
+//    var licenseSummary: String = "PADI 오픈워터 다이버 / 총 다이빙 횟수: 21회"
     
     init(diContainer: DIContainer) {
         _viewModel = StateObject(wrappedValue: MyPageMainViewModel(
             loginService: diContainer.loginService,
-            router: diContainer.router
+            router: diContainer.router,
+            memberService: diContainer.memberService
         ))
     }
 
@@ -46,11 +47,11 @@ struct MyPageMainView: View {
                             .frame(width: 25, height: 25)
 
                         VStack(alignment: .leading) {
-                            Text(userId)
+                            Text(viewModel.userId)
                                 .font(.omyu.regular(size: 20))
                                 .foregroundStyle(.primary)
                                 .padding(.bottom, 2)
-                            Text(licenseSummary)
+                            Text(viewModel.licenseSummary)
                                 .font(.omyu.regular(size: 16))
                                 .foregroundStyle(Color(.grayscaleG400))
                         }
@@ -120,6 +121,9 @@ struct MyPageMainView: View {
             }
         }
         .navigationBarHidden(true)
+        .task { // 4. 뷰가 나타날 때 ViewModel의 fetchProfile 호출
+            viewModel.fetchProfile()
+        }
     }
 }
 

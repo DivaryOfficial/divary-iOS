@@ -35,12 +35,12 @@ struct MyPageTopBar: View {
                     Color.clear.frame(width: 44, height: 44)
                 }
                 Spacer()
-                Button(action: onBell) {
-                    Image("bell-1")
-                        .foregroundStyle(Color.black)
-                        .padding(.horizontal, 2)
-                        .contentShape(Rectangle())
-                }
+//                Button(action: onBell) {
+//                    Image("bell-1")
+//                        .foregroundStyle(Color.black)
+//                        .padding(.horizontal, 2)
+//                        .contentShape(Rectangle())
+//                }
             }
         }
         .frame(height: 44)
