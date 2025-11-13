@@ -33,7 +33,7 @@ struct MyPageRow: View {
                 }
                 .padding(.vertical, 14)
             }
-            Divider()
+//            Divider()
         }
     }
 }
@@ -58,7 +58,7 @@ struct CustomerCenter: View {
                 Spacer()
             }
             .padding(.vertical, 14)
-            Divider()
+//            Divider()
         }
     }
 }
@@ -80,7 +80,7 @@ struct AppCare: View {
                     .foregroundStyle(Color(.grayscaleG400))
             }
             .padding(.vertical, 14)
-            Divider()
+//            Divider()
         }
     }
 }

@@ -12,13 +12,14 @@ struct MyPageMainView: View {
     @Environment(\.diContainer) private var di
     @StateObject private var viewModel: MyPageMainViewModel
     
-    var userId: String = "user_id0123"
-    var licenseSummary: String = "PADI 오픈워터 다이버 / 총 다이빙 횟수: 21회"
+//    var userId: String = "user_id0123"
+//    var licenseSummary: String = "PADI 오픈워터 다이버 / 총 다이빙 횟수: 21회"
     
     init(diContainer: DIContainer) {
         _viewModel = StateObject(wrappedValue: MyPageMainViewModel(
             loginService: diContainer.loginService,
-            router: diContainer.router
+            router: diContainer.router,
+            memberService: diContainer.memberService
         ))
     }
 
@@ -46,11 +47,11 @@ struct MyPageMainView: View {
                             .frame(width: 25, height: 25)
 
                         VStack(alignment: .leading) {
-                            Text(userId)
+                            Text(viewModel.userId)
                                 .font(.omyu.regular(size: 20))
                                 .foregroundStyle(.primary)
                                 .padding(.bottom, 2)
-                            Text(licenseSummary)
+                            Text(viewModel.licenseSummary)
                                 .font(.omyu.regular(size: 16))
                                 .foregroundStyle(Color(.grayscaleG400))
                         }
@@ -66,28 +67,31 @@ struct MyPageMainView: View {
                     }
                     .padding(.vertical, 14)
 
-                    Divider()
+                    Rectangle().fill(Color(.grayscaleG100)).frame(height: 1)
 
                     // 메뉴 리스트
                     VStack(spacing: 0) {
-                        MyPageRow(icon: "humbleicons_verified", title: "나의 라이센스") {
-                            di.router.push(.myLicense)
-                        }
+//                        MyPageRow(icon: "humbleicons_verified", title: "나의 라이센스") {
+//                            di.router.push(.myLicense)
+//                        }
 //                        MyPageRow(icon: "humbleicons_documents", title: "로그 모아보기", action: onTapLogs)
 //                        MyPageRow(icon: "humbleicons_save", title: "임시저장 글", action: onTapDrafts)
                         MyPageRow(icon: "humbleicons_users", title: "나의 친구") {
                             di.router.push(.myFriend)
                         }
-                        Divider().frame(height: 5)
-                        MyPageRow(icon: "logout", title: "로그아웃") { 
+                        Rectangle().fill(Color(.grayscaleG100)).frame(height: 2)
+                        MyPageRow(icon: "logout", title: "로그아웃") {
                             viewModel.showLogoutPopup = true 
                         }
+                        Rectangle().fill(Color(.grayscaleG100)).frame(height: 1)
                         MyPageRow(icon: "withdraw", title: "회원탈퇴") {
                             di.router.push(.withdraw)
                         }
-                        Divider().frame(height: 5)
+                        Rectangle().fill(Color(.grayscaleG100)).frame(height: 2)
                         CustomerCenter()
+                        Rectangle().fill(Color(.grayscaleG100)).frame(height: 1)
                         AppCare()
+                        Rectangle().fill(Color(.grayscaleG100)).frame(height: 1)
                     }
             }
             .padding(.horizontal, 16)
@@ -120,6 +124,9 @@ struct MyPageMainView: View {
             }
         }
         .navigationBarHidden(true)
+        .task { // 4. 뷰가 나타날 때 ViewModel의 fetchProfile 호출
+            viewModel.fetchProfile()
+        }
     }
 }
 

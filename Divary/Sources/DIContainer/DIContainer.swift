@@ -28,6 +28,7 @@ final class DIContainer: ObservableObject {
     let imageService: ImageService
     let logDiaryService: LogDiaryService
     let oceanCatalogService: OceanCatalogService
+    let memberService: MemberService
     let tokenManager: TokenManager
     
     //메인 탭바 변수
@@ -49,6 +50,7 @@ final class DIContainer: ObservableObject {
         self.imageService = ImageService()
         self.logDiaryService = LogDiaryService()
         self.oceanCatalogService = OceanCatalogService()
+        self.memberService = MemberService()
     }
 }
 

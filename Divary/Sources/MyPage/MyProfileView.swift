@@ -9,14 +9,31 @@ import SwiftUI
 
 struct MyProfileView: View {
     @Environment(\.diContainer) private var di
+    var onTapBell: () -> Void = {}
+    
+    var body: some View {
+        MyProfileViewContent(
+            viewModel: MyProfileViewModel(memberService: di.memberService),
+            onTapBell: onTapBell
+        )
+    }
+}
 
+private struct MyProfileViewContent: View {
+    @StateObject private var viewModel: MyProfileViewModel
+    
     // 임시 데이터(연결되면 ViewModel 바인딩으로 교체)
-    @State private var userId: String = "user_id0123"
-    @State private var organization: String = ""
-    @State private var selectedLevel: DiveLevel = .openWater
+//    @State private var userId: String = "user_id0123"
+//    @State private var organization: String = ""
+//    @State private var selectedLevel: DiveLevel = .openWater
     @State private var isLevelExpanded: Bool = false
 
     var onTapBell: () -> Void = {}
+    
+    init(viewModel: MyProfileViewModel, onTapBell: @escaping () -> Void) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
+        self.onTapBell = onTapBell
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -28,19 +45,19 @@ struct MyProfileView: View {
 
                 // 아이디 (읽기 전용)
                 LabeledBlock(title: "아이디") {
-                    ReadOnlyField(text: userId)
+                    ReadOnlyField(text: viewModel.userId)
                 }
 
                 // 단체 (입력)
                 LabeledBlock(title: "단체") {
-                    EditableField(text: $organization,
+                    EditableField(text: $viewModel.organization,
                                   placeholder: "내용을 입력하세요")
                 }
 
                 // 레벨 (드롭다운)
                 LabeledBlock(title: "레벨") {
                     LevelDropdown(
-                        selected: $selectedLevel,
+                        selected: $viewModel.selectedLevel,
                         isExpanded: $isLevelExpanded
                     )
                 }
@@ -49,6 +66,12 @@ struct MyProfileView: View {
             .padding(.horizontal, 16)
             .padding(.top, 40)
             .padding(.bottom, 24)
+        }
+        .onAppear {
+            viewModel.fetchProfile()
+        }
+        .onDisappear {
+            viewModel.saveChangesOnDisappear()
         }
     }
 }
@@ -64,6 +87,27 @@ enum DiveLevel: String, CaseIterable, Identifiable {
     case instructor = "인스트럭터"
 
     var id: String { rawValue }
+    
+    var apiValue: String {
+        switch self {
+        case .openWater: return "OPEN_WATER_DIVER"
+        case .advancedOW: return "ADVANCED_OPEN_WATER_DIVER"
+        case .rescue: return "RESCUE_DIVER"
+        case .diveMaster: return "DIVE_MASTER"
+        case .assistantInstructor: return "ASSISTANT_INSTRUCTOR"
+        case .instructor: return "INSTRUCTOR"
+        }
+    }
+    
+    init?(apiValue: String) {
+        for level in DiveLevel.allCases {
+            if level.apiValue == apiValue {
+                self = level
+                return
+            }
+        }
+        return nil // 일치하는 케이스 없음
+    }
 }
 
 // MARK: - Building Blocks

@@ -16,10 +16,21 @@ extension AnyPublisher where Output == Response, Failure == MoyaError {
             .tryMap({ defaultResponse in
                 switch defaultResponse.status {
                 case 200..<300:
-                    guard let data = defaultResponse.data else {
-                        throw APIError.resultNil
+                    if let data = defaultResponse.data {
+                        // 3a. data가 있으면 (프로필 조회 등) data를 그대로 반환
+                        return data
+                    } else {
+                        // 3b. data가 nil이면 (레벨, 그룹 업데이트 등)
+                        //     요청한 타입(D.self)이 EmptyData인지 확인
+                        if D.self == EmptyData.self {
+                            // EmptyData를 요청했고, data가 nil -> "성공"으로 간주
+                            // 비어있는 EmptyData 인스턴스를 생성하여 성공으로 반환
+                            return EmptyData() as! D
+                        } else {
+                            // 다른 타입(MemberProfileResponse 등)을 요청했는데 nil -> "실패"
+                            throw APIError.resultNil
+                        }
                     }
-                    return data
                 case 300..<400:
                     throw APIError.responseState(status: defaultResponse.status, code: defaultResponse.code, message: defaultResponse.message)
                 case 400..<500:
