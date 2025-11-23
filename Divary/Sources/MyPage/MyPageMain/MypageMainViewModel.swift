@@ -47,11 +47,11 @@ final class MyPageMainViewModel: ObservableObject {
                 
                 // 5. API 응답(String)을 한글 레벨(String)으로 변환
                 // (MyProfileView의 DiveLevel enum 로직을 가져와 여기서 처리)
-                let levelString = self.mapApiLevelToKorean(apiLevel: profile.level)
+                let levelString = self.mapApiLevelToKorean(apiLevel: profile.level ?? "")
                 
                 // 6. @Published 프로퍼티 업데이트 (View가 갱신됨)
                 self.userId = profile.id
-                self.licenseSummary = "\(profile.memberGroup) \(levelString) / 총 다이빙 횟수: \(profile.accumulations)회"
+                self.licenseSummary = "\(profile.memberGroup ?? "미설정") \(levelString) / 총 다이빙 횟수: \(profile.accumulations)회"
                 
                 print("✅ 마이페이지 프로필 로드 성공")
             })

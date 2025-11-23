@@ -95,10 +95,15 @@ struct MainView: View {
                     onCreateNewLog: {
                         newLogViewModel.createNewLog { newLogBaseId in
                             DispatchQueue.main.async {
+                                print("📍 onCreateNewLog 콜백 받음: \(String(describing: newLogBaseId))")
                                 if let logBaseId = newLogBaseId, !logBaseId.isEmpty {
+                                    print("🚀 라우터 이동 시도: logBaseId=\(logBaseId)")
                                     container.router.push(.logBookMain(logBaseId: logBaseId))
+                                    print("✅ 라우터 push 완료")
                                     newLogViewModel.resetData()
                                     refreshLogData()
+                                } else {
+                                    print("❌ logBaseId가 nil이거나 빈 문자열")
                                 }
                             }
                         }

@@ -59,7 +59,7 @@ struct NewLogCreationView: View {
                             TitleAndIconSelectionView(
                                 viewModel: viewModel,
                                 onComplete: {
-                                    //onCreateNewLog?()
+                                    onCreateNewLog?()
                                 }
                             )
                         }
