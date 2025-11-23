@@ -110,7 +110,7 @@ struct CharacterView: View {
                         y: y,
                         onTap: {
                             // 온보딩 완료된 경우에만
-                            if customization.CharacterName != nil && !(customization.CharacterName?.isEmpty ?? true) {
+                            if let name = customization.CharacterName, !name.isEmpty, !isStoreView {
                                 impactFeedback()
                                 showBuddySpeech = true
                             }

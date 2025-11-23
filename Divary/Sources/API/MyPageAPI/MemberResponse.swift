@@ -13,8 +13,8 @@ struct EmptyData: Codable {}
 // 프로필 조회
 struct MemberProfileResponse: Codable {
     let id: String
-    let memberGroup: String
-    let level: String
+    let memberGroup: String?
+    let level: String?
     let accumulations: Int
 }
 

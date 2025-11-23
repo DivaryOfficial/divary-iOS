@@ -52,15 +52,15 @@ final class MyProfileViewModel: ObservableObject {
                 
                 // 1. API 응답(String)을 뷰에서 쓰는 DiveLevel(Enum)으로 변환
                 //    (DiveLevel(apiValue:)는 View 파일에서 정의)
-                let level = DiveLevel(apiValue: profile.level) ?? .openWater
+                let level = profile.level.flatMap { DiveLevel(apiValue: $0) } ?? .openWater
                 
                 // 2. @Published 프로퍼티 업데이트 (View가 갱신됨)
                 self.userId = profile.id
-                self.organization = profile.memberGroup
+                self.organization = profile.memberGroup ?? ""
                 self.selectedLevel = level
                 
                 // 3. "최초 값" 저장 (나중에 비교용)
-                self.initialOrganization = profile.memberGroup
+                self.initialOrganization = profile.memberGroup ?? ""
                 self.initialLevel = level
                 
                 print("✅ 프로필 로드 성공: \(profile.id)")

@@ -105,15 +105,8 @@ struct TitleAndIconSelectionView: View {
                 .disabled(viewModel.isLoading) // 로딩 중 비활성화
                 
                 Button("작성하러 가기") {
-                    // API 연동: 비동기 로그 생성
-                    viewModel.createNewLog { logBaseId in
-                        DispatchQueue.main.async {
-                            if logBaseId != nil {
-                                onComplete?()
-                            }
-                            // 에러 처리는 viewModel의 errorMessage로 처리됨
-                        }
-                    }
+                    // MainView에서 로그 생성 처리하도록 위임
+                    onComplete?()
                 }
                 .font(Font.omyu.regular(size: 16))
                 .frame(maxWidth: .infinity)
