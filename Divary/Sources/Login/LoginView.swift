@@ -51,19 +51,6 @@ struct LoginView: View {
                 GeometryReader { geometry in
                     VStack {
                         Spacer()
-                        Button(action:{
-                            KeyChainManager.shared.save("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0Iiwicm9sZSI6IlVTRVIiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzYzMDUyMDE5LCJleHAiOjE3NjMwNTI5MTl9.MYrFpB7TcgzYWLWnPXHPR_qe0RV79QDTYUsVI8ULus8", forKey: KeyChainKey.accessToken)
-                            container.router.push(.MainTabBar)
-                        }) {
-                            Text("테스트 계정")
-                                .font(.system(size: 15, weight: .semibold))
-                                .foregroundStyle(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 12)
-                                .background(Color.gray.opacity(0.8))
-                                .cornerRadius(8)
-                        }
-                        .padding(.horizontal, 20)
                         
                         
                         HStack {
