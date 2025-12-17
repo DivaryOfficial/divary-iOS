@@ -90,7 +90,7 @@ struct LogBookPageView: View {
                         HStack {
                             Spacer()
                             // ✅ 서버에서 받은 총 다이빙 횟수 사용
-                            Text("이 다이빙 횟수 \(mainViewModel.totalDiveCount) 회")
+                            Text("총 다이빙 횟수 \(mainViewModel.totalDiveCount) 회")
                                 .font(Font.omyu.regular(size: 24))
                             Spacer()
                         }
