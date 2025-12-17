@@ -45,8 +45,10 @@ extension LoginAPI: TargetType {
 
     var method: Moya.Method {
         switch self {
-        case .googleLogin, .appleLogin, .reissueToken, .logout, .deleteAccount:
+        case .googleLogin, .appleLogin, .reissueToken, .deleteAccount:
             return .post
+        case .logout:
+            return .delete
         }
     }
 
@@ -76,8 +78,8 @@ extension LoginAPI: TargetType {
                 "Device-Id": deviceId
             ]
             
-        case .deleteAccount:
-            // 회원탈퇴 API는 AccessToken이 필요
+        case .deleteAccount, .logout:
+            // 회원탈퇴, 로그아웃 API는 AccessToken이 필요
             headerDict = [
                 "Content-Type": "application/json",
                 "Accept": "*/*",
