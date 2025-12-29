@@ -17,15 +17,6 @@ struct MainTabbarView: View {
                 switch container.selectedTab {
                 case "기록":
                     MainWrapperView()
-                        .gesture(
-                            DragGesture(minimumDistance: 30, coordinateSpace: .local)
-                                .onEnded { value in
-                                    if value.translation.width < -50 {
-                                        // 기록 탭에서만 캐릭터 뷰로 이동
-                                        container.router.push(.CharacterViewWrapper)
-                                    }
-                                }
-                        )
                 case "챗봇":
                     ChatBotView()
                 case "해양도감":

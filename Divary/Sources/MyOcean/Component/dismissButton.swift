@@ -1,15 +1,15 @@
 //
-//  StoreButton.swift
+//  dismissButton.swift
 //  Divary
 //
-//  Created by 바견규 on 8/13/25.
+//  Created by 바견규 on 12/30/25.
 //
 
 
 import SwiftUI
 
 // MARK: - 상점 버튼
-struct StoreButton: View {
+struct DismissButton: View {
     let scale: CGFloat
     let scaleX: CGFloat
     let scaleY: CGFloat
@@ -20,15 +20,16 @@ struct StoreButton: View {
     
     var body: some View {
         Button(action: {
-            container.router.push(.Store(viewModel: viewModel))
-            print("상점 버튼 클릭")
+            container.router.pop()
+            print("뒤로가기 버튼 클릭")
         }) {
-            Image("storeIcon")
+            Image("chevron.left")
                 .resizable()
                 .frame(width:30, height: 30)
                 .scaleEffect(scale)
+                .foregroundStyle(Color(.bWBlack))
         }
-        .offset(x: (150 * scaleX) + x, y: (-240 * scaleY) + y)
+        .offset(x: (-190 * scaleX) + x, y: (-240 * scaleY) + y)
         .zIndex(1000)
     }
 }

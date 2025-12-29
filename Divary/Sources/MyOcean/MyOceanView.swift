@@ -88,6 +88,19 @@ struct CharacterView: View {
                     let scale = min(scaleX, scaleY)
                     let x: CGFloat = 20 * scaleX
                     let y: CGFloat = (-110 + storeViewOffset) * scaleY
+                    
+                    // 상점 아이콘 (다른 컴포넌트와 동일한 방식)
+                    if isStoreView == false && isPetEditingMode == false {
+                        DismissButton(
+                            scale: scale,
+                            scaleX: scaleX,
+                            scaleY: scaleY,
+                            x: x,
+                            y: y,
+                            container: container,
+                            viewModel: viewModel
+                        )
+                    }
 
                     // 상점 아이콘 (다른 컴포넌트와 동일한 방식)
                     if isStoreView == false && isPetEditingMode == false && customization.CharacterName != nil && customization.CharacterName?.isEmpty == false {
@@ -200,15 +213,6 @@ struct CharacterView: View {
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
             keyboardHeight = 0
         }
-        .gesture(
-            DragGesture(minimumDistance: -30, coordinateSpace: .local)
-                .onEnded { value in
-                    if value.translation.width > 50 {
-                        // 라우터로 네비게이션
-                        container.router.pop()
-                    }
-                }
-        )
     }
     // MARK: - 헬퍼 함수들
     

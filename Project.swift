@@ -30,7 +30,7 @@ let project = Project(
             name: "Divary",
             destinations: .iOS,
             product: .app,
-            bundleId: "io.tuist.Divary",
+            bundleId: "io.tuist.DivaryOfficial",
             infoPlist: .extendingDefault(
                 with: [
                     "CFBundleIconName": "AppIcon",
@@ -59,7 +59,8 @@ let project = Project(
             ],
             settings: .settings(
                 base: [
-                    "IPHONEOS_DEPLOYMENT_TARGET": "17.0"
+                    "IPHONEOS_DEPLOYMENT_TARGET": "17.0",
+                    "CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION": "YES"
                 ]
             )
         ),
