@@ -30,23 +30,22 @@ struct PhotoSelectionView: View {
                 }
             }
             
-            Button(action: {
-                print("카메라 버튼 클릭")
-                // 카메라 로직은 나중에 구현
-            }) {
-                VStack(spacing: 8) {
-                    Image("ChatCamera")
-                        .font(.system(size: 24))
-                        .foregroundStyle(.primary)
-                    
-                    Text("카메라")
-                        .font(.system(size: 10))
-                        .foregroundStyle(Color.bw_black)
-                }
+//            Button(action: {
+//                print("카메라 버튼 클릭")
+//                // 카메라 로직은 나중에 구현
+//            }) {
+//                VStack(spacing: 8) {
+//                    Image("ChatCamera")
+//                        .font(.system(size: 24))
+//                        .foregroundStyle(.primary)
+//                    
+//                    Text("카메라")
+//                        .font(.system(size: 10))
+//                        .foregroundStyle(Color.bw_black)
+//                }
             }
         }
     }
-}
 
 #Preview {
     PhotoSelectionView(selectedImage: .constant(nil))
