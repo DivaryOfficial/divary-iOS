@@ -21,7 +21,7 @@ struct DismissButton: View {
     var body: some View {
         Button(action: {
             container.router.pop()
-            print("뒤로가기 버튼 클릭")
+            DebugLogger.log("뒤로가기 버튼 클릭")
         }) {
             Image("chevron.left")
                 .resizable()

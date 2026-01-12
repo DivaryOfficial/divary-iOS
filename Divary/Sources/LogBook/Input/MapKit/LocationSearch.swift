@@ -141,8 +141,8 @@ struct LocationSearchView: View {
         // 이전 화면으로 돌아가기
         container.router.pop()
         
-        print("선택된 위치: \(selectedLocationName)")
-        print("좌표: \(item.placemark.coordinate)")
+        DebugLogger.log("선택된 위치: \(selectedLocationName)")
+        DebugLogger.log("좌표: \(item.placemark.coordinate)")
     }
     
     // 디바운싱된 검색 처리
@@ -403,13 +403,13 @@ struct LocationSearchView: View {
             if let mkError = error as? MKError {
                 switch mkError.code {
                 case .serverFailure:
-                    print("MapKit 서버 오류 (\(query))")
+                    DebugLogger.error("MapKit 서버 오류 (\(query))")
                 case .loadingThrottled:
-                    print("MapKit API 제한 초과 (\(query)): 잠시 후 재시도하세요")
+                    DebugLogger.warning("MapKit API 제한 초과 (\(query)): 잠시 후 재시도하세요")
                 case .placemarkNotFound:
-                    print("검색 결과 없음 (\(query))")
+                    DebugLogger.log("검색 결과 없음 (\(query))")
                 default:
-                    print("MapKit 오류 (\(query)): \(mkError.localizedDescription)")
+                    DebugLogger.error("MapKit 오류 (\(query)): \(mkError.localizedDescription)")
                 }
             }
             return nil
@@ -619,7 +619,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("위치 획득 실패: \(error.localizedDescription)")
+        DebugLogger.error("위치 획득 실패: \(error.localizedDescription)")
     }
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
@@ -627,7 +627,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         case .authorizedWhenInUse, .authorizedAlways:
             manager.startUpdatingLocation()
         case .denied, .restricted:
-            print("위치 권한이 거부되었습니다")
+            DebugLogger.warning("위치 권한이 거부되었습니다")
         default:
             break
         }
@@ -641,7 +641,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
             currentValue: "",
             placeholder: "다이빙 스팟 검색",
             onLocationSelected: { location in
-                print("Selected: \(location)")
+                DebugLogger.log("Selected: \(location)")
             }
         )
     }

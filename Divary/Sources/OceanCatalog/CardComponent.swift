@@ -29,7 +29,7 @@ struct CardComponent: View {
                             .stroke(Color(.seaBlue), lineWidth: isSelected ? 2 : 0)
                     )
                 if let url = imageURL {
-//                    let _ = print("🔗 Image URL:", url.absoluteString)
+//                    let _ = DebugLogger.log("Image URL: \(url.absoluteString)")
                     KFImage(url)
                         .placeholder { ProgressView() }
                         .retry(maxCount: 2, interval: .seconds(1))

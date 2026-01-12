@@ -55,7 +55,7 @@ struct ComPop: View {
             .ignoresSafeArea()
         
         ComPop(
-            onClose: { print("팝업 닫기") }
+            onClose: { DebugLogger.log("팝업 닫기") }
         )
         .padding()
     }

@@ -62,7 +62,7 @@ extension OceanCatalogAPI: TargetType {
         if let accessToken = KeyChainManager.shared.readAccessToken() {
             headers["Authorization"] = "Bearer \(accessToken)"
         } else {
-            print("⚠️ accessToken 없음: 인증이 필요한 요청입니다.")
+            DebugLogger.token("⚠️ accessToken 없음: 인증이 필요한 요청입니다.")
         }
         
         return headers

@@ -118,12 +118,15 @@ struct LoginView: View {
             }
         }
         .onAppear {
-            if container.tokenManager.hasValidToken() {
-                // 토큰이 유효하면 바로 메인 화면으로 이동
-                container.router.push(.MainTabBar)
-            } else {
-                // 토큰이 없거나 유효하지 않으면 로그인 버튼들을 표시
-                isCheckingToken = false
+            // 토큰 검증 및 필요 시 갱신
+            container.tokenManager.validateAndRefreshToken { canAutoLogin in
+                if canAutoLogin {
+                    // 토큰이 유효하거나 갱신 성공 → 메인 화면으로 이동
+                    container.router.push(.MainTabBar)
+                } else {
+                    // 토큰이 없거나 갱신 실패 → 로그인 버튼 표시
+                    isCheckingToken = false
+                }
             }
         }
     }

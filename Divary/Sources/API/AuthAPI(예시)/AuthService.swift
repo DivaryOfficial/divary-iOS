@@ -51,13 +51,13 @@ final class AuthService {
         switch result {
         case .success(let response):
             if let jsonString = String(data: response.data, encoding: .utf8) {
-                print("📦 서버 응답: \(jsonString)")
+                DebugLogger.log("서버 응답: \(jsonString)")
             }
             do {
                 let decodedData = try JSONDecoder().decode(T.self, from: response.data)
                 completion(.success(decodedData))
             } catch {
-                print("❌ 디코딩 실패: \(error)")
+                DebugLogger.error("디코딩 실패: \(error)")
                 completion(.failure(error))
             }
         case .failure(let error):

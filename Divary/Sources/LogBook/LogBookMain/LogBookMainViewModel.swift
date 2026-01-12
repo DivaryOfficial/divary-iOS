@@ -91,7 +91,7 @@ class LogBookMainViewModel {
                 
             case .failure(let error):
                 self.errorMessage = "로그 데이터를 불러올 수 없습니다: \(error.localizedDescription)"
-                print("❌ 로그베이스 상세 조회 실패: \(error)")
+                DebugLogger.error("로그베이스 상세 조회 실패: \(error)")
             }
         }
     }
@@ -125,7 +125,7 @@ class LogBookMainViewModel {
         frontendTempData = copyDiveLogData(diveLogData)
         hasFrontendTempSave = false
         
-        print("✅ LogBase 업데이트 완료 - 총 다이빙 횟수: \(totalDiveCount)")
+        DebugLogger.success("LogBase 업데이트 완료 - 총 다이빙 횟수: \(totalDiveCount)")
     }
     
     // MARK: - 날짜 수정 관련 메서드
@@ -144,12 +144,12 @@ class LogBookMainViewModel {
             case .success:
                 self.selectedDate = newDate
                 completion(true)
-                print("✅ 날짜 서버 저장 성공: \(dateString)")
+                DebugLogger.success("날짜 서버 저장 성공: \(dateString)")
                 
             case .failure(let error):
                 self.errorMessage = "날짜 수정 중 오류가 발생했습니다: \(error.localizedDescription)"
                 completion(false)
-                print("❌ 날짜 서버 저장 실패: \(error)")
+                DebugLogger.error("날짜 서버 저장 실패: \(error)")
             }
         }
     }
@@ -161,7 +161,7 @@ class LogBookMainViewModel {
         frontendTempData = copyDiveLogData(diveLogData)
         hasFrontendTempSave = true
         
-        print("✅ 프론트엔드 임시저장 완료")
+        DebugLogger.success("프론트엔드 임시저장 완료")
     }
     
     // ✅ 변경사항 감지 로직 (단순화)
@@ -186,11 +186,11 @@ class LogBookMainViewModel {
         // 로그북 데이터 복원
         if hasFrontendTempSave {
             diveLogData = copyDiveLogData(frontendTempData)
-            print("✅ 프론트엔드 임시저장으로 복원")
+            DebugLogger.success("프론트엔드 임시저장으로 복원")
             return
         }
         
-        print("🔄 서버 최신 데이터로 복원 시작")
+        DebugLogger.log("서버 최신 데이터로 복원 시작")
         loadLogBaseDetail()
     }
     
@@ -234,12 +234,12 @@ class LogBookMainViewModel {
                 // 메인 화면 데이터 새로고침
                 let currentYear = Calendar.current.component(.year, from: self.selectedDate)
                 LogBookDataManager.shared.refreshCache(for: currentYear)
-                print("✅ 로그북 서버 저장 성공: logBookId=\(logBookId), saveStatus=\(saveStatus.rawValue)")
+                DebugLogger.success("로그북 서버 저장 성공: logBookId=\(logBookId), saveStatus=\(saveStatus.rawValue)")
                 
             case .failure(let error):
                 self.errorMessage = "저장 중 오류가 발생했습니다: \(error.localizedDescription)"
                 completion(false)
-                print("❌ 로그북 서버 저장 실패: \(error)")
+                DebugLogger.error("로그북 서버 저장 실패: \(error)")
             }
         }
     }
@@ -352,7 +352,7 @@ class LogBookMainViewModel {
             frontendTempTitle = nil
             hasTitleChanges = false
         }
-        print("✅ 프론트엔드 제목 임시저장: \(trimmedTitle)")
+        DebugLogger.success("프론트엔드 제목 임시저장: \(trimmedTitle)")
     }
     
     // 서버 제목 업데이트
@@ -367,12 +367,12 @@ class LogBookMainViewModel {
             case .success:
                 self.logBaseTitle = newTitle
                 completion(true)
-                print("✅ 제목 서버 저장 성공: \(newTitle)")
+                DebugLogger.success("제목 서버 저장 성공: \(newTitle)")
                 
             case .failure(let error):
                 self.errorMessage = "제목 수정 중 오류가 발생했습니다: \(error.localizedDescription)"
                 completion(false)
-                print("❌ 제목 서버 저장 실패: \(error)")
+                DebugLogger.error("제목 서버 저장 실패: \(error)")
             }
         }
     }
@@ -409,7 +409,7 @@ class LogBookMainViewModel {
     private func updateTempSavedStatus() {
         let hasAnyTempSaved = diveLogData.saveStatus == .temp && !diveLogData.isEmpty
         isTempSaved = hasAnyTempSaved
-        print("✅ 임시저장 상태 업데이트: \(isTempSaved)")
+        DebugLogger.success("임시저장 상태 업데이트: \(isTempSaved)")
     }
     
     // DiveLogData 깊은 복사

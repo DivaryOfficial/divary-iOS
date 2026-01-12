@@ -55,7 +55,7 @@ final class ChatService {
         switch result {
         case .success(let response):
             if let jsonString = String(data: response.data, encoding: .utf8) {
-                print("📦 챗봇 서버 응답: \(jsonString)")
+                DebugLogger.log("챗봇 서버 응답: \(jsonString)")
             }
             if response.statusCode >= 400 {
                 do {
@@ -76,11 +76,11 @@ final class ChatService {
                 let baseResponse = try JSONDecoder().decode(ChatBaseResponseDTO<SendMessageResponseDTO>.self, from: response.data)
                 completion(.success(baseResponse.data))
             } catch {
-                print("❌ 챗봇 디코딩 실패: \(error)")
+                DebugLogger.error("챗봇 디코딩 실패: \(error)")
                 completion(.failure(error))
             }
         case .failure(let error):
-            print("❌ 챗봇 네트워크 에러: \(error)")
+            DebugLogger.error("챗봇 네트워크 에러: \(error)")
             completion(.failure(error))
         }
     }
@@ -89,7 +89,7 @@ final class ChatService {
         switch result {
         case .success(let response):
             if let jsonString = String(data: response.data, encoding: .utf8) {
-                print("📦 챗봇 서버 응답: \(jsonString)")
+                DebugLogger.log("챗봇 서버 응답: \(jsonString)")
             }
             if response.statusCode >= 400 {
                 do {
@@ -110,11 +110,11 @@ final class ChatService {
                 let baseResponse = try JSONDecoder().decode(ChatBaseResponseDTO<ChatRoomListResponseDTO>.self, from: response.data)
                 completion(.success(baseResponse.data))
             } catch {
-                print("❌ 챗봇 디코딩 실패: \(error)")
+                DebugLogger.error("챗봇 디코딩 실패: \(error)")
                 completion(.failure(error))
             }
         case .failure(let error):
-            print("❌ 챗봇 네트워크 에러: \(error)")
+            DebugLogger.error("챗봇 네트워크 에러: \(error)")
             completion(.failure(error))
         }
     }
@@ -123,7 +123,7 @@ final class ChatService {
         switch result {
         case .success(let response):
             if let jsonString = String(data: response.data, encoding: .utf8) {
-                print("📦 챗봇 서버 응답: \(jsonString)")
+                DebugLogger.log("챗봇 서버 응답: \(jsonString)")
             }
             if response.statusCode >= 400 {
                 do {
@@ -144,11 +144,11 @@ final class ChatService {
                 let baseResponse = try JSONDecoder().decode(ChatBaseResponseDTO<ChatRoomDetailResponseDTO>.self, from: response.data)
                 completion(.success(baseResponse.data))
             } catch {
-                print("❌ 챗봇 디코딩 실패: \(error)")
+                DebugLogger.error("챗봇 디코딩 실패: \(error)")
                 completion(.failure(error))
             }
         case .failure(let error):
-            print("❌ 챗봇 네트워크 에러: \(error)")
+            DebugLogger.error("챗봇 네트워크 에러: \(error)")
             completion(.failure(error))
         }
     }

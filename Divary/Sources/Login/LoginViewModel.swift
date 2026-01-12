@@ -42,7 +42,7 @@ final class LoginViewModel: ObservableObject {
                 self.showToast = true
             }
             
-            print("\(message)")
+            DebugLogger.log(message)
         }
     }
     
@@ -51,7 +51,7 @@ final class LoginViewModel: ObservableObject {
         isLoading = true
         loginError = nil
         
-        print("애플 로그인 시작")
+        DebugLogger.log("애플 로그인 시작")
         
         switch result {
         case .success(let auth):
@@ -61,7 +61,7 @@ final class LoginViewModel: ObservableObject {
                 return
             }
             
-            print("Apple 자격 증명 획득 성공")
+            DebugLogger.success("Apple 자격 증명 획득 성공")
             
             // 2. 서버 검증에 필요한 identityToken 가져오기
             guard let identityTokenData = credential.identityToken,
@@ -70,20 +70,20 @@ final class LoginViewModel: ObservableObject {
                 return
             }
             
-            print("identityToken 변환 성공")
-            print("서버에 애플 로그인 요청 중...")
+            DebugLogger.success("identityToken 변환 성공")
+            DebugLogger.log("서버에 애플 로그인 요청 중...")
             
             // 3. 서버에 identityToken을 보내 로그인/회원가입 처리
             self.loginService.appleLogin(identityToken: identityToken, deviceId: self.deviceID) { result in
                 DispatchQueue.main.async {
                     self.isLoading = false
                     
-                    print("identityToken:\n\(identityToken)\n\ndeviceID:\n\(self.deviceID)")
+                    DebugLogger.log("identityToken:\n\(identityToken)\n\ndeviceID:\n\(self.deviceID)")
                     switch result {
                     case .success(let response):
-                        print("애플 로그인 서버 인증 성공")
-                        print("   AccessToken: \(response.accessToken)")
-                        print("   RefreshToken: \(response.refreshToken)")
+                        DebugLogger.success("애플 로그인 서버 인증 성공")
+                        DebugLogger.log("   AccessToken: \(response.accessToken)")
+                        DebugLogger.log("   RefreshToken: \(response.refreshToken)")
                         
                         KeyChainManager.shared.save(response.accessToken, forKey: KeyChainKey.accessToken)
                         KeyChainManager.shared.save(response.refreshToken, forKey: KeyChainKey.refreshToken)
@@ -93,7 +93,7 @@ final class LoginViewModel: ObservableObject {
                         self.router.push(.MainTabBar)
                         
                     case .failure(let error):
-                        print("서버 애플 로그인 실패: \(error)")
+                        DebugLogger.error("서버 애플 로그인 실패: \(error)")
                         
                         // APIError 타입에 따라 다른 메시지 표시
                         var errorMsg = "서버 인증에 실패했습니다."
@@ -109,7 +109,7 @@ final class LoginViewModel: ObservableObject {
             }
             
         case .failure(let error):
-            print("애플 로그인 실패: \(error.localizedDescription)")
+            DebugLogger.error("애플 로그인 실패: \(error.localizedDescription)")
             
             // 사용자가 취소한 경우 토스트를 띄우지 않음
             let nsError = error as NSError
@@ -117,7 +117,7 @@ final class LoginViewModel: ObservableObject {
                nsError.code == ASAuthorizationError.canceled.rawValue {
                 DispatchQueue.main.async {
                     self.isLoading = false
-                    print("사용자가 애플 로그인을 취소했습니다.")
+                    DebugLogger.log("사용자가 애플 로그인을 취소했습니다.")
                 }
             } else {
                 showToastMessage("애플 로그인에 실패했습니다.")
@@ -130,11 +130,11 @@ final class LoginViewModel: ObservableObject {
         isLoading = true
         loginError = nil
         
-        print("구글 로그인 시작")
+        DebugLogger.log("구글 로그인 시작")
         
         // xcconfig에서 읽어오기
         guard let clientID = Bundle.main.object(forInfoDictionaryKey: "GOOGLE_CLIENT_ID") as? String else {
-            print("GOOGLE_CLIENT_ID 값 불러오기 실패")
+            DebugLogger.error("GOOGLE_CLIENT_ID 값 불러오기 실패")
             showToastMessage("Google Client ID를 찾을 수 없습니다.")
             return
         }
@@ -148,18 +148,18 @@ final class LoginViewModel: ObservableObject {
             return
         }
         
-        print("구글 로그인 UI 표시 중...")
+        DebugLogger.log("구글 로그인 UI 표시 중...")
         
         GIDSignIn.sharedInstance.signIn(withPresenting: rootVC) { result, error in
             if let error = error {
-                print("구글 로그인 에러: \(error.localizedDescription)")
+                DebugLogger.error("구글 로그인 에러: \(error.localizedDescription)")
                 
                 // 사용자가 취소한 경우 토스트를 띄우지 않음
                 let nsError = error as NSError
                 if nsError.code == -5 { // GIDSignInErrorCode.canceled
                     DispatchQueue.main.async {
                         self.isLoading = false
-                        print("사용자가 구글 로그인을 취소했습니다.")
+                        DebugLogger.log("사용자가 구글 로그인을 취소했습니다.")
                     }
                 } else {
                     self.showToastMessage("구글 로그인에 실패했습니다.")
@@ -168,15 +168,15 @@ final class LoginViewModel: ObservableObject {
             }
             
             guard let user = result?.user else {
-                print("사용자 정보 없음")
+                DebugLogger.warning("사용자 정보 없음")
                 self.showToastMessage("사용자 정보를 가져올 수 없습니다.")
                 return
             }
             
-            print("구글 로그인 성공")
-            print("   Email: \(user.profile?.email ?? "N/A")")
-            print("   Google AccessToken: \(user.accessToken.tokenString)")
-            print("서버에 구글 로그인 요청 중...")
+            DebugLogger.success("구글 로그인 성공")
+            DebugLogger.log("   Email: \(user.profile?.email ?? "N/A")")
+            DebugLogger.log("   Google AccessToken: \(user.accessToken.tokenString)")
+            DebugLogger.log("서버에 구글 로그인 요청 중...")
             
             DispatchQueue.main.async {
                 self.userEmail = user.profile?.email
@@ -188,10 +188,10 @@ final class LoginViewModel: ObservableObject {
                         
                         switch result {
                         case .success(let response):
-                            print("구글 로그인 서버 인증 성공")
-                            print("   AccessToken: \(response.accessToken)")
-                            print("   RefreshToken: \(response.refreshToken)")
-                            print("   DeviceId: \(self.deviceID)")
+                            DebugLogger.success("구글 로그인 서버 인증 성공")
+                            DebugLogger.log("   AccessToken: \(response.accessToken)")
+                            DebugLogger.log("   RefreshToken: \(response.refreshToken)")
+                            DebugLogger.log("   DeviceId: \(self.deviceID)")
                             
                             KeyChainManager.shared.save(response.accessToken, forKey: KeyChainKey.accessToken)
                             KeyChainManager.shared.save(response.refreshToken, forKey: KeyChainKey.refreshToken)
@@ -201,7 +201,7 @@ final class LoginViewModel: ObservableObject {
                             self.router.push(.MainTabBar)
                             
                         case .failure(let error):
-                            print("서버 로그인 실패: \(error)")
+                            DebugLogger.error("서버 로그인 실패: \(error)")
                             
                             // APIError 타입에 따라 다른 메시지 표시
                             var errorMsg = "서버 인증에 실패했습니다."

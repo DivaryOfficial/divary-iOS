@@ -67,7 +67,7 @@ class NewLogCreationViewModel {
             case .failure(let error):
                 self.errorMessage = "로그 확인 중 오류가 발생했습니다: \(error.localizedDescription)"
                 completion(false)
-                print("❌ 로그 존재 확인 실패: \(error)")
+                DebugLogger.error("로그 존재 확인 실패: \(error)")
             }
         }
     }
@@ -83,7 +83,7 @@ class NewLogCreationViewModel {
     func createNewLog(completion: @escaping (String?) -> Void) {
         // 중복 생성 방지
         guard !isCreatingLog else {
-            print("⚠️ 이미 로그 생성 중이므로 요청 무시")
+            DebugLogger.warning("이미 로그 생성 중이므로 요청 무시")
             completion(nil)
             return
         }
@@ -98,7 +98,7 @@ class NewLogCreationViewModel {
         isLoading = true
         errorMessage = nil
         
-        print("🚀 새 로그 생성 시작: \(selectedTitle), 날짜: \(selectedDate)")
+        DebugLogger.info("새 로그 생성 시작: \(selectedTitle), 날짜: \(selectedDate)")
         
         dataManager.createLogBase(
             iconType: icon,
@@ -111,12 +111,12 @@ class NewLogCreationViewModel {
                 
                 switch result {
                 case .success(let logBaseId):
-                    print("✅ 새 로그 생성 완료: logBaseId=\(logBaseId)")
+                    DebugLogger.success("새 로그 생성 완료: logBaseId=\(logBaseId)")
                     completion(logBaseId)
                     
                 case .failure(let error):
                     self?.errorMessage = "로그 생성 중 오류가 발생했습니다: \(error.localizedDescription)"
-                    print("❌ 로그 생성 실패: \(error)")
+                    DebugLogger.error("로그 생성 실패: \(error)")
                     completion(nil)
                 }
             }
@@ -132,7 +132,7 @@ class NewLogCreationViewModel {
     func resetData() {
         // ✅ 진행 중인 작업이 있으면 리셋하지 않음
         guard !isCreatingLog else {
-            print("⚠️ 로그 생성 중이므로 리셋 무시")
+            DebugLogger.warning("로그 생성 중이므로 리셋 무시")
             return
         }
         
@@ -146,7 +146,7 @@ class NewLogCreationViewModel {
         isLoading = false
         isCreatingLog = false
         
-        print("🔄 NewLogCreationViewModel 데이터 리셋 완료")
+        DebugLogger.log("NewLogCreationViewModel 데이터 리셋 완료")
     }
     
     // 에러 메시지 클리어

@@ -89,10 +89,10 @@ extension LoginAPI: TargetType {
             // 키체인에서 AccessToken 가져와서 Authorization 헤더에 추가
             if let accessToken = KeyChainManager.shared.read(forKey: KeyChainKey.accessToken) {
                 headerDict["Authorization"] = "Bearer \(accessToken)"
-                print("🔑 [DELETE ACCOUNT] Authorization 헤더 추가됨")
-                print("   Bearer \(accessToken.prefix(20))...")
+                DebugLogger.log("[DELETE ACCOUNT] Authorization 헤더 추가됨")
+                DebugLogger.log("   Bearer \(accessToken.prefix(20))...")
             } else {
-                print("⚠️ [DELETE ACCOUNT] AccessToken이 없어서 Authorization 헤더를 추가하지 못함")
+                DebugLogger.warning("[DELETE ACCOUNT] AccessToken이 없어서 Authorization 헤더를 추가하지 못함")
             }
             
         default:
@@ -103,12 +103,12 @@ extension LoginAPI: TargetType {
             ]
         }
         
-        print("📤 [LoginAPI] 최종 헤더:")
+        DebugLogger.log("[LoginAPI] 최종 헤더:")
         headerDict.forEach { key, value in
             if key == "Authorization" {
-                print("   \(key): \(value.prefix(30))...")
+                DebugLogger.log("   \(key): \(value.prefix(30))...")
             } else {
-                print("   \(key): \(value)")
+                DebugLogger.log("   \(key): \(value)")
             }
         }
         

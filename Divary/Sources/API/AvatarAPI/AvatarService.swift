@@ -40,7 +40,7 @@ final class AvatarService {
         switch result {
         case .success(let response):
             if let jsonString = String(data: response.data, encoding: .utf8) {
-                print("📦 아바타 서버 응답: \(jsonString)")
+                DebugLogger.log("아바타 서버 응답: \(jsonString)")
             }
             do {
                 if response.statusCode != 200 {
@@ -79,11 +79,11 @@ final class AvatarService {
                     }
                 }
             } catch {
-                print("❌ 아바타 디코딩 실패: \(error)")
+                DebugLogger.error("아바타 디코딩 실패: \(error)")
                 completion(.failure(error))
             }
         case .failure(let error):
-            print("❌ 네트워크 요청 실패: \(error)")
+            DebugLogger.error("네트워크 요청 실패: \(error)")
             completion(.failure(error))
         }
     }

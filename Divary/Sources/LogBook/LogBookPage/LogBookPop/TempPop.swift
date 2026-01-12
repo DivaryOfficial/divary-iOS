@@ -79,9 +79,9 @@ struct TempPop: View {
             .ignoresSafeArea()
         
         TempPop(
-            onTempSave: { print("임시저장") },
-            onDiscardChanges: { print("그냥 나가기") },
-            onClose: { print("팝업 닫기") }
+            onTempSave: { DebugLogger.log("임시저장") },
+            onDiscardChanges: { DebugLogger.log("그냥 나가기") },
+            onClose: { DebugLogger.log("팝업 닫기") }
         )
         .padding()
     }

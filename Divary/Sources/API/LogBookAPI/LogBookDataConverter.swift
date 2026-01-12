@@ -40,7 +40,7 @@ extension LogListResponseDTO {
             iconType: iconType,
             accumulation: 0,
             logBooks: [],
-            saveStatus: saveStatus  // ✅ 추가
+            saveStatus: saveStatus
         )
     }
 }
@@ -71,7 +71,7 @@ extension Array where Element == LogBaseDetailDTO {
             iconType: iconType,
             accumulation: firstItem.accumulation,
             logBooks: logBooks,
-            saveStatus: nil  // ✅ 상세 조회에서는 nil (logBooks로 판단)
+            saveStatus: nil
         )
     }
 }
@@ -91,7 +91,7 @@ extension LogBaseDetailDTO {
             )
         }
 
-        // ✅ Participants - 백엔드 타입 기반으로 UI 모델 구성
+        // Participants - 백엔드 타입 기반으로 UI 모델 구성
         if hasParticipantsData() {
             let participants = DiveParticipants()
             
@@ -111,7 +111,7 @@ extension LogBaseDetailDTO {
                         }
                         participants.companion?.append(name)
                     default:
-                        print("⚠️ 알 수 없는 동행자 타입: \(companion.type)")
+                        DebugLogger.warning("알 수 없는 동행자 타입: \(companion.type)")
                         // 알 수 없는 타입도 동행자로 처리
                         if participants.companion == nil {
                             participants.companion = []
@@ -165,7 +165,7 @@ extension LogBaseDetailDTO {
     }
 
     private func hasOverviewData() -> Bool {
-        return place != nil ||           // ✅ 추가: place 체크
+        return place != nil ||
                divePoint != nil ||
                divePurpose != nil ||
                diveMethod != nil
@@ -201,16 +201,16 @@ extension DiveLogData {
             saveStatus: saveStatus.rawValue,
             place: self.overview?.title,        // TODO: place 별도 필드가 생기면 교체
             divePoint: self.overview?.point,
-            // ✅ UI 표시용 텍스트 → 백엔드 enum 변환
+            // UI 표시용 텍스트 → 백엔드 enum 변환
             diveMethod: self.overview?.method?.toDivingMethodEnum(),
             divePurpose: self.overview?.purpose?.toDivingPurposeEnum(),
-            companions: self.participants?.toCompanionRequestDTOs(), // ✅ 수정된 변환 사용
-            // ✅ UI 표시용 텍스트 → 백엔드 enum 변환
+            companions: self.participants?.toCompanionRequestDTOs(),
+            // UI 표시용 텍스트 → 백엔드 enum 변환
             suitType: self.equipment?.suitType?.toSuitTypeEnum(),
             equipment: self.equipment?.Equipment,
             weight: self.equipment?.weight,
             perceivedWeight: self.equipment?.pweight?.toPerceivedWeightEnum(),
-            // ✅ UI 표시용 텍스트 → 백엔드 enum 변환
+            // UI 표시용 텍스트 → 백엔드 enum 변환
             weather: self.environment?.weather?.toWeatherEnum(),
             wind: self.environment?.wind?.toWindEnum(),
             tide: self.environment?.current?.toCurrentEnum(),
@@ -236,17 +236,17 @@ extension DiveParticipants {
     func toCompanionRequestDTOs() -> [CompanionRequestDTO] {
         var result: [CompanionRequestDTO] = []
 
-        // ✅ 리더 추가 - 공백 제거 및 빈 문자열 체크
+        // 리더 추가 - 공백 제거 및 빈 문자열 체크
         if let leader = self.leader?.trimmingCharacters(in: .whitespacesAndNewlines), !leader.isEmpty {
             result.append(CompanionRequestDTO(name: leader, type: "LEADER"))
         }
         
-        // ✅ 버디 추가 - 공백 제거 및 빈 문자열 체크
+        // 버디 추가 - 공백 제거 및 빈 문자열 체크
         if let buddy = self.buddy?.trimmingCharacters(in: .whitespacesAndNewlines), !buddy.isEmpty {
             result.append(CompanionRequestDTO(name: buddy, type: "BUDDY"))
         }
         
-        // ✅ 동행자들 추가 - 공백 제거 및 빈 문자열 체크
+        // 동행자들 추가 - 공백 제거 및 빈 문자열 체크
         if let companions = self.companion {
             for name in companions {
                 let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)

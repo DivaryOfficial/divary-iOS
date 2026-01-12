@@ -124,8 +124,8 @@ struct ChatBotView: View {
     }
     
     private func sendTextMessage(_ message: String, imageData: Data?) {
-        print("🔍 전송할 메시지: '\(message)'")
-        print("🔍 이미지 데이터: \(imageData?.count ?? 0) bytes")
+        DebugLogger.log("전송할 메시지: '\(message)'")
+        DebugLogger.log("이미지 데이터: \(imageData?.count ?? 0) bytes")
         
         chatService.sendMessage(
             chatRoomId: currentChatRoomId,
@@ -158,7 +158,7 @@ struct ChatBotView: View {
     private func handleSendError(_ errorMessage: String) {
         DispatchQueue.main.async {
             isLoading = false
-            print("❌ \(errorMessage)")
+            DebugLogger.error(errorMessage)
             
             // 에러 메시지 표시
             let errorMsg = ChatMessage(
@@ -188,7 +188,7 @@ struct ChatBotView: View {
                     messages = response.messages.map { ChatMessage(from: $0) }
                     
                 case .failure(let error):
-                    print("채팅방 로드 실패: \(error)")
+                    DebugLogger.error("채팅방 로드 실패: \(error)")
                     // 에러 발생시 빈 채팅방으로 처리
                     currentRoomName = chatRoom.name
                     messages = []
@@ -206,10 +206,10 @@ struct ChatBotView: View {
                 switch result {
                 case .success:
                     currentRoomName = newTitle
-                    print("채팅방 제목이 변경되었습니다: \(newTitle)")
+                    DebugLogger.success("채팅방 제목이 변경되었습니다: \(newTitle)")
                     
                 case .failure(let error):
-                    print("제목 변경 실패: \(error)")
+                    DebugLogger.error("제목 변경 실패: \(error)")
                 }
             }
         }

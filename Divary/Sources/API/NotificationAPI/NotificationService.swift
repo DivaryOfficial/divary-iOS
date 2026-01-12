@@ -37,13 +37,13 @@ final class NotificationService {
         switch result {
         case .success(let response):
             if let jsonString = String(data: response.data, encoding: .utf8) {
-                print("📦 알림 서버 응답: \(jsonString)")
+                DebugLogger.log("알림 서버 응답: \(jsonString)")
             }
             do {
                 let decodedData = try JSONDecoder().decode(T.self, from: response.data)
                 completion(.success(decodedData))
             } catch {
-                print("❌ 알림 디코딩 실패: \(error)")
+                DebugLogger.error("알림 디코딩 실패: \(error)")
                 completion(.failure(error))
             }
         case .failure(let error):

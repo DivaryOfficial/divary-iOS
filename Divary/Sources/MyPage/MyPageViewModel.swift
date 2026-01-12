@@ -44,7 +44,7 @@ final class MyProfileViewModel: ObservableObject {
         memberService.getProfile()
             .sink(receiveCompletion: { completion in
                 if case .failure(let error) = completion {
-                    print("⛔️ getProfile 에러: \(error.localizedDescription)")
+                    DebugLogger.error("getProfile 에러: \(error.localizedDescription)")
                     self.userId = "에러 발생"
                 }
             }, receiveValue: { [weak self] profile in
@@ -63,7 +63,7 @@ final class MyProfileViewModel: ObservableObject {
                 self.initialOrganization = profile.memberGroup ?? ""
                 self.initialLevel = level
                 
-                print("✅ 프로필 로드 성공: \(profile.id)")
+                DebugLogger.success("프로필 로드 성공: \(profile.id)")
             })
             .store(in: &cancellables)
     }
@@ -85,14 +85,14 @@ final class MyProfileViewModel: ObservableObject {
     // MARK: - Private API Callers
     
     private func saveGroup(group: String) {
-        print("🆙 단체 정보 업데이트 시도: \(group)")
+        DebugLogger.log("단체 정보 업데이트 시도: \(group)")
         memberService.updateGroup(group: group)
             .sink(receiveCompletion: { completion in
                 if case .failure(let error) = completion {
-                    print("⛔️ updateGroup 에러: \(error.localizedDescription)")
+                    DebugLogger.error("updateGroup 에러: \(error.localizedDescription)")
                 }
             }, receiveValue: { _ in
-                print("✅ 단체 정보 업데이트 성공")
+                DebugLogger.success("단체 정보 업데이트 성공")
                 // 저장 성공 시, "최초 값"도 갱신
                 self.initialOrganization = group
             })
@@ -100,14 +100,14 @@ final class MyProfileViewModel: ObservableObject {
     }
     
     private func saveLevel(level: String) {
-        print("🆙 레벨 정보 업데이트 시도: \(level)")
+        DebugLogger.log("레벨 정보 업데이트 시도: \(level)")
         memberService.updateLevel(level: level)
             .sink(receiveCompletion: { completion in
                 if case .failure(let error) = completion {
-                    print("⛔️ updateLevel 에러: \(error.localizedDescription)")
+                    DebugLogger.error("updateLevel 에러: \(error.localizedDescription)")
                 }
             }, receiveValue: { _ in
-                print("✅ 레벨 정보 업데이트 성공")
+                DebugLogger.success("레벨 정보 업데이트 성공")
                 // 저장 성공 시, "최초 값"도 갱신
                 self.initialLevel = self.selectedLevel
             })

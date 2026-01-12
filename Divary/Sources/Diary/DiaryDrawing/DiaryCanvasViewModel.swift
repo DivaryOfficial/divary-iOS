@@ -59,7 +59,7 @@ final class DiaryCanvasViewModel: ObservableObject {
 //        do {
 //            try DrawingStore.save(diaryId: diaryId, drawing: drawing, offsetY: offsetY)
 //        } catch {
-//            print("saveDrawingWithOffset error: \(error)")
+//            DebugLogger.error("saveDrawingWithOffset error: \(error)")
 //        }
 //    }
     
@@ -69,7 +69,7 @@ final class DiaryCanvasViewModel: ObservableObject {
             let loaded = try DrawingStore.load(diaryId: diaryId)
             canvas.drawing = loaded.drawing
         } catch {
-            print("loadDrawingIfExists error: \(error)")
+            DebugLogger.error("loadDrawingIfExists error: \(error)")
         }
     }
 }

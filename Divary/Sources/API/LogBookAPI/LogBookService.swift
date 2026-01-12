@@ -76,7 +76,7 @@ final class LogBookService {
             switch result {
             case .success(let response):
                 if let jsonString = String(data: response.data, encoding: .utf8) {
-                    print("📦 로그베이스 제목 수정 응답: \(jsonString)")
+                    DebugLogger.log("로그베이스 제목 수정 응답: \(jsonString)")
                 }
                 
                 if response.statusCode >= 400 {
@@ -137,7 +137,7 @@ final class LogBookService {
             switch result {
             case .success(let response):
                 if let jsonString = String(data: response.data, encoding: .utf8) {
-                    print("📦 로그베이스 날짜 수정 응답: \(jsonString)")
+                    DebugLogger.log("로그베이스 날짜 수정 응답: \(jsonString)")
                 }
                 
                 if response.statusCode >= 400 {
@@ -172,7 +172,7 @@ final class LogBookService {
         switch result {
         case .success(let response):
             if let jsonString = String(data: response.data, encoding: .utf8) {
-                print("📦 로그북 서버 응답: \(jsonString)")
+                DebugLogger.log("로그북 서버 응답: \(jsonString)")
             }
             
             // 상태코드 체크
@@ -203,7 +203,7 @@ final class LogBookService {
                 let wrappedResponse = try JSONDecoder().decode(APIResponse<T>.self, from: response.data)
                 completion(.success(wrappedResponse.data))
             } catch {
-                print("❌ 로그북 디코딩 실패: \(error)")
+                DebugLogger.error("로그북 디코딩 실패: \(error)")
                 completion(.failure(error))
             }
             

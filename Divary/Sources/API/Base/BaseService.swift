@@ -15,26 +15,26 @@ class BaseService {
         switch result {
         case .success(let response):
             // 요청 정보 출력
-            print("📡 API Request Info:")
-            print("   URL: \(response.request?.url?.absoluteString ?? "N/A")")
-            print("   Method: \(response.request?.httpMethod ?? "N/A")")
+            DebugLogger.log("API Request Info:")
+            DebugLogger.log("   URL: \(response.request?.url?.absoluteString ?? "N/A")")
+            DebugLogger.log("   Method: \(response.request?.httpMethod ?? "N/A")")
             
             // 요청 헤더 출력
             if let headers = response.request?.allHTTPHeaderFields {
-                print("   Request Headers:")
+                DebugLogger.log("   Request Headers:")
                 headers.forEach { key, value in
                     if key.lowercased().contains("authorization") || key.lowercased().contains("token") {
-                        print("      \(key): \(value.prefix(30))...")
+                        DebugLogger.log("      \(key): \(value.prefix(30))...")
                     } else {
-                        print("      \(key): \(value)")
+                        DebugLogger.log("      \(key): \(value)")
                     }
                 }
             }
             
             // 원본 응답 데이터 출력
             if let jsonString = String(data: response.data, encoding: .utf8) {
-                print("API Response [\(response.statusCode)]:")
-                print(jsonString)
+                DebugLogger.log("API Response [\(response.statusCode)]:")
+                DebugLogger.log(jsonString)
             }
             
             do {
@@ -45,16 +45,16 @@ class BaseService {
                 if (200...299).contains(decodedResponse.status) {
                     if let data = decodedResponse.data {
                         // 성공 시 실제 데이터(T) 전달
-                        print("API Success: status=\(decodedResponse.status), code=\(decodedResponse.code)")
+                        DebugLogger.success("API Success: status=\(decodedResponse.status), code=\(decodedResponse.code)")
                         completion(.success(data))
                     } else {
                         // 성공이지만 데이터가 없는 경우 .resultNil 에러 전달
-                        print("API Warning: 응답 성공이지만 데이터가 nil")
+                        DebugLogger.warning("API Warning: 응답 성공이지만 데이터가 nil")
                         completion(.failure(.resultNil))
                     }
                 } else {
                     // 서버가 정의한 에러를 .responseState 케이스로 전달
-                    print("API Error: status=\(decodedResponse.status), code=\(decodedResponse.code), message=\(decodedResponse.message)")
+                    DebugLogger.error("API Error: status=\(decodedResponse.status), code=\(decodedResponse.code), message=\(decodedResponse.message)")
                     completion(.failure(.responseState(
                         status: decodedResponse.status,
                         code: decodedResponse.code,
@@ -63,7 +63,7 @@ class BaseService {
                 }
             } catch {
                 // JSON 디코딩 실패 시 .responseState 케이스로 에러 전달
-                print("Decoding Error: \(error.localizedDescription)")
+                DebugLogger.error("Decoding Error: \(error.localizedDescription)")
                 completion(.failure(.responseState(
                     status: response.statusCode,
                     code: "DECODING_ERROR",
@@ -72,7 +72,7 @@ class BaseService {
             }
         case .failure(let moyaError):
             // 네트워크 통신 자체에 실패한 경우 .moya 에러 전달
-            print("Network Error: \(moyaError.localizedDescription)")
+            DebugLogger.error("Network Error: \(moyaError.localizedDescription)")
             completion(.failure(.moya(error: moyaError)))
         }
     }

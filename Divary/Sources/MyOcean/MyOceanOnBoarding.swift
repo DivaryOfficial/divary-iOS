@@ -21,7 +21,7 @@ struct OnboardingMessageOverlay: View {
     let messages = [
         "나의 바다에 오신 것을 환영합니다!",
         "이곳은 바다 속 나만의 공간이에요\n나만의 감성으로 함께 채워보아요",
-        "전 당신의 바다를 함께할 버디에요",
+        "전 당신의 바다를 함께할 버디예요",
     ]
     
     var body: some View {
@@ -152,7 +152,7 @@ struct OnboardingMessageOverlay: View {
             isCompleted = true
         }
         
-        print("사용자 이름: \(trimmedName)")
+        DebugLogger.log("사용자 이름: \(trimmedName)")
     }
     
     private func showErrorMessage(_ message: String) {

@@ -74,7 +74,7 @@ struct ImageSelectView: View {
 //        .task {
         .task {
             for (i, f) in framedImages.enumerated() {
-                print("[\(i)] hasLocal=\(f.originalData != nil) temp=\(f.tempFilename ?? "nil") imageNil=\(f.image == nil)")
+                DebugLogger.log("[\(i)] hasLocal=\(f.originalData != nil) temp=\(f.tempFilename ?? "nil") imageNil=\(f.image == nil)")
             }
         }
 //        .toolbar(.hidden, for: .navigationBar)

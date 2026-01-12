@@ -79,9 +79,9 @@ struct SavePop: View {
             .ignoresSafeArea()
         
         SavePop(
-            onCompleteSave: { print("작성 완료하기") },
-            onTempSave: { print("임시 저장하기") },
-            onClose: { print("팝업 닫기") }
+            onCompleteSave: { DebugLogger.log("작성 완료하기") },
+            onTempSave: { DebugLogger.log("임시 저장하기") },
+            onClose: { DebugLogger.log("팝업 닫기") }
         )
         .padding()
     }

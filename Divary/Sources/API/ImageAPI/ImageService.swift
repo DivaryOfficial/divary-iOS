@@ -24,7 +24,7 @@ final class ImageService {
         )
         .handleEvents(receiveOutput: { response in
             if let text = String(data: response.data, encoding: .utf8) {
-                print("📦 uploadTemp response: \(text)")
+                DebugLogger.log("uploadTemp response: \(text)")
             }
         })
         .eraseToAnyPublisher()

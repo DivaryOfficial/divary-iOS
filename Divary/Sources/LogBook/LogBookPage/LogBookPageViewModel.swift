@@ -53,7 +53,7 @@ class LogBookPageViewModel {
             }
         }
         
-        print("✅ 프론트엔드 임시저장 완료")
+        DebugLogger.success("프론트엔드 임시저장 완료")
     }
     
     // ✅ 그냥 나가기 (입력 취소 - 인덱스 제거)
@@ -65,6 +65,6 @@ class LogBookPageViewModel {
             activeInputSection = nil
         }
         
-        print("✅ 입력 취소 완료")
+        DebugLogger.success("입력 취소 완료")
     }
 }
