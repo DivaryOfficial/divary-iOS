@@ -19,7 +19,6 @@ struct MainView: View {
     @Environment(\.diContainer) private var container
 
     @State private var selectedYear: Int = 2025
-    @State private var showSwipeTooltip = false
     @State private var showDeletePopup = false
 
     // 삭제 팝업용으로만 사용하는 선택값
@@ -69,19 +68,6 @@ struct MainView: View {
             )
             .padding(.top, 110)
 
-            if showSwipeTooltip {
-                VStack {
-                    Spacer()
-                    HStack {
-                        Spacer()
-                        Image(.swipeTooltip)
-                            .padding(.trailing, 20)
-                            .transition(.opacity)
-                    }
-                    .padding(.bottom, 200)
-                }
-            }
-
             yearSelectbar
             
             // 새 로그 생성 플로우
@@ -95,15 +81,15 @@ struct MainView: View {
                     onCreateNewLog: {
                         newLogViewModel.createNewLog { newLogBaseId in
                             DispatchQueue.main.async {
-                                print("📍 onCreateNewLog 콜백 받음: \(String(describing: newLogBaseId))")
+                                DebugLogger.log("onCreateNewLog 콜백 받음: \(String(describing: newLogBaseId))")
                                 if let logBaseId = newLogBaseId, !logBaseId.isEmpty {
-                                    print("🚀 라우터 이동 시도: logBaseId=\(logBaseId)")
+                                    DebugLogger.info("라우터 이동 시도: logBaseId=\(logBaseId)")
                                     container.router.push(.logBookMain(logBaseId: logBaseId))
-                                    print("✅ 라우터 push 완료")
+                                    DebugLogger.success("라우터 push 완료")
                                     newLogViewModel.resetData()
                                     refreshLogData()
                                 } else {
-                                    print("❌ logBaseId가 nil이거나 빈 문자열")
+                                    DebugLogger.error("logBaseId가 nil이거나 빈 문자열")
                                 }
                             }
                         }
@@ -123,13 +109,6 @@ struct MainView: View {
                 .scaledToFill()
         )
         .task {
-            // 최초 실행 시 한 번만 툴팁 표시
-            let launched = UserDefaults.standard.bool(forKey: "launchedBefore")
-            if !launched {
-                showSwipeTooltip = true
-                UserDefaults.standard.set(true, forKey: "launchedBefore")
-            }
-
             // 초기 데이터 로드
             await loadLogData()
         }

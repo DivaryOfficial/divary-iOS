@@ -42,12 +42,12 @@ class OceanCatalogViewModel {
         isLoadingList = true
         service.getCardList(type: type)
 //            .sinkHandledCompletion(receiveValue: { [weak self] creatureCardEntities in
-//                print(creatureCardEntities)
+//                DebugLogger.log(creatureCardEntities)
 //                self?.creatureCards = creatureCardEntities
 //            })
             .sink(receiveCompletion: { [weak self] comp in
                self?.isLoadingList = false
-               if case let .failure(err) = comp { print("list error:", err) }
+               if case let .failure(err) = comp { DebugLogger.error("list error: \(err)") }
            }, receiveValue: { [weak self] creatureCardEntities in
                self?.creatureCards = creatureCardEntities
            })
@@ -71,7 +71,7 @@ class OceanCatalogViewModel {
 //            })
             .sink(receiveCompletion: { [weak self] comp in
                self?.isLoadingList = false
-               if case let .failure(err) = comp { print("list error:", err) }
+               if case let .failure(err) = comp { DebugLogger.error("list error: \(err)") }
            }, receiveValue: { [weak self] list in
                self?.creatureCards = list
            })
@@ -101,10 +101,10 @@ class OceanCatalogViewModel {
             .sink(receiveCompletion: { [weak self] comp in
                 self?.isLoadingDetail = false
                 if case let .failure(err) = comp {
-                    print("detail error:", err)
+                    DebugLogger.error("detail error: \(err)")
                 }
             }, receiveValue: { [weak self] detail in
-//                print("✅ detail received:", detail)
+               DebugLogger.success("detail received: \(detail)")
                 self?.lastDetail = detail
             })
             .store(in: &cancellable)

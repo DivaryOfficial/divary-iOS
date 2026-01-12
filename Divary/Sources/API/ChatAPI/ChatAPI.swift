@@ -47,10 +47,10 @@ extension ChatAPI: TargetType {
         case .sendMessage(let chatRoomId, let message, let imageData):
             var formData: [MultipartFormData] = []
             
-            print("🔍 ChatAPI - 전송 파라미터:")
-            print("  - chatRoomId: \(chatRoomId?.description ?? "nil")")
-            print("  - message: \(message)")
-            print("  - imageData: \(imageData?.count ?? 0) bytes")
+            DebugLogger.log("ChatAPI - 전송 파라미터:")
+            DebugLogger.log("  - chatRoomId: \(chatRoomId?.description ?? "nil")")
+            DebugLogger.log("  - message: \(message)")
+            DebugLogger.log("  - imageData: \(imageData?.count ?? 0) bytes")
             
             // message는 필수
             formData.append(MultipartFormData(provider: .data(message.data(using: .utf8)!), name: "message"))
@@ -60,9 +60,9 @@ extension ChatAPI: TargetType {
                 formData.append(MultipartFormData(provider: .data("\(chatRoomId)".data(using: .utf8)!), name: "chatRoomId"))
             }
             
-            // 🔍 이미지 바이너리 데이터가 있을 때만 추가
+            // 이미지 바이너리 데이터가 있을 때만 추가
             if let imageData = imageData, !imageData.isEmpty {
-                print("  - 이미지 바이너리 추가: \(imageData.count) bytes")
+                DebugLogger.log("  - 이미지 바이너리 추가: \(imageData.count) bytes")
                 formData.append(MultipartFormData(
                     provider: .data(imageData),
                     name: "image",
@@ -70,10 +70,10 @@ extension ChatAPI: TargetType {
                     mimeType: "image/jpeg"
                 ))
             } else {
-                print("  - 이미지 없음: image 필드 제외")
+                DebugLogger.log("  - 이미지 없음: image 필드 제외")
             }
             
-            print("  - FormData 항목 수: \(formData.count)")
+            DebugLogger.log("  - FormData 항목 수: \(formData.count)")
             
             return .uploadMultipart(formData)
             
@@ -101,9 +101,9 @@ extension ChatAPI: TargetType {
         
         if let accessToken = KeyChainManager.shared.readAccessToken() {
             headers["Authorization"] = "Bearer \(accessToken)"
-            print("🔍 Authorization 헤더 설정됨")
+            DebugLogger.log("Authorization 헤더 설정됨")
         } else {
-            print("⚠️ accessToken 없음: 인증이 필요한 요청입니다.")
+            DebugLogger.warning("accessToken 없음: 인증이 필요한 요청입니다.")
         }
         
         return headers

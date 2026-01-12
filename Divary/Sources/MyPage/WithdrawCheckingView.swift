@@ -35,7 +35,7 @@ final class WithdrawCheckingViewModel: ObservableObject {
                 
                 switch result {
                 case .success(let response):
-                    print("✅ 회원 탈퇴 성공: 삭제 예정일 - \(response.scheduledDeletionAt)")
+                    DebugLogger.success("회원 탈퇴 성공: 삭제 예정일 - \(response.scheduledDeletionAt)")
                     
                     // 저장된 토큰 및 사용자 정보 삭제
                     self.clearUserData()
@@ -44,7 +44,7 @@ final class WithdrawCheckingViewModel: ObservableObject {
                     self.showWithdrawView = true
                     
                 case .failure(let error):
-                    print("❌ 회원 탈퇴 실패: \(error.localizedDescription)")
+                    DebugLogger.error("회원 탈퇴 실패: \(error.localizedDescription)")
                     self.errorMessage = error.localizedDescription
                     
                     // 에러 알림 표시

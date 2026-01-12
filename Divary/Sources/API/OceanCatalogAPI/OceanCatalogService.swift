@@ -18,7 +18,7 @@ final class OceanCatalogService {
             makeTarget: { .getCardList(type: type) }
         )
         .handleEvents(receiveOutput: { response in
-            print("getCardList \(String(describing: type)) response:", response)
+            DebugLogger.log("getCardList \(String(describing: type)) response: \(response)")
         })
         .eraseToAnyPublisher()
         .extractData([CreatureCardDTO].self)
@@ -34,7 +34,7 @@ final class OceanCatalogService {
             makeTarget: { .getCardDetail(cardId: id) }
         )
         .handleEvents(receiveOutput: { response in
-            print("getCardDetail response:", response)
+            DebugLogger.log("getCardDetail response: \(response)")
         })
         .eraseToAnyPublisher()
         .extractData(CreatureDetailDTO.self, using: decoder)

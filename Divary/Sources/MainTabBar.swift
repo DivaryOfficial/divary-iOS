@@ -53,7 +53,7 @@ struct MainTabbarView: View {
     private func tabButton(title: String, selectedImage: String, nonSelectedImage: String) -> some View {
         Button {
             container.selectedTab = title
-            print("탭 선택됨: \(title)")
+            DebugLogger.log("탭 선택됨: \(title)")
         } label: {
             VStack(spacing: 0) {
                 Image(container.selectedTab == title ? selectedImage : nonSelectedImage)

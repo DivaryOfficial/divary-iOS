@@ -39,7 +39,7 @@ final class MyLicenseViewModel: ObservableObject {
     
     /// 1. 뷰가 나타날 때, 기존에 등록된 라이센스를 불러옵니다.
     func fetchLicense(showLoading: Bool = true) {
-        print("🚀 fetchLicense 호출")
+        DebugLogger.info("fetchLicense 호출")
         if showLoading {
             isLoading = true
             licenseImage = nil // 로드 시작 시, 이전 이미지를 초기화
@@ -51,7 +51,7 @@ final class MyLicenseViewModel: ObservableObject {
         memberService.getLicense()
             .flatMap { [weak self] response -> AnyPublisher<UIImage?, Error> in
                 // .getLicense는 성공. 이제 URL에서 이미지를 다운로드합니다.
-                print("✅ getLicense 성공: \(response.url)")
+                DebugLogger.success("getLicense 성공: \(response.url)")
                 return self?.downloadImagePublisher(from: response.url)
                     // 만약 self가 nil이면, 빈 Publisher를 반환하여 체인을 중단시킵니다.
                     ?? Empty<UIImage?, Error>(completeImmediately: true).eraseToAnyPublisher()
@@ -60,7 +60,7 @@ final class MyLicenseViewModel: ObservableObject {
             .sink(receiveCompletion: { [weak self] completion in
                 if showLoading { self?.isLoading = false }
                 if case .failure(let error) = completion {
-                    print("⛔️ fetchLicense (또는 download) 에러: \(error.localizedDescription)")
+                    DebugLogger.error("fetchLicense (또는 download) 에러: \(error.localizedDescription)")
                     // 404 등 에러 -> 등록된 이미지 없음.
                     self?.licenseImage = nil
                     self?.showSourceMenu = false // "+" 버튼 표시
@@ -77,7 +77,7 @@ final class MyLicenseViewModel: ObservableObject {
     func uploadLicense(image: UIImage) {
         // 이미지를 고화질 JPEG 데이터로 압축
         guard let imageData = image.jpegData(compressionQuality: 0.7) else {
-            print("⛔️ 이미지 JPEG 데이터 변환 실패")
+            DebugLogger.error("이미지 JPEG 데이터 변환 실패")
             return
         }
         
@@ -85,20 +85,20 @@ final class MyLicenseViewModel: ObservableObject {
         let fileName = "license_\(UUID().uuidString).jpg"
         let mimeType = "image/jpeg"
         
-        print("🚀 uploadLicense 호출: \(fileName)")
+        DebugLogger.info("uploadLicense 호출: \(fileName)")
         isLoading = true
         
         memberService.uploadLicense(image: imageData, fileName: fileName, mimeType: mimeType)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { [weak self] completion in
                 if case .failure(let error) = completion {
-                    print("⛔️ uploadLicense 에러: \(error.localizedDescription)")
+                    DebugLogger.error("uploadLicense 에러: \(error.localizedDescription)")
                     self?.isLoading = false // 실패 시 즉시 로딩 끔
                     self?.fetchLicense(showLoading: false) // 로딩 없이 조용히 롤백
                 }
             }, receiveValue: { [weak self] response in
                 guard let self = self else { return }
-                print("✅ uploadLicense 성공: \(response.url)")
+                DebugLogger.success("uploadLicense 성공: \(response.url)")
                 // 업로드 성공. 뷰의 이미지를 방금 업로드한 것으로 확정.
                 // (이미 UI는 업데이트 되었으므로) 메뉴만 닫음.
                 self.licenseImage = image // 방금 업로드한 이미지로 확정
@@ -113,11 +113,11 @@ final class MyLicenseViewModel: ObservableObject {
     /// 3. 이미지 URL 문자열을 UIImage로 변환하는 헬퍼 Publisher
     private func downloadImagePublisher(from urlString: String) -> AnyPublisher<UIImage?, Error> {
         guard let url = URL(string: urlString) else {
-            print("⛔️ 잘못된 이미지 URL: \(urlString)")
+            DebugLogger.error("잘못된 이미지 URL: \(urlString)")
             return Fail(error: URLError(.badURL)).eraseToAnyPublisher()
         }
         
-        print("⬇️ 이미지 다운로드 시작: \(url)")
+        DebugLogger.log("이미지 다운로드 시작: \(url)")
         let weakSelf = self
         
         // URLSession의 dataTaskPublisher 사용

@@ -340,9 +340,9 @@ struct CalenderView: View {
                 switch result {
                 case .success(let logs):
                     self.existingLogDates = Set(logs.map { $0.date })
-                    print("📅 로드된 로그 날짜들: \(self.existingLogDates)")
+                    DebugLogger.log("로드된 로그 날짜들: \(self.existingLogDates)")
                 case .failure(let error):
-                    print("❌ 로그 로드 실패: \(error.localizedDescription)")
+                    DebugLogger.error("로그 로드 실패: \(error.localizedDescription)")
                 }
             }
         }

@@ -38,7 +38,7 @@ final class MyPageMainViewModel: ObservableObject {
         memberService.getProfile()
             .sink(receiveCompletion: { [weak self] completion in
                 if case .failure(let error) = completion {
-                    print("⛔️ MyPageMain/getProfile 에러: \(error.localizedDescription)")
+                    DebugLogger.error("MyPageMain/getProfile 에러: \(error.localizedDescription)")
                     self?.userId = "에러 발생"
                     self?.licenseSummary = "정보를 불러오지 못했습니다."
                 }
@@ -53,7 +53,7 @@ final class MyPageMainViewModel: ObservableObject {
                 self.userId = profile.id
                 self.licenseSummary = "\(profile.memberGroup ?? "미설정") \(levelString) / 총 다이빙 횟수: \(profile.accumulations)회"
                 
-                print("✅ 마이페이지 프로필 로드 성공")
+                DebugLogger.success("마이페이지 프로필 로드 성공")
             })
             .store(in: &cancellables)
     }
@@ -61,7 +61,7 @@ final class MyPageMainViewModel: ObservableObject {
     func logout() {
         // 저장된 socialType 가져오기
         guard let socialType = KeyChainManager.shared.read(forKey: KeyChainKey.socialType) else {
-            print("❌ socialType이 없습니다. 강제 로그아웃 처리")
+            DebugLogger.error("socialType이 없습니다. 강제 로그아웃 처리")
             clearUserDataAndNavigateToLogin()
             return
         }
@@ -76,11 +76,11 @@ final class MyPageMainViewModel: ObservableObject {
                 
                 switch result {
                 case .success:
-                    print("✅ 로그아웃 성공")
+                    DebugLogger.success("로그아웃 성공")
                     self.clearUserDataAndNavigateToLogin()
                     
                 case .failure(let error):
-                    print("❌ 로그아웃 실패: \(error.localizedDescription)")
+                    DebugLogger.error("로그아웃 실패: \(error.localizedDescription)")
                     // 실패해도 로컬 데이터는 삭제하고 로그인 화면으로
                     self.clearUserDataAndNavigateToLogin()
                 }

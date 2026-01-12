@@ -107,7 +107,7 @@ class DiaryMainViewModel: Hashable {
             .sink { [weak self] comp in
                 self?.isLoading = false
                 if case let .failure(err) = comp {
-                    print("❌ getDiary error:", err)
+                    DebugLogger.error("getDiary error: \(err)")
                     Task { @MainActor in
                         self?.hasDiary = false // 생성 POST 으로
                     }
@@ -157,7 +157,7 @@ class DiaryMainViewModel: Hashable {
                     if case let .image(f) = $0.content { return f.tempFilename } else { return nil }
                 }).first, let u = URL(string: s) {
                     URLSession.shared.dataTask(with: u) { _, resp, err in
-                        print("🔎 IMG resp:", (resp as? HTTPURLResponse)?.statusCode ?? -1, "err:", err as Any)
+                        DebugLogger.log("IMG resp: \((resp as? HTTPURLResponse)?.statusCode ?? -1), err: \(err as Any)")
                     }.resume()
                 }
 
@@ -174,11 +174,11 @@ class DiaryMainViewModel: Hashable {
         self.blocks = newBlocks
         self.recomputeCanSave()
         self.hasUnsavedChanges = false
-        // 🔎 디버그: 첫 이미지 URL 확인
+        // 디버그: 첫 이미지 URL 확인
         if case let .image(f)? = self.blocks.first?.content {
-            print("🖼 tempFilename:", f.tempFilename ?? "nil")
+            DebugLogger.log("tempFilename: \(f.tempFilename ?? "nil")")
         }
-        print("✅ blocks:", blocks.count, "drawing:", savedDrawing != nil)
+        DebugLogger.success("blocks: \(blocks.count), drawing: \(savedDrawing != nil)")
     }
 
     // frameColor: 서버는 "0","1",... 문자열 → 앱 enum으로 변환
@@ -229,7 +229,7 @@ class DiaryMainViewModel: Hashable {
              commitEditingTextBlock()
         }
         guard canSave else {
-            print("⚠️ 저장 불가: 이미지 업로드 미완료 또는 토큰/서비스 없음")
+            DebugLogger.warning("저장 불가: 이미지 업로드 미완료 또는 토큰/서비스 없음")
             return
         }
         guard let diaryService, let token else { return }
@@ -244,13 +244,13 @@ class DiaryMainViewModel: Hashable {
         pub
             .receive(on: DispatchQueue.main)
             .sink { comp in
-                if case let .failure(err) = comp { print("❌ manualSave error:", err) }
+                if case let .failure(err) = comp { DebugLogger.error("manualSave error: \(err)") }
             } receiveValue: { [weak self] dto in
                 Task { @MainActor in
                     self?.applyServerDiary(dto)  // 서버 정규화 반영
                     self?.hasDiary = true        // 최초 생성 후엔 항상 PUT
                 }
-                print("✅ 저장 완료")
+                DebugLogger.success("저장 완료")
             }
             .store(in: &bag)
     }
@@ -312,7 +312,7 @@ class DiaryMainViewModel: Hashable {
                     .receive(on: DispatchQueue.main)
                     .sink { comp in
                         if case let .failure(err) = comp {
-                            print("❌ uploadTemp (edit) error:", err)
+                            DebugLogger.error("uploadTemp (edit) error: \(err)")
                         }
                     } receiveValue: { [weak self] url in
                         newContent.tempFilename = url
@@ -350,7 +350,7 @@ class DiaryMainViewModel: Hashable {
                 }
             }
         } catch {
-            print("extractPhotoDate error: \(error)")
+            DebugLogger.error("extractPhotoDate error: \(error)")
         }
         return nil
     }
@@ -418,7 +418,7 @@ class DiaryMainViewModel: Hashable {
                     .map { $0.first?.fileUrl ?? "" }
                     .receive(on: DispatchQueue.main)
                     .sink { comp in
-                        if case let .failure(err) = comp { print("❌ uploadTemp error:", err) }
+                        if case let .failure(err) = comp { DebugLogger.error("uploadTemp error: \(err)") }
                     } receiveValue: { [weak self] url in
                         image.tempFilename = url
                         self?.recomputeCanSave() // 업로드 후 재계산

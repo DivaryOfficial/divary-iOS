@@ -86,7 +86,7 @@ struct ChatInputBar: View {
         showPhotoOptions: .constant(false),
         selectedImage: .constant(nil),
         onSendMessage: {
-            print("메시지 전송")
+            DebugLogger.log("메시지 전송")
         }
     )
 }

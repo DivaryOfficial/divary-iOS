@@ -118,7 +118,7 @@ struct ChatHistoryView: View {
                     self.chatRooms = chatRoomDTOs.map { ChatRoom(from: $0) }
                     
                 case .failure(let error):
-                    print("채팅방 목록 로드 실패: \(error)")
+                    DebugLogger.error("채팅방 목록 로드 실패: \(error)")
                     // 에러 발생시 Mock 데이터 사용
                     self.chatRooms = MockData.chatRooms
                 }
@@ -141,7 +141,7 @@ struct ChatHistoryView: View {
                     chatRooms.removeAll { $0.id == room.id }
                     
                 case .failure(let error):
-                    print("채팅방 삭제 실패: \(error)")
+                    DebugLogger.error("채팅방 삭제 실패: \(error)")
                     // 에러 처리 필요시 여기에 추가
                 }
             }
@@ -162,7 +162,7 @@ struct ChatHistoryView: View {
                     loadChatRooms() // 목록 새로고침
                     
                 case .failure(let error):
-                    print("채팅방 제목 변경 실패: \(error)")
+                    DebugLogger.error("채팅방 제목 변경 실패: \(error)")
                 }
             }
         }

@@ -12,7 +12,8 @@ let project = Project(
     settings: .settings(
         base: [
             "GOOGLE_CLIENT_ID": "$(GOOGLE_CLIENT_ID)",
-            "GOOGLE_URL_SCHEME": "$(GOOGLE_URL_SCHEME)"
+            "GOOGLE_URL_SCHEME": "$(GOOGLE_URL_SCHEME)",
+            "MARKETING_VERSION": "1.1",       // 버전 (CFBundleShortVersionString)
         ],
         configurations: [
             .debug(
@@ -33,14 +34,19 @@ let project = Project(
             bundleId: "io.tuist.DivaryOfficial",
             infoPlist: .extendingDefault(
                 with: [
+                    "CFBundleShortVersionString": "$(MARKETING_VERSION)",
                     "CFBundleIconName": "AppIcon",
                     "UILaunchScreen": [:],
                     "UISupportedInterfaceOrientations": ["UIInterfaceOrientationPortrait"],
+                    
                     "API_URL": "$(API_URL)",
                     "GOOGLE_CLIENT_ID": "$(GOOGLE_CLIENT_ID)",
                     "CFBundleURLTypes": [["CFBundleURLSchemes": ["$(GOOGLE_URL_SCHEME)"]]],
+                    
                     "UIUserInterfaceStyle": "Light",
-                    "NSLocationWhenInUseUsageDescription": "주변 장소를 검색하기 위해 위치 정보가 필요합니다."
+                    
+                    "NSLocationWhenInUseUsageDescription": "주변 장소를 검색하기 위해 위치 정보가 필요합니다.",
+                    
                 ]
             ),
             sources: ["Divary/Sources/**"],

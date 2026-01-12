@@ -40,7 +40,7 @@ class LogBookDataManager {
                 case .failure(let error):
                     self?.errorMessage = error.localizedDescription
                     completion(.failure(error))
-                    print("❌ 로그 리스트 조회 실패: \(error)")
+                    DebugLogger.error("로그 리스트 조회 실패: \(error)")
                 }
             }
         }
@@ -73,11 +73,11 @@ class LogBookDataManager {
                 case .failure(let error):
                     // 서버 에러인 경우 임시 로그베이스 생성하여 반환
                     if let apiError = error as? LogBookAPIError, apiError.statusCode == 500 {
-                        print("⚠️ 서버 에러로 인해 임시 로그베이스 생성은 이제 안 할 거임: \(logBaseInfoId)")
+                        DebugLogger.warning("서버 에러로 인해 임시 로그베이스 생성은 이제 안 할 거임: \(logBaseInfoId)")
                         //self?.createTemporaryLogBase(logBaseInfoId: logBaseInfoId, completion: completion)
                     } else {
                         completion(.failure(error))
-                        print("❌ 로그베이스 상세 조회 실패: \(error)")
+                        DebugLogger.error("로그베이스 상세 조회 실패: \(error)")
                     }
                 }
             }
@@ -92,7 +92,7 @@ class LogBookDataManager {
         
         // ✅ 중복 생성 방지: 같은 날짜로 이미 생성 중인지 확인
         if isCreatingLogBase && creatingLogBaseForDate == dateString {
-            print("⚠️ 같은 날짜(\(dateString))로 이미 로그베이스 생성 중이므로 요청 무시")
+            DebugLogger.warning("같은 날짜(\(dateString))로 이미 로그베이스 생성 중이므로 요청 무시")
             let error = NSError(domain: "DuplicateCreation", code: -1, userInfo: [NSLocalizedDescriptionKey: "이미 같은 날짜로 로그를 생성 중입니다."])
             completion(.failure(error))
             return
@@ -102,7 +102,7 @@ class LogBookDataManager {
         isCreatingLogBase = true
         creatingLogBaseForDate = dateString
         
-        print("🚀 데이터매니저의 로그베이스 생성 시작: \(name), 날짜: \(dateString)")
+        DebugLogger.info("데이터매니저의 로그베이스 생성 시작: \(name), 날짜: \(dateString)")
         
         service.createLogBase(iconType: iconType.rawValue, name: name, date: dateString) { [weak self] result in
             DispatchQueue.main.async {
@@ -114,7 +114,7 @@ class LogBookDataManager {
                 case .success(let createResponse):
                     let logBaseInfoId = createResponse.logBaseInfoId
                     
-                    print("✅ 로그베이스 생성 성공: logBaseInfoId=\(logBaseInfoId)")
+                    DebugLogger.success("로그베이스 생성 성공: logBaseInfoId=\(logBaseInfoId)")
                     
                     // ✅ 빈 로그북 1개만 생성
                     self?.createOneEmptyLogBook(
@@ -130,7 +130,7 @@ class LogBookDataManager {
                             
                         case .failure(let error):
                             // 빈 로그북 생성 실패해도 로그베이스는 생성되었으므로 캐시에 추가
-                            print("⚠️ 빈 로그북 생성 실패했지만 로그베이스는 생성됨: \(error)")
+                            DebugLogger.warning("빈 로그북 생성 실패했지만 로그베이스는 생성됨: \(error)")
                             let newLogBase = LogBookBase(
                                 id: String(logBaseInfoId),
                                 logBaseInfoId: logBaseInfoId,
@@ -147,7 +147,7 @@ class LogBookDataManager {
                     }
                     
                 case .failure(let error):
-                    print("❌ 로그베이스 생성 실패: \(error)")
+                    DebugLogger.error("로그베이스 생성 실패: \(error)")
                     completion(.failure(error))
                 }
             }
@@ -168,7 +168,7 @@ class LogBookDataManager {
             DispatchQueue.main.async {
                 switch result {
                 case .success(let response):
-                    print("✅ 빈 로그북 1개 생성 성공: logBookId=\(response.logBookId)")
+                    DebugLogger.success("빈 로그북 1개 생성 성공: logBookId=\(response.logBookId)")
                     
                     // 빈 로그북 1개로 로그베이스 생성
                     let emptyLogBook = LogBook(
@@ -193,7 +193,7 @@ class LogBookDataManager {
                     completion(.success(()))
                     
                 case .failure(let error):
-                    print("❌ 빈 로그북 생성 실패: \(error)")
+                    DebugLogger.error("빈 로그북 생성 실패: \(error)")
                     completion(.failure(error))
                 }
             }
@@ -227,11 +227,11 @@ class LogBookDataManager {
                     }
                     
                     completion(.success(response.logBookId))
-                    print("✅ 새 로그북 추가 성공: logBookId=\(response.logBookId)")
+                    DebugLogger.success("새 로그북 추가 성공: logBookId=\(response.logBookId)")
                     
                 case .failure(let error):
                     completion(.failure(error))
-                    print("❌ 새 로그북 추가 실패: \(error)")
+                    DebugLogger.error("새 로그북 추가 실패: \(error)")
                 }
             }
         }
@@ -249,7 +249,7 @@ class LogBookDataManager {
                     
                 case .failure(let error):
                     completion(.failure(error))
-                    print("❌ 로그베이스 삭제 실패: \(error)")
+                    DebugLogger.error("로그베이스 삭제 실패: \(error)")
                 }
             }
         }
@@ -267,7 +267,7 @@ class LogBookDataManager {
                     
                 case .failure(let error):
                     completion(.failure(error))
-                    print("❌ 로그 존재 확인 실패: \(error)")
+                    DebugLogger.error("로그 존재 확인 실패: \(error)")
                 }
             }
         }
@@ -295,7 +295,7 @@ class LogBookDataManager {
     // 오프라인 로그베이스 추가
     func addOfflineLogBase(_ logBase: LogBookBase) {
         logBookBases.append(logBase)
-        print("📱 오프라인 로그베이스 캐시에 추가: \(logBase.id)")
+        DebugLogger.log("오프라인 로그베이스 캐시에 추가: \(logBase.id)")
     }
     
     // 오프라인 로그베이스들 동기화 (서버 복구 시 호출)
@@ -314,10 +314,10 @@ class LogBookDataManager {
                     // 성공하면 오프라인 로그 제거하고 새 로그로 교체
                     DispatchQueue.main.async {
                         self?.logBookBases.removeAll { $0.id == offlineLogBase.id }
-                        print("✅ 오프라인 로그 동기화 완료: \(offlineLogBase.id) -> \(newLogBaseId)")
+                        DebugLogger.success("오프라인 로그 동기화 완료: \(offlineLogBase.id) -> \(newLogBaseId)")
                     }
                 case .failure(let error):
-                    print("❌ 오프라인 로그 동기화 실패: \(error)")
+                    DebugLogger.error("오프라인 로그 동기화 실패: \(error)")
                 }
             }
         }

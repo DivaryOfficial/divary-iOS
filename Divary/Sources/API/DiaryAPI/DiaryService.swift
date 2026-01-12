@@ -40,7 +40,7 @@ final class LogDiaryService: LogDiaryServicing {
         )
         .handleEvents(receiveOutput: { res in
             if let t = String(data: res.data, encoding: .utf8) {
-                print("📒 GET diary response:", t)
+                DebugLogger.log("GET diary response: \(t)")
             }
         })
         .eraseToAnyPublisher()
@@ -54,7 +54,7 @@ final class LogDiaryService: LogDiaryServicing {
         )
         .handleEvents(receiveOutput: { res in
             if let t = String(data: res.data, encoding: .utf8) {
-                print("✏️ PUT diary response:", t)
+                DebugLogger.log("PUT diary response: \(t)")
             }
         })
         .eraseToAnyPublisher()
@@ -68,7 +68,7 @@ final class LogDiaryService: LogDiaryServicing {
         )
         .handleEvents(receiveOutput: { res in
             if let t = String(data: res.data, encoding: .utf8) {
-                print("🆕 POST diary response:", t)
+                DebugLogger.log("POST diary response: \(t)")
             }
         })
         .eraseToAnyPublisher()

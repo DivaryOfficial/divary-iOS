@@ -74,12 +74,12 @@ class CharacterViewModel: Equatable, Hashable {
                 switch result {
                 case .success(let avatarResponse):
                     self?.convertResponseToCustomization(avatarResponse)
-                    print(avatarResponse)
-                    print("아바타 불러오기 성공")
+                    DebugLogger.log("\(avatarResponse)")
+                    DebugLogger.success("아바타 불러오기 성공")
                     
                 case .failure(let error):
                     self?.errorMessage = "아바타를 불러오는데 실패했습니다: \(error.localizedDescription)"
-                    print("아바타 불러오기 실패: \(error)")
+                    DebugLogger.error("아바타 불러오기 실패: \(error)")
                     // 실패 시 기본 아바타 설정
                     self?.setDefaultAvatar()
                 }
@@ -105,13 +105,13 @@ class CharacterViewModel: Equatable, Hashable {
                 switch result {
                 case .success(_):
                     // 저장 성공 시, 서버 응답으로 완전히 덮어쓰지 않고 현재 상태 유지
-                    print("아바타 저장 성공")
-                    print(avatarRequest)
+                    DebugLogger.success("아바타 저장 성공")
+                    DebugLogger.log("\(avatarRequest)")
                 case .failure(let error):
                     self?.errorMessage = "아바타 저장에 실패했습니다: \(error.localizedDescription)"
-                    print("전송한 데이터:")
+                    DebugLogger.log("전송한 데이터:")
                     self?.printRequestData(avatarRequest)
-                    print("아바타 저장 실패: \(error)")
+                    DebugLogger.error("아바타 저장 실패: \(error)")
                 }
             }
         }
@@ -166,11 +166,11 @@ class CharacterViewModel: Equatable, Hashable {
             speechText: response.bubbleText
         )
         
-        print("서버 응답 변환 완료:")
-        print("  - 이름: \(response.name ?? "없음")")
-        print("  - 배경: \(response.theme ?? "없음") -> \(background.rawValue)")
-        print("  - 몸통: \(response.bodyColor ?? "없음") -> \(body.rawValue)")
-        print("  - 펫: \(response.buddyPetInfo?.budyPet ?? "없음") -> \(pet.type.rawValue)")
+        DebugLogger.log("서버 응답 변환 완료:")
+        DebugLogger.log("  - 이름: \(response.name ?? "없음")")
+        DebugLogger.log("  - 배경: \(response.theme ?? "없음") -> \(background.rawValue)")
+        DebugLogger.log("  - 몸통: \(response.bodyColor ?? "없음") -> \(body.rawValue)")
+        DebugLogger.log("  - 펫: \(response.buddyPetInfo?.budyPet ?? "없음") -> \(pet.type.rawValue)")
     }
     
     /// CharacterCustomization을 AvatarRequestDTO로 변환
@@ -204,10 +204,10 @@ class CharacterViewModel: Equatable, Hashable {
             theme: customization.background.serverValue
         )
         
-        print("클라이언트 데이터 변환 완료:")
-        print("  - 배경: \(customization.background.rawValue) -> \(request.theme)")
-        print("  - 몸통: \(customization.body.rawValue) -> \(request.bodyColor)")
-        print("  - 펫: \(customization.pet.type.rawValue) -> \(buddyPetInfo?.budyPet ?? "nil")")
+        DebugLogger.log("클라이언트 데이터 변환 완료:")
+        DebugLogger.log("  - 배경: \(customization.background.rawValue) -> \(request.theme)")
+        DebugLogger.log("  - 몸통: \(customization.body.rawValue) -> \(request.bodyColor)")
+        DebugLogger.log("  - 펫: \(customization.pet.type.rawValue) -> \(buddyPetInfo?.budyPet ?? "nil")")
         
         return request
     }
@@ -227,14 +227,14 @@ class CharacterViewModel: Equatable, Hashable {
             speechBubble: .none,
             speechText: nil
         )
-        print("기본 아바타로 설정됨")
+        DebugLogger.log("기본 아바타로 설정됨")
     }
     
     /// 요청 데이터 디버그 출력
     private func printRequestData(_ request: AvatarRequestDTO) {
         if let jsonData = try? JSONEncoder().encode(request),
            let jsonString = String(data: jsonData, encoding: .utf8) {
-            print("아바타 저장 요청 데이터: \(jsonString)")
+            DebugLogger.log("아바타 저장 요청 데이터: \(jsonString)")
         }
     }
 

@@ -110,13 +110,13 @@ struct ChatRoomRowView: View {
     ChatRoomRowView(
         room: ChatRoom(name: "바다거북 질문"),
         onTap: {
-            print("채팅방 선택")
+            DebugLogger.log("채팅방 선택")
         },
         onDelete: {
-            print("채팅방 삭제")
+            DebugLogger.log("채팅방 삭제")
         },
         onEdit: { newTitle in
-            print("제목 변경: \(newTitle)")
+            DebugLogger.log("제목 변경: \(newTitle)")
         }
     )
 }

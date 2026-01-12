@@ -24,9 +24,9 @@ struct MyPageMainView: View {
     }
 
     // 액션 콜백들
-    var onTapEditProfile: () -> Void = {print("편집버튼")}
+    var onTapEditProfile: () -> Void = { DebugLogger.log("편집버튼") }
     var onTapBell: () -> Void = {}
-    var onTapLicense: () -> Void = {print("라이선스버튼")}
+    var onTapLicense: () -> Void = { DebugLogger.log("라이선스버튼") }
     var onTapLogs: () -> Void = {}
     var onTapDrafts: () -> Void = {}
     var onTapFriends: () -> Void = {}

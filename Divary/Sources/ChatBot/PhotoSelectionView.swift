@@ -31,7 +31,7 @@ struct PhotoSelectionView: View {
             }
             
 //            Button(action: {
-//                print("카메라 버튼 클릭")
+//                DebugLogger.log("카메라 버튼 클릭")
 //                // 카메라 로직은 나중에 구현
 //            }) {
 //                VStack(spacing: 8) {

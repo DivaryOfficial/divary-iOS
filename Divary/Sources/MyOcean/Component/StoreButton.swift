@@ -21,7 +21,7 @@ struct StoreButton: View {
     var body: some View {
         Button(action: {
             container.router.push(.Store(viewModel: viewModel))
-            print("상점 버튼 클릭")
+            DebugLogger.log("상점 버튼 클릭")
         }) {
             Image("storeIcon")
                 .resizable()

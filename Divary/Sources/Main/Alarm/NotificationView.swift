@@ -22,6 +22,7 @@ struct NotificationItem: Identifiable {
 @Observable
 class NotificationManager {
     var notifications: [NotificationItem] = [
+        /* 알림 기능 구현 전까지 주석 처리
         NotificationItem(
             icon: "mysea",
             category: "나의 바다",
@@ -38,6 +39,7 @@ class NotificationManager {
             timeAgo: "어제",
             isRead: false
         )
+         */
     ]
     
     var unreadCount: Int {
