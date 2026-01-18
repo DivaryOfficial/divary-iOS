@@ -17,8 +17,8 @@ struct MainTabbarView: View {
                 switch container.selectedTab {
                 case "기록":
                     MainWrapperView()
-                case "챗봇":
-                    ChatBotView()
+                case "나의바다":
+                    CharacterViewWrapper()
                 case "해양도감":
                     OceanCatalogView()
                 case "My":
@@ -34,9 +34,9 @@ struct MainTabbarView: View {
                 tabButton(title: "기록", selectedImage: "Property 1=Clicked-1", nonSelectedImage: "Property 1=Default-1")
                 Spacer()
                 Button {
-                    container.router.push(.chatBot)
+                    container.router.push(.CharacterViewWrapper)
                 } label: {
-                    Image(container.selectedTab == "챗봇" ? "Property 1=Clicked-2" : "Property 1=Default-2")
+                    Image(container.selectedTab == "나의바다" ? "Property 1=Default-2" : "Property 1=Default-2")
                 }
                 Spacer()
                 tabButton(title: "해양도감", selectedImage: "Property 1=Clicked-3", nonSelectedImage: "Property 1=Default-3")

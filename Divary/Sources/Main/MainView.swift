@@ -145,13 +145,6 @@ struct MainView: View {
             HStack {
                 Spacer()
                 
-                Button {
-                    container.router.push(.CharacterViewWrapper)
-                } label: {
-                    Image("seashell")
-                        .foregroundStyle(.black)
-                }
-                
                 ZStack {
                     Button {
                         container.router.push(.notifications)
