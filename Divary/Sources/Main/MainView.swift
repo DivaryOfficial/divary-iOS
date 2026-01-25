@@ -18,7 +18,7 @@ struct MainWrapperView: View {
 struct MainView: View {
     @Environment(\.diContainer) private var container
 
-    @State private var selectedYear: Int = 2025
+    @State private var selectedYear: Int = Calendar.current.component(.year, from: Date())
     @State private var showDeletePopup = false
 
     // 삭제 팝업용으로만 사용하는 선택값
@@ -45,8 +45,12 @@ struct MainView: View {
         return dataManager.logBookBases.first(where: { $0.id == id })
     }
 
+    private var currentYear: Int {
+        Calendar.current.component(.year, from: Date())
+    }
+    
     private var canSubYear: Bool { selectedYear > 1950 }
-    private var canAddYear: Bool { selectedYear < Calendar.current.component(.year, from: Date()) }
+    private var canAddYear: Bool { selectedYear < currentYear }
 
     var body: some View {
         ZStack {
