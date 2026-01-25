@@ -49,8 +49,8 @@ struct OverViewInputView: View {
                         
                         // 다이빙 포인트
                         TextInputField(
-                            title: "내용을 입력하세요.",
-                            placeholder: "ex) 문섬",
+                            title: "다이빙 포인트",
+                            placeholder: "내용을 입력하세요.",
                             unit: "",
                             value: $overview.point
                         )
