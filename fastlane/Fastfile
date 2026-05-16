@@ -59,11 +59,12 @@ platform :ios do
       }
     )
 
-    upload_to_testflight(
-      api_key: api_key,
-      distribute_external: false,
-      skip_waiting_for_build_processing: true
-    )
+    sh("xcrun altool --upload-app" \
+       " -f #{lane_context[SharedValues::IPA_OUTPUT_PATH]}" \
+       " -t ios" \
+       " --apiKey #{ENV.fetch('APP_STORE_CONNECT_API_KEY_ID', '')}" \
+       " --apiIssuer #{ENV.fetch('APP_STORE_CONNECT_API_KEY_ISSUER_ID', '')}" \
+       " --apiKeyPath /tmp/AuthKey_raw.p8")
   end
 
   desc "Build and upload to TestFlight (external testers)"
@@ -87,11 +88,12 @@ platform :ios do
       }
     )
 
-    upload_to_testflight(
-      api_key: api_key,
-      distribute_external: true,
-      skip_waiting_for_build_processing: false
-    )
+    sh("xcrun altool --upload-app" \
+       " -f #{lane_context[SharedValues::IPA_OUTPUT_PATH]}" \
+       " -t ios" \
+       " --apiKey #{ENV.fetch('APP_STORE_CONNECT_API_KEY_ID', '')}" \
+       " --apiIssuer #{ENV.fetch('APP_STORE_CONNECT_API_KEY_ISSUER_ID', '')}" \
+       " --apiKeyPath /tmp/AuthKey_raw.p8")
   end
 
   desc "Build and submit to App Store"
@@ -115,12 +117,11 @@ platform :ios do
       }
     )
 
-    upload_to_app_store(
-      api_key: api_key,
-      skip_metadata: true,
-      skip_screenshots: true,
-      submit_for_review: false,
-      force: true
-    )
+    sh("xcrun altool --upload-app" \
+       " -f #{lane_context[SharedValues::IPA_OUTPUT_PATH]}" \
+       " -t ios" \
+       " --apiKey #{ENV.fetch('APP_STORE_CONNECT_API_KEY_ID', '')}" \
+       " --apiIssuer #{ENV.fetch('APP_STORE_CONNECT_API_KEY_ISSUER_ID', '')}" \
+       " --apiKeyPath /tmp/AuthKey_raw.p8")
   end
 end
