@@ -63,8 +63,7 @@ platform :ios do
        " -f #{lane_context[SharedValues::IPA_OUTPUT_PATH]}" \
        " -t ios" \
        " --apiKey #{ENV.fetch('APP_STORE_CONNECT_API_KEY_ID', '')}" \
-       " --apiIssuer #{ENV.fetch('APP_STORE_CONNECT_API_KEY_ISSUER_ID', '')}" \
-       " --apiKeyPath /tmp/AuthKey_raw.p8")
+       " --apiIssuer #{ENV.fetch('APP_STORE_CONNECT_API_KEY_ISSUER_ID', '')}")
   end
 
   desc "Build and upload to TestFlight (external testers)"
@@ -92,8 +91,7 @@ platform :ios do
        " -f #{lane_context[SharedValues::IPA_OUTPUT_PATH]}" \
        " -t ios" \
        " --apiKey #{ENV.fetch('APP_STORE_CONNECT_API_KEY_ID', '')}" \
-       " --apiIssuer #{ENV.fetch('APP_STORE_CONNECT_API_KEY_ISSUER_ID', '')}" \
-       " --apiKeyPath /tmp/AuthKey_raw.p8")
+       " --apiIssuer #{ENV.fetch('APP_STORE_CONNECT_API_KEY_ISSUER_ID', '')}")
   end
 
   desc "Build and submit to App Store"
@@ -121,7 +119,6 @@ platform :ios do
        " -f #{lane_context[SharedValues::IPA_OUTPUT_PATH]}" \
        " -t ios" \
        " --apiKey #{ENV.fetch('APP_STORE_CONNECT_API_KEY_ID', '')}" \
-       " --apiIssuer #{ENV.fetch('APP_STORE_CONNECT_API_KEY_ISSUER_ID', '')}" \
-       " --apiKeyPath /tmp/AuthKey_raw.p8")
+       " --apiIssuer #{ENV.fetch('APP_STORE_CONNECT_API_KEY_ISSUER_ID', '')}")
   end
 end
