@@ -27,11 +27,17 @@ jobs:
       - name: Install mise
         uses: jdx/mise-action@v2
 
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+      - name: Cache gems
+        uses: actions/cache@v4
         with:
-          ruby-version: "3.1"
-          bundler-cache: true
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('Gemfile.lock') }}
+
+      - name: Set up Ruby (Homebrew + OpenSSL)
+        run: |
+          brew install ruby@3.1
+          echo "/opt/homebrew/opt/ruby@3.1/bin" >> $GITHUB_PATH
+          gem install bundler:2.3.27 && bundle config set --local path vendor/bundle && bundle install
 
       - name: Create Secret.xcconfig
         env:
