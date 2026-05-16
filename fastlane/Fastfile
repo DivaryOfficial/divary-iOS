@@ -52,12 +52,10 @@ platform :ios do
       configuration: "Release",
       export_method: "app-store",
       output_directory: "build",
-      xcargs: "CURRENT_PROJECT_VERSION=#{ENV.fetch('BUILD_NUMBER', '1')} DEVELOPMENT_TEAM=9BSC3KRJ35 CODE_SIGN_STYLE=Manual",
+      xcargs: "CURRENT_PROJECT_VERSION=#{ENV.fetch('BUILD_NUMBER', '1')} DEVELOPMENT_TEAM=9BSC3KRJ35 -allowProvisioningUpdates -authenticationKeyPath #{API_KEY_PATH} -authenticationKeyID #{ENV.fetch('APP_STORE_CONNECT_API_KEY_ID', '')} -authenticationKeyIssuerID #{ENV.fetch('APP_STORE_CONNECT_API_KEY_ISSUER_ID', '')}",
       export_options: {
         method: "app-store",
-        provisioningProfiles: {
-          "io.tuist.DivaryOfficial" => "match AppStore io.tuist.DivaryOfficial"
-        }
+        signingStyle: "automatic"
       }
     )
 
@@ -82,12 +80,10 @@ platform :ios do
       configuration: "Release",
       export_method: "app-store",
       output_directory: "build",
-      xcargs: "CURRENT_PROJECT_VERSION=#{ENV.fetch('BUILD_NUMBER', '1')} DEVELOPMENT_TEAM=9BSC3KRJ35 CODE_SIGN_STYLE=Manual",
+      xcargs: "CURRENT_PROJECT_VERSION=#{ENV.fetch('BUILD_NUMBER', '1')} DEVELOPMENT_TEAM=9BSC3KRJ35 -allowProvisioningUpdates -authenticationKeyPath #{API_KEY_PATH} -authenticationKeyID #{ENV.fetch('APP_STORE_CONNECT_API_KEY_ID', '')} -authenticationKeyIssuerID #{ENV.fetch('APP_STORE_CONNECT_API_KEY_ISSUER_ID', '')}",
       export_options: {
         method: "app-store",
-        provisioningProfiles: {
-          "io.tuist.DivaryOfficial" => "match AppStore io.tuist.DivaryOfficial"
-        }
+        signingStyle: "automatic"
       }
     )
 
@@ -112,12 +108,10 @@ platform :ios do
       configuration: "Release",
       export_method: "app-store",
       output_directory: "build",
-      xcargs: "CURRENT_PROJECT_VERSION=#{ENV.fetch('BUILD_NUMBER', '1')} DEVELOPMENT_TEAM=9BSC3KRJ35 CODE_SIGN_STYLE=Manual",
+      xcargs: "CURRENT_PROJECT_VERSION=#{ENV.fetch('BUILD_NUMBER', '1')} DEVELOPMENT_TEAM=9BSC3KRJ35 -allowProvisioningUpdates -authenticationKeyPath #{API_KEY_PATH} -authenticationKeyID #{ENV.fetch('APP_STORE_CONNECT_API_KEY_ID', '')} -authenticationKeyIssuerID #{ENV.fetch('APP_STORE_CONNECT_API_KEY_ISSUER_ID', '')}",
       export_options: {
         method: "app-store",
-        provisioningProfiles: {
-          "io.tuist.DivaryOfficial" => "match AppStore io.tuist.DivaryOfficial"
-        }
+        signingStyle: "automatic"
       }
     )
 
