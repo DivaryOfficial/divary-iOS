@@ -26,17 +26,11 @@ jobs:
       - name: Install mise
         uses: jdx/mise-action@v2
 
-      - name: Cache gems
-        uses: actions/cache@v4
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
         with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('Gemfile.lock') }}
-
-      - name: Set up Ruby (Homebrew + OpenSSL)
-        run: |
-          brew install ruby@3.1
-          echo "/opt/homebrew/opt/ruby@3.1/bin" >> $GITHUB_PATH
-          gem install bundler:2.3.27 && bundle config set --local path vendor/bundle && bundle install
+          ruby-version: "3.3"
+          bundler-cache: true
 
       - name: Create Secret.xcconfig
         env:
@@ -51,13 +45,14 @@ jobs:
           GOOGLE_URL_SCHEME = ${GOOGLE_URL_SCHEME}
           EOF
 
-      - name: Decode API Key (LibreSSL 호환 변환)
+      - name: Decode API Key
         env:
           APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
         run: |
           echo "$APP_STORE_CONNECT_API_KEY_CONTENT" | base64 --decode > /tmp/AuthKey_raw.p8
-          /opt/homebrew/opt/openssl@3/bin/openssl ec -in /tmp/AuthKey_raw.p8 -out /tmp/AuthKey.p8 2>/dev/null \
-            || cp /tmp/AuthKey_raw.p8 /tmp/AuthKey.p8
+          brew install openssl@3 --quiet 2>/dev/null || true
+          /opt/homebrew/opt/openssl@3/bin/openssl pkey -traditional \
+            -in /tmp/AuthKey_raw.p8 -out /tmp/AuthKey.p8
 
       - name: Tuist install (SPM 패키지)
         run: tuist install
