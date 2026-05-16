@@ -1,0 +1,5 @@
+app_identifier("io.tuist.DivaryOfficial")
+apple_id("divary.app@gmail.com")
+
+itc_team_id(ENV["APP_STORE_CONNECT_TEAM_ID"] || "9BSC3KRJ35")
+team_id(ENV["DEVELOPER_PORTAL_TEAM_ID"] || "9BSC3KRJ35")
