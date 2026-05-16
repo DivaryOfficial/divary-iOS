@@ -55,7 +55,7 @@ jobs:
         env:
           APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
         run: |
-          pip3 install cryptography --quiet
+          pip3 install cryptography --quiet --break-system-packages
           python3 << 'EOF'
           import os, base64
           from cryptography.hazmat.primitives.serialization import (
