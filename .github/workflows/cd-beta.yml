@@ -1,20 +1,17 @@
-name: Submit to App Store
+name: Deploy to TestFlight (Internal)
 
 on:
+  push:
+    branches: [develop]
   workflow_dispatch:
-    inputs:
-      build_number:
-        description: "빌드 번호 (비워두면 GitHub run number 사용)"
-        required: false
-        type: string
 
 concurrency:
-  group: cd-release
+  group: cd-internal
   cancel-in-progress: false
 
 jobs:
-  release:
-    name: App Store 제출
+  beta_internal:
+    name: TestFlight 내부 테스트 배포
     runs-on: macos-15
 
     steps:
@@ -32,7 +29,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.3"
+          ruby-version: "3.1"
           bundler-cache: true
 
       - name: Create Secret.xcconfig
@@ -41,6 +38,7 @@ jobs:
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_URL_SCHEME: ${{ secrets.GOOGLE_URL_SCHEME }}
         run: |
+          mkdir -p Configuration
           cat > Configuration/Secret.xcconfig << EOF
           API_URL = ${API_URL}
           GOOGLE_CLIENT_ID = ${GOOGLE_CLIENT_ID}
@@ -53,7 +51,7 @@ jobs:
       - name: Tuist generate
         run: tuist generate --no-open
 
-      - name: Submit to App Store
+      - name: Deploy to TestFlight (Internal)
         env:
           APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
@@ -63,5 +61,5 @@ jobs:
           MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
-          BUILD_NUMBER: ${{ inputs.build_number || github.run_number }}
-        run: bundle exec fastlane release
+          BUILD_NUMBER: ${{ github.run_number }}
+        run: bundle exec fastlane beta_internal

@@ -2,7 +2,7 @@ name: CI
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, develop]
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -28,7 +28,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.3"
+          ruby-version: "3.1"
           bundler-cache: true
 
       - name: Create Secret.xcconfig
@@ -37,6 +37,7 @@ jobs:
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_URL_SCHEME: ${{ secrets.GOOGLE_URL_SCHEME }}
         run: |
+          mkdir -p Configuration
           cat > Configuration/Secret.xcconfig << EOF
           API_URL = ${API_URL}
           GOOGLE_CLIENT_ID = ${GOOGLE_CLIENT_ID}
