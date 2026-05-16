@@ -13,7 +13,7 @@ let project = Project(
         base: [
             "GOOGLE_CLIENT_ID": "$(GOOGLE_CLIENT_ID)",
             "GOOGLE_URL_SCHEME": "$(GOOGLE_URL_SCHEME)",
-            "MARKETING_VERSION": "1.1",       // 버전 (CFBundleShortVersionString)
+            "MARKETING_VERSION": "2.1",
         ],
         configurations: [
             .debug(
