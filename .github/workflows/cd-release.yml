@@ -1,6 +1,9 @@
 name: Submit to App Store
 
 on:
+  push:
+    tags:
+      - "v*.*.*"
   workflow_dispatch:
     inputs:
       build_number:
