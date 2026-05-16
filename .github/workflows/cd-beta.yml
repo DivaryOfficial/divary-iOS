@@ -45,6 +45,27 @@ jobs:
           GOOGLE_URL_SCHEME = ${GOOGLE_URL_SCHEME}
           EOF
 
+      - name: Convert API Key (PKCS#8 → 전통 EC 형식)
+        env:
+          APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
+        run: |
+          pip3 install cryptography --quiet
+          python3 << 'EOF'
+          import os, base64
+          from cryptography.hazmat.primitives.serialization import (
+              load_pem_private_key, Encoding, PrivateFormat, NoEncryption
+          )
+          key_pem = base64.b64decode(os.environ["APP_STORE_CONNECT_API_KEY_CONTENT"])
+          private_key = load_pem_private_key(key_pem, password=None)
+          traditional = private_key.private_bytes(
+              encoding=Encoding.PEM,
+              format=PrivateFormat.TraditionalOpenSSL,
+              encryption_algorithm=NoEncryption()
+          )
+          with open("/tmp/AuthKey.p8", "wb") as f:
+              f.write(traditional)
+          EOF
+
       - name: Tuist install (SPM 패키지)
         run: tuist install
 
