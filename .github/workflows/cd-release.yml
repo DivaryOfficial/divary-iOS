@@ -51,15 +51,6 @@ jobs:
           GOOGLE_URL_SCHEME = ${GOOGLE_URL_SCHEME}
           EOF
 
-      - name: Decode API Key
-        env:
-          APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
-        run: |
-          echo "$APP_STORE_CONNECT_API_KEY_CONTENT" | base64 --decode > /tmp/AuthKey_raw.p8
-          brew install openssl@3 --quiet 2>/dev/null || true
-          /opt/homebrew/opt/openssl@3/bin/openssl pkey -traditional \
-            -in /tmp/AuthKey_raw.p8 -out /tmp/AuthKey.p8
-
       - name: Tuist install (SPM 패키지)
         run: tuist install
 
