@@ -50,22 +50,9 @@ jobs:
         env:
           APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
         run: |
-          pip3 install cryptography --quiet --break-system-packages
-          python3 << 'EOF'
-          import os, base64
-          from cryptography.hazmat.primitives.serialization import (
-              load_pem_private_key, Encoding, PrivateFormat, NoEncryption
-          )
-          key_pem = base64.b64decode(os.environ["APP_STORE_CONNECT_API_KEY_CONTENT"])
-          private_key = load_pem_private_key(key_pem, password=None)
-          traditional = private_key.private_bytes(
-              encoding=Encoding.PEM,
-              format=PrivateFormat.TraditionalOpenSSL,
-              encryption_algorithm=NoEncryption()
-          )
-          with open("/tmp/AuthKey.p8", "wb") as f:
-              f.write(traditional)
-          EOF
+          echo "$APP_STORE_CONNECT_API_KEY_CONTENT" | base64 --decode > /tmp/AuthKey_raw.p8
+          /opt/homebrew/opt/openssl@3/bin/openssl pkey -traditional \
+            -in /tmp/AuthKey_raw.p8 -out /tmp/AuthKey.p8
 
       - name: Tuist install (SPM 패키지)
         run: tuist install
