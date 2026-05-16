@@ -35,6 +35,7 @@ let project = Project(
             infoPlist: .extendingDefault(
                 with: [
                     "CFBundleShortVersionString": "$(MARKETING_VERSION)",
+                    "CFBundleVersion": "$(CURRENT_PROJECT_VERSION)",
                     "CFBundleIconName": "AppIcon",
                     "UILaunchScreen": [:],
                     "UISupportedInterfaceOrientations": ["UIInterfaceOrientationPortrait"],
