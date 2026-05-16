@@ -1,17 +1,18 @@
-name: Deploy to TestFlight (Internal)
+name: Deploy to TestFlight (External)
 
 on:
   push:
-    branches: [develop]
+    branches:
+      - "release/**"
   workflow_dispatch:
 
 concurrency:
-  group: cd-internal
+  group: cd-external
   cancel-in-progress: false
 
 jobs:
-  beta_internal:
-    name: TestFlight 내부 테스트 배포
+  beta_external:
+    name: TestFlight 외부 테스트 배포
     runs-on: macos-15
 
     steps:
@@ -50,7 +51,7 @@ jobs:
       - name: Tuist generate
         run: tuist generate --no-open
 
-      - name: Deploy to TestFlight (Internal)
+      - name: Deploy to TestFlight (External)
         env:
           APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
@@ -61,4 +62,4 @@ jobs:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           BUILD_NUMBER: ${{ github.run_number }}
-        run: bundle exec fastlane beta_internal
+        run: bundle exec fastlane beta_external

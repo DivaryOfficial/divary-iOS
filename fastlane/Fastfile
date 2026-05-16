@@ -16,8 +16,8 @@ platform :ios do
     )
   end
 
-  desc "Build and upload to TestFlight"
-  lane :beta do
+  desc "Build and upload to TestFlight (internal testers)"
+  lane :beta_internal do
     api_key = app_store_connect_api_key(
       key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
       issuer_id: ENV["APP_STORE_CONNECT_API_KEY_ISSUER_ID"],
@@ -43,7 +43,40 @@ platform :ios do
 
     upload_to_testflight(
       api_key: api_key,
+      distribute_external: false,
       skip_waiting_for_build_processing: true
+    )
+  end
+
+  desc "Build and upload to TestFlight (external testers)"
+  lane :beta_external do
+    api_key = app_store_connect_api_key(
+      key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
+      issuer_id: ENV["APP_STORE_CONNECT_API_KEY_ISSUER_ID"],
+      key_content: ENV["APP_STORE_CONNECT_API_KEY_CONTENT"],
+      is_key_content_base64: true,
+      in_house: false
+    )
+
+    match(
+      type: "appstore",
+      api_key: api_key,
+      readonly: true
+    )
+
+    build_app(
+      workspace: "Divary.xcworkspace",
+      scheme: "Divary",
+      configuration: "Release",
+      export_method: "app-store",
+      output_directory: "build",
+      xcargs: "CURRENT_PROJECT_VERSION=#{ENV.fetch('BUILD_NUMBER', '1')}"
+    )
+
+    upload_to_testflight(
+      api_key: api_key,
+      distribute_external: true,
+      skip_waiting_for_build_processing: false
     )
   end
 
