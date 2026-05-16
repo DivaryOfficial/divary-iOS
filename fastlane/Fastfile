@@ -1,8 +1,35 @@
 default_platform(:ios)
 
+API_KEY_PATH = "/tmp/AuthKey.p8"
+
 platform :ios do
   before_all do
     setup_ci if ENV["CI"]
+
+    if ENV["CI"] && ENV["APP_STORE_CONNECT_API_KEY_CONTENT"]
+      require "base64"
+      File.write(API_KEY_PATH, Base64.decode64(ENV["APP_STORE_CONNECT_API_KEY_CONTENT"]))
+    end
+  end
+
+  def api_key
+    if ENV["CI"]
+      app_store_connect_api_key(
+        key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
+        issuer_id: ENV["APP_STORE_CONNECT_API_KEY_ISSUER_ID"],
+        key_filepath: API_KEY_PATH,
+        in_house: false
+      )
+    else
+      require "json"
+      key_data = JSON.parse(File.read(File.expand_path("../api_key.json", __FILE__)))
+      app_store_connect_api_key(
+        key_id: key_data["key_id"],
+        issuer_id: key_data["issuer_id"],
+        key_content: key_data["key"],
+        in_house: false
+      )
+    end
   end
 
   desc "Run unit tests"
@@ -18,14 +45,6 @@ platform :ios do
 
   desc "Build and upload to TestFlight (internal testers)"
   lane :beta_internal do
-    api_key = app_store_connect_api_key(
-      key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
-      issuer_id: ENV["APP_STORE_CONNECT_API_KEY_ISSUER_ID"],
-      key_content: ENV["APP_STORE_CONNECT_API_KEY_CONTENT"],
-      is_key_content_base64: true,
-      in_house: false
-    )
-
     match(
       type: "appstore",
       api_key: api_key,
@@ -50,14 +69,6 @@ platform :ios do
 
   desc "Build and upload to TestFlight (external testers)"
   lane :beta_external do
-    api_key = app_store_connect_api_key(
-      key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
-      issuer_id: ENV["APP_STORE_CONNECT_API_KEY_ISSUER_ID"],
-      key_content: ENV["APP_STORE_CONNECT_API_KEY_CONTENT"],
-      is_key_content_base64: true,
-      in_house: false
-    )
-
     match(
       type: "appstore",
       api_key: api_key,
@@ -82,14 +93,6 @@ platform :ios do
 
   desc "Build and submit to App Store"
   lane :release do
-    api_key = app_store_connect_api_key(
-      key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
-      issuer_id: ENV["APP_STORE_CONNECT_API_KEY_ISSUER_ID"],
-      key_content: ENV["APP_STORE_CONNECT_API_KEY_CONTENT"],
-      is_key_content_base64: true,
-      in_house: false
-    )
-
     match(
       type: "appstore",
       api_key: api_key,
