@@ -36,6 +36,7 @@ let project = Project(
                 with: [
                     "CFBundleShortVersionString": "$(MARKETING_VERSION)",
                     "CFBundleVersion": "$(CURRENT_PROJECT_VERSION)",
+                    "ITSAppUsesNonExemptEncryption": false,
                     "CFBundleIconName": "AppIcon",
                     "UILaunchScreen": [:],
                     "UISupportedInterfaceOrientations": ["UIInterfaceOrientationPortrait"],
