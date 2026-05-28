@@ -1,0 +1,2270 @@
+{
+  "sourceLanguage" : "ko",
+  "strings" : {
+    " " : {
+
+    },
+    " bar" : {
+
+    },
+    "-" : {
+
+    },
+    "%@" : {
+
+    },
+    "%@ / %@" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ / %2$@"
+          }
+        }
+      }
+    },
+    "%@｜%@" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@｜%2$@"
+          }
+        }
+      }
+    },
+    "%@년" : {
+
+    },
+    "℃" : {
+
+    },
+    "=" : {
+
+    },
+    "0 bar" : {
+
+    },
+    "1.0.0" : {
+
+    },
+    "Continue with Google" : {
+
+    },
+    "Divary" : {
+
+    },
+    "Dive Time" : {
+
+    },
+    "가벼움" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light"
+          }
+        }
+      }
+    },
+    "감압정지" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Safety Stop"
+          }
+        }
+      }
+    },
+    "갑각류" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crustaceans"
+          }
+        }
+      }
+    },
+    "강풍" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strong"
+          }
+        }
+      }
+    },
+    "강함" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rough"
+          }
+        }
+      }
+    },
+    "갯민숭달팽이" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nudibranch"
+          }
+        }
+      }
+    },
+    "검색 결과가 없습니다" : {
+
+    },
+    "격류" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strong"
+          }
+        }
+      }
+    },
+    "고객 센터" : {
+
+    },
+    "고객센터" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Customer Support"
+          }
+        }
+      }
+    },
+    "고요한 찬란함의 절정" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The peak of serene brilliance"
+          }
+        }
+      }
+    },
+    "공개예정" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coming Soon"
+          }
+        }
+      }
+    },
+    "관찰 팁" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Observation Tip"
+          }
+        }
+      }
+    },
+    "교육 다이빙" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Training Dive"
+          }
+        }
+      }
+    },
+    "군소" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sea Hare"
+          }
+        }
+      }
+    },
+    "그냥 나가기" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leave Without Saving"
+          }
+        }
+      }
+    },
+    "그동안 함께해주셔서 감사합니다." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thank you for being with us."
+          }
+        }
+      }
+    },
+    "글씨체" : {
+
+    },
+    "기록" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Logs"
+          }
+        }
+      }
+    },
+    "기록이 모두 저장되었어요." : {
+
+    },
+    "기온" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Air Temp"
+          }
+        }
+      }
+    },
+    "기존 로그로 이동하시겠습니까?" : {
+
+    },
+    "기체 소모량" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gas Used"
+          }
+        }
+      }
+    },
+    "기체 소모량 " : {
+
+    },
+    "기타" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other"
+          }
+        }
+      }
+    },
+    "기타 특징" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other Features"
+          }
+        }
+      }
+    },
+    "끄덕새우" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hinge-beak Shrimp"
+          }
+        }
+      }
+    },
+    "나비고기" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Butterflyfish"
+          }
+        }
+      }
+    },
+    "나쁨" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poor"
+          }
+        }
+      }
+    },
+    "나의 친구" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My Friends"
+          }
+        }
+      }
+    },
+    "나의바다" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My Ocean"
+          }
+        }
+      }
+    },
+    "난파선" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shipwreck"
+          }
+        }
+      }
+    },
+    "날씨" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weather"
+          }
+        }
+      }
+    },
+    "날짜 선택" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date"
+          }
+        }
+      }
+    },
+    "날짜 선택 완료" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
+          }
+        }
+      }
+    },
+    "날짜선택" : {
+
+    },
+    "내용을 입력하세요" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please Enter"
+          }
+        }
+      }
+    },
+    "년도" : {
+
+    },
+    "닉네임, 프로필 이미지, 나의 다이빙 레벨 등 계정 정보가 삭제돼요." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your account information, including your nickname, profile image, and diving level, will be deleted."
+          }
+        }
+      }
+    },
+    "다시 가입해도 이전 정보는 복구되지 않아요." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Even if you sign up again, your previous information cannot be restored."
+          }
+        }
+      }
+    },
+    "다시 등록하기" : {
+
+    },
+    "다이버 아이템" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diving Gear"
+          }
+        }
+      }
+    },
+    "다이버리 회원 탈퇴 유의사항을 확인했어요" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I have read and understood the account deletion notice."
+          }
+        }
+      }
+    },
+    "다이버리 회원 탈퇴 유의사항을 확인했어요." : {
+
+    },
+    "다이브 마스터" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Divemaster"
+          }
+        }
+      }
+    },
+    "다이빙 개요" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dive Overview"
+          }
+        }
+      }
+    },
+    "다이빙 로그 제목" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dive Log Title"
+          }
+        }
+      }
+    },
+    "다이빙 목적" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dive Type"
+          }
+        }
+      }
+    },
+    "다이빙 방법" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entry Type"
+          }
+        }
+      }
+    },
+    "다이빙 지역" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Location"
+          }
+        }
+      }
+    },
+    "다이빙 포인트" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dive Site"
+          }
+        }
+      }
+    },
+    "다이빙 프로파일" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dive Profile"
+          }
+        }
+      }
+    },
+    "다채로운 스티커팩으로 일기장에 특별한 감성을 더해보세요." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a special touch to your diary with colorful sticker packs."
+          }
+        }
+      }
+    },
+    "단체" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agency"
+          }
+        }
+      }
+    },
+    "더움" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hot"
+          }
+        }
+      }
+    },
+    "독성 여부" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toxicity"
+          }
+        }
+      }
+    },
+    "돌돔" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Striped Beakfish"
+          }
+        }
+      }
+    },
+    "동행자" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dive Team"
+          }
+        }
+      }
+    },
+    "드라이 슈트" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drysuit"
+          }
+        }
+      }
+    },
+    "등불아귀" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anglerfish"
+          }
+        }
+      }
+    },
+    "레귤레이터" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Regulator"
+          }
+        }
+      }
+    },
+    "레벨" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Level"
+          }
+        }
+      }
+    },
+    "레스큐 다이버" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rescue Diver"
+          }
+        }
+      }
+    },
+    "로그북" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Logbook"
+          }
+        }
+      }
+    },
+    "로그북 제목 수정" : {
+
+    },
+    "로그북, 일기 나의 바다 등 모든 기록이 영구 삭제돼요" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All records, including your logbook, diary, and My Ocean, will be permanently deleted."
+          }
+        }
+      }
+    },
+    "로그아웃" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log Out"
+          }
+        }
+      }
+    },
+    "로그아웃하시겠어요?" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Do you want to log out?"
+          }
+        }
+      }
+    },
+    "로그인 중..." : {
+
+    },
+    "로그인 확인 중..." : {
+
+    },
+    "리더" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dive Leader"
+          }
+        }
+      }
+    },
+    "리셋" : {
+
+    },
+    "마스크" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mask"
+          }
+        }
+      }
+    },
+    "마이페이지" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My Page"
+          }
+        }
+      }
+    },
+    "말풍선" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Speech Bubble"
+          }
+        }
+      }
+    },
+    "맑음" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear"
+          }
+        }
+      }
+    },
+    "멋진 로그가 완성되었네요!" : {
+
+    },
+    "몸 형태" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Body Shape"
+          }
+        }
+      }
+    },
+    "무거움" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heavy"
+          }
+        }
+      }
+    },
+    "무늬" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pattern"
+          }
+        }
+      }
+    },
+    "문어" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Octopus"
+          }
+        }
+      }
+    },
+    "문의사항은 divary.app@gmail.com으로 남겨주세요." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For inquiries, please contact us at divary.app@gmail.com."
+          }
+        }
+      }
+    },
+    "미류" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mild"
+          }
+        }
+      }
+    },
+    "미리보기에서는 캐릭터와 펫이 실제 위치보다 아래에 표시됩니다" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In the preview, the character and pet appear lower than their actual position."
+          }
+        }
+      }
+    },
+    "미설정" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not Set"
+          }
+        }
+      }
+    },
+    "바다거북" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sea Turtle"
+          }
+        }
+      }
+    },
+    "바다테마" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ocean Themes"
+          }
+        }
+      }
+    },
+    "바디 색상" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Body Color"
+          }
+        }
+      }
+    },
+    "바람" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wind"
+          }
+        }
+      }
+    },
+    "반응성" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reactiveness"
+          }
+        }
+      }
+    },
+    "버디" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buddy"
+          }
+        }
+      }
+    },
+    "버디 펫" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My Buddy"
+          }
+        }
+      }
+    },
+    "버튼을 눌러 첫 로그를 작성해보세요!" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap the button to write your first log!"
+          }
+        }
+      }
+    },
+    "보름달물해파리" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moon Jellyfish"
+          }
+        }
+      }
+    },
+    "보통" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Normal"
+          }
+        }
+      }
+    },
+    "보트" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Boat"
+          }
+        }
+      }
+    },
+    "복어" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pufferfish"
+          }
+        }
+      }
+    },
+    "볼터치 색상" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blush Color"
+          }
+        }
+      }
+    },
+    "분" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "min"
+          }
+        }
+      }
+    },
+    "불가사리" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starfish"
+          }
+        }
+      }
+    },
+    "비" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rain"
+          }
+        }
+      }
+    },
+    "비치" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shore"
+          }
+        }
+      }
+    },
+    "사회성" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Social Behavior"
+          }
+        }
+      }
+    },
+    "삭제" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete"
+          }
+        }
+      }
+    },
+    "산호숲" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coral Forest"
+          }
+        }
+      }
+    },
+    "상점" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shop"
+          }
+        }
+      }
+    },
+    "새로운 채팅방 이름을 입력해주세요." : {
+
+    },
+    "새로운 채팅방 제목을 입력해주세요." : {
+
+    },
+    "색상" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Color"
+          }
+        }
+      }
+    },
+    "생존 전략" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Survival Strategy"
+          }
+        }
+      }
+    },
+    "서식" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Habitat"
+          }
+        }
+      }
+    },
+    "선택된 탭: %@" : {
+
+    },
+    "선택한 날짜에 로그가 존재합니다." : {
+
+    },
+    "성게" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sea Urchin"
+          }
+        }
+      }
+    },
+    "성격" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personality"
+          }
+        }
+      }
+    },
+    "세월을 머금은 고요하고 신비로운 푸른 바다" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A quiet, mysterious blue sea touched by time"
+          }
+        }
+      }
+    },
+    "소라게" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hermit Crab"
+          }
+        }
+      }
+    },
+    "수온" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Water Temp"
+          }
+        }
+      }
+    },
+    "슈트 종류" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suit Type"
+          }
+        }
+      }
+    },
+    "스킨" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skin"
+          }
+        }
+      }
+    },
+    "시야" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visibility"
+          }
+        }
+      }
+    },
+    "시작탱크 압력" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start"
+          }
+        }
+      }
+    },
+    "쏠배감펭" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lionfish"
+          }
+        }
+      }
+    },
+    "쏨뱅이" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rockfish"
+          }
+        }
+      }
+    },
+    "아기해마" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Baby Seahorse"
+          }
+        }
+      }
+    },
+    "아바타를 불러오는 중" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading..."
+          }
+        }
+      }
+    },
+    "아이디" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ID"
+          }
+        }
+      }
+    },
+    "아직 바다 기록이 없어요." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No ocean records yet."
+          }
+        }
+      }
+    },
+    "아직 작성되지 않은 내용이 있어요" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You have unsaved content"
+          }
+        }
+      }
+    },
+    "알림" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications"
+          }
+        }
+      }
+    },
+    "앨범" : {
+
+    },
+    "앱 관리" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Info"
+          }
+        }
+      }
+    },
+    "약간 흐림" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partly Cloudy"
+          }
+        }
+      }
+    },
+    "약풍" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light"
+          }
+        }
+      }
+    },
+    "약함" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calm"
+          }
+        }
+      }
+    },
+    "어드밴스드 오픈워터 다이버" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Advanced Open Water Diver"
+          }
+        }
+      }
+    },
+    "어떤 방식으로 저장할까요?" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How would you like to save?"
+          }
+        }
+      }
+    },
+    "어류" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish"
+          }
+        }
+      }
+    },
+    "어시스턴트 인스트럭터" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assistant Instructor"
+          }
+        }
+      }
+    },
+    "없음" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None"
+          }
+        }
+      }
+    },
+    "에메랄드" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Emerald"
+          }
+        }
+      }
+    },
+    "연체동물" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mollusks"
+          }
+        }
+      }
+    },
+    "오늘의 바다 친구는?" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose your dive icon"
+          }
+        }
+      }
+    },
+    "오류 발생" : {
+
+    },
+    "오픈워터다이버" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Water Diver"
+          }
+        }
+      }
+    },
+    "옷장" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Closet"
+          }
+        }
+      }
+    },
+    "완료" : {
+
+    },
+    "외모" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appearance"
+          }
+        }
+      }
+    },
+    "우파루파" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Axolotl"
+          }
+        }
+      }
+    },
+    "월" : {
+
+    },
+    "웨이트" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weight"
+          }
+        }
+      }
+    },
+    "웻슈트" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wetsuit"
+          }
+        }
+      }
+    },
+    "응답 중..." : {
+
+    },
+    "이 채팅방을 삭제하시겠습니까?" : {
+
+    },
+    "이름을 작성해주세요" : {
+
+    },
+    "이전으로" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back"
+          }
+        }
+      }
+    },
+    "인스트럭터" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Instructor"
+          }
+        }
+      }
+    },
+    "일기" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diary"
+          }
+        }
+      }
+    },
+    "임시 저장하고 나가기" : {
+
+    },
+    "임시 저장하기" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save Draft"
+          }
+        }
+      }
+    },
+    "임시저장 완료!" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Draft saved!"
+          }
+        }
+      }
+    },
+    "임시저장하고 나가기" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save Draft and Leave"
+          }
+        }
+      }
+    },
+    "입력해주세요" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please Enter"
+          }
+        }
+      }
+    },
+    "자세히보기" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View Details"
+          }
+        }
+      }
+    },
+    "작성 완료" : {
+
+    },
+    "작성 완료하기" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complete"
+          }
+        }
+      }
+    },
+    "작성 중인 내용이 일부 비어 있어요." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Some fields are still empty."
+          }
+        }
+      }
+    },
+    "작성 중인 내용이 일부 비어 있어요.\n 지금 끝내거나, 나중에 이어 쓸 수 있어요." : {
+
+    },
+    "작성중" : {
+
+    },
+    "작성하러 가기" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start Writing"
+          }
+        }
+      }
+    },
+    "저장" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save"
+          }
+        }
+      }
+    },
+    "저장하지 않으면 지금까지 입력한 내용이 사라질 수 있어요" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If you leave without saving, your changes may be lost"
+          }
+        }
+      }
+    },
+    "저장하지 않으면 지금까지 입력한 내용이 사라질 수 있어요." : {
+
+    },
+    "전체" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All"
+          }
+        }
+      }
+    },
+    "제목" : {
+
+    },
+    "제목을 입력해주세요" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter a title"
+          }
+        }
+      }
+    },
+    "조금만 기다리면 함께 다이빙 로그를 나눌 수 있어요 :)" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Soon, you'll be able to share dive logs with your friends :)"
+          }
+        }
+      }
+    },
+    "조류" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Current"
+          }
+        }
+      }
+    },
+    "종료탱크 압력" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "End"
+          }
+        }
+      }
+    },
+    "좋음" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Good"
+          }
+        }
+      }
+    },
+    "주변 다이빙 스팟을 찾고 있습니다..." : {
+
+    },
+    "주변 다이빙 스팟을 찾을 수 없습니다" : {
+
+    },
+    "줄전갱이" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Striped Jack"
+          }
+        }
+      }
+    },
+    "중간" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moderate"
+          }
+        }
+      }
+    },
+    "중류" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moderate"
+          }
+        }
+      }
+    },
+    "중풍" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moderate"
+          }
+        }
+      }
+    },
+    "지금 끝내거나, 나중에 이어 쓸 수 있어요." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You can finish now or continue later."
+          }
+        }
+      }
+    },
+    "지금 나가면 일기의 변경 내용이 모두 삭제됩니다." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If you leave now, all changes to your diary will be deleted."
+          }
+        }
+      }
+    },
+    "착용" : {
+      "comment" : "Used as both card title (Dive Gear) and input field label (Other Gear) depending on context",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dive Gear"
+          }
+        }
+      }
+    },
+    "채팅방 관리" : {
+
+    },
+    "청줄놀래기" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blue-lined Wrasse"
+          }
+        }
+      }
+    },
+    "체감 무게" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weight Feel"
+          }
+        }
+      }
+    },
+    "총 다이빙 횟수" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total Dives"
+          }
+        }
+      }
+    },
+    "총 다이빙 횟수 %@ 회" : {
+
+    },
+    "최대수심" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Max Depth"
+          }
+        }
+      }
+    },
+    "추움" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cold"
+          }
+        }
+      }
+    },
+    "출몰시기" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Season"
+          }
+        }
+      }
+    },
+    "출시 예정!" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coming Soon!"
+          }
+        }
+      }
+    },
+    "취소" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        }
+      }
+    },
+    "친구 기능 오픈 예정!" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Friend feature coming soon!"
+          }
+        }
+      }
+    },
+    "크게 보기" : {
+
+    },
+    "크기" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Size"
+          }
+        }
+      }
+    },
+    "탈퇴 후에는 복구가 불가능합니다." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Once deleted, your account cannot be restored."
+          }
+        }
+      }
+    },
+    "탈퇴가 완료되었습니다." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your account has been deleted."
+          }
+        }
+      }
+    },
+    "탈퇴하기" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete Account"
+          }
+        }
+      }
+    },
+    "탈퇴하기 전에 꼭 확인해주세요" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please read this before deleting your account"
+          }
+        }
+      }
+    },
+    "탈퇴하기 전에 꼭 확인해주세요." : {
+
+    },
+    "탈퇴하면 어떤 방법으로도 되돌릴 수 없어요" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Once you delete your account, there is no way to undo it"
+          }
+        }
+      }
+    },
+    "탱크" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tank"
+          }
+        }
+      }
+    },
+    "특이사항" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notes"
+          }
+        }
+      }
+    },
+    "파도" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waves"
+          }
+        }
+      }
+    },
+    "펀 다이빙" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fun Dive"
+          }
+        }
+      }
+    },
+    "평균수심" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avg Depth"
+          }
+        }
+      }
+    },
+    "포근한 분홍빛이 퍼져 있는 몽글몽글한 풍경" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A soft, dreamy landscape glowing with warm pink hues"
+          }
+        }
+      }
+    },
+    "폭풍" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stormy"
+          }
+        }
+      }
+    },
+    "프로필 정보" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profile Info"
+          }
+        }
+      }
+    },
+    "핀" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fins"
+          }
+        }
+      }
+    },
+    "핑크호수" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pink Lake"
+          }
+        }
+      }
+    },
+    "해양도감" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oceanpedia"
+          }
+        }
+      }
+    },
+    "햇살이 비치는 맑고 투명한 에메랄드 물결" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear, transparent emerald waves glowing in the sunlight"
+          }
+        }
+      }
+    },
+    "행동 특성" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Behavior"
+          }
+        }
+      }
+    },
+    "형형색색의 산호" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Colorful corals"
+          }
+        }
+      }
+    },
+    "확인" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        }
+      }
+    },
+    "환경정보" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conditions"
+          }
+        }
+      }
+    },
+    "활동성" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activity Level"
+          }
+        }
+      }
+    },
+    "회원 탈퇴" : {
+
+    },
+    "회원탈퇴" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete Account"
+          }
+        }
+      }
+    },
+    "흐림" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cloudy"
+          }
+        }
+      }
+    },
+    "흰동가리" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clownfish"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
