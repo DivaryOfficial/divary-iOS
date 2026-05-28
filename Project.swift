@@ -2,6 +2,7 @@ import ProjectDescription
 
 let project = Project(
     name: "Divary",
+    options: .options(developmentRegion: "ko"),
     packages: [
         .package(url: "https://github.com/Moya/Moya.git", .upToNextMinor(from: "15.0.3")),
         .package(url: "https://github.com/google/GoogleSignIn-iOS", .upToNextMinor(from: "7.0.0")),
@@ -48,6 +49,7 @@ let project = Project(
                     "UIUserInterfaceStyle": "Light",
                     
                     "NSLocationWhenInUseUsageDescription": "주변 장소를 검색하기 위해 위치 정보가 필요합니다.",
+                    "CFBundleLocalizations": ["ko", "en"],
                     
                 ]
             ),
